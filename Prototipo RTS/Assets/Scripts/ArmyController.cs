@@ -80,7 +80,7 @@ public class ArmyController : MonoBehaviour
                 myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(myRay, out myHit, 1000f))
                 {
-
+                    //Debug.Log("he tocado: " + myHit.transform.name);
 					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
 					if (objSel != null)
 					{
@@ -121,35 +121,6 @@ public class ArmyController : MonoBehaviour
 						//Deseleccionar las unidades
 						DeselectAll();
 					}
-					/*
-					//Debug.Log("he tocado: " + myHit.transform.name);
-					UnitController unitCont = (UnitController)myHit.transform.GetComponent("UnitController");
-					// el rayo ha chocado en una Unidad
-                    if (unitCont != null)
-                    {
-                        // si NO tenemos control pulsada, se deselecciona lo que hubiera
-                        // y se selecciona la nueva unidad
-                        if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
-                        {
-                            DeselectAll();
-                        }
-                        // seleccionamos la nueva unidad
-                        GameObject unit = (GameObject)myHit.transform.gameObject;
-                        // la añadimos a la lista de seleccionados
-                        unitSelectedList.Add(unit);
-                        // y la marcamos como seleccionada
-                        unit.GetComponent<UnitController>().SetSelected();
-                    }
-                    else
-                    {
-                        DeselectAll();
-
-						BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
-						if (baseCont != null)
-						{
-							
-						}
-                    }*/
                 }
             }
         }
@@ -182,7 +153,7 @@ public class ArmyController : MonoBehaviour
 
     } // Update ()
 
-    void OnGUI()
+    void OnGUI ()
     {
         if (selecting)
         {

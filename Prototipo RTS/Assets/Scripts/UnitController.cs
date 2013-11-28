@@ -12,18 +12,15 @@ public class UnitController : MonoBehaviour
 	private State currentState = State.Iddle;
 	
     public float velocity = 5.0f;
-    public Vector3 dirMovement;
-    private Vector3 destiny;
-    private int destinyThreshold;
+    public Vector3 dirMovement = new Vector3();
+    private Vector3 destiny = new Vector3();
+    private int destinyThreshold = 1;
 
     // Use this for initialization
     void Start ()
     {
-        currentState = State.Iddle;
-
-        dirMovement = new Vector3();
-        destiny = transform.position;
-        destinyThreshold = 1;
+        if (destiny == Vector3.zero)
+            destiny = transform.position;
     }
 
     // Update is called once per frame
