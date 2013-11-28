@@ -3,18 +3,14 @@ using System.Collections;
 
 public class UnitController : MonoBehaviour
 {
-    private Color origColor;
-    private Color selectColor = Color.yellow;
 
     private enum State
     {
         Iddle,	// reposo
         GoingTo
     }
-    private State currentState;
-
-    private bool selected;
-
+	private State currentState = State.Iddle;
+	
     public float velocity = 5.0f;
     public Vector3 dirMovement;
     private Vector3 destiny;
@@ -23,10 +19,7 @@ public class UnitController : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        origColor = this.renderer.material.color;
         currentState = State.Iddle;
-
-        selected = false;
 
         dirMovement = new Vector3();
         destiny = transform.position;
@@ -53,36 +46,6 @@ public class UnitController : MonoBehaviour
                     currentState = State.Iddle;
                 break;
         }
-    }
-
-    public void SetSelected ()
-    {
-        selected = true;
-        this.renderer.material.color = selectColor;
-    }
-
-    public void SetDeselect()
-    {
-        selected = false;
-        this.renderer.material.color = origColor;
-    }
-
-    public void SetSelected(bool selected)
-    {
-        if (selected)
-            SetSelected();
-        else
-            SetDeselect();
-    }
-
-    public bool IsSelected ()
-    {
-        return selected;
-    }
-
-    public void ResetColor ()
-    {
-        this.renderer.material.color = origColor;
     }
 
     public void GoTo (Vector3 destiny)

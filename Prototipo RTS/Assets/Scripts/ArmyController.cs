@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ArmyController : MonoBehaviour
 {
-
+	public GameObject armyBase;
     public List<GameObject> unitList = new List<GameObject>();
     public List<GameObject> unitSelectedList = new List<GameObject>();
 
@@ -80,9 +80,51 @@ public class ArmyController : MonoBehaviour
                 myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(myRay, out myHit, 1000f))
                 {
-                    //Debug.Log("he tocado: " + myHit.transform.name);
-                    UnitController unitCont = (UnitController)myHit.transform.GetComponent("UnitController");
-                    // el rayo ha chocado en una Unidad
+
+					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
+					if (objSel != null)
+					{
+						// la marcamos como seleccionada
+						objSel.SetSelected();
+
+						//Miramos si el objeto es una unidad
+						UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
+						if (unitCont != null)
+						{
+							// si NO tenemos control pulsada, se deselecciona lo que hubiera
+							// y se selecciona la nueva unidad
+							if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
+							{
+								DeselectAll();
+							}
+							// seleccionamos la nueva unidad
+							GameObject unit = (GameObject)myHit.transform.gameObject;
+							// la añadimos a la lista de seleccionados
+							unitSelectedList.Add(unit);
+							// y la marcamos como seleccionada
+							unit.GetComponent<CSelectable>().SetSelected();
+						}
+						else
+						{
+							DeselectAll();
+							
+							BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
+							if (baseCont != null)
+							{
+								// seleccionamos la nueva unidad
+								armyBase.GetComponent<CSelectable>().SetSelected();
+							}
+						}
+					}
+					else
+					{
+						//Deseleccionar las unidades
+						DeselectAll();
+					}
+					/*
+					//Debug.Log("he tocado: " + myHit.transform.name);
+					UnitController unitCont = (UnitController)myHit.transform.GetComponent("UnitController");
+					// el rayo ha chocado en una Unidad
                     if (unitCont != null)
                     {
                         // si NO tenemos control pulsada, se deselecciona lo que hubiera
@@ -101,7 +143,13 @@ public class ArmyController : MonoBehaviour
                     else
                     {
                         DeselectAll();
-                    }
+
+						BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
+						if (baseCont != null)
+						{
+							
+						}
+                    }*/
                 }
             }
         }
@@ -121,6 +169,16 @@ public class ArmyController : MonoBehaviour
                 }
             }
         }
+
+		if (Input.GetKeyDown (KeyCode.A))
+		{
+			if (armyBase.GetComponent<CSelectable>().IsSelected())
+			{
+				// spawn a new unit
+				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit();
+				unitList.Add(newUnit);
+			}
+		}
 
     } // Update ()
 
@@ -151,6 +209,8 @@ public class ArmyController : MonoBehaviour
 
     private void CreatingSquare ()
     {
+		unitSelectedList.Clear ();
+
         // se actualizan las posiciones de los vértices del cuadrado en pantalla:
         squareSelectionPointsScreen[2] = Input.mousePosition;
         squareSelectionPointsScreen[1].x = squareSelectionPointsScreen[2].x;
@@ -257,14 +317,14 @@ public class ArmyController : MonoBehaviour
                     // we add it to the selection list
                     unitSelectedList.Add(unitList[i]);
                     // and mark it as selected
-                    unitList[i].GetComponent<UnitController>().SetSelected();
+                    unitList[i].GetComponent<CSelectable>().SetSelected();
                 }
                 else
                 {
                     // delete the unit from the selection list
                     unitSelectedList.Remove(unitList[i]);
                     // and mark it as deselected
-                    unitList[i].GetComponent<UnitController>().SetDeselect();
+					unitList[i].GetComponent<CSelectable>().SetDeselect();
                 }
             }
         }
@@ -289,10 +349,13 @@ public class ArmyController : MonoBehaviour
     {
         // deseleccionamos los que hubiera seleccionado
         foreach (GameObject u in unitSelectedList)
-            u.GetComponent<UnitController>().SetDeselect();
+			u.GetComponent<CSelectable>().SetDeselect();
         // vaciamos la lista de seleccionados previamente
         unitSelectedList.Clear();
-    }
+
+		//Deseleccionar la base
+		armyBase.GetComponent<CSelectable>().SetDeselect();
+	}
 
 
     private void AddBlackBox (Vector3 position)
