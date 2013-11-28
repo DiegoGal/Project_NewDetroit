@@ -56,7 +56,7 @@ public class ArmyController : MonoBehaviour
             else // se continúa el modo de selección múltiple
             {
                 // select units on the fly
-                CreatingSquare();
+                CreatingSquare2();
             }
         }
 
@@ -65,7 +65,7 @@ public class ArmyController : MonoBehaviour
             // fin del modo de selección múltiple
             //Debug.Log("fin seleccion: " + Input.mousePosition);
             selecting = false;
-            CreatingSquare();
+            CreatingSquare2();
         }
         else
         {
@@ -180,7 +180,7 @@ public class ArmyController : MonoBehaviour
 
     private void CreatingSquare ()
     {
-		unitSelectedList.Clear ();
+		unitSelectedList.Clear();
 
         // se actualizan las posiciones de los vértices del cuadrado en pantalla:
         squareSelectionPointsScreen[2] = Input.mousePosition;
@@ -263,7 +263,7 @@ public class ArmyController : MonoBehaviour
                 new Vector2(
                     squareSelectionPointsProyected[2].x,
                     squareSelectionPointsProyected[2].z
-                ) );
+                ) ) / 2;
             float d = 0;
             int contNeg = 0, contPos = 0;
             // // 1st: Manhattan distance
@@ -272,9 +272,15 @@ public class ArmyController : MonoBehaviour
                 // 2nd: distance unit to segments of the square
                 for (int j = 0; j < 4; j++)
                 {
-                    d = DistancePointToSegment(
+                    /*d = DistancePointToSegment(
                         new Vector2(squareSelectionPointsProyected[j].x, squareSelectionPointsProyected[j].z),
                         new Vector2(squareSelectionPointsProyected[(j + 1) % 4].x, squareSelectionPointsProyected[(j + 1) % 4].z),
+                        unitPos
+                    );*/
+                    // this alternative is less expensive:
+                    d = SignPointToSegment(
+                        squareSelectionPointsProyected[j],
+                        squareSelectionPointsProyected[(j + 1) % 4],
                         unitPos
                     );
                     if (d < 0)
@@ -302,6 +308,46 @@ public class ArmyController : MonoBehaviour
 
     } // CreatingSquare ()
 
+    // alternative version which avoids the (presumably expensive) use of rays
+    // doc: http://docs.unity3d.com/Documentation/ScriptReference/Camera.WorldToScreenPoint.html
+    private void CreatingSquare2 ()
+    {
+        unitSelectedList.Clear();
+
+        // se actualizan las posiciones de los vértices del cuadrado en pantalla:
+        squareSelectionPointsScreen[2] = Input.mousePosition;
+        squareSelectionPointsScreen[1].x = squareSelectionPointsScreen[2].x;
+        squareSelectionPointsScreen[1].y = squareSelectionPointsScreen[0].y;
+        squareSelectionPointsScreen[3].x = squareSelectionPointsScreen[0].x;
+        squareSelectionPointsScreen[3].y = squareSelectionPointsScreen[2].y;
+
+        Vector3 unitScreenPos;
+        int count = unitList.Count;
+        for (int i = 0; i < count; i++)
+        {
+            // capture the screen position of the unit
+            unitScreenPos = Camera.main.WorldToScreenPoint(unitList[i].transform.position);
+            // check if the position if inside the square we are creating
+            if (unitScreenPos.x >= squareSelectionPointsScreen[0].x &&
+                unitScreenPos.y <= squareSelectionPointsScreen[0].y &&
+                unitScreenPos.x <= squareSelectionPointsScreen[2].x &&
+                unitScreenPos.y >= squareSelectionPointsScreen[2].y)    // select the unit
+            {
+                // we add it to the selection list
+                unitSelectedList.Add(unitList[i]);
+                // and mark it as selected
+                unitList[i].GetComponent<CSelectable>().SetSelected();
+            }
+            else
+            {
+                // delete the unit from the selection list
+                unitSelectedList.Remove(unitList[i]);
+                // and mark it as deselected
+                unitList[i].GetComponent<CSelectable>().SetDeselect();
+            }
+        }
+    }
+
     /// <summary>
     /// The distance of the point to the segment
     /// </summary>
@@ -313,6 +359,11 @@ public class ArmyController : MonoBehaviour
     {
         return (((B.x - A.x) * (A.y - p.y) - (A.x - p.x) * (B.y - A.y)) /
             (float)(Mathf.Sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y))));
+    }
+
+    private float SignPointToSegment (Vector3 A, Vector3 B, Vector2 p)
+    {
+        return ((B.x - A.x) * (A.z - p.y) - (A.x - p.x) * (B.z - A.z));
     }
 
     // deselect all the units in the selected list

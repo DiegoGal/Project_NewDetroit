@@ -3,7 +3,6 @@ using System.Collections;
 
 public class BaseController : MonoBehaviour
 {
-
 	//Donde van a aparecer las unidades
 	private Vector3 spawnDestiny;
 	//Donde van a aparecer las unidades

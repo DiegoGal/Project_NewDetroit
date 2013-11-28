@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CSelectable : MonoBehaviour {
+public class CSelectable : MonoBehaviour
+{
 	
 	private Color origColor;
 	private Color selectColor = Color.yellow;
@@ -9,14 +10,15 @@ public class CSelectable : MonoBehaviour {
 	private bool selected;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 		origColor = this.renderer.material.color;
-				
 		selected = false;
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 	
 	}
 
