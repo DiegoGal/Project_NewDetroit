@@ -7,7 +7,9 @@ public class UnitController : MonoBehaviour
     private enum State
     {
         Iddle,	// reposo
-        GoingTo
+        GoingTo,
+        Harvesting,
+        Attacking
     }
 	private State currentState = State.Iddle;
 	
@@ -17,14 +19,14 @@ public class UnitController : MonoBehaviour
     private int destinyThreshold = 1;
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         if (destiny == Vector3.zero)
             destiny = transform.position;
     }
 
     // Update is called once per frame
-    void Update ()
+    public virtual void Update()
     {
         switch (currentState)
         {
@@ -45,9 +47,15 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    public void GoTo (Vector3 destiny)
+    public void GoTo(Vector3 destiny)
     {
         this.destiny = destiny;
         currentState = State.GoingTo;
     }
+
+    public virtual void RightClickOnSelected(Vector3 destiny, Transform destTransform)
+    {
+        GoTo(destiny);
+    }
+
 }

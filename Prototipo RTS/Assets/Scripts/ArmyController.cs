@@ -17,6 +17,8 @@ public class ArmyController : MonoBehaviour
     private Vector3[] squareSelectionPointsScreen;      // positions of the corners in the screen
     private Vector3[] squareSelectionPointsProyected;   // positions of the corners in the world
 
+    private int resources;
+
     // Use this for initialization
     void Start ()
     {
@@ -26,6 +28,8 @@ public class ArmyController : MonoBehaviour
         mouseButtonPreshed = false;
         squareSelectionPointsScreen = new Vector3[4];
         squareSelectionPointsProyected = new Vector3[4];
+
+        resources = 0;
     }
 
     // Update is called once per frame
@@ -136,7 +140,8 @@ public class ArmyController : MonoBehaviour
                 foreach (GameObject u in unitSelectedList)
                 {
                     Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
-                    u.GetComponent<UnitController>().GoTo(destiny);
+                    //u.GetComponent<UnitController>().GoTo(destiny);
+                    u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
                 }
             }
         }

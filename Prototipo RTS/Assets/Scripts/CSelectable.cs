@@ -28,13 +28,13 @@ public class CSelectable : MonoBehaviour
 		this.renderer.material.color = selectColor;
 	}
 	
-	public void SetDeselect()
+	public void SetDeselect ()
 	{
 		selected = false;
 		this.renderer.material.color = origColor;
 	}
 	
-	public void SetSelected(bool selected)
+	public void SetSelected (bool selected)
 	{
 		if (selected)
 			SetSelected();
