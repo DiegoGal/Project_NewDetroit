@@ -160,6 +160,9 @@ public class ArmyController : MonoBehaviour
 
     void OnGUI ()
     {
+        GUI.Label(new Rect(0, 0, 150, 50), "Total resources: " + resources);
+
+        // selecting rectangle
         if (selecting)
         {
             DrawQuad(
@@ -384,13 +387,17 @@ public class ArmyController : MonoBehaviour
 		armyBase.GetComponent<CSelectable>().SetDeselect();
 	}
 
-
     private void AddBlackBox (Vector3 position)
     {
         // aparece un cubo negro en la proyección del rayo
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = position;
         cube.renderer.material.color = Color.black;
+    }
+
+    public void IncreaseResources(int resources)
+    {
+        this.resources += resources;
     }
 
 } // class ArmyController

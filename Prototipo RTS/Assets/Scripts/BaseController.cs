@@ -3,6 +3,9 @@ using System.Collections;
 
 public class BaseController : MonoBehaviour
 {
+    // referencia al controlador del ejército
+    public ArmyController armyController;
+
 	//Donde van a aparecer las unidades
 	private Vector3 spawnDestiny;
 	//Donde van a aparecer las unidades
@@ -12,6 +15,7 @@ public class BaseController : MonoBehaviour
 	private Ray myRay;
 
 	public GameObject basicUnit;
+    public GameObject harvesterUnit;
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
@@ -55,10 +59,27 @@ public class BaseController : MonoBehaviour
 		
 	}
 
+    void OnCollisionEnter(Collision collision)
+    {
+        UnitController unit = collision.transform.GetComponent<UnitController>();
+        if (unit != null)
+        {
+            unit.ArrivedToBase();
+        }
+    }
+
 	public GameObject SpawnUnit ()
 	{
-		GameObject newUnit = Instantiate(basicUnit, spawnOrigin, new Quaternion()) as GameObject;
-		newUnit.GetComponent<UnitController>().GoTo (spawnDestiny);
+        GameObject newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion()) as GameObject;
+        newUnit.GetComponent<UnitController>().SetArmyBase(this);
+        newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
+		newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
 		return  newUnit;
 	}
-}
+
+    public void DownloadResources(int resources)
+    {
+        armyController.IncreaseResources(resources);
+    }
+
+} // class BaseController
