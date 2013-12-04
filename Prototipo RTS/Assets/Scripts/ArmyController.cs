@@ -54,7 +54,7 @@ public class ArmyController : MonoBehaviour
                 // deselect all the units
                 DeselectAll();
                 //Debug.Log("iniciando seleccion: " + Input.mousePosition);
-                squareSelectionPointsScreen[0] = Input.mousePosition;
+                squareSelectionPointsScreen[0] = lastClick;// Input.mousePosition;
                 selecting = true;
             }
             else // se continúa el modo de selección múltiple
@@ -69,7 +69,6 @@ public class ArmyController : MonoBehaviour
             // fin del modo de selección múltiple
             //Debug.Log("fin seleccion: " + Input.mousePosition);
             selecting = false;
-            CreatingSquare2();
         }
         else
         {
@@ -191,11 +190,7 @@ public class ArmyController : MonoBehaviour
 		unitSelectedList.Clear();
 
         // se actualizan las posiciones de los vértices del cuadrado en pantalla:
-        squareSelectionPointsScreen[2] = Input.mousePosition;
-        squareSelectionPointsScreen[1].x = squareSelectionPointsScreen[2].x;
-        squareSelectionPointsScreen[1].y = squareSelectionPointsScreen[0].y;
-        squareSelectionPointsScreen[3].x = squareSelectionPointsScreen[0].x;
-        squareSelectionPointsScreen[3].y = squareSelectionPointsScreen[2].y;
+        UpdateSelectionPointScreen();        
 
         //Lanzamos 4 rayos para coger los 4 vertices del rectángulo
         for (int i = 0; i < squareSelectionPointsProyected.Length; i++)
@@ -323,11 +318,7 @@ public class ArmyController : MonoBehaviour
         unitSelectedList.Clear();
 
         // se actualizan las posiciones de los vértices del cuadrado en pantalla:
-        squareSelectionPointsScreen[2] = Input.mousePosition;
-        squareSelectionPointsScreen[1].x = squareSelectionPointsScreen[2].x;
-        squareSelectionPointsScreen[1].y = squareSelectionPointsScreen[0].y;
-        squareSelectionPointsScreen[3].x = squareSelectionPointsScreen[0].x;
-        squareSelectionPointsScreen[3].y = squareSelectionPointsScreen[2].y;
+        UpdateSelectionPointScreen();
 
         Vector3 unitScreenPos;
         int count = unitList.Count;
@@ -354,6 +345,37 @@ public class ArmyController : MonoBehaviour
                 unitList[i].GetComponent<CSelectable>().SetDeselect();
             }
         }
+    }
+
+    private void UpdateSelectionPointScreen()
+    {
+        squareSelectionPointsScreen[2] = Input.mousePosition;
+
+        // miramos que el 0 sea el de más arriba a la izquierda
+        if (lastClick.x > Input.mousePosition.x)
+        {
+            // voltear las x
+            squareSelectionPointsScreen[2].x = lastClick.x;
+            squareSelectionPointsScreen[0].x = Input.mousePosition.x;
+        }
+
+        if (lastClick.y < Input.mousePosition.y)
+        {
+            // voltear las y
+            squareSelectionPointsScreen[2].y = lastClick.y;
+            squareSelectionPointsScreen[0].y = Input.mousePosition.y;
+        }
+
+        squareSelectionPointsScreen[1].x = squareSelectionPointsScreen[2].x;
+        squareSelectionPointsScreen[1].y = squareSelectionPointsScreen[0].y;
+        squareSelectionPointsScreen[3].x = squareSelectionPointsScreen[0].x;
+        squareSelectionPointsScreen[3].y = squareSelectionPointsScreen[2].y;
+
+        /*squareSelectionPointsScreen[2] = Input.mousePosition;
+        squareSelectionPointsScreen[1].x = squareSelectionPointsScreen[2].x;
+        squareSelectionPointsScreen[1].y = squareSelectionPointsScreen[0].y;
+        squareSelectionPointsScreen[3].x = squareSelectionPointsScreen[0].x;
+        squareSelectionPointsScreen[3].y = squareSelectionPointsScreen[2].y;*/
     }
 
     /// <summary>

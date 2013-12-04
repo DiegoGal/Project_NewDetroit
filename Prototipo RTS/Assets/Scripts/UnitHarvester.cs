@@ -93,7 +93,7 @@ public class UnitHarvester : UnitController
                 if (actualHarvestTime >= harvestTime)
                 {
                     resourcesLoaded += currentMine.GetComponent<CResources>().GetResources(amountOfResourcesPerHarvest);
-                    Debug.Log("Chop! " + resourcesLoaded);
+                    //Debug.Log("Chop! " + resourcesLoaded);
                     if (resourcesLoaded == harvestCapacity)
                     {
                         // la unidad se ha "llenado"
@@ -109,14 +109,16 @@ public class UnitHarvester : UnitController
                 base.Update();
                 break;
         }
-    }
+    } // Update
 
     void OnGUI()
     {
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 20, 100, 50),
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
             currentHarvestState.ToString());
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 40, 100, 50),
+            "resources: " + resourcesLoaded);
     }
 
     public void StartChoping()
