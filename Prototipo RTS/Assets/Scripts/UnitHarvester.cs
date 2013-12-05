@@ -19,6 +19,9 @@ public class UnitHarvester : UnitController
     // capacidad total de recursos recolectados por la unidad
     private int totalHarvest = 0;
 
+	// referencia a la moneda
+	public GameObject coin;
+
     private enum HarvestState
     {
         None,
@@ -97,9 +100,21 @@ public class UnitHarvester : UnitController
                     if (resourcesLoaded == harvestCapacity)
                     {
                         // la unidad se ha "llenado"
-                        Debug.Log("Estamos llenos, vamos pa la base");
+                        Debug.Log("Estoy lleno, vamos pa la base");
                         lastHarvestState = currentHarvestState;
                         currentHarvestState = HarvestState.ReturningToBase;
+
+						// intanciamos una monedita encima de la unidad
+						Vector3 coinPosition = new Vector3
+                        (
+                            transform.position.x,
+						    transform.position.y + 2.2f,
+						    transform.position.z
+                        );
+						GameObject newCoin = Instantiate(coin, coinPosition, new Quaternion()) as GameObject;
+						newCoin.transform.name = "coin";
+						newCoin.transform.parent = transform;
+
                         GoTo(basePosition);
                     }
                     actualHarvestTime = 0;
@@ -115,9 +130,13 @@ public class UnitHarvester : UnitController
     {
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
+		GUI.skin.label.fontSize = 12;
+
+		GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
+		          currentState.ToString());
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 35, 100, 50),
             currentHarvestState.ToString());
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 40, 100, 50),
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
             "resources: " + resourcesLoaded);
     }
 
@@ -140,6 +159,11 @@ public class UnitHarvester : UnitController
             baseController.DownloadResources(resourcesLoaded);
             totalHarvest += resourcesLoaded;
             resourcesLoaded = 0;
+
+			// eliminamos la moneda de la cabeza
+			Transform coin = transform.FindChild("coin");
+			if (coin != null)
+				GameObject.Destroy(coin.gameObject);
 
             if (lastHarvestState == HarvestState.Choping)
             {

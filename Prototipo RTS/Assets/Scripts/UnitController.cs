@@ -3,14 +3,14 @@ using System.Collections;
 
 public class UnitController : MonoBehaviour
 {
-    private enum State
+    protected enum State
     {
         Iddle,	// reposo
         GoingTo,
         Harvesting,
         Attacking
     }
-	private State currentState = State.Iddle;
+	protected State currentState = State.Iddle;
     private State lastState = State.Iddle;
 	
     public float velocity = 5.0f;
