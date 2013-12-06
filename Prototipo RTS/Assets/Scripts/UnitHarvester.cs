@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class UnitHarvester : UnitController
@@ -30,7 +30,7 @@ public class UnitHarvester : UnitController
         ReturningToBase
     }
     private HarvestState currentHarvestState = HarvestState.None;
-    private HarvestState lastHarvestState = HarvestState.None;
+    private HarvestState nextHarvestState = HarvestState.None;
 
     // referencia a la mina que se está cosechando
     private Transform currentMine;
@@ -40,44 +40,66 @@ public class UnitHarvester : UnitController
         if (destTransform.name == "WorldFloor")
         {
             Debug.Log("ojo suelo!");
-            lastHarvestState = HarvestState.None;
+            nextHarvestState = HarvestState.None;
             currentHarvestState = HarvestState.None;
             base.RightClickOnSelected(destiny, destTransform);
         }
         else if (destTransform.name == "ResourcesMine")
         {
-            // actualizar la referencia de la última mina seleccionada
-            Debug.Log("vamos pa la mina!");
-            currentMine = destTransform;
-
-            // actualizar el estado de cosecha
-            if (resourcesLoaded == harvestCapacity)
-            {
-                // si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
-                lastHarvestState = currentHarvestState;
-                currentHarvestState = HarvestState.ReturningToBase;
-                GoTo(basePosition);
-            }
-            else
-            {
-                // todavía tiene capacidad para más recursos, se le envía a la mina
-                lastHarvestState = currentHarvestState;
-                currentHarvestState = HarvestState.GoingToMine;
-                GoTo(destiny);
-            }
-
-            // transcurrido el tiempo de recolecta recoger los recursos y volver a la base
-            //destTransform.GetComponent<CResources>().GetResources(harvestCapacity);
-
-            // reiniciar el proceso una vez se ha llegado a la base
+			// actualizar la referencia de la última mina seleccionada
+			currentMine = destTransform;
+			Debug.Log("vamos pa la mina!");
+			if (currentHarvestState == HarvestState.None)
+			{
+				// actualizar el estado de cosecha
+				if (resourcesLoaded == harvestCapacity)
+				{
+					// si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
+					currentHarvestState = HarvestState.ReturningToBase;
+					GoTo(basePosition);
+					nextHarvestState = HarvestState.None;
+				}
+				else
+				{
+					// todavía tiene capacidad para más recursos, se le envía a la mina
+					currentHarvestState = HarvestState.GoingToMine;
+					GoTo(destiny);
+					nextHarvestState = HarvestState.Choping;
+				}
+			}
+			else if (currentHarvestState == HarvestState.ReturningToBase)
+			{
+				// actualizar el estado de cosecha
+				if (resourcesLoaded == harvestCapacity)
+				{
+					// si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
+					currentHarvestState = HarvestState.ReturningToBase;
+					GoTo(basePosition);
+					nextHarvestState = HarvestState.GoingToMine;
+				}
+				else
+				{
+					// todavía tiene capacidad para más recursos, se le envía a la mina
+					currentHarvestState = HarvestState.GoingToMine;
+					GoTo(destiny);
+					nextHarvestState = HarvestState.Choping;
+				}
+			}
         }
         else if (destTransform.name == "Army Base")
         {
             // vuelve a la base, si tiene recursos los deja
-            Debug.Log("vuelta a la base");
-            lastHarvestState = currentHarvestState;
-            currentHarvestState = HarvestState.ReturningToBase;
-            GoTo(basePosition);
+			if (resourcesLoaded > 0)
+			{
+				Debug.Log("vuelta a la base");
+				currentHarvestState = HarvestState.ReturningToBase;
+			}
+			else
+			{
+				currentHarvestState = HarvestState.None;
+			}
+			GoTo(basePosition);
+			nextHarvestState = HarvestState.None;
         }
     }
 
@@ -101,8 +123,8 @@ public class UnitHarvester : UnitController
                     {
                         // la unidad se ha "llenado"
                         Debug.Log("Estoy lleno, vamos pa la base");
-                        lastHarvestState = currentHarvestState;
                         currentHarvestState = HarvestState.ReturningToBase;
+					    nextHarvestState = HarvestState.GoingToMine;
 
 						// intanciamos una monedita encima de la unidad
 						Vector3 coinPosition = new Vector3
@@ -146,8 +168,8 @@ public class UnitHarvester : UnitController
         if (currentHarvestState == HarvestState.GoingToMine)
         {
             Debug.Log("comenzando cosecha...");
-            lastHarvestState = currentHarvestState;
             currentHarvestState = HarvestState.Choping;
+			nextHarvestState = HarvestState.ReturningToBase;
         }
     }
 
@@ -165,13 +187,13 @@ public class UnitHarvester : UnitController
 			if (coin != null)
 				GameObject.Destroy(coin.gameObject);
 
-            if (lastHarvestState == HarvestState.Choping)
+			if (nextHarvestState == HarvestState.GoingToMine)
             {
                 // si estaba cosechando, volvemos a la mina
-                Debug.Log("volvemos a la mina");
-                lastHarvestState = currentHarvestState;
+                Debug.Log("volvemos a la mina");;
                 currentHarvestState = HarvestState.GoingToMine;
                 GoTo(currentMine.position);
+				nextHarvestState = HarvestState.Choping;
             }
         }
     }
