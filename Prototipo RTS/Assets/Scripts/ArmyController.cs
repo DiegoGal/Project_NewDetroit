@@ -171,7 +171,7 @@ public class ArmyController : MonoBehaviour
                     squareSelectionPointsScreen[2].x - squareSelectionPointsScreen[0].x,
                     squareSelectionPointsScreen[0].y - squareSelectionPointsScreen[2].y
                 ),
-                new Color(0.0f, 0.0f, 1.0f, 0.05f)
+                new Color(0.0f, 0.0f, 1.0f, 0.085f)
             );
         }
     } // OnGUI()

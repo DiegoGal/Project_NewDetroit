@@ -52,7 +52,7 @@ public class CameraRTSController : MonoBehaviour
         }
         else
         {
-            if ( Input.GetKey(KeyCode.UpArrow) ||
+            /*if ( Input.GetKey(KeyCode.UpArrow) ||
                 (Input.mousePosition.y >= Screen.height * (1 - scrollEdge)) )
             {
                 transform.Translate(Vector3.forward * scrollSpeed * Time.deltaTime, Space.World);
@@ -72,7 +72,7 @@ public class CameraRTSController : MonoBehaviour
                 (Input.mousePosition.x <= Screen.width * scrollEdge) )
             {
                 transform.Translate(Vector3.right * -scrollSpeed * Time.deltaTime, Space.World);
-            }
+            }*/
         }
 
         // Zoom in-out

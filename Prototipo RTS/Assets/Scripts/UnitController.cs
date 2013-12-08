@@ -16,7 +16,7 @@ public class UnitController : MonoBehaviour
     public float velocity = 5.0f;
     public Vector3 dirMovement = new Vector3();
     private Vector3 destiny = new Vector3();
-    private int destinyThreshold = 1;
+    protected float destinyThreshold = 1.1f;
 
     // referencia a la posición de la base de la unidad
     protected Vector3 basePosition = new Vector3();
@@ -43,9 +43,12 @@ public class UnitController : MonoBehaviour
                 Vector3 direction = destiny - transform.position;
                 if (direction.magnitude >= destinyThreshold)
                 {
-                    transform.position += direction.normalized *
-                        velocity * Time.deltaTime;
-                    transform.position = new Vector3(transform.position.x, 1, transform.position.z);
+                    Quaternion qu = new Quaternion();
+                    qu.SetLookRotation(direction, Vector2.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, qu, Time.time * 0.1f);
+                    //transform.position += direction.normalized *
+                    //    velocity * Time.deltaTime;
+                    //transform.position = new Vector3(transform.position.x, 1, transform.position.z);
                     //transform.Translate(direction.normalized * velocity * Time.deltaTime);
                 }
                 else
@@ -67,6 +70,7 @@ public class UnitController : MonoBehaviour
     public void GoTo(Vector3 destiny)
     {
         this.destiny = destiny;
+
         currentState = State.GoingTo;
     }
 

@@ -26,6 +26,8 @@ public class UnitHarvester : UnitController
     {
         None,
         GoingToMine,
+        Waiting, // espera hasta que halla hueco en la mina
+        GoingToChopPosition,
         Choping, // picando
         ReturningToBase
     }
@@ -35,11 +37,18 @@ public class UnitHarvester : UnitController
     // referencia a la mina que se está cosechando
     private Transform currentMine;
 
+    private Vector3 lastHarvestPos;
+    private int lastHarvestIndex;
+
     public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
     {
         if (destTransform.name == "WorldFloor")
         {
             Debug.Log("ojo suelo!");
+            if (currentHarvestState == HarvestState.Waiting ||
+                currentHarvestState == HarvestState.GoingToChopPosition ||
+                currentHarvestState == HarvestState.Choping)
+                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
             nextHarvestState = HarvestState.None;
             currentHarvestState = HarvestState.None;
             base.RightClickOnSelected(destiny, destTransform);
@@ -111,18 +120,53 @@ public class UnitHarvester : UnitController
                 base.Update();
                 break;
             case HarvestState.GoingToMine:
-                base.Update();
+                // si la distancia a la mina es menor que la distanceToWait preguntamos si hay hueco
+                if (Vector3.Distance(transform.position, currentMine.position) <
+                    currentMine.GetComponent<CResources>().distanceToWait)
+                {
+                    if ( currentMine.GetComponent<CResources>().GetHarvestPosition(
+                            ref lastHarvestPos,
+                            ref lastHarvestIndex,
+                            this) )
+                    {
+                        // hay hueco y tenemos la posicion
+                        currentHarvestState = HarvestState.GoingToChopPosition;
+                        base.GoTo(lastHarvestPos);
+                    }
+                    else
+                    {
+                        currentHarvestState = HarvestState.Waiting;
+                    }
+                }
+                else
+                    base.Update();
+                break;
+            case HarvestState.Waiting:
+
+                break;
+            case HarvestState.GoingToChopPosition:
+                if (Vector3.Distance(transform.position, lastHarvestPos) < destinyThreshold)
+                {
+                    // ha llegado a la posición de extracción
+                    Debug.Log("comenzando cosecha...");
+                    currentHarvestState = HarvestState.Choping;
+                    nextHarvestState = HarvestState.ReturningToBase;
+                }
+                else
+                    base.Update();
                 break;
             case HarvestState.Choping:
                 actualHarvestTime += Time.deltaTime;
                 if (actualHarvestTime >= harvestTime)
                 {
-                    resourcesLoaded += currentMine.GetComponent<CResources>().GetResources(amountOfResourcesPerHarvest);
+                    resourcesLoaded +=
+                        currentMine.GetComponent<CResources>().GetResources(amountOfResourcesPerHarvest);
                     //Debug.Log("Chop! " + resourcesLoaded);
                     if (resourcesLoaded == harvestCapacity)
                     {
                         // la unidad se ha "llenado"
                         Debug.Log("Estoy lleno, vamos pa la base");
+                        currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
                         currentHarvestState = HarvestState.ReturningToBase;
 					    nextHarvestState = HarvestState.GoingToMine;
 
@@ -162,7 +206,15 @@ public class UnitHarvester : UnitController
             "resources: " + resourcesLoaded);
     }
 
-    public void StartChoping()
+    public void FinishWaiting (Vector3 chopPosition, int chopIndex)
+    {
+        lastHarvestPos = chopPosition;
+        lastHarvestIndex = chopIndex;
+        currentHarvestState = HarvestState.GoingToChopPosition;
+        base.GoTo(lastHarvestPos);
+    }
+
+    public void StartChoping ()
     {
         // cuando llegue a la mina pasar el estado a Choping
         if (currentHarvestState == HarvestState.GoingToMine)
