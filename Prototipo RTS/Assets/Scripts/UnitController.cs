@@ -46,10 +46,10 @@ public class UnitController : MonoBehaviour
                     Quaternion qu = new Quaternion();
                     qu.SetLookRotation(direction, Vector2.up);
                     transform.rotation = Quaternion.Slerp(transform.rotation, qu, Time.time * 0.1f);
-                    //transform.position += direction.normalized *
-                    //    velocity * Time.deltaTime;
-                    //transform.position = new Vector3(transform.position.x, 1, transform.position.z);
-                    //transform.Translate(direction.normalized * velocity * Time.deltaTime);
+                    transform.position += direction.normalized *
+                        velocity * Time.deltaTime;
+                    transform.position = new Vector3(transform.position.x, 1, transform.position.z);
+                    transform.Translate(direction.normalized * velocity * Time.deltaTime);
                 }
                 else
                     currentState = State.Iddle;
