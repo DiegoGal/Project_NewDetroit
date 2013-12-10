@@ -11,7 +11,7 @@ public class CameraRTSController : MonoBehaviour
 
     public float panSpeed = 10.0f;
 
-    public Vector2 zoomRange = new Vector2(-24.0f, 5.0f);
+    public Vector2 zoomRange = new Vector2(-28.0f, 5.0f);
     private float currentZoom = 0.0f;
     public float zoomSpeed = 1000.0f;
     public float zoomRotation = 1.0f;
@@ -52,7 +52,7 @@ public class CameraRTSController : MonoBehaviour
         }
         else
         {
-            /*if ( Input.GetKey(KeyCode.UpArrow) ||
+            if ( Input.GetKey(KeyCode.UpArrow) ||
                 (Input.mousePosition.y >= Screen.height * (1 - scrollEdge)) )
             {
                 transform.Translate(Vector3.forward * scrollSpeed * Time.deltaTime, Space.World);
@@ -72,7 +72,7 @@ public class CameraRTSController : MonoBehaviour
                 (Input.mousePosition.x <= Screen.width * scrollEdge) )
             {
                 transform.Translate(Vector3.right * -scrollSpeed * Time.deltaTime, Space.World);
-            }*/
+            }
         }
 
         // Zoom in-out

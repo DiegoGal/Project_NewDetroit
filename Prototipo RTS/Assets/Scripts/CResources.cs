@@ -12,7 +12,7 @@ public class CResources : MonoBehaviour
     public int numHarvestPositions = 8;
     private Vector3[] harvestPositions;
     private bool[] harvestPosTaken;
-    private float despPosition = 1.4f;
+    private float despPosition = 1.5f;
 
     // Queue of units harversters which are waiting in the mine
     private Queue<UnitHarvester> harvesterQueue;

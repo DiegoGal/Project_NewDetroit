@@ -145,7 +145,8 @@ public class UnitHarvester : UnitController
 
                 break;
             case HarvestState.GoingToChopPosition:
-                if (Vector3.Distance(transform.position, lastHarvestPos) < destinyThreshold)
+                //if (Vector3.Distance(transform.position, lastHarvestPos) < destinyThreshold)
+                if (currentState == State.Iddle)
                 {
                     // ha llegado a la posición de extracción
                     Debug.Log("comenzando cosecha...");
