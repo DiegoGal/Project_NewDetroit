@@ -6,8 +6,6 @@ public class FogOfWarUnit : MonoBehaviour {
 	//==============================
 	//=====     Attributes     =====
 	//==============================
-	private float radius;	//radius vision.
-
 
 
 	//=====================================
@@ -21,7 +19,6 @@ public class FogOfWarUnit : MonoBehaviour {
 	//==================================
 	// Use this for initialization
 	void Start () {
-		radius = 2.0f;
 	}
 	
 	// Update is called once per frame
