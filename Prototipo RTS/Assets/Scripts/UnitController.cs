@@ -3,6 +3,8 @@ using System.Collections;
 
 public class UnitController : MonoBehaviour
 {
+	public int teamNumber;
+
     protected enum State
     {
         Iddle,	// reposo
