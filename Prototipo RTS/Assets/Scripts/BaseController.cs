@@ -3,6 +3,8 @@ using System.Collections;
 
 public class BaseController : MonoBehaviour
 {
+	public int teamNumber;
+
     // referencia al controlador del ejército
     public ArmyController armyController;
 
@@ -16,6 +18,8 @@ public class BaseController : MonoBehaviour
 
 	public GameObject basicUnit;
     public GameObject harvesterUnit;
+	public GameObject basicArtilleryUnit;
+	public GameObject heavyArtilleryUnit;
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
@@ -68,12 +72,31 @@ public class BaseController : MonoBehaviour
         }
     }
 
-	public GameObject SpawnUnit ()
+	public GameObject SpawnUnit (int id)
 	{
-        GameObject newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion()) as GameObject;
-        newUnit.GetComponent<UnitController>().SetArmyBase(this);
-        newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
+		GameObject newUnit = null;
+
+		switch (id)
+		{
+			case 0: // Harvester
+		        newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion())
+					as GameObject;
+			break;
+			case 1: // Basic Artillery
+				newUnit = Instantiate(basicArtilleryUnit, spawnOrigin, new Quaternion())
+					as GameObject;
+			break;
+			case 2: // Heavy Artillery
+				newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
+					as GameObject;
+			break;
+		}
+
+		newUnit.GetComponent<UnitController>().SetArmyBase(this);
+		newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
+		newUnit.GetComponent<UnitController>().teamNumber = this.teamNumber;
 		newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
+
 		return  newUnit;
 	}
 

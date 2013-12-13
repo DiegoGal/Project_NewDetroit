@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class ArmyController : MonoBehaviour
 {
+	public int teamNumber;
+
 	public GameObject armyBase;
     public List<GameObject> unitList = new List<GameObject>();
     public List<GameObject> unitSelectedList = new List<GameObject>();
@@ -19,6 +21,8 @@ public class ArmyController : MonoBehaviour
 
     private int resources;
 
+	private int layerMask; // para obviar la capa de la niebla
+
     // Use this for initialization
     void Start ()
     {
@@ -30,6 +34,13 @@ public class ArmyController : MonoBehaviour
         squareSelectionPointsProyected = new Vector3[4];
 
         resources = 0;
+
+		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
+		// Bit shift the index of the layer (8) to get a bit mask
+		layerMask = 1 << 8;
+		// This would cast rays only against colliders in layer 8.
+		// But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
+		layerMask = ~layerMask;
     }
 
     // Update is called once per frame
@@ -81,7 +92,7 @@ public class ArmyController : MonoBehaviour
                 //selecting = true;
                 // lanzamos rayo y recogemos donde choca
                 myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(myRay, out myHit, 1000f))
+                if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
                 {
                     //Debug.Log("he tocado: " + myHit.transform.name);
 					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
@@ -133,7 +144,7 @@ public class ArmyController : MonoBehaviour
         {
             // lanzamos rayo y recogemos donde choca
             myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(myRay, out myHit, 1000f))
+			if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
             {
                 Vector3 destiny = myHit.point;
                 foreach (GameObject u in unitSelectedList)
@@ -150,7 +161,17 @@ public class ArmyController : MonoBehaviour
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
 			{
 				// spawn a new unit
-				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit();
+				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(0);
+				unitList.Add(newUnit);
+			}
+		}
+
+		if (Input.GetKeyDown (KeyCode.S))
+		{
+			if (armyBase.GetComponent<CSelectable>().IsSelected())
+			{
+				// spawn a new unit
+				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(1);
 				unitList.Add(newUnit);
 			}
 		}
@@ -159,7 +180,10 @@ public class ArmyController : MonoBehaviour
 
     void OnGUI ()
     {
+		GUI.skin.label.fontSize = 12;
+
         GUI.Label(new Rect(0, 0, 150, 50), "Total resources: " + resources);
+		GUI.Label(new Rect(0, 14, 150, 50), "Total Units: " + unitList.Count);
 
         // selecting rectangle
         if (selecting)
@@ -198,7 +222,7 @@ public class ArmyController : MonoBehaviour
             // rayo:
             myRay = Camera.main.ScreenPointToRay(squareSelectionPointsScreen[i]);
             // recogemos posición
-            if (Physics.Raycast(myRay, out myHit, 1000f))
+			if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
                 squareSelectionPointsProyected[i] = myHit.point;
             
             // aparece un cubo negro en la proyección del rayo
@@ -347,7 +371,7 @@ public class ArmyController : MonoBehaviour
         }
     }
 
-    private void UpdateSelectionPointScreen()
+    private void UpdateSelectionPointScreen ()
     {
         squareSelectionPointsScreen[2] = Input.mousePosition;
 
@@ -417,7 +441,7 @@ public class ArmyController : MonoBehaviour
         cube.renderer.material.color = Color.black;
     }
 
-    public void IncreaseResources(int resources)
+    public void IncreaseResources (int resources)
     {
         this.resources += resources;
     }

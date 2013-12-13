@@ -197,7 +197,7 @@ public class UnitHarvester : UnitController
     {
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 
-		GUI.skin.label.fontSize = 12;
+		GUI.skin.label.fontSize = 10;
 
 		GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
 		          currentState.ToString());
