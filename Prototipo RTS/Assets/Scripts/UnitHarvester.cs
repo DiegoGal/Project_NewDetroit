@@ -40,15 +40,21 @@ public class UnitHarvester : UnitController
     private Vector3 lastHarvestPos;
     private int lastHarvestIndex;
 
-    public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
+    // última posición a donde se va a dejar los recursos
+    // es el punto más cercano de la base a la mina de recursos actual
+    private Vector3 lastBasePos = new Vector3();
+
+    public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
         if (destTransform.name == "WorldFloor")
         {
             Debug.Log("ojo suelo!");
-            if (currentHarvestState == HarvestState.Waiting ||
+            /*if (currentHarvestState == HarvestState.Waiting ||
                 currentHarvestState == HarvestState.GoingToChopPosition ||
                 currentHarvestState == HarvestState.Choping)
-                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
+                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);*/
+            if (currentHarvestState == HarvestState.Waiting)
+
             nextHarvestState = HarvestState.None;
             currentHarvestState = HarvestState.None;
             base.RightClickOnSelected(destiny, destTransform);
@@ -57,6 +63,17 @@ public class UnitHarvester : UnitController
         {
 			// actualizar la referencia de la última mina seleccionada
 			currentMine = destTransform;
+            // actualizar la posición de la base donde se dejarán los recursos
+            float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
+                (currentMine.transform.position.z - basePosition.z));
+            float radius = 6.0f;
+            lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
+            lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
+            /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.position = lastBasePos;
+            cube.renderer.material.color = Color.red;
+            cube.transform.parent = this;*/
+
 			Debug.Log("vamos pa la mina!");
 			if (currentHarvestState == HarvestState.None)
 			{
@@ -65,7 +82,7 @@ public class UnitHarvester : UnitController
 				{
 					// si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
 					currentHarvestState = HarvestState.ReturningToBase;
-					GoTo(basePosition);
+                    GoTo(lastBasePos);
 					nextHarvestState = HarvestState.None;
 				}
 				else
@@ -83,7 +100,7 @@ public class UnitHarvester : UnitController
 				{
 					// si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
 					currentHarvestState = HarvestState.ReturningToBase;
-					GoTo(basePosition);
+                    GoTo(lastBasePos);
 					nextHarvestState = HarvestState.GoingToMine;
 				}
 				else
@@ -102,12 +119,13 @@ public class UnitHarvester : UnitController
 			{
 				Debug.Log("vuelta a la base");
 				currentHarvestState = HarvestState.ReturningToBase;
+                GoTo(lastBasePos);
 			}
 			else
 			{
 				currentHarvestState = HarvestState.None;
+                GoTo(basePosition);
 			}
-			GoTo(basePosition);
 			nextHarvestState = HarvestState.None;
         }
     }
@@ -136,6 +154,7 @@ public class UnitHarvester : UnitController
                     else
                     {
                         currentHarvestState = HarvestState.Waiting;
+                        GetComponent<NavMeshAgent>().destination = transform.position;
                     }
                 }
                 else
@@ -182,18 +201,21 @@ public class UnitHarvester : UnitController
 						newCoin.transform.name = "coin";
 						newCoin.transform.parent = transform;
 
-                        GoTo(basePosition);
+                        GoTo(lastBasePos);
                     }
                     actualHarvestTime = 0;
                 }
                 break;
             case HarvestState.ReturningToBase:
-                base.Update();
+                if (currentState == State.Iddle)
+                    ArrivedToBase();
+                else
+                    base.Update();
                 break;
         }
     } // Update
 
-    void OnGUI()
+    void OnGUI ()
     {
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 
@@ -226,7 +248,7 @@ public class UnitHarvester : UnitController
         }
     }
 
-    public override void ArrivedToBase()
+    public override void ArrivedToBase ()
     {
         if (currentHarvestState == HarvestState.ReturningToBase)
         {

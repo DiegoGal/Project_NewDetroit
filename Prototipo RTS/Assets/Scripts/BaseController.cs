@@ -26,13 +26,13 @@ public class BaseController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-		spawnOrigin = new Vector3 (
-			this.transform.position.x + 5.5f,
-			this.transform.position.y,
-            this.transform.position.z - 5.5f
-		);
+        spawnOrigin = transform.FindChild("SpawnPoint").position;
 
-		spawnDestiny = spawnOrigin;
+        spawnDestiny = new Vector3(
+            this.transform.position.x + 5.5f,
+            this.transform.position.y,
+            this.transform.position.z - 5.5f
+        );
 
         // colocamos una caja en el spawnDestiny
         cubeSpawnDest = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -63,13 +63,13 @@ public class BaseController : MonoBehaviour
 		
 	}
 
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter (Collision collision)
     {
-        UnitController unit = collision.transform.GetComponent<UnitController>();
+        /*UnitController unit = collision.transform.GetComponent<UnitController>();
         if (unit != null)
         {
             unit.ArrivedToBase();
-        }
+        }*/
     }
 
 	public GameObject SpawnUnit (int id)

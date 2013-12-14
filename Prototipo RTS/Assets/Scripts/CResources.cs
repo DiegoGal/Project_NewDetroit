@@ -12,10 +12,12 @@ public class CResources : MonoBehaviour
     public int numHarvestPositions = 8;
     private Vector3[] harvestPositions;
     private bool[] harvestPosTaken;
-    private float despPosition = 1.5f;
+
+    // desplazamiento de los harvest positions
+    public float despPosition = 0.4f;
 
     // Queue of units harversters which are waiting in the mine
-    private Queue<UnitHarvester> harvesterQueue;
+    private List<UnitHarvester> harvesterQueue;
 
     // for debugging
     private GameObject[] cubes;
@@ -53,10 +55,10 @@ public class CResources : MonoBehaviour
             cubes[i].transform.parent = this.transform;
         }
 
-        harvesterQueue = new Queue<UnitHarvester>();
+        harvesterQueue = new List<UnitHarvester>();
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter (Collision collision)
     {
         UnitHarvester unit = collision.transform.GetComponent<UnitHarvester>();
         if (unit != null)
@@ -113,7 +115,7 @@ public class CResources : MonoBehaviour
                 i++;
         }
         if (!found)
-            harvesterQueue.Enqueue(unit);
+            harvesterQueue.Add(unit);
         return found;
     }
 
@@ -122,7 +124,18 @@ public class CResources : MonoBehaviour
         harvestPosTaken[index] = false;
         cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
         if (harvesterQueue.Count > 0)
-            harvesterQueue.Dequeue().FinishWaiting(harvestPositions[index], index);
+        {
+            UnitHarvester unit = harvesterQueue[0];
+            unit.FinishWaiting(harvestPositions[index], index);
+            harvesterQueue.RemoveAt(0);
+            harvestPosTaken[index] = true;
+            cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+        }
+    }
+
+    public void LeaveQueue (UnitHarvester unit)
+    {
+        harvesterQueue.Remove(unit);
     }
 
 } // class CResources

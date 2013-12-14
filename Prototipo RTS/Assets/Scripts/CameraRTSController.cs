@@ -52,24 +52,24 @@ public class CameraRTSController : MonoBehaviour
         }
         else
         {
-            if ( Input.GetKey(KeyCode.UpArrow) ||
-                (Input.mousePosition.y >= Screen.height * (1 - scrollEdge)) )
+            if ( Input.GetKey(KeyCode.UpArrow) /*||
+                (Input.mousePosition.y >= Screen.height * (1 - scrollEdge))*/ )
             {
                 transform.Translate(Vector3.forward * scrollSpeed * Time.deltaTime, Space.World);
             }
-            else if ( Input.GetKey(KeyCode.DownArrow) ||
-                (Input.mousePosition.y <= Screen.height * scrollEdge) )
+            else if ( Input.GetKey(KeyCode.DownArrow) /*||
+                (Input.mousePosition.y <= Screen.height * scrollEdge)*/ )
             {
                 transform.Translate(Vector3.forward * -scrollSpeed * Time.deltaTime, Space.World);
             }
 
-            if ( Input.GetKey(KeyCode.RightArrow) ||
-                (Input.mousePosition.x >= Screen.width * (1 - scrollEdge)) )
+            if ( Input.GetKey(KeyCode.RightArrow) /*||
+                (Input.mousePosition.x >= Screen.width * (1 - scrollEdge))*/ )
             {
                 transform.Translate(Vector3.right * scrollSpeed * Time.deltaTime, Space.World);
             }
-            else if (Input.GetKey(KeyCode.LeftArrow) ||
-                (Input.mousePosition.x <= Screen.width * scrollEdge) )
+            else if (Input.GetKey(KeyCode.LeftArrow) /*||
+                (Input.mousePosition.x <= Screen.width * scrollEdge)*/ )
             {
                 transform.Translate(Vector3.right * -scrollSpeed * Time.deltaTime, Space.World);
             }

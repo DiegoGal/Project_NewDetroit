@@ -28,14 +28,14 @@ public class UnitController : MonoBehaviour
     public BaseController baseController;
 
     // Use this for initialization
-    void Start()
+    void Start ()
     {
         if (destiny == Vector3.zero)
             destiny = transform.position;
     }
 
     // Update is called once per frame
-    public virtual void Update()
+    public virtual void Update ()
     {
         switch (currentState)
         {
@@ -48,13 +48,16 @@ public class UnitController : MonoBehaviour
                     destiny.z - transform.position.z);
                 if (direction.magnitude >= destinyThreshold)
                 {
-                    Quaternion qu = new Quaternion();
+                    /*Quaternion qu = new Quaternion();
                     qu.SetLookRotation(direction, Vector3.up);
                     transform.rotation = Quaternion.Slerp(transform.rotation, qu, Time.deltaTime * rotationVelocity);
                     transform.position += direction.normalized *
-                        velocity * Time.deltaTime;
+                        velocity * Time.deltaTime;*/
+
                     //transform.position = new Vector3(transform.position.x, 1, transform.position.z);
                     //transform.Translate(direction.normalized * velocity * Time.deltaTime);
+
+                    //GetComponent<NavMeshAgent>().destination = destiny;
                 }
                 else
                     currentState = State.Iddle;
@@ -62,30 +65,30 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    public void SetBasePosition(Vector3 basePosition)
+    public void SetBasePosition (Vector3 basePosition)
     {
         this.basePosition = basePosition;
     }
 
-    public void SetArmyBase(BaseController baseController)
+    public void SetArmyBase (BaseController baseController)
     {
         this.baseController = baseController;
     }
 
-    public void GoTo(Vector3 destiny)
+    public void GoTo (Vector3 destiny)
     {
         this.destiny = destiny;
-
+        GetComponent<NavMeshAgent>().destination = destiny;
         currentState = State.GoingTo;
     }
 
-    public virtual void RightClickOnSelected(Vector3 destiny, Transform destTransform)
+    public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
         GoTo(destiny);
     }
 
     // this method is called when a unit collides with the army base
-    public virtual void ArrivedToBase()
+    public virtual void ArrivedToBase ()
     {
 
     }
