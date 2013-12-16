@@ -1,3 +1,0 @@
-activar debugging en Mono:
-http://docs.unity3d.com/Documentation/Manual/Debugger.html
-Mono->Menu->Run->Attach to proccess (ahí aparecerá unity)
