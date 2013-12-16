@@ -16,9 +16,16 @@ public class WorkerMenu : MonoBehaviour
 
     private bool connectFailed = false;
 
+	private String[] selStrings = {"Rob Render","Skelterbot","Rob Army", "Skelter Army"};
+
+	private int selInt = 0;
+
     public static readonly string SceneNameMenu = "Menu";
 
     public static readonly string SceneNameGame = "Juego";
+
+	enum state {select ,create, join}
+	private state GUIstate=0;
 
     public void Awake()
     {
@@ -72,94 +79,159 @@ public class WorkerMenu : MonoBehaviour
             return;
         }
 
+		switch (GUIstate)
+		{
+		case state.select:
+	        GUI.skin.box.fontStyle = FontStyle.Bold;
+	        GUI.Box(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300), "Join or Create a Room");
+	        GUILayout.BeginArea(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300));
 
-        GUI.skin.box.fontStyle = FontStyle.Bold;
-        GUI.Box(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300), "Join or Create a Room");
-        GUILayout.BeginArea(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300));
+	        GUILayout.Space(25);
 
-        GUILayout.Space(25);
+	        // Player name
+	        GUILayout.BeginHorizontal();
+	        GUILayout.Label("Player name:", GUILayout.Width(100));
+	        PhotonNetwork.playerName = GUILayout.TextField(PhotonNetwork.playerName);
+	        GUILayout.Space(105);
+	        if (GUI.changed)
+	        {
+	            // Save name
+	            PlayerPrefs.SetString("playerName", PhotonNetwork.playerName);
+	        }
+	        GUILayout.EndHorizontal();
 
-        // Player name
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Player name:", GUILayout.Width(100));
-        PhotonNetwork.playerName = GUILayout.TextField(PhotonNetwork.playerName);
-        GUILayout.Space(105);
-        if (GUI.changed)
-        {
-            // Save name
-            PlayerPrefs.SetString("playerName", PhotonNetwork.playerName);
-        }
-        GUILayout.EndHorizontal();
+	        GUILayout.Space(15);
 
-        GUILayout.Space(15);
+	        // Join room by title
+	        GUILayout.BeginHorizontal();
+	        GUILayout.Label("Roomname:", GUILayout.Width(100));
+	        this.roomName = GUILayout.TextField(this.roomName);
+	        
+	        if (GUILayout.Button("Create Room", GUILayout.Width(100)))
+	        {
+				GUIstate = state.create;
+	        }
 
-        // Join room by title
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Roomname:", GUILayout.Width(100));
-        this.roomName = GUILayout.TextField(this.roomName);
-        
-        if (GUILayout.Button("Create Room", GUILayout.Width(100)))
-        {
-            PhotonNetwork.CreateRoom(this.roomName, true, true, 10);
-        }
+	        GUILayout.EndHorizontal();
 
-        GUILayout.EndHorizontal();
+	        // Create a room (fails if exist!)
+	        GUILayout.BeginHorizontal();
+	        GUILayout.FlexibleSpace();
+	        //this.roomName = GUILayout.TextField(this.roomName);
+	        if (GUILayout.Button("Join Room", GUILayout.Width(100)))
+	        {
+				GUIstate=state.join;
+	        }
 
-        // Create a room (fails if exist!)
-        GUILayout.BeginHorizontal();
-        GUILayout.FlexibleSpace();
-        //this.roomName = GUILayout.TextField(this.roomName);
-        if (GUILayout.Button("Join Room", GUILayout.Width(100)))
-        {
-            PhotonNetwork.JoinRoom(this.roomName);
-        }
-
-        GUILayout.EndHorizontal();
+	        GUILayout.EndHorizontal();
 
 
-        GUILayout.Space(15);
+	        GUILayout.Space(15);
 
-        // Join random room
-        GUILayout.BeginHorizontal();
+	        // Join random room
+	        GUILayout.BeginHorizontal();
 
-        GUILayout.Label(PhotonNetwork.countOfPlayers + " users are online in " + PhotonNetwork.countOfRooms + " rooms.");
-        GUILayout.FlexibleSpace();
-        if (GUILayout.Button("Join Random", GUILayout.Width(100)))
-        {
-            PhotonNetwork.JoinRandomRoom();
-        }
-        
+	        GUILayout.Label(PhotonNetwork.countOfPlayers + " users are online in " + PhotonNetwork.countOfRooms + " rooms.");
+	        GUILayout.FlexibleSpace();
+	        
+			/*
+			if (GUILayout.Button("Join Random", GUILayout.Width(100)))
+	        {
+	            PhotonNetwork.JoinRandomRoom();
+	        }
+			*/
+	        
 
-        GUILayout.EndHorizontal();
+	        GUILayout.EndHorizontal();
 
-        GUILayout.Space(15);
-        if (PhotonNetwork.GetRoomList().Length == 0)
-        {
-            GUILayout.Label("Currently no games are available.");
-            GUILayout.Label("Rooms will be listed here, when they become available.");
-        }
-        else
-        {
-            GUILayout.Label(PhotonNetwork.GetRoomList() + " currently available. Join either:");
+	        GUILayout.Space(15);
+	        if (PhotonNetwork.GetRoomList().Length == 0)
+	        {
+	            GUILayout.Label("Currently no games are available.");
+	            GUILayout.Label("Rooms will be listed here, when they become available.");
+	        }
+	        else
+	        {
+	            GUILayout.Label(PhotonNetwork.GetRoomList() + " currently available. Join either:");
 
-            // Room listing: simply call GetRoomList: no need to fetch/poll whatever!
-            this.scrollPos = GUILayout.BeginScrollView(this.scrollPos);
-            foreach (RoomInfo roomInfo in PhotonNetwork.GetRoomList())
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(roomInfo.name + " " + roomInfo.playerCount + "/" + roomInfo.maxPlayers);
-                if (GUILayout.Button("Join"))
-                {
-                    PhotonNetwork.JoinRoom(roomInfo.name);
-                }
+	            // Room listing: simply call GetRoomList: no need to fetch/poll whatever!
+	            this.scrollPos = GUILayout.BeginScrollView(this.scrollPos);
+	            foreach (RoomInfo roomInfo in PhotonNetwork.GetRoomList())
+	            {
+	                GUILayout.BeginHorizontal();
+	                GUILayout.Label(roomInfo.name + " " + roomInfo.playerCount + "/" + roomInfo.maxPlayers);
+	                if (GUILayout.Button("Join"))
+	                {
+	                    PhotonNetwork.JoinRoom(roomInfo.name);
+	                }
 
-                GUILayout.EndHorizontal();
-            }
+	                GUILayout.EndHorizontal();
+	            }
 
-            GUILayout.EndScrollView();
-        }
+	            GUILayout.EndScrollView();
+	        }
 
-        GUILayout.EndArea();
+	        GUILayout.EndArea();
+			break;
+		case state.join:
+
+			GUI.Box(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300), "Select your rol:");
+			GUILayout.BeginArea(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300));
+			
+			GUILayout.Space(25);
+			
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("Play as:", GUILayout.Width(100));
+			GUILayout.EndHorizontal();
+			
+			GUILayout.Space(15);
+			
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("Team RED:", GUILayout.Width(100));
+			GUILayout.Space(25);
+			GUILayout.Label("Team BLUE:", GUILayout.Width(100));
+			GUILayout.EndHorizontal();
+			
+			GUILayout.BeginHorizontal();
+			selInt = GUILayout.SelectionGrid (selInt, selStrings, 2);
+			GUILayout.EndHorizontal();
+			if (GUILayout.Button("Play", GUILayout.Width(100)))
+				PhotonNetwork.JoinRoom(this.roomName);
+			GUILayout.EndArea();
+			break;
+		case state.create:
+			GUI.Box(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300), "Select your team");
+			GUILayout.BeginArea(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300));
+			
+			GUILayout.Space(25);
+			
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("Select a rol too:", GUILayout.Width(100));
+			GUILayout.EndHorizontal();
+			
+			GUILayout.Space(15);
+
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Space(70);
+			GUILayout.Label("Team RED", GUILayout.Width(100));
+			GUILayout.Space(90);
+			GUILayout.Label("Team BLUE", GUILayout.Width(100));
+			GUILayout.EndHorizontal();
+
+			GUILayout.BeginHorizontal();
+			selInt = GUILayout.SelectionGrid (selInt, selStrings, 2);
+			GUILayout.EndHorizontal();
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Space(150);
+			if (GUILayout.Button("Play", GUILayout.Width(100)))
+				PhotonNetwork.CreateRoom(this.roomName, true, true, 10);
+			GUILayout.EndHorizontal();
+			GUILayout.EndArea();
+			break;
+		}
+
     }
 
     // We have two options here: we either joined(by title, list or random) or created a room.
