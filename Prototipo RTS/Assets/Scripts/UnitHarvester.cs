@@ -49,12 +49,11 @@ public class UnitHarvester : UnitController
         if (destTransform.name == "WorldFloor")
         {
             Debug.Log("ojo suelo!");
-            /*if (currentHarvestState == HarvestState.Waiting ||
-                currentHarvestState == HarvestState.GoingToChopPosition ||
+            if (currentHarvestState == HarvestState.GoingToChopPosition ||
                 currentHarvestState == HarvestState.Choping)
-                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);*/
-            if (currentHarvestState == HarvestState.Waiting)
-
+                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
+            else if (currentHarvestState == HarvestState.Waiting)
+                currentMine.GetComponent<CResources>().LeaveQueue(this);
             nextHarvestState = HarvestState.None;
             currentHarvestState = HarvestState.None;
             base.RightClickOnSelected(destiny, destTransform);
