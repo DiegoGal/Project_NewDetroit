@@ -6,7 +6,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerInGame : Photon.MonoBehaviour
+public class GameManager : Photon.MonoBehaviour
 {
     public Transform playerPrefab;
 		
@@ -20,6 +20,8 @@ public class PlayerInGame : Photon.MonoBehaviour
 	public GameObject fogPlane; //The fog plane in the scene
 
 	public GameObject redBase; // Rob Base
+
+	public GameObject redArmyManager;
 
     public void Awake()
     {
@@ -70,16 +72,22 @@ public class PlayerInGame : Photon.MonoBehaviour
 				if (selInt==0) // Instantiate ROB RENDER
 				{
 					PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
-					DestroyObject(fogPlane);
+					DestroyObject (fogPlane);
+					DestroyObject (redArmyManager);
 					Camera.main.GetComponent<CameraRTSController>().enabled=false;
 					redBase.GetComponent<CSelectable>().enabled=false;
+					redBase.GetComponent<BaseController>().enabled=false;
+					redBase.GetComponent<FogOfWarUnit>().enabled=false;
 				}
 				if (selInt==1) // Instantiate SKELTERBOT
 				{
 					PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
 					DestroyObject(fogPlane);
+					DestroyObject (redArmyManager);
 					Camera.main.GetComponent<CameraRTSController>().enabled=false;
 					redBase.GetComponent<CSelectable>().enabled=false;
+					redBase.GetComponent<BaseController>().enabled=false;
+					redBase.GetComponent<FogOfWarUnit>().enabled=false;
 				}
 				if (selInt==2) // Rob Army
 				{
