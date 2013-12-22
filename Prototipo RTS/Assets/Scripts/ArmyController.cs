@@ -147,12 +147,27 @@ public class ArmyController : MonoBehaviour
 			if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
             {
                 Vector3 destiny = myHit.point;
-                foreach (GameObject u in unitSelectedList)
-                {
-                    Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
-                    //u.GetComponent<UnitController>().GoTo(destiny);
-                    u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
-                }
+				if (unitSelectedList.Count > 1)
+				{
+					//Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
+					List<Vector3> destinyList;
+					destinyList = CalculateMultipleDestiny(destiny);
+					int i = 0;
+					foreach (GameObject u in unitSelectedList)
+					{
+						Debug.DrawLine(u.transform.localPosition, destinyList[i], Color.red, 1);
+						u.GetComponent<UnitController>().RightClickOnSelected(destinyList[i], myHit.transform);
+						i++;
+					}
+				}
+				else if (unitSelectedList.Count == 1)
+				{
+					GameObject u = unitSelectedList[0];
+					Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
+					//u.GetComponent<UnitController>().GoTo(destiny);
+					u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
+				}
+
             }
         }
 
@@ -199,6 +214,118 @@ public class ArmyController : MonoBehaviour
             );
         }
     } // OnGUI()
+
+	private List<Vector3> CalculateMultipleDestiny (Vector3 destiny)
+	{
+		List<Vector3> destinyList = new List<Vector3>();
+		double radious = System.Math.Sqrt(unitSelectedList.Count);
+		int truncateRadious = (int)System.Math.Truncate(radious);
+		Vector3 destinyAux = destiny;
+		Vector3 origDestiny = destiny;
+		//Esquina superior izquierda
+		int squareNum =  (truncateRadious * truncateRadious);
+		int alpha = 2;
+		float beta = 0.5f;
+		int cont = 0;
+		int row = 0;
+		int contSqr = 0;
+		bool first = true;
+		int numSelected = unitSelectedList.Count;
+		//Para saber como centrar las tropas
+		if (numSelected % 2 != 0)
+		{
+			beta = 1;
+		}
+		origDestiny.x = destinyAux.x = destiny.x - (float)(truncateRadious/2) - beta;
+		if (numSelected == 2)//Caso especial NumSelected = 2
+		{
+			foreach (GameObject u in unitSelectedList)
+			{
+				destinyList.Add(destinyAux);
+				destinyAux.x += alpha;
+			}
+		}
+		else if (numSelected == 3)//Caso especial NumSelected = 2
+		{
+			foreach (GameObject u in unitSelectedList)
+			{
+				destinyList.Add(destinyAux);
+				destinyAux.x += alpha;
+			}
+		}
+		else
+			origDestiny.z = destinyAux.z = destiny.z + (float)(truncateRadious/2) + beta;
+			foreach (GameObject u in unitSelectedList)
+			{
+				cont ++;
+				contSqr ++;
+				if (squareNum + 1 > contSqr) //Si todavia estoy haciendo el cuadrado
+				{
+					destinyList.Add(destinyAux);
+					//Siguiente unidad
+					if (cont == truncateRadious)//Si hay que hacer otra fila
+					{
+						cont = 0;
+						destinyAux.z -= alpha;
+						destinyAux.x = origDestiny.x;
+					}
+					else//Si es en la misma fila
+					{
+						destinyAux.x += alpha;
+					}
+				}
+				else if ((squareNum + (2 * (truncateRadious - 1))) >= contSqr)//Si tengo que añadir al resto de filas
+				{
+					//Lo inicializo en la esquina sup, izq
+					if (squareNum + 1 == contSqr)
+					{
+						destinyAux = origDestiny;
+					}
+					//Si es el primero baja de fila, a la izquierda del resto y lo meto en array 
+					if (first)
+					{
+						row ++;
+						destinyAux.z -= alpha;//Baja de fila
+						destinyAux.x = origDestiny.x - alpha; //Posiciona en la izquierda
+						destinyList.Add(destinyAux);
+						if (contSqr == numSelected) //Si es el ultimo -> centro la fila
+						{
+							//Se centra la fila
+							Vector3 unity = new Vector3();
+							int min =  truncateRadious * row;
+							int max =  min + truncateRadious;
+							for (int i = min; i <max; i++)
+							{
+								unity = destinyList[i];
+								unity.x += alpha/2;
+								destinyList[i] = unity;
+							}
+							unity = destinyList[destinyList.Count - 1];
+							unity.x += alpha/2;
+							destinyList[destinyList.Count - 1] = unity;
+						}
+						first = false;
+					}
+					else//Si es el segundo lo pongo a la derecha del resto y lo meto en array. Despues centro la fila
+					{
+						destinyAux.x += ((alpha ) * truncateRadious) + 2; //Se posiciona al final
+						destinyList.Add(destinyAux);
+						first = true;
+					}
+				}
+				else //Si son las ultimas y hay que hacer una fila
+				{
+					destinyAux = origDestiny;
+					destinyAux.z -= alpha * truncateRadious;
+					for (int i = contSqr; i < numSelected + 1; i++)
+					{
+						destinyList.Add(destinyAux);
+						destinyAux.x += alpha;
+					}
+				}
+			}
+		return destinyList;	
+	}
 
     void DrawQuad (Rect position, Color color)
     {
