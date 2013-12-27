@@ -156,7 +156,7 @@ public class ArmyController : MonoBehaviour
 					foreach (GameObject u in unitSelectedList)
 					{
 						Debug.DrawLine(u.transform.localPosition, destinyList[i], Color.red, 1);
-						u.GetComponent<UnitController>().RightClickOnSelected(destinyList[i], myHit.transform);
+						//u.GetComponent<UnitController>().RightClickOnSelected(destinyList[i], myHit.transform);
 						i++;
 					}
 				}
@@ -223,7 +223,7 @@ public class ArmyController : MonoBehaviour
 		Vector3 destinyAux = destiny;
 		Vector3 origDestiny = destiny;
 		//Esquina superior izquierda
-		int squareNum =  (truncateRadious * truncateRadious);
+		int squareNum = (truncateRadious * truncateRadious);
 		int alpha = 2;
 		float beta = 0.5f;
 		int cont = 0;
@@ -231,6 +231,7 @@ public class ArmyController : MonoBehaviour
 		int contSqr = 0;
 		bool first = true;
 		int numSelected = unitSelectedList.Count;
+
 		//Para saber como centrar las tropas
 		if (numSelected % 2 != 0)
 		{
@@ -245,85 +246,130 @@ public class ArmyController : MonoBehaviour
 				destinyAux.x += alpha;
 			}
 		}
-		else if (numSelected == 3)//Caso especial NumSelected = 2
-		{
-			foreach (GameObject u in unitSelectedList)
-			{
-				destinyList.Add(destinyAux);
-				destinyAux.x += alpha;
-			}
-		}
-		else
-			origDestiny.z = destinyAux.z = destiny.z + (float)(truncateRadious/2) + beta;
-			foreach (GameObject u in unitSelectedList)
-			{
-				cont ++;
-				contSqr ++;
-				if (squareNum + 1 > contSqr) //Si todavia estoy haciendo el cuadrado
-				{
-					destinyList.Add(destinyAux);
-					//Siguiente unidad
-					if (cont == truncateRadious)//Si hay que hacer otra fila
-					{
-						cont = 0;
-						destinyAux.z -= alpha;
-						destinyAux.x = origDestiny.x;
-					}
-					else//Si es en la misma fila
-					{
-						destinyAux.x += alpha;
-					}
-				}
-				else if ((squareNum + (2 * (truncateRadious - 1))) >= contSqr)//Si tengo que añadir al resto de filas
-				{
-					//Lo inicializo en la esquina sup, izq
-					if (squareNum + 1 == contSqr)
-					{
-						destinyAux = origDestiny;
-					}
-					//Si es el primero baja de fila, a la izquierda del resto y lo meto en array 
-					if (first)
-					{
-						row ++;
-						destinyAux.z -= alpha;//Baja de fila
-						destinyAux.x = origDestiny.x - alpha; //Posiciona en la izquierda
-						destinyList.Add(destinyAux);
-						if (contSqr == numSelected) //Si es el ultimo -> centro la fila
-						{
-							//Se centra la fila
-							Vector3 unity = new Vector3();
-							int min =  truncateRadious * row;
-							int max =  min + truncateRadious;
-							for (int i = min; i <max; i++)
-							{
-								unity = destinyList[i];
-								unity.x += alpha/2;
-								destinyList[i] = unity;
-							}
-							unity = destinyList[destinyList.Count - 1];
-							unity.x += alpha/2;
-							destinyList[destinyList.Count - 1] = unity;
-						}
-						first = false;
-					}
-					else//Si es el segundo lo pongo a la derecha del resto y lo meto en array. Despues centro la fila
-					{
-						destinyAux.x += ((alpha ) * truncateRadious) + 2; //Se posiciona al final
-						destinyList.Add(destinyAux);
-						first = true;
-					}
-				}
-				else //Si son las ultimas y hay que hacer una fila
-				{
-					destinyAux = origDestiny;
-					destinyAux.z -= alpha * truncateRadious;
-					for (int i = contSqr; i < numSelected + 1; i++)
-					{
-						destinyList.Add(destinyAux);
-						destinyAux.x += alpha;
-					}
-				}
-			}
+        else if (numSelected == 3)//Caso especial NumSelected = 2
+        {
+            foreach (GameObject u in unitSelectedList)
+            {
+                destinyList.Add(destinyAux);
+                destinyAux.x += alpha;
+            }
+        }
+        else
+        {
+            origDestiny.z = destinyAux.z = destiny.z + (float)(truncateRadious / 2) + beta;
+            foreach (GameObject u in unitSelectedList)
+            {
+                cont++;
+                contSqr++;
+                if (squareNum + 1 > contSqr) //Si todavia estoy haciendo el cuadrado
+                {
+                    destinyList.Add(destinyAux);
+                    //Siguiente unidad
+                    if (cont == truncateRadious)//Si hay que hacer otra fila
+                    {
+                        cont = 0;
+                        destinyAux.z -= alpha;
+                        destinyAux.x = origDestiny.x;
+                    }
+                    else//Si es en la misma fila
+                    {
+                        destinyAux.x += alpha;
+                    }
+                }
+                else if ((squareNum + (2 * (truncateRadious - 1))) >= contSqr)//Si tengo que añadir al resto de filas
+                {
+                    //Lo inicializo en la esquina sup, izq
+                    if (squareNum + 1 == contSqr)
+                    {
+                        destinyAux = origDestiny;
+                    }
+                    //Si es el primero baja de fila, a la izquierda del resto y lo meto en array 
+                    if (first)
+                    {
+                        row++;
+                        destinyAux.z -= alpha;//Baja de fila
+                        destinyAux.x = origDestiny.x - alpha; //Posiciona en la izquierda
+                        destinyList.Add(destinyAux);
+                        if (contSqr == numSelected) //Si es el ultimo -> centro la fila
+                        {
+                            //Se centra la fila
+                            Vector3 unity = new Vector3();
+                            int min = truncateRadious * row;
+                            int max = min + truncateRadious;
+                            for (int i = min; i < max; i++)
+                            {
+                                unity = destinyList[i];
+                                unity.x += alpha / 2;
+                                destinyList[i] = unity;
+                            }
+                            unity = destinyList[destinyList.Count - 1];
+                            unity.x += alpha / 2;
+                            destinyList[destinyList.Count - 1] = unity;
+                        }
+                        first = false;
+                    }
+                    else//Si es el segundo lo pongo a la derecha del resto y lo meto en array. Despues centro la fila
+                    {
+                        destinyAux.x += ((alpha) * truncateRadious) + 2; //Se posiciona al final
+                        destinyList.Add(destinyAux);
+                        first = true;
+                    }
+                }
+                else //Si son las ultimas y hay que hacer una fila
+                {
+                    destinyAux = origDestiny;
+                    destinyAux.z -= alpha * truncateRadious;
+                    for (int i = contSqr; i < numSelected + 1; i++)
+                    {
+                        destinyList.Add(destinyAux);
+                        destinyAux.x += alpha;
+                    }
+                }
+            }
+        }
+
+        // rotación de los destinos en función de la media de todos los orígenes
+        Vector3 origCenter;
+        float minX = float.MaxValue, maxX = float.MinValue, minZ = minX, maxZ = maxX;
+        for (int i = 0; i < numSelected; i++)
+        {
+            if (unitSelectedList[i].transform.position.x > maxX)
+                maxX = unitSelectedList[i].transform.position.x;
+            if (unitSelectedList[i].transform.position.z > maxZ)
+                maxZ = unitSelectedList[i].transform.position.z;
+            if (unitSelectedList[i].transform.position.x < minX)
+                minX = unitSelectedList[i].transform.position.x;
+            if (unitSelectedList[i].transform.position.z < minZ)
+                minZ = unitSelectedList[i].transform.position.z;
+        }
+        origCenter = new Vector3( (maxX + minX) / 2.0f, 0.0F, (maxZ + minZ) / 2.0f);
+        float angleDeg = Mathf.Atan2(destiny.z - origCenter.z, destiny.x - origCenter.x) * Mathf.Rad2Deg;
+        Quaternion rot = Quaternion.Euler(0, -angleDeg + 90, 0);
+        for (int i = 0; i < destinyList.Count; i++)
+        {
+            // http://answers.unity3d.com/questions/532297/rotate-a-vector-around-a-certain-point.html
+            //Vector3 myVector = Quaternion.Euler(0, angleDeg, 0) * Vector3.up;
+            GameObject cubi = AddBlackBox(destinyList[i]);
+            Destroy(cubi, 1.0f);
+            Vector3 dir = destinyList[i] - destiny; // get point direction relative to pivot
+            dir = rot * dir; // rotate it
+            destinyList[i] = dir + destiny; // calculate rotated point
+            GameObject cubo = AddBox(destinyList[i], new Color(0.0f, 0.0f - 0.1f * i, 1.0f - 0.1f * i));
+            Destroy(cubo, 2.0f);
+        }
+
+        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.position = destiny;
+        cube.transform.localScale = new Vector3(0.5f, 2.0f, 0.5f);
+        cube.renderer.material.color = Color.white;
+        Destroy(cube, 2.0f);
+
+        GameObject cube2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube2.transform.position = origCenter;
+        cube2.transform.localScale = new Vector3(0.5f, 2.0f, 0.5f);
+        cube2.renderer.material.color = Color.white;
+        Destroy(cube2, 2.0f);
+
 		return destinyList;	
 	}
 
@@ -496,7 +542,7 @@ public class ArmyController : MonoBehaviour
                 unitList[i].GetComponent<CSelectable>().SetDeselect();
             }
         }
-    }
+    } // CreatingSquare2 ()
 
     private void UpdateSelectionPointScreen ()
     {
@@ -560,12 +606,22 @@ public class ArmyController : MonoBehaviour
 		armyBase.GetComponent<CSelectable>().SetDeselect();
 	}
 
-    private void AddBlackBox (Vector3 position)
+    private GameObject AddBox (Vector3 position, Color color)
+    {
+        // aparece un cubo del color indicado en la posición indicada
+        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.position = position;
+        cube.renderer.material.color = color;
+        return cube;
+    }
+
+    private GameObject AddBlackBox (Vector3 position)
     {
         // aparece un cubo negro en la proyección del rayo
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = position;
         cube.renderer.material.color = Color.black;
+        return cube;
     }
 
     public void IncreaseResources (int resources)
