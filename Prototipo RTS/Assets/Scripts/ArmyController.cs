@@ -20,6 +20,7 @@ public class ArmyController : MonoBehaviour
     private Vector3[] squareSelectionPointsProyected;   // positions of the corners in the world
 
     private int resources;
+    private float lastCrowdAngle; // último ángulo de desplazamiento de la bandada
 
 	private int layerMask; // para obviar la capa de la niebla
 
@@ -34,6 +35,7 @@ public class ArmyController : MonoBehaviour
         squareSelectionPointsProyected = new Vector3[4];
 
         resources = 0;
+        lastCrowdAngle = 0;
 
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
 		// Bit shift the index of the layer (8) to get a bit mask
@@ -51,6 +53,8 @@ public class ArmyController : MonoBehaviour
         {
             lastClick = Input.mousePosition;
             mouseButtonPreshed = true;
+
+            lastCrowdAngle = 0;
         }
         // se levanta el botón izquierdo del ratón
         if (mouseButtonPreshed && Input.GetMouseButtonUp(0))
@@ -156,7 +160,7 @@ public class ArmyController : MonoBehaviour
 					foreach (GameObject u in unitSelectedList)
 					{
 						Debug.DrawLine(u.transform.localPosition, destinyList[i], Color.red, 1);
-						//u.GetComponent<UnitController>().RightClickOnSelected(destinyList[i], myHit.transform);
+						u.GetComponent<UnitController>().RightClickOnSelected(destinyList[i], myHit.transform);
 						i++;
 					}
 				}
@@ -344,21 +348,22 @@ public class ArmyController : MonoBehaviour
         }
         origCenter = new Vector3( (maxX + minX) / 2.0f, 0.0F, (maxZ + minZ) / 2.0f);
         float angleDeg = Mathf.Atan2(destiny.z - origCenter.z, destiny.x - origCenter.x) * Mathf.Rad2Deg;
+        angleDeg = (angleDeg + lastCrowdAngle) % 90;
         Quaternion rot = Quaternion.Euler(0, -angleDeg + 90, 0);
         for (int i = 0; i < destinyList.Count; i++)
         {
             // http://answers.unity3d.com/questions/532297/rotate-a-vector-around-a-certain-point.html
             //Vector3 myVector = Quaternion.Euler(0, angleDeg, 0) * Vector3.up;
-            GameObject cubi = AddBlackBox(destinyList[i]);
-            Destroy(cubi, 1.0f);
+            /*GameObject cubi = AddBlackBox(destinyList[i]);
+            Destroy(cubi, 1.0f);*/
             Vector3 dir = destinyList[i] - destiny; // get point direction relative to pivot
             dir = rot * dir; // rotate it
             destinyList[i] = dir + destiny; // calculate rotated point
-            GameObject cubo = AddBox(destinyList[i], new Color(0.0f, 0.0f - 0.1f * i, 1.0f - 0.1f * i));
-            Destroy(cubo, 2.0f);
+            /*GameObject cubo = AddBox(destinyList[i], new Color(0.0f, 0.0f - 0.1f * i, 1.0f - 0.1f * i));
+            Destroy(cubo, 2.0f);*/
         }
 
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = destiny;
         cube.transform.localScale = new Vector3(0.5f, 2.0f, 0.5f);
         cube.renderer.material.color = Color.white;
@@ -368,7 +373,7 @@ public class ArmyController : MonoBehaviour
         cube2.transform.position = origCenter;
         cube2.transform.localScale = new Vector3(0.5f, 2.0f, 0.5f);
         cube2.renderer.material.color = Color.white;
-        Destroy(cube2, 2.0f);
+        Destroy(cube2, 2.0f);*/
 
 		return destinyList;	
 	}
