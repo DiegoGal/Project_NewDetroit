@@ -90,7 +90,7 @@ public class ThirdPersonCameraNET : MonoBehaviour
 		}
 		
 		lastStationaryPosition = target.transform.position;
-		targetDistance = optimalDistance = (camera.transform.position - target.transform.position).magnitude / 4;
+		targetDistance = optimalDistance = (camera.transform.position - target.transform.position).magnitude;
 	}
 	
 	

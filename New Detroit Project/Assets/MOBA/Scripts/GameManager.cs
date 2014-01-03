@@ -71,23 +71,23 @@ public class GameManager : Photon.MonoBehaviour
 			{
 				if (selInt==0) // Instantiate ROB RENDER
 				{
-					PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
+					PhotonNetwork.Instantiate("Rob Render", transform.position, Quaternion.identity, 0);
 					DestroyObject (fogPlane);
 					DestroyObject (redArmyManager);
 					Camera.main.GetComponent<CameraRTSController>().enabled=false;
 					redBase.GetComponent<CSelectable>().enabled=false;
 					redBase.GetComponent<BaseController>().enabled=false;
-					redBase.GetComponent<FogOfWarUnit>().enabled=false;
+					redBase.GetComponent<FogOfWarUnit>().enabled=true;
 				}
 				if (selInt==1) // Instantiate SKELTERBOT
 				{
-					PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
+					PhotonNetwork.Instantiate("Rob Render", transform.position, Quaternion.identity, 0);
 					DestroyObject(fogPlane);
 					DestroyObject (redArmyManager);
 					Camera.main.GetComponent<CameraRTSController>().enabled=false;
 					redBase.GetComponent<CSelectable>().enabled=false;
 					redBase.GetComponent<BaseController>().enabled=false;
-					redBase.GetComponent<FogOfWarUnit>().enabled=false;
+					redBase.GetComponent<FogOfWarUnit>().enabled=true;
 				}
 				if (selInt==2) // Rob Army
 				{

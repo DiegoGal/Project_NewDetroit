@@ -230,7 +230,7 @@ public abstract class PropertyEditor : Editor
 	}
 	
 	
-	public static float AngularSlider (Vector3 position, Vector3 forward, Vector3 right, Vector3 up, float angle, float radius, Handles.DrawCapFunction capFunction, float offset , float handleSize )
+	public static float AngularSlider (Vector3 position, Vector3 forward, Vector3 right, Vector3 up, float angle, float radius, Handles.DrawCapFunction capFunction, float offset = 0.0f, float handleSize = 1.0f)
 	// Create an angular slider for the given transform
 	{
 		Vector3 angleVector = PlanarAngleVector (forward, right, angle) * radius;
@@ -241,13 +241,13 @@ public abstract class PropertyEditor : Editor
 	}
 	
 	
-	public static float AngularSlider (Vector3 position, Vector3 forward, Vector3 right, Vector3 up, float angle, float radius, float offset)
+	public static float AngularSlider (Vector3 position, Vector3 forward, Vector3 right, Vector3 up, float angle, float radius, float offset = 0.0f)
 	{
 		return AngularSlider (position, forward, right, up, angle, radius, Handles.ArrowCap, offset, HandleUtility.GetHandleSize (position));
 	}
 	
 	
-	public static float AngularSlider (Transform transform, float angle, float radius, float offset )
+	public static float AngularSlider (Transform transform, float angle, float radius, float offset = 0.0f)
 	{
 		return AngularSlider (transform.position, transform.forward, transform.right, transform.up, angle, radius, offset);
 	}

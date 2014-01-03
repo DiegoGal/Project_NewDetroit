@@ -13,7 +13,7 @@ public class MainMenuVik : MonoBehaviour
             PhotonNetwork.ConnectUsingSettings("v1.0"); // version of the game/demo. used to separate older clients from newer ones (e.g. if incompatible)
 
         //Load name from PlayerPrefs
-        PhotonNetwork.playerName = "Guest" + Random.Range(1, 9999);//PlayerPrefs.GetString("playerName","Guest" + Random.Range(1, 9999));
+        PhotonNetwork.playerName = PlayerPrefs.GetString("playerName", "Guest" + Random.Range(1, 9999));
 
         //Set camera clipping for nicer "main menu" background
         Camera.main.farClipPlane = Camera.main.nearClipPlane + 0.1f;
@@ -44,8 +44,8 @@ public class MainMenuVik : MonoBehaviour
         GUILayout.BeginHorizontal();
         GUILayout.Label("Player name:", GUILayout.Width(150));
         PhotonNetwork.playerName = GUILayout.TextField(PhotonNetwork.playerName);
-        //if (GUI.changed)//Save name
-            //PlayerPrefs.SetString("playerName", PhotonNetwork.playerName);
+        if (GUI.changed)//Save name
+            PlayerPrefs.SetString("playerName", PhotonNetwork.playerName);
         GUILayout.EndHorizontal();
 
         GUILayout.Space(15);

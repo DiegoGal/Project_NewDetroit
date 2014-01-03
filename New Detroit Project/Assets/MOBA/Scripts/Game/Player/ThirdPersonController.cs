@@ -24,9 +24,7 @@ public class ThirdPersonController : MonoBehaviour
     public float jumpAnimationSpeed = 1.15f;
     public float landAnimationSpeed = 1.0f;
 
-    private Animation _animation;
-
-  
+    private Animator animator;
 
     public CharacterState _characterState;
 
@@ -93,8 +91,8 @@ public class ThirdPersonController : MonoBehaviour
     {
         moveDirection = transform.TransformDirection(Vector3.forward);
 
-        _animation = GetComponent<Animation>();
-        if (!_animation)
+        animator = GetComponent<Animator>();
+        if (!animator)
             Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
 
         /*
@@ -105,22 +103,22 @@ public class ThirdPersonController : MonoBehaviour
         */
         if (!idleAnimation)
         {
-            _animation = null;
+            animator = null;
             Debug.Log("No idle animation found. Turning off animations.");
         }
         if (!walkAnimation)
         {
-            _animation = null;
+            animator = null;
             Debug.Log("No walk animation found. Turning off animations.");
         }
         if (!runAnimation)
         {
-            _animation = null;
+            animator = null;
             Debug.Log("No run animation found. Turning off animations.");
         }
         if (!jumpPoseAnimation && canJump)
         {
-            _animation = null;
+            animator = null;
             Debug.Log("No jump animation found and the character has canJump enabled. Turning off animations.");
         }
 
@@ -320,21 +318,49 @@ public class ThirdPersonController : MonoBehaviour
         velocity = (transform.position - lastPos)*25;
 
         // ANIMATION sector
-        if (_animation)
+		if (isControllable)
+			if(animator)
+			{
+				//get the current state
+				AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+				
+				//if we're in "Run" mode, respond to input for jump, and set the Jump parameter accordingly. 
+				/*if(stateInfo.nameHash == Animator.StringToHash("Base Layer.RunBT"))
+				{
+					if(Input.GetButton("Fire1")) 
+						_animation.SetBool("Jump", true );
+				}
+				else
+				{
+					_animation.SetBool("Jump", false);				
+				}*/
+				float v = Input.GetAxisRaw("Vertical");
+				float h = Input.GetAxisRaw("Horizontal");
+				//set event parameters based on user input
+				animator.SetFloat("Speed", h*h+v*v);
+				if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
+					animator.SetBool("isRunning",true);
+				else
+					animator.SetBool("isRunning",false);
+				//_animation.SetFloat("Direction", h, DirectionDampTime, Time.deltaTime);
+
+			}		
+
+        /*if (_animation)
         {
             if (_characterState == CharacterState.Jumping)
             {
                 if (!jumpingReachedApex)
                 {
-                    _animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;
-                    _animation[jumpPoseAnimation.name].wrapMode = WrapMode.ClampForever;
-                    _animation.CrossFade(jumpPoseAnimation.name);
+                    _animation.animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;
+					_animation.animation[jumpPoseAnimation.name].wrapMode = WrapMode.ClampForever;
+					_animation.CrossFade(jumpPoseAnimation.name,0.3f);
                 }
                 else
                 {
-                    _animation[jumpPoseAnimation.name].speed = -landAnimationSpeed;
-                    _animation[jumpPoseAnimation.name].wrapMode = WrapMode.ClampForever;
-                    _animation.CrossFade(jumpPoseAnimation.name);
+					_animation.animation[jumpPoseAnimation.name].speed = -landAnimationSpeed;
+					_animation.animation[jumpPoseAnimation.name].wrapMode = WrapMode.ClampForever;
+					_animation.CrossFade(jumpPoseAnimation.name,0.3f);
                 }
             }
             else
@@ -342,45 +368,44 @@ public class ThirdPersonController : MonoBehaviour
                 if (this.isControllable && velocity.sqrMagnitude < 0.001f)
                 {
                     _characterState = CharacterState.Idle;
-                    _animation.CrossFade(idleAnimation.name);
                 }
                 else
                 {
                     if (_characterState == CharacterState.Idle)
                     {
-                        _animation.CrossFade(idleAnimation.name);
+						_animation.CrossFade(idleAnimation.name,0.3f);
                     }
                     else if (_characterState == CharacterState.Running)
                     {
-                        _animation[runAnimation.name].speed = runMaxAnimationSpeed;
+						_animation.animation[runAnimation.name].speed = runMaxAnimationSpeed;
                         if (this.isControllable)
                         {
-                            _animation[runAnimation.name].speed = Mathf.Clamp(velocity.magnitude, 0.0f, runMaxAnimationSpeed);
+							_animation.animation[runAnimation.name].speed = Mathf.Clamp(velocity.magnitude, 0.0f, runMaxAnimationSpeed);
                         }
-                        _animation.CrossFade(runAnimation.name);
+						_animation.CrossFade(runAnimation.name,0.3f);
                     }
                     else if (_characterState == CharacterState.Trotting)
                     {
-                        _animation[walkAnimation.name].speed = trotMaxAnimationSpeed;
+						_animation.animation[walkAnimation.name].speed = trotMaxAnimationSpeed;
                         if (this.isControllable)
                         {
-                            _animation[walkAnimation.name].speed = Mathf.Clamp(velocity.magnitude, 0.0f, trotMaxAnimationSpeed);
+							_animation.animation[walkAnimation.name].speed = Mathf.Clamp(velocity.magnitude, 0.0f, trotMaxAnimationSpeed);
                         }
-                        _animation.CrossFade(walkAnimation.name);
+						_animation.CrossFade(walkAnimation.name,0.3f);
                     }
                     else if (_characterState == CharacterState.Walking)
                     {
-                        _animation[walkAnimation.name].speed = walkMaxAnimationSpeed;
+						_animation.animation[walkAnimation.name].speed = walkMaxAnimationSpeed;
                         if (this.isControllable)
                         {
-                            _animation[walkAnimation.name].speed = Mathf.Clamp(velocity.magnitude, 0.0f, walkMaxAnimationSpeed);
+							_animation.animation[walkAnimation.name].speed = Mathf.Clamp(velocity.magnitude, 0.0f, walkMaxAnimationSpeed);
                         }
-                        _animation.CrossFade(walkAnimation.name);
+                        _animation.CrossFade(walkAnimation.name,0.3f);
                     }
 
                 }
             }
-        }
+        }*/
         // ANIMATION sector
 
         // Set rotation to the move direction
