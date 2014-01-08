@@ -39,8 +39,9 @@ public class ArmyController : MonoBehaviour
 
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
 		// Bit shift the index of the layer (8) to get a bit mask
-		layerMask = 1 << 8;
-		// This would cast rays only against colliders in layer 8.
+		layerMask = 1 << 8 | 1 << 2;
+
+		// This would cast rays only against colliders in layer 8 and 2.
 		// But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
 		layerMask = ~layerMask;
     }
