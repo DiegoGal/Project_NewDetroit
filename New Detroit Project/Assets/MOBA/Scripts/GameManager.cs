@@ -31,7 +31,7 @@ public class GameManager : Photon.MonoBehaviour
             Application.LoadLevel(MenuDetroit.SceneNameMenu);
             return;
         }
-
+	
     }
 
     public void OnGUI()
