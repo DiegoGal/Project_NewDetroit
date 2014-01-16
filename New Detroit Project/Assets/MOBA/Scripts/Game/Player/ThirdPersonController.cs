@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
+//-----------------------------------------------------------------------------------------------------------------------
+
 public enum CharacterState
 {
     Idle = 0,
@@ -9,6 +11,10 @@ public enum CharacterState
     Running = 3,
     Jumping = 4,
 }
+
+
+//-----------------------------------------------------------------------------------------------------------------------
+
 
 public class ThirdPersonController : MonoBehaviour
 {
@@ -87,6 +93,12 @@ public class ThirdPersonController : MonoBehaviour
     private float lastGroundedTime = 0.0f;
     public bool isControllable = true;
 
+	private Vector3 lastPos;
+
+
+	//-----------------------------------------------------------------------------------------------------------------------
+
+
     void Awake()
     {
         moveDirection = transform.TransformDirection(Vector3.forward);
@@ -122,9 +134,8 @@ public class ThirdPersonController : MonoBehaviour
             Debug.Log("No jump animation found and the character has canJump enabled. Turning off animations.");
         }
 
-    }
 
-    private Vector3 lastPos;
+    }
 
     void UpdateSmoothedMovementDirection()
     {
@@ -166,7 +177,7 @@ public class ThirdPersonController : MonoBehaviour
             // We store speed and direction seperately,
             // so that when the character stands still we still have a valid forward direction
             // moveDirection is always normalized, and we only update it if there is user input.
-            if (targetDirection != Vector3.zero)
+            if (targetDirection != Vector3.zero && !animator.GetBool("isAttacking"))
             {
                 // If we are really slow, just snap to the target direction
                 if (moveSpeed < walkSpeed * 0.9f && grounded)
@@ -189,24 +200,28 @@ public class ThirdPersonController : MonoBehaviour
             //* We want to support analog input but make sure you cant walk faster diagonally than just forward or sideways
             float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);
 
-            _characterState = CharacterState.Idle;
+            //_characterState = CharacterState.Idle;
 
-            // Pick speed modifier
-            if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
+			// Pick speed modifier
+			if (!animator.GetBool("isAttacking") && (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)))
             {
                 targetSpeed *= runSpeed;
-                _characterState = CharacterState.Running;
+                //_characterState = CharacterState.Running;
             }
             else if (Time.time - trotAfterSeconds > walkTimeStart)
             {
                 targetSpeed *= trotSpeed;
-                _characterState = CharacterState.Trotting;
+                //_characterState = CharacterState.Trotting;
             }
-            else
+            else if (!animator.GetBool("isAttacking"))
             {
                 targetSpeed *= walkSpeed;
-                _characterState = CharacterState.Walking;
+                //_characterState = CharacterState.Walking;
             }
+			else
+			{
+				targetSpeed = 0;
+			}
         
             moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
 
@@ -291,12 +306,13 @@ public class ThirdPersonController : MonoBehaviour
     {        
         if (isControllable)
         {
-            if (Input.GetButtonDown("Jump"))
+            /*if (Input.GetButtonDown("Jump"))
             {
                 lastJumpButtonTime = Time.time;
-            }
+            }*/
 
-            UpdateSmoothedMovementDirection();
+			//update the movement direction.
+			UpdateSmoothedMovementDirection();
 
             // Apply gravity
             // - extra power jump modifies gravity
@@ -304,7 +320,7 @@ public class ThirdPersonController : MonoBehaviour
             ApplyGravity();
 
             // Apply jumping logic
-            ApplyJumping();
+            //ApplyJumping();
 
 
             // Calculate actual motion
@@ -334,16 +350,41 @@ public class ThirdPersonController : MonoBehaviour
 				{
 					_animation.SetBool("Jump", false);				
 				}*/
-				float v = Input.GetAxisRaw("Vertical");
-				float h = Input.GetAxisRaw("Horizontal");
-				//set event parameters based on user input
-				animator.SetFloat("Speed", h*h+v*v);
-				if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
-					animator.SetBool("isRunning",true);
+				
+				//attacking
+				if (Input.GetMouseButton(0))
+				{
+					animator.SetBool ("isAttacking", true);
+				}
 				else
-					animator.SetBool("isRunning",false);
-				//_animation.SetFloat("Direction", h, DirectionDampTime, Time.deltaTime);
+				{
+					animator.SetBool ("isAttacking", false);
+				}
 
+				//moving
+				if (!animator.GetBool("isAttacking"))
+			    {
+					float v = Input.GetAxisRaw("Vertical");
+					float h = Input.GetAxisRaw("Horizontal");
+					//set event parameters based on user input
+					animator.SetFloat("Speed", h*h+v*v);
+				}
+				else
+				{
+					animator.SetFloat("Speed", 0);
+				}
+
+				//running
+				if (!animator.GetBool("isAttacking") && (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)))
+				{
+					animator.SetBool ("isRunning", true);
+				}
+				else
+				{
+					animator.SetBool ("isRunning", false);
+				}
+				
+				//_animation.SetFloat("Direction", h, DirectionDampTime, Time.deltaTime);
 			}		
 
         /*if (_animation)
