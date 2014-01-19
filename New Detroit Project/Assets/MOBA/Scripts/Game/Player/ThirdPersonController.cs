@@ -180,17 +180,17 @@ public class ThirdPersonController : MonoBehaviour
             if (targetDirection != Vector3.zero && !animator.GetBool("isAttacking"))
             {
                 // If we are really slow, just snap to the target direction
-                if (moveSpeed < walkSpeed * 0.9f && grounded)
+                /*if (moveSpeed < walkSpeed * 0.9f && grounded)
                 {
                     moveDirection = targetDirection.normalized;
                 }
                 // Otherwise smoothly turn towards it
                 else
-                {
+                {*/
                     moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 
                     moveDirection = moveDirection.normalized;
-                }
+                //}
             }
 
             // Smooth the speed based on the current target direction
@@ -203,7 +203,11 @@ public class ThirdPersonController : MonoBehaviour
             //_characterState = CharacterState.Idle;
 
 			// Pick speed modifier
-			if (!animator.GetBool("isAttacking") && (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)))
+			if (animator.GetBool("isAttacking"))
+			{
+				targetSpeed = 0;
+			}
+			else if ( Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
             {
                 targetSpeed *= runSpeed;
                 //_characterState = CharacterState.Running;
@@ -213,15 +217,11 @@ public class ThirdPersonController : MonoBehaviour
                 targetSpeed *= trotSpeed;
                 //_characterState = CharacterState.Trotting;
             }
-            else if (!animator.GetBool("isAttacking"))
+            else
             {
                 targetSpeed *= walkSpeed;
                 //_characterState = CharacterState.Walking;
             }
-			else
-			{
-				targetSpeed = 0;
-			}
         
             moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
 
