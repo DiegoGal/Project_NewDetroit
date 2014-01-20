@@ -12,6 +12,14 @@ public enum CharacterState
     Jumping = 4,
 }
 
+public enum ScondaryAttack
+{
+	None,
+	Attack1,
+	Attack2,
+	Attack3,
+}
+
 
 //-----------------------------------------------------------------------------------------------------------------------
 
@@ -95,6 +103,8 @@ public class ThirdPersonController : MonoBehaviour
 
 	private Vector3 lastPos;
 
+	//Secondary attack selected
+	private ScondaryAttack secondAttack;
 
 	//-----------------------------------------------------------------------------------------------------------------------
 
@@ -134,7 +144,8 @@ public class ThirdPersonController : MonoBehaviour
             Debug.Log("No jump animation found and the character has canJump enabled. Turning off animations.");
         }
 
-
+		// Initial secondary attack (no secondary attack in the beginning).
+		secondAttack = ScondaryAttack.None;
     }
 
     void UpdateSmoothedMovementDirection()
@@ -300,6 +311,23 @@ public class ThirdPersonController : MonoBehaviour
         _characterState = CharacterState.Jumping;
     }
 
+	// Update the secondary attack
+	void UpdateSecondAttack()
+	{
+		if (Input.GetKey(KeyCode.Alpha1))
+		{
+			secondAttack = ScondaryAttack.Attack1;
+		}
+		else if (Input.GetKey(KeyCode.Alpha2))
+		{
+			secondAttack = ScondaryAttack.Attack2;
+		}
+		else if (Input.GetKey(KeyCode.Alpha3))
+		{
+			secondAttack = ScondaryAttack.Attack3;
+		}
+	}
+
     Vector3 velocity = Vector3.zero;
 
     void Update()
@@ -310,6 +338,9 @@ public class ThirdPersonController : MonoBehaviour
             {
                 lastJumpButtonTime = Time.time;
             }*/
+
+			// Update secondary attack
+			UpdateSecondAttack();
 
 			//update the movement direction.
 			UpdateSmoothedMovementDirection();
@@ -350,8 +381,34 @@ public class ThirdPersonController : MonoBehaviour
 				{
 					_animation.SetBool("Jump", false);				
 				}*/
-				
-				//attacking
+
+				// Secondary attack
+				if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack1)
+				{
+					animator.SetBool("isSecondAttack1", true);
+					animator.SetBool("isSecondAttack2", false);
+					animator.SetBool("isSecondAttack3", false);
+				}
+				else if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack2)
+				{
+					animator.SetBool("isSecondAttack2", true);
+					animator.SetBool("isSecondAttack1", false);
+					animator.SetBool("isSecondAttack3", false);
+				}
+				else if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack3)
+				{
+					animator.SetBool("isSecondAttack3", true);
+					animator.SetBool("isSecondAttack1", false);
+					animator.SetBool("isSecondAttack2", false);
+				}
+				else
+				{
+					animator.SetBool("isSecondAttack1", false);
+					animator.SetBool("isSecondAttack2", false);
+					animator.SetBool("isSecondAttack3", false);
+				}
+
+				// attacking
 				if (Input.GetMouseButton(0))
 				{
 					animator.SetBool ("isAttacking", true);
