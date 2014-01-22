@@ -7,18 +7,25 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 ThirdPersonCamera cameraScript;
 ThirdPersonController controllerScript;
 Animator animator;
+//Collider collideObjectSend;
+//int damageCollideSend;
+//OrcBasicAttack attackScript;
 
 void Awake()
 {
 	cameraScript = GetComponent<ThirdPersonCamera>();
 	controllerScript = GetComponent<ThirdPersonController>();
 	animator = GetComponent<Animator>();
+	//collideObjectSend = GetComponent<OrcBasicAttack> ().getCollideObject ();
+	//damageCollideSend = GetComponent<OrcBasicAttack> ().getDamage ();
+	//attackScript = GetComponent<OrcBasicAttack> ();
 	
 	if (photonView.isMine)
 	{
 		//MINE: local player, simply enable the local scripts
 		cameraScript.enabled = true;
 		controllerScript.enabled = true;
+		//attackScript.enabled = true;
 	}
 	else
 	{           
@@ -40,7 +47,12 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 		stream.SendNext(animator.GetBool("isRunning"));
 		stream.SendNext(animator.GetFloat("Speed"));
 		stream.SendNext(transform.position);
-		stream.SendNext(transform.rotation); 
+		stream.SendNext(transform.rotation);
+		//stream.SendNext(attack.getCollideObject());
+		//stream.SendNext(attackScript.getDamage());
+		
+		//Update collide object
+		//attack.setCollideObject(null);
 	}
 	else
 	{
@@ -50,6 +62,8 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 		Speed = (float)stream.ReceiveNext();
 		correctPlayerPos = (Vector3)stream.ReceiveNext();
 		correctPlayerRot = (Quaternion)stream.ReceiveNext();
+		//collideObject = (Collider)stream.ReceiveNext();
+		//damageCollide = (int)stream.ReceiveNext();
 	}
 }
 
@@ -57,6 +71,8 @@ private bool isRunning;
 private float Speed;
 private Vector3 correctPlayerPos = Vector3.zero; //We lerp towards this
 private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
+private Collider collideObject; //The collide object that we receive
+private int damageCollide; // The damage of the collider
 
 void Update()
 {
@@ -67,6 +83,11 @@ void Update()
 		transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 		animator.SetBool("isRunning",isRunning);
 		animator.SetFloat("Speed",Speed);
+		//if (collideObject != null)
+		//{
+			//GameObject go = collideObject.gameObject;
+			//go.GetComponent<HeroeController>().damage(damageCollide);
+		//}
 	}
 }
 
