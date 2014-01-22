@@ -3,10 +3,17 @@ using System.Collections;
 
 public class UnitBasicArtillery : UnitArtillery
 {
+
+    public int attackPower1 = 10;
+    public int attackPower2 = 20;
+
 	// Use this for initialization
-	void Start ()
+    public override void Start ()
 	{
-	
+        base.Start();
+
+        basicAttackPower = attackPower1;
+        secondaryAttackPower = attackPower2;
 	}
 	
 	// Update is called once per frame

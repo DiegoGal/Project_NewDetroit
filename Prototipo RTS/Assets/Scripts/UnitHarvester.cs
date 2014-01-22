@@ -3,6 +3,8 @@ using System.Collections;
 
 public class UnitHarvester : UnitController
 {
+    public int attackPower = 1;
+
     // capacidad de transporte por viaje que la unidad es capaz de cargar
     public int harvestCapacity = 10;
 
@@ -43,6 +45,13 @@ public class UnitHarvester : UnitController
     // última posición a donde se va a dejar los recursos
     // es el punto más cercano de la base a la mina de recursos actual
     private Vector3 lastBasePos = new Vector3();
+
+    public override void Start ()
+    {
+        base.Start();
+
+        basicAttackPower = secondaryAttackPower = attackPower;
+    }
 
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
@@ -214,14 +223,18 @@ public class UnitHarvester : UnitController
         }
     } // Update
 
-    void OnGUI ()
+    public override void OnGUI()
     {
+        base.OnGUI();
+
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 
 		GUI.skin.label.fontSize = 10;
-
+        
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 15, 100, 50),
+            "life" + currentLife.ToString());
 		GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
-		          currentState.ToString());
+		    currentState.ToString());
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 35, 100, 50),
             currentHarvestState.ToString());
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
