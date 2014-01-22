@@ -46,7 +46,7 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 		stream.SendNext(animator.GetFloat("Speed"));
 		stream.SendNext(transform.position);
 		stream.SendNext(transform.rotation);
-		stream.SendNext(attackScript.getDamage());
+		//stream.SendNext(attackScript.getDamage());
 	}
 	else
 	{
