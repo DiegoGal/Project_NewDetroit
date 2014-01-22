@@ -3,19 +3,26 @@ using System.Collections;
 
 public class UnitController : MonoBehaviour
 {
-	public int teamNumber;
+    public int teamNumber;
+    public int maximunLife = 100;
+    protected int currentLife;
+
+    protected int basicAttackPower;
+    protected int secondaryAttackPower;
+
+    protected int attackSelected = 1;
 
     protected enum State
     {
         Iddle,	// reposo
         GoingTo,
-        Harvesting,
+        /*Harvesting,*/
         Attacking
     }
 	protected State currentState = State.Iddle;
     private State lastState = State.Iddle;
 	
-    public float velocity = 5.0f;
+    public float velocity = 3.5f;
     public float rotationVelocity = 10.0f;
     public Vector3 dirMovement = new Vector3();
     private Vector3 destiny = new Vector3();
@@ -23,13 +30,18 @@ public class UnitController : MonoBehaviour
 
     // referencia a la posición de la base de la unidad
     protected Vector3 basePosition = new Vector3();
-
     // referencia a la base
     public BaseController baseController;
 
+    // health bar
+    public Texture2D progressBarEmpty, progressBarFull;
+
     // Use this for initialization
-    void Start ()
+    public virtual void Start ()
     {
+        currentLife = maximunLife;
+        GetComponent<NavMeshAgent>().speed = velocity;
+
         if (destiny == Vector3.zero)
             destiny = transform.position;
     }
@@ -65,6 +77,24 @@ public class UnitController : MonoBehaviour
         }
     }
 
+    public virtual void OnGUI()
+    {
+        // http://answers.unity3d.com/questions/11892/how-would-you-make-an-energy-bar-loading-progress.html
+        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
+        Vector2 size = new Vector2(200.0f, 30.0f);
+
+        // draw the background:
+        GUI.BeginGroup(new Rect(camPos.x, Screen.height - camPos.y, size.x, size.y));
+            GUI.Box(new Rect(0, 0, size.x, size.y), progressBarEmpty);
+
+            // draw the filled-in part:
+            GUI.BeginGroup(new Rect(0, 0, size.x * (float)currentLife / (float)maximunLife, size.y));
+                GUI.Box(new Rect(0, 0, size.x, size.y), progressBarFull);
+            GUI.EndGroup();
+
+        GUI.EndGroup();
+    }
+
     public void SetBasePosition (Vector3 basePosition)
     {
         this.basePosition = basePosition;
@@ -91,6 +121,21 @@ public class UnitController : MonoBehaviour
     public virtual void ArrivedToBase ()
     {
 
+    }
+
+    public bool Damage (int damage)
+    {
+        //Debug.Log("damage");
+        currentLife -= damage;
+        if (currentLife <= 0)
+        {
+            // the unit DIES
+            Destroy(this.gameObject, 0.5f);
+
+            return true;
+        }
+        else
+            return false;
     }
 
 }
