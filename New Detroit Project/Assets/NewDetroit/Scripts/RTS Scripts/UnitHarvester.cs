@@ -58,14 +58,14 @@ public class UnitHarvester : UnitController
             currentHarvestState = HarvestState.None;
             base.RightClickOnSelected(destiny, destTransform);
         }
-        else if (destTransform.name == "ResourcesMine")
+        else if (destTransform.name == "Resources Mine")
         {
 			// actualizar la referencia de la última mina seleccionada
 			currentMine = destTransform;
             // actualizar la posición de la base donde se dejarán los recursos
             float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
                 (currentMine.transform.position.z - basePosition.z));
-            float radius = 6.0f;
+            float radius = 15.0f;
             lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
             lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
             /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);

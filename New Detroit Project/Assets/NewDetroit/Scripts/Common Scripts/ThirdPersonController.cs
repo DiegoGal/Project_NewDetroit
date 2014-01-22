@@ -106,6 +106,11 @@ public class ThirdPersonController : MonoBehaviour
 	//Secondary attack selected
 	private ScondaryAttack secondAttack;
 
+	//Splash particle
+	public GameObject splash; 
+	private bool splashActivated=false;
+	private float splashCD = 1.7f;
+
 	//-----------------------------------------------------------------------------------------------------------------------
 
 
@@ -326,6 +331,19 @@ public class ThirdPersonController : MonoBehaviour
 		{
 			secondAttack = ScondaryAttack.Attack3;
 		}
+
+		if (splashActivated)
+		{
+			if (splashCD <= 0)
+			{
+				splashCD = 1.7f;
+				splashActivated = false;
+			}
+			else
+			{
+				splashCD -= Time.deltaTime;
+			}
+		}
 	}
 
     Vector3 velocity = Vector3.zero;
@@ -394,6 +412,13 @@ public class ThirdPersonController : MonoBehaviour
 					animator.SetBool("isSecondAttack2", true);
 					animator.SetBool("isSecondAttack1", false);
 					animator.SetBool("isSecondAttack3", false);
+
+					//Comprobamos que no ha sido activado el poder para activarlo
+					if (!splashActivated){
+						Object spl = Instantiate(splash,transform.position + new Vector3(0,-2,0),Quaternion.identity);
+						Destroy(spl,1.5f);
+						splashActivated=true;
+					}
 				}
 				else if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack3)
 				{
