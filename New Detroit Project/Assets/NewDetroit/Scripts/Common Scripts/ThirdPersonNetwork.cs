@@ -16,8 +16,6 @@ void Awake()
 	cameraScript = GetComponent<ThirdPersonCamera>();
 	controllerScript = GetComponent<ThirdPersonController>();
 	animator = GetComponent<Animator>();
-	//collideObjectSend = GetComponent<OrcBasicAttack> ().getCollideObject ();
-	//damageCollideSend = GetComponent<OrcBasicAttack> ().getDamage ();
 	//attackScript = GetComponent<OrcBasicAttack> ();
 	
 	if (photonView.isMine)
@@ -25,7 +23,6 @@ void Awake()
 		//MINE: local player, simply enable the local scripts
 		cameraScript.enabled = true;
 		controllerScript.enabled = true;
-		//attackScript.enabled = true;
 	}
 	else
 	{           
@@ -44,15 +41,12 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 	{
 		//We own this player: send the others our data
 		//stream.SendNext((int)controllerScript._characterState);
+		//stream.SendNext(attackScript.getDamage());
 		stream.SendNext(animator.GetBool("isRunning"));
 		stream.SendNext(animator.GetFloat("Speed"));
 		stream.SendNext(transform.position);
 		stream.SendNext(transform.rotation);
-		//stream.SendNext(attack.getCollideObject());
-		//stream.SendNext(attackScript.getDamage());
-		
-		//Update collide object
-		//attack.setCollideObject(null);
+		stream.SendNext(attackScript.getDamage());
 	}
 	else
 	{

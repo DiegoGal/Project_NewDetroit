@@ -169,7 +169,7 @@ public abstract class HeroeController : MonoBehaviour
 		    animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3")) &&
 		    animator.GetBool("isAttacking"))
 		{
-			launchAttack();
+			//launchAttack();
 			if (!attackInstantiate)
 			{
 				this.attackInstantiate = true;
