@@ -14,7 +14,10 @@ public class OrcBasicAttack : MonoBehaviour {
 
 	private int damage; // Damage
 	private GameObject owner; // Owner
-	private Collider collideObject; // collide object
+	//private Collider collideObject; // collide object
+	private bool hasCollided; // Tell us if the attack has collided with something
+	private string nameCollide; // Tell us the name of the collided object
+	private int lifeCollide; // Tell us the life of the collided object
 
 	//==========================
 	//=====    Methods     =====
@@ -46,16 +49,29 @@ public class OrcBasicAttack : MonoBehaviour {
 		this.owner = owner;
 	}
 
-	// Get collide object
-	public Collider getCollideObject()
+	// Get hasCollided
+	public bool getHasCollided()
 	{
-		return this.collideObject;
+		return this.hasCollided;
 	}
 
-	// Set collide object
-	public void setCollideObject(Collider collideObject)
+	// Get the name
+	public string getNameCollide()
 	{
-		this.collideObject = collideObject;
+		return this.nameCollide;
+	}
+
+	// Get the name that de object that has collided and put hasCollided to false
+	public string getNameCollideOnce()
+	{
+		this.hasCollided = false;
+		return this.nameCollide;
+	}
+
+	// Get the life of the collided object
+	public int getLifeCollide()
+	{
+		return lifeCollide;
 	}
 
 	// Get damage
@@ -72,10 +88,10 @@ public class OrcBasicAttack : MonoBehaviour {
 	void Awake () 
 	{
 		this.damage = 50;
-		// The collider is false in the begining
 		this.collider.enabled = false;
-		// Initialize collide object
-		this.collideObject = null;
+		this.hasCollided = false;
+		nameCollide = "";
+		lifeCollide = 0;
 	}
 	
 	// Update is called once per frame
@@ -83,6 +99,7 @@ public class OrcBasicAttack : MonoBehaviour {
 	{
 		//move();
 		if (owner != null)
+		{
 			// If the orc is attacking
 			if (!this.owner.GetComponent<HeroeController> ().getAttackInstantiate())
 			{
@@ -93,14 +110,21 @@ public class OrcBasicAttack : MonoBehaviour {
 			{
 				this.collider.enabled = true; // The collider is desactivated
 			}
+		}
 	}
 
 	//Detect all object that collide with this
-	void OnTriggerStay(Collider collisionInfo) 
+	void OnTriggerEnter(Collider collisionInfo)
 	{
 		GameObject go = collisionInfo.gameObject;
-		go.GetComponent<HeroeController> ().damage (this.damage); // Damage the enemy
-		collideObject = collisionInfo;
-		// Here we have to check that the enemy is not the owner!!!!! <---------------
+		nameCollide = go.name;
+		if (nameCollide != this.owner.name)
+		{
+			HeroeController goHeroeController = go.GetComponent<HeroeController> ();
+			goHeroeController.damage (this.damage); // Damage the enemy
+			hasCollided = true;
+			lifeCollide = goHeroeController.getLife();
+		}
+		// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
 	}
 }

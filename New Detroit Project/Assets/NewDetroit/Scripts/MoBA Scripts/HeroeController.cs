@@ -141,6 +141,16 @@ public abstract class HeroeController : MonoBehaviour
 		this.life -= life;
 	}
 
+	public int getLife()
+	{
+		return this.life;
+	}
+
+	public void setLife(int life)
+	{
+		this.life = life;
+	}
+
 	//================================
 	//=====     Main methods     =====
 	//================================
@@ -165,9 +175,9 @@ public abstract class HeroeController : MonoBehaviour
 	virtual public void Update () {
 		// If the hero is attacking (may be, we should do that in OrcController)
 		if ((animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") ||
-		    animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") ||
-		    animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3")) &&
-		    animator.GetBool("isAttacking"))
+		    	animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") ||
+		    	animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3")) &&
+		    	animator.GetBool("isAttacking"))
 		{
 			//launchAttack();
 			if (!attackInstantiate)

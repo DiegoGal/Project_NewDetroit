@@ -7,16 +7,14 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 ThirdPersonCamera cameraScript;
 ThirdPersonController controllerScript;
 Animator animator;
-//Collider collideObjectSend;
-//int damageCollideSend;
-//OrcBasicAttack attackScript;
+OrcController orcControllerScript;
 
 void Awake()
 {
 	cameraScript = GetComponent<ThirdPersonCamera>();
 	controllerScript = GetComponent<ThirdPersonController>();
 	animator = GetComponent<Animator>();
-	//attackScript = GetComponent<OrcBasicAttack> ();
+	orcControllerScript = GetComponent<OrcController> ();
 	
 	if (photonView.isMine)
 	{
@@ -39,14 +37,37 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 {
 	if (stream.isWriting)
 	{
+		OrcBasicAttack leftAttack = orcControllerScript.leftArm.GetComponent<OrcBasicAttack>(),
+			rightAttack = orcControllerScript.rightArm.GetComponent<OrcBasicAttack>();
 		//We own this player: send the others our data
 		//stream.SendNext((int)controllerScript._characterState);
-		//stream.SendNext(attackScript.getDamage());
 		stream.SendNext(animator.GetBool("isRunning"));
 		stream.SendNext(animator.GetFloat("Speed"));
 		stream.SendNext(transform.position);
 		stream.SendNext(transform.rotation);
-		//stream.SendNext(attackScript.getDamage());
+
+		// if the left arm attack has collided with something
+		if (leftAttack.getHasCollided())
+		{
+			stream.SendNext(leftAttack.getNameCollideOnce()); // Send the name of the object that has been collided with the left arm of an orc.
+			stream.SendNext(leftAttack.getLifeCollide()); // Send the life of the object that has been collided with the left arm of an orc.
+		}
+		else
+		{
+			stream.SendNext(null);
+			stream.SendNext(0);
+		}
+		// if the right arm attack has collided with something
+		if (rightAttack.getHasCollided())
+		{
+			stream.SendNext(rightAttack.getNameCollideOnce()); // Send the name of the object that has been collided with the right arm of an orc.
+			stream.SendNext(rightAttack.getLifeCollide()); // Send the life of the object that has been collided with the right arm of an orc.
+		}
+		else
+		{
+			stream.SendNext(null);
+			stream.SendNext(0);
+		}
 	}
 	else
 	{
@@ -56,8 +77,11 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 		Speed = (float)stream.ReceiveNext();
 		correctPlayerPos = (Vector3)stream.ReceiveNext();
 		correctPlayerRot = (Quaternion)stream.ReceiveNext();
-		//collideObject = (Collider)stream.ReceiveNext();
-		//damageCollide = (int)stream.ReceiveNext();
+
+		nameOrcLA = (string) stream.ReceiveNext(); //Receive the name of the object that has been collided by an orc with his left arm
+		lifeOrcLA = (int) stream.ReceiveNext(); // Receive the life of the object that has been collided by an orc with his left arm
+		nameOrcRA = (string) stream.ReceiveNext(); // Receive the name of the object that has been collided by an orc with his right arm
+		lifeOrcRA = (int) stream.ReceiveNext(); // Receive the life of the object that has been collided by an orc with his right arm
 	}
 }
 
@@ -65,8 +89,10 @@ private bool isRunning;
 private float Speed;
 private Vector3 correctPlayerPos = Vector3.zero; //We lerp towards this
 private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
-private Collider collideObject; //The collide object that we receive
-private int damageCollide; // The damage of the collider
+private string nameOrcLA; // The name of the collide object that an orc have collided from his left arm
+private string nameOrcRA; // The name of the collide object that an orc have collided from his rigth arm
+private int lifeOrcLA; // The life the the collided object from the left arm of an orc
+private int lifeOrcRA; // The life the the collided object from the right arm of an orc
 
 void Update()
 {
@@ -77,11 +103,23 @@ void Update()
 		transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 		animator.SetBool("isRunning",isRunning);
 		animator.SetFloat("Speed",Speed);
-		//if (collideObject != null)
-		//{
-			//GameObject go = collideObject.gameObject;
-			//go.GetComponent<HeroeController>().damage(damageCollide);
-		//}
+		
+		// Update the life of the object that has been collided from an orc with his left arm
+		if (nameOrcLA != null)
+		{
+			GameObject go = GameObject.Find(nameOrcLA);
+			go.GetComponent<HeroeController>().setLife(lifeOrcLA);
+			nameOrcLA = null;
+			// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
+		}
+		// Update the life of the object that has been collided from an orc with his right arm
+		if (nameOrcRA != null)
+		{
+			GameObject go = GameObject.Find(nameOrcRA);
+			go.GetComponent<HeroeController>().setLife(lifeOrcRA);
+			nameOrcRA = null;
+			// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
+		}
 	}
 }
 
