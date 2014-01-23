@@ -15,13 +15,16 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other)
 	{
+        Debug.Log("trigger!");
 		UnitController unit = other.transform.GetComponent<UnitController>();
 		if (unit != null)
 		{
+            Debug.Log("unidad detectada");
 			NeutralTower selfUnit = transform.parent.GetComponent<NeutralTower>();
 			if ( (selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber) )
 			{
-				selfUnit.EnemyEntersInVisionSphere(unit);
+                Debug.Log("unidad enemiga");
+				//selfUnit.EnemyEntersInVisionSphere(unit);
 			}
 		}
 	}
