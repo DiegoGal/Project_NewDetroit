@@ -12,6 +12,15 @@ public enum CharacterState
     Jumping = 4,
 }
 
+public enum HeroeState
+{
+	Iddle,
+	Walk,
+	Run,
+	Attack,
+	SecondaryAttack
+}
+
 public enum ScondaryAttack
 {
 	None,
@@ -38,8 +47,11 @@ public class ThirdPersonController : MonoBehaviour
     public float jumpAnimationSpeed = 1.15f;
     public float landAnimationSpeed = 1.0f;
 
+	//animation.
     private Animator animator;
 
+	//current states of heroe.
+	private HeroeState currentHeroeState;
     public CharacterState _characterState;
 
     // The speed when walking
@@ -105,6 +117,7 @@ public class ThirdPersonController : MonoBehaviour
 
 	//Secondary attack selected
 	private ScondaryAttack secondAttack;
+	private float timerSecondAttack;
 
 	//Splash particle
 	public GameObject splash; 
@@ -149,8 +162,12 @@ public class ThirdPersonController : MonoBehaviour
             Debug.Log("No jump animation found and the character has canJump enabled. Turning off animations.");
         }
 
+		//initialize the current heroe state.
+		currentHeroeState = HeroeState.Iddle;
+
 		// Initial secondary attack (no secondary attack in the beginning).
 		secondAttack = ScondaryAttack.None;
+		timerSecondAttack = 0;
     }
 
     void UpdateSmoothedMovementDirection()
@@ -219,11 +236,14 @@ public class ThirdPersonController : MonoBehaviour
             //_characterState = CharacterState.Idle;
 
 			// Pick speed modifier
-			if (animator.GetBool("isAttacking"))
-			{
+			if (currentHeroeState == HeroeState.Iddle || currentHeroeState == HeroeState.Attack || currentHeroeState == HeroeState.SecondaryAttack)
 				targetSpeed = 0;
-			}
-			else if ( Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
+			else if (currentHeroeState == HeroeState.Walk)
+				targetSpeed = walkSpeed;
+			else if (currentHeroeState == HeroeState.Run)
+				targetSpeed = runSpeed;
+
+			/*else if ( Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
             {
                 targetSpeed *= runSpeed;
                 //_characterState = CharacterState.Running;
@@ -237,7 +257,7 @@ public class ThirdPersonController : MonoBehaviour
             {
                 targetSpeed *= walkSpeed;
                 //_characterState = CharacterState.Walking;
-            }
+            }*/
         
             moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
 
@@ -357,6 +377,46 @@ public class ThirdPersonController : MonoBehaviour
                 lastJumpButtonTime = Time.time;
             }*/
 
+			//update the current heroe state.
+			if (currentHeroeState == HeroeState.SecondaryAttack)
+			{
+				timerSecondAttack += Time.deltaTime;
+				if ((secondAttack == ScondaryAttack.Attack1 && timerSecondAttack >= 3.3) || 
+				    (secondAttack == ScondaryAttack.Attack2 && timerSecondAttack >= 1.633) ||
+				    (secondAttack == ScondaryAttack.Attack3 && timerSecondAttack >= 1.633))
+				{
+					secondAttack = ScondaryAttack.None;
+					currentHeroeState = HeroeState.Iddle;
+				}
+			}
+			else if (Input.GetKey(KeyCode.Space) && secondAttack != ScondaryAttack.None)
+			{
+				currentHeroeState = HeroeState.SecondaryAttack;
+				timerSecondAttack = 0;
+				if (secondAttack == ScondaryAttack.Attack2)
+				{
+					Object spl = Instantiate(splash,transform.position + new Vector3(0,-2,0),Quaternion.identity);
+					Destroy(spl,1.5f);
+					splashActivated = true;
+				}
+			}
+			else if (Input.GetMouseButton(0))
+			{
+				currentHeroeState = HeroeState.Attack;
+			}
+			else if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+			{
+				if (Input.GetKey(KeyCode.LeftShift))
+					currentHeroeState = HeroeState.Run;
+				else
+					currentHeroeState = HeroeState.Walk;
+			}
+			else 
+			{
+				currentHeroeState = HeroeState.Iddle;
+			}
+
+
 			// Update secondary attack
 			UpdateSecondAttack();
 
@@ -401,7 +461,7 @@ public class ThirdPersonController : MonoBehaviour
 				}*/
 
 				// Secondary attack
-				if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack1)
+				/*if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack1)
 				{
 					animator.SetBool("isSecondAttack1", true);
 					animator.SetBool("isSecondAttack2", false);
@@ -431,20 +491,20 @@ public class ThirdPersonController : MonoBehaviour
 					animator.SetBool("isSecondAttack1", false);
 					animator.SetBool("isSecondAttack2", false);
 					animator.SetBool("isSecondAttack3", false);
-				}
+				}*/
 
 				// attacking
-				if (Input.GetMouseButton(0))
+				/*if (Input.GetMouseButton(0))
 				{
 					animator.SetBool ("isAttacking", true);
 				}
 				else
 				{
 					animator.SetBool ("isAttacking", false);
-				}
+				}*/
 
 				//moving
-				if (!animator.GetBool("isAttacking"))
+				/*if (!animator.GetBool("isAttacking"))
 			    {
 					float v = Input.GetAxisRaw("Vertical");
 					float h = Input.GetAxisRaw("Horizontal");
@@ -454,16 +514,53 @@ public class ThirdPersonController : MonoBehaviour
 				else
 				{
 					animator.SetFloat("Speed", 0);
-				}
+				}*/
 
-				//running
-				if (!animator.GetBool("isAttacking") && (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)))
-				{
-					animator.SetBool ("isRunning", true);
-				}
-				else
+				//animate the animator
+				if (currentHeroeState == HeroeState.Iddle)
 				{
 					animator.SetBool ("isRunning", false);
+					animator.SetFloat ("Speed", 0);
+					animator.SetBool ("isAttacking", false);
+					animator.SetBool ("isSecondAttack1", false);
+					animator.SetBool ("isSecondAttack2", false);
+					animator.SetBool ("isSecondAttack3", false);
+				}
+				else if (currentHeroeState == HeroeState.SecondaryAttack)
+				{
+					if (secondAttack == ScondaryAttack.Attack1)
+						animator.SetBool ("isSecondAttack1", true);
+					else if (secondAttack == ScondaryAttack.Attack2)
+						animator.SetBool ("isSecondAttack2", true);
+					else
+						animator.SetBool ("isSecondAttack3", true);
+				}
+				else if (currentHeroeState == HeroeState.Attack)
+				{
+					animator.SetFloat ("Speed", 0);
+					animator.SetBool ("isRunning", false);
+					animator.SetBool ("isAttacking", true);
+					animator.SetBool ("isSecondAttack1", false);
+					animator.SetBool ("isSecondAttack2", false);
+					animator.SetBool ("isSecondAttack3", false);
+				}
+				else if (currentHeroeState == HeroeState.Walk)
+				{
+					animator.SetFloat ("Speed", 1);
+					animator.SetBool ("isRunning", false);
+					animator.SetBool ("isAttacking", false);
+					animator.SetBool ("isSecondAttack1", false);
+					animator.SetBool ("isSecondAttack2", false);
+					animator.SetBool ("isSecondAttack3", false);
+				}
+				else if (currentHeroeState == HeroeState.Run)
+				{
+					animator.SetFloat ("Speed", 1);
+					animator.SetBool ("isRunning", true);
+					animator.SetBool ("isAttacking", false);
+					animator.SetBool ("isSecondAttack1", false);
+					animator.SetBool ("isSecondAttack2", false);
+					animator.SetBool ("isSecondAttack3", false);
 				}
 				
 				//_animation.SetFloat("Direction", h, DirectionDampTime, Time.deltaTime);
