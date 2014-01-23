@@ -4,11 +4,11 @@ using System.Collections;
 public class UnitController : MonoBehaviour
 {
     public int teamNumber;
-    public int maximunLife = 100;
-    protected int currentLife;
+    public float maximunLife = 100.0f;
+    protected float currentLife;
 
-    protected int basicAttackPower;
-    protected int secondaryAttackPower;
+    protected float basicAttackPower;
+    protected float secondaryAttackPower;
 
     protected int attackSelected = 1;
 
@@ -81,7 +81,7 @@ public class UnitController : MonoBehaviour
     {
         // http://answers.unity3d.com/questions/11892/how-would-you-make-an-energy-bar-loading-progress.html
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
-        Vector2 size = new Vector2(200.0f, 30.0f);
+        /*Vector2 size = new Vector2(48.0f, 12.0f);
 
         // draw the background:
         GUI.BeginGroup(new Rect(camPos.x, Screen.height - camPos.y, size.x, size.y));
@@ -92,7 +92,13 @@ public class UnitController : MonoBehaviour
                 GUI.Box(new Rect(0, 0, size.x, size.y), progressBarFull);
             GUI.EndGroup();
 
-        GUI.EndGroup();
+        GUI.EndGroup();*/
+
+        // rectángulo donde se dibujará la barra
+        Rect rect1 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 14.0f, 20.0f, 4.0f);
+        GUI.DrawTexture(rect1, progressBarEmpty);
+        Rect rect2 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 14.0f, 20.0f * (currentLife/maximunLife), 4.0f);
+        GUI.DrawTexture(rect2, progressBarFull);
     }
 
     public void SetBasePosition (Vector3 basePosition)
@@ -123,7 +129,7 @@ public class UnitController : MonoBehaviour
 
     }
 
-    public bool Damage (int damage)
+    public bool Damage (float damage)
     {
         //Debug.Log("damage");
         currentLife -= damage;
