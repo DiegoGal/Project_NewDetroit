@@ -22,7 +22,7 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 			NeutralTower selfUnit = transform.parent.GetComponent<NeutralTower>();
 			if ( (selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber) )
 			{
-				selfUnit.EnemyEntersInVisionSphere((GameObject)other.transform.gameObject);
+				selfUnit.EnemyEntersInVisionSphere(unit);
 			}
 		}
 	}
@@ -35,7 +35,7 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 			NeutralTower selfUnit = transform.parent.GetComponent<NeutralTower>();
 			if ( (selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber) )
 			{
-				selfUnit.EnemyExitsInVisionSphere((GameObject)other.transform.gameObject);
+				selfUnit.EnemyExitsInVisionSphere(unit);
 			}
 		}
 	}
