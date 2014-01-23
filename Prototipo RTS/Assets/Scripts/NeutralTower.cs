@@ -35,41 +35,61 @@ public class NeutralTower : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		
 		switch (currentTowerState) 
 		{
-			case TowerState.Neutral:
-					
-
-				break;
-
-			case TowerState.Iddle:
-				
-
-				break;
-
-			case TowerState.Searching:
+		case TowerState.Neutral:
 			
-				break;
-
-			case TowerState.ShootingEnemies:
+			
 			break;
-				
+			
+		case TowerState.Iddle:
+			
+			if (unitsSearched.Count > 0)
+				currentTowerState = TowerState.Searching; 
+			break;
+			
+		case TowerState.Searching:
+			
+			if (unitsSearched.Count == 0)
+				currentTowerState = TowerState.Iddle;
+			break;
+			
+		case TowerState.ShootingEnemies:
+			
+			if (unitsSearched.Count == 0)
+				currentTowerState = TowerState.Iddle;
+			break;	
 		}
 	}
 	
-	public void EnemyEntersInVisionSphere (UnitController enemy)
+	public void EnemyEntersInVisionSphere (GameObject enemy)
 	{
-
-		if (currentTowerState == TowerState.Iddle) 
+		
+		if (unitsSearched.Count == 0) 
 		{
 			currentTowerState = TowerState.Searching;
-			//unitsSearched.Add(enemy);
-			Debug.Log ("Enemy entered in TOWER");
+			unitsSearched.Add(enemy);
+			Debug.Log ("First Enemy entered in TOWER");
 		}
 		else
 		{
-		
+			if (!unitsSearched.Contains(enemy))
+			{
+				unitsSearched.Add(enemy);
+				Debug.Log ("New Enemy entered in TOWER");
+			}
+			else
+			{
+				Debug.Log ("Enemy already entered in TOWER");
+			}
+			
 		}
+	}
+	
+	public void EnemyExitsInVisionSphere (GameObject enemy)
+	{
+		unitsSearched.Remove(enemy);
+		Debug.Log ("Enemy exits the TOWER");
 	}
 }
