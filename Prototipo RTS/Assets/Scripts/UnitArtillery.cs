@@ -28,6 +28,8 @@ public class UnitArtillery : UnitController
     }
     protected ArtilleryState currentArtilleryState = ArtilleryState.None;
 
+    public GameObject shotParticles;
+
     protected List<UnitController> enemiesInside;
     protected UnitController lastEnemyAttacked;
 
@@ -103,6 +105,11 @@ public class UnitArtillery : UnitController
                 {
                     // Attack!
                     Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
+                    // emite some particles:
+                    GameObject particles = (GameObject)Instantiate(shotParticles,
+                        transform.FindChild("Weapon").FindChild("gun barrel").transform.position,
+                        transform.rotation);
+                    Destroy(particles, 0.4f);
                     // first we check if the enemy is now alive
                     if (lastEnemyAttacked.Damage(basicAttackPower))
                     {

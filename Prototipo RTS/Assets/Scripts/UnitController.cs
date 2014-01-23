@@ -12,6 +12,9 @@ public class UnitController : MonoBehaviour
 
     protected int attackSelected = 1;
 
+    // the blood particles for when the unit has been hit
+    public GameObject bloodParticles;
+
     protected enum State
     {
         Iddle,	// reposo
@@ -132,6 +135,11 @@ public class UnitController : MonoBehaviour
     {
         //Debug.Log("damage");
         currentLife -= damage;
+        // blood!
+        GameObject blood = (GameObject)Instantiate(bloodParticles,
+            transform.position + transform.forward, transform.rotation);
+        Destroy(blood, 0.4f);
+        
         if (currentLife <= 0)
         {
             // the unit DIES, comunicate it to the army manager
