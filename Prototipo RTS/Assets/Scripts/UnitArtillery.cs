@@ -3,12 +3,20 @@ using System.Collections.Generic;
 
 public class UnitArtillery : UnitController
 {
-    protected enum Mode
+    protected enum WaitMode
     {
         Defensive,
         Ofensive
     }
-    protected Mode mode = Mode.Defensive;
+    protected WaitMode waitMode = WaitMode.Defensive;
+
+    protected enum MoveMode
+    {
+        Idle,
+        Moving,
+        MovingAttacking
+    }
+    protected MoveMode moveMode = MoveMode.Idle;
 
     protected enum ArtilleryState
     {
@@ -63,6 +71,9 @@ public class UnitArtillery : UnitController
                         
                         Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
                         //Debug.Log("origen: " + transform.position + ". destino: " + enemiesInside[i].transform.position + ". direccion: " + fwd);
+                        fwd.Normalize();
+                        Vector3 aux = new Vector3(fwd.x * transform.position.x, fwd.y * transform.position.y, fwd.z * transform.position.z);
+                        Debug.DrawLine(transform.position, aux /** visionSphereRadious*/, Color.blue, 0.3f);
                         RaycastHit myHit;
                         if (Physics.Raycast(transform.position, fwd, out myHit, visionSphereRadious))
                         {
@@ -128,9 +139,9 @@ public class UnitArtillery : UnitController
 
                 break;
         }
-	}
+	} // Update
 
-    public override void OnGUI()
+    public override void OnGUI ()
     {
         base.OnGUI();
 
@@ -138,14 +149,16 @@ public class UnitArtillery : UnitController
 
         GUI.skin.label.fontSize = 10;
 
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 15, 100, 50),
-            "life" + currentLife.ToString());
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
             currentState.ToString());
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 35, 100, 50),
             currentArtilleryState.ToString());
-    }
+    } // OnGUI
 
+    public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
+    {
+        base.RightClickOnSelected(destiny, destTransform);
+    } // RightClickOnSelected
     public void EnemyEntersInVisionSphere (UnitController enemy)
     {
         //Debug.Log("ALERT");

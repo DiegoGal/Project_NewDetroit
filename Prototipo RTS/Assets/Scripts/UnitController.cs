@@ -79,7 +79,6 @@ public class UnitController : MonoBehaviour
 
     public virtual void OnGUI()
     {
-        // http://answers.unity3d.com/questions/11892/how-would-you-make-an-energy-bar-loading-progress.html
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
         /*Vector2 size = new Vector2(48.0f, 12.0f);
 
@@ -135,8 +134,8 @@ public class UnitController : MonoBehaviour
         currentLife -= damage;
         if (currentLife <= 0)
         {
-            // the unit DIES
-            Destroy(this.gameObject, 0.5f);
+            // the unit DIES, comunicate it to the army manager
+            baseController.armyController.UnitDied(this.gameObject);
 
             return true;
         }

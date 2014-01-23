@@ -635,4 +635,16 @@ public class ArmyController : MonoBehaviour
         this.resources += resources;
     }
 
+    public void UnitDied (GameObject unit)
+    {
+        // delete the unit from the unit list
+        unitList.Remove(unit);
+        // if the unit is selected, remove it from the selected list
+        if (unitSelectedList.Contains(unit))
+            unitSelectedList.Remove(unit);
+
+        // destroy the unit from the game
+        Destroy(unit, 0.5f);
+    }
+
 } // class ArmyController
