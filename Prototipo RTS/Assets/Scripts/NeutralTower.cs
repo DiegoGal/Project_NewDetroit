@@ -1,28 +1,196 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NeutralTower : MonoBehaviour {
+
+	public int teamNumber;
 
 	private enum TowerState
 	{
 		Neutral,
 		Iddle,
-		Searching, // espera hasta que halla hueco en la mina
+		Alert, // espera hasta que halla hueco en la mina
 		ShootingEnemies
 	}
 
+	private TowerState currentTowerState = TowerState.Iddle;
+
+	private float alertHitTimer = 1.0f;
+	private float alertHitTimerAux = 0.0f;
+
+	// the vision radious of the tower
+	protected float visionSphereRadious;
+
+	private float attackCadenceAux = 0.0f;
+
+	// frecuencia (en segundos) de ataque primario
+	public float attackCadence = 1.0f;
+
+	protected UnitController lastEnemyAttacked;
+
+	public GameObject shotParticles;
+
+	private float attackPower = 10;
+
+	//Conts for Tower conquest
+	private float contConq1 = 0.0f;
+	private float contConq2 = 0.0f;
+
+	//Constant when the tower is conquered
+	private const float finalCont = 100.0f;
+
+	//Constant wfor the life of the tower
+	private const float totalLife = 100.0f;
+
+	//The life of the Tower
+	private float life = 100.0f;
+
+	private List<UnitController> enemiesInside = new List<UnitController>();
+
 	// Use this for initialization
 	void Start () {
-		
+
+		visionSphereRadious = transform.FindChild("TowerVisionSphere").GetComponent<SphereCollider>().radius;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
+		switch (currentTowerState) 
+		{
+		case TowerState.Neutral:
+			
+			
+			break;
+			
+		case TowerState.Iddle:
+
+			if (life <= 0.0f)
+				currentTowerState = TowerState.Neutral;
+			if (enemiesInside.Count > 0)
+				currentTowerState = TowerState.Alert; 
+			break;
+			
+		case TowerState.Alert:
+
+			if (alertHitTimerAux <= 0)
+			{
+				// launch a ray for each enemy inside the vision sphere
+				int count = enemiesInside.Count;
+				for (int i = 0; i < count; i++)
+				{
+					Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.2f);
+					
+					Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
+					//Debug.Log("origen: " + transform.position + ". destino: " + enemiesInside[i].transform.position + ". direccion: " + fwd);
+					fwd.Normalize();
+					Vector3 aux = new Vector3(fwd.x * transform.position.x, fwd.y * transform.position.y, fwd.z * transform.position.z);
+					Debug.DrawLine(transform.position, aux /** visionSphereRadious*/, Color.blue, 0.3f);
+					RaycastHit myHit;
+					if (Physics.Raycast(transform.position, fwd, out myHit, visionSphereRadious))
+					{
+						// the ray has hit something
+						UnitController enemy = myHit.transform.GetComponent<UnitController>();
+						if ( (enemy != null) && (enemy == enemiesInside[i]) )
+						{
+							// this "something" is the enemy we are looking for...
+							//Debug.Log("LE HE DADO!!!");
+							lastEnemyAttacked = enemy;
+							alertHitTimerAux = alertHitTimer;
+							currentTowerState = TowerState.ShootingEnemies;
+						}
+					}
+				}
+				// reset the timer
+				alertHitTimerAux = alertHitTimer;
+			}
+			else
+			{
+				alertHitTimerAux -= Time.deltaTime;
+			}
+
+
+
+
+			if (enemiesInside.Count == 0)
+				currentTowerState = TowerState.Iddle;
+			if (life <= 0.0f)
+				currentTowerState = TowerState.Neutral;
+			break;
+			
+		case TowerState.ShootingEnemies:
+
+
+			if (attackCadenceAux <= 0.0f)
+			{
+				// Attack!
+				Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
+				// emite some particles:
+				GameObject particles = (GameObject)Instantiate(shotParticles,
+				                                               transform.position,
+				                                               transform.rotation);
+				Destroy(particles, 0.4f);
+				// first we check if the enemy is now alive
+				//UnitController lastEnemyAtackedUC = (UnitController)lastEnemyAttacked;
+				if (lastEnemyAttacked.Damage(attackPower))
+				{
+					// the enemy died, time to reset the lastEnemyAttacked reference
+					enemiesInside.Remove(lastEnemyAttacked);
+					if (enemiesInside.Count == 0)
+					{
+						lastEnemyAttacked = null;
+						// no more enemies, change the state
+						currentTowerState = TowerState.Iddle;
+					}
+					else
+					{
+						currentTowerState = TowerState.Alert;
+					}
+				}
+				// reset the timer
+				attackCadenceAux = attackCadence;
+			}
+			else
+				attackCadenceAux -= Time.deltaTime;
+
+
+
+
+			if (life <= 0.0f)
+				currentTowerState = TowerState.Neutral;
+			if (enemiesInside.Count == 0)
+				currentTowerState = TowerState.Iddle;
+			break;	
+		}
 	}
 	
 	public void EnemyEntersInVisionSphere (UnitController enemy)
 	{
-		Debug.Log("TOWER SEARCHING");
+		
+		if (enemiesInside.Count == 0) 
+		{
+			enemiesInside.Add(enemy);
+			Debug.Log ("First Enemy entered in TOWER");
+		}
+		else
+		{
+			if (!enemiesInside.Contains(enemy))
+			{
+				enemiesInside.Add(enemy);
+				Debug.Log ("New Enemy entered in TOWER");
+			}
+			else
+			{
+				Debug.Log ("Enemy already entered in TOWER");
+			}
+			
+		}
+	}
+	
+	public void EnemyExitsInVisionSphere (UnitController enemy)
+	{
+		enemiesInside.Remove(enemy);
+		Debug.Log ("Enemy exits the TOWER");
 	}
 }

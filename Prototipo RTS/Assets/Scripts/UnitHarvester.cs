@@ -52,92 +52,7 @@ public class UnitHarvester : UnitController
 
         basicAttackPower = secondaryAttackPower = attackPower;
     }
-
-    public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
-    {
-        if (destTransform.name == "WorldFloor")
-        {
-            Debug.Log("ojo suelo!");
-            if (currentHarvestState == HarvestState.GoingToChopPosition ||
-                currentHarvestState == HarvestState.Choping)
-                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
-            else if (currentHarvestState == HarvestState.Waiting)
-                currentMine.GetComponent<CResources>().LeaveQueue(this);
-            nextHarvestState = HarvestState.None;
-            currentHarvestState = HarvestState.None;
-            base.RightClickOnSelected(destiny, destTransform);
-        }
-        else if (destTransform.name == "ResourcesMine")
-        {
-			// actualizar la referencia de la última mina seleccionada
-			currentMine = destTransform;
-            // actualizar la posición de la base donde se dejarán los recursos
-            float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
-                (currentMine.transform.position.z - basePosition.z));
-            float radius = 6.0f;
-            lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
-            lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
-            /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.position = lastBasePos;
-            cube.renderer.material.color = Color.red;
-            cube.transform.parent = this;*/
-
-			Debug.Log("vamos pa la mina!");
-			if (currentHarvestState == HarvestState.None)
-			{
-				// actualizar el estado de cosecha
-				if (resourcesLoaded == harvestCapacity)
-				{
-					// si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
-					currentHarvestState = HarvestState.ReturningToBase;
-                    GoTo(lastBasePos);
-					nextHarvestState = HarvestState.None;
-				}
-				else
-				{
-					// todavía tiene capacidad para más recursos, se le envía a la mina
-					currentHarvestState = HarvestState.GoingToMine;
-					GoTo(destiny);
-					nextHarvestState = HarvestState.Choping;
-				}
-			}
-			else if (currentHarvestState == HarvestState.ReturningToBase)
-			{
-				// actualizar el estado de cosecha
-				if (resourcesLoaded == harvestCapacity)
-				{
-					// si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
-					currentHarvestState = HarvestState.ReturningToBase;
-                    GoTo(lastBasePos);
-					nextHarvestState = HarvestState.GoingToMine;
-				}
-				else
-				{
-					// todavía tiene capacidad para más recursos, se le envía a la mina
-					currentHarvestState = HarvestState.GoingToMine;
-					GoTo(destiny);
-					nextHarvestState = HarvestState.Choping;
-				}
-			}
-        }
-        else if (destTransform.name == "Army Base")
-        {
-            // vuelve a la base, si tiene recursos los deja
-			if (resourcesLoaded > 0)
-			{
-				Debug.Log("vuelta a la base");
-				currentHarvestState = HarvestState.ReturningToBase;
-                GoTo(lastBasePos);
-			}
-			else
-			{
-				currentHarvestState = HarvestState.None;
-                GoTo(basePosition);
-			}
-			nextHarvestState = HarvestState.None;
-        }
-    }
-
+    
     public override void Update()
     {
         switch (currentHarvestState)
@@ -231,8 +146,6 @@ public class UnitHarvester : UnitController
 
 		GUI.skin.label.fontSize = 10;
         
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 15, 100, 50),
-            "life" + currentLife.ToString());
 		GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
 		    currentState.ToString());
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 35, 100, 50),
@@ -240,6 +153,91 @@ public class UnitHarvester : UnitController
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
             "resources: " + resourcesLoaded);
     }
+
+    public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
+    {
+        if (destTransform.name == "WorldFloor")
+        {
+            //Debug.Log("ojo suelo!");
+            if (currentHarvestState == HarvestState.GoingToChopPosition ||
+                currentHarvestState == HarvestState.Choping)
+                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
+            else if (currentHarvestState == HarvestState.Waiting)
+                currentMine.GetComponent<CResources>().LeaveQueue(this);
+            nextHarvestState = HarvestState.None;
+            currentHarvestState = HarvestState.None;
+            base.RightClickOnSelected(destiny, destTransform);
+        }
+        else if (destTransform.name == "ResourcesMine")
+        {
+            // actualizar la referencia de la última mina seleccionada
+            currentMine = destTransform;
+            // actualizar la posición de la base donde se dejarán los recursos
+            float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
+                (currentMine.transform.position.z - basePosition.z));
+            float radius = 6.0f;
+            lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
+            lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
+            /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.position = lastBasePos;
+            cube.renderer.material.color = Color.red;
+            cube.transform.parent = this;*/
+
+            Debug.Log("vamos pa la mina!");
+            if (currentHarvestState == HarvestState.None)
+            {
+                // actualizar el estado de cosecha
+                if (resourcesLoaded == harvestCapacity)
+                {
+                    // si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
+                    currentHarvestState = HarvestState.ReturningToBase;
+                    GoTo(lastBasePos);
+                    nextHarvestState = HarvestState.None;
+                }
+                else
+                {
+                    // todavía tiene capacidad para más recursos, se le envía a la mina
+                    currentHarvestState = HarvestState.GoingToMine;
+                    GoTo(destiny);
+                    nextHarvestState = HarvestState.Choping;
+                }
+            }
+            else if (currentHarvestState == HarvestState.ReturningToBase)
+            {
+                // actualizar el estado de cosecha
+                if (resourcesLoaded == harvestCapacity)
+                {
+                    // si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
+                    currentHarvestState = HarvestState.ReturningToBase;
+                    GoTo(lastBasePos);
+                    nextHarvestState = HarvestState.GoingToMine;
+                }
+                else
+                {
+                    // todavía tiene capacidad para más recursos, se le envía a la mina
+                    currentHarvestState = HarvestState.GoingToMine;
+                    GoTo(destiny);
+                    nextHarvestState = HarvestState.Choping;
+                }
+            }
+        }
+        else if (destTransform.name == "Army Base")
+        {
+            // vuelve a la base, si tiene recursos los deja
+            if (resourcesLoaded > 0)
+            {
+                Debug.Log("vuelta a la base");
+                currentHarvestState = HarvestState.ReturningToBase;
+                GoTo(lastBasePos);
+            }
+            else
+            {
+                currentHarvestState = HarvestState.None;
+                GoTo(basePosition);
+            }
+            nextHarvestState = HarvestState.None;
+        }
+    } // RightClickOnSelected
 
     public void FinishWaiting (Vector3 chopPosition, int chopIndex)
     {

@@ -4,8 +4,8 @@ using System.Collections;
 public class UnitBasicArtillery : UnitArtillery
 {
 
-    public int attackPower1 = 10;
-    public int attackPower2 = 20;
+    public float attackPower1 = 10.0f;
+    public float attackPower2 = 20.0f;
 
 	// Use this for initialization
     public override void Start ()
