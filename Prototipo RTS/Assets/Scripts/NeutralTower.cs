@@ -31,6 +31,9 @@ public class NeutralTower : MonoBehaviour {
 
 	public GameObject shotParticles;
 
+	// health bar
+	public Texture2D progressBarEmpty, progressBarFull;
+
 	private float attackPower = 10;
 
 	//Conts for Tower conquest
@@ -40,11 +43,11 @@ public class NeutralTower : MonoBehaviour {
 	//Constant when the tower is conquered
 	private const float finalCont = 100.0f;
 
-	//Constant wfor the life of the tower
+	//Constant for the life of the tower
 	private const float totalLife = 100.0f;
 
-	//The life of the Tower
-	private float life = 100.0f;
+	//The currentLife of the Tower
+	private float currentLife = 100.0f;
 
 	private List<UnitController> enemiesInside = new List<UnitController>();
 
@@ -66,7 +69,7 @@ public class NeutralTower : MonoBehaviour {
 			
 		case TowerState.Iddle:
 
-			if (life <= 0.0f)
+			if (currentLife <= 0.0f)
 				currentTowerState = TowerState.Neutral;
 			if (enemiesInside.Count > 0)
 				currentTowerState = TowerState.Alert; 
@@ -88,7 +91,7 @@ public class NeutralTower : MonoBehaviour {
 					Vector3 aux = new Vector3(fwd.x * transform.position.x, fwd.y * transform.position.y, fwd.z * transform.position.z);
 					Debug.DrawLine(transform.position, aux /** visionSphereRadious*/, Color.blue, 0.3f);
 					RaycastHit myHit;
-					if (Physics.Raycast(transform.position, fwd, out myHit, visionSphereRadious))
+					if (Physics.Raycast(transform.position, fwd, out myHit))
 					{
 						// the ray has hit something
 						UnitController enemy = myHit.transform.GetComponent<UnitController>();
@@ -109,26 +112,22 @@ public class NeutralTower : MonoBehaviour {
 			{
 				alertHitTimerAux -= Time.deltaTime;
 			}
-
-
-
-
 			if (enemiesInside.Count == 0)
 				currentTowerState = TowerState.Iddle;
-			if (life <= 0.0f)
+			if (currentLife <= 0.0f)
 				currentTowerState = TowerState.Neutral;
 			break;
 			
 		case TowerState.ShootingEnemies:
-
 
 			if (attackCadenceAux <= 0.0f)
 			{
 				// Attack!
 				Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
 				// emite some particles:
+				Vector3 auxPos = new Vector3(transform.position.x, 10.0f + transform.position.y,transform.position.z);
 				GameObject particles = (GameObject)Instantiate(shotParticles,
-				                                               transform.position,
+				                                               auxPos,
 				                                               transform.rotation);
 				Destroy(particles, 0.4f);
 				// first we check if the enemy is now alive
@@ -145,6 +144,7 @@ public class NeutralTower : MonoBehaviour {
 					}
 					else
 					{
+						// there are more enemies, we have to see if can be shooted
 						currentTowerState = TowerState.Alert;
 					}
 				}
@@ -153,11 +153,7 @@ public class NeutralTower : MonoBehaviour {
 			}
 			else
 				attackCadenceAux -= Time.deltaTime;
-
-
-
-
-			if (life <= 0.0f)
+			if (currentLife <= 0.0f)
 				currentTowerState = TowerState.Neutral;
 			if (enemiesInside.Count == 0)
 				currentTowerState = TowerState.Iddle;
@@ -192,5 +188,45 @@ public class NeutralTower : MonoBehaviour {
 	{
 		enemiesInside.Remove(enemy);
 		Debug.Log ("Enemy exits the TOWER");
+	}
+
+	public bool Repair (float sum)
+	{
+		if (currentLife < totalLife)
+		{
+			currentLife += sum;
+			if (totalLife > currentLife)
+				currentLife = totalLife;
+		}
+
+		if (currentLife == totalLife)
+		{
+			return false;
+		}
+		else
+			return true;
+
+	}
+
+	public void Damage (float damage)
+	{
+		//Debug.Log("damage");
+		currentLife -= damage;
+		// blood!
+		GameObject blood = (GameObject)Instantiate(shotParticles,
+		                                           transform.position + transform.forward, transform.rotation);
+		Destroy(blood, 0.4f);
+
+	}
+
+	public virtual void OnGUI()
+	{
+		Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
+
+		// rectángulo donde se dibujará la barra
+		Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f, 4.0f);
+		GUI.DrawTexture(rect1, progressBarEmpty);
+		Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f * (currentLife/totalLife), 4.0f);
+		GUI.DrawTexture(rect2, progressBarFull);
 	}
 }
