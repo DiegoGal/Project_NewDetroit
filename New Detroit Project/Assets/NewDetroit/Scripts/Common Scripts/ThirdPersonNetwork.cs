@@ -43,6 +43,10 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 		//stream.SendNext((int)controllerScript._characterState);
 		stream.SendNext(animator.GetBool("isRunning"));
 		stream.SendNext(animator.GetFloat("Speed"));
+		stream.SendNext(animator.GetBool("isAttacking"));
+		stream.SendNext(animator.GetBool("isSecondAttack1"));
+		stream.SendNext(animator.GetBool("isSecondAttack2"));
+		stream.SendNext(animator.GetBool("isSecondAttack3"));
 		stream.SendNext(transform.position);
 		stream.SendNext(transform.rotation);
 
@@ -75,6 +79,10 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 		//controllerScript._characterState = (CharacterState)(int)stream.ReceiveNext();
 		isRunning = (bool)stream.ReceiveNext();
 		Speed = (float)stream.ReceiveNext();
+		isAttacking = (bool)stream.ReceiveNext();
+		isSecondAttack1 = (bool)stream.ReceiveNext();
+		isSecondAttack2 = (bool)stream.ReceiveNext();
+		isSecondAttack3 = (bool)stream.ReceiveNext();
 		correctPlayerPos = (Vector3)stream.ReceiveNext();
 		correctPlayerRot = (Quaternion)stream.ReceiveNext();
 
@@ -87,6 +95,7 @@ void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 
 private bool isRunning;
 private float Speed;
+private bool isAttacking, isSecondAttack1, isSecondAttack2, isSecondAttack3;
 private Vector3 correctPlayerPos = Vector3.zero; //We lerp towards this
 private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
 private string nameOrcLA; // The name of the collide object that an orc have collided from his left arm
@@ -103,6 +112,10 @@ void Update()
 		transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 		animator.SetBool("isRunning",isRunning);
 		animator.SetFloat("Speed",Speed);
+		animator.SetBool("isAttacking", isAttacking);
+		animator.SetBool("isSecondAttack1", isSecondAttack1);
+		animator.SetBool("isSecondAttack2", isSecondAttack2);
+		animator.SetBool("isSecondAttack3", isSecondAttack3);
 		
 		// Update the life of the object that has been collided from an orc with his left arm
 		if (nameOrcLA != null)
