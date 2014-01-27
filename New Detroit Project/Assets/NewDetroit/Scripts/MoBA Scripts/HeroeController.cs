@@ -20,6 +20,8 @@ public abstract class HeroeController : MonoBehaviour
 
 	protected Animator animator; //Animator
 
+	protected bool isMine; // Tell us if that instance if ours or not
+
 	//===========================
 	//=====     Methods     =====
 	//===========================
@@ -151,6 +153,16 @@ public abstract class HeroeController : MonoBehaviour
 		this.life = life;
 	}
 
+	public bool getIsMine()
+	{
+		return this.isMine;
+	}
+
+	public void setIsMine(bool isMine)
+	{
+		this.isMine = isMine;
+	}
+
 	//================================
 	//=====     Main methods     =====
 	//================================
@@ -169,6 +181,8 @@ public abstract class HeroeController : MonoBehaviour
 		animator = GetComponent<Animator> ();
 		if (!animator)
 			Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
+
+		//this.isMine = false;
 	}
 	
 	// Update is called once per frame
@@ -196,6 +210,7 @@ public abstract class HeroeController : MonoBehaviour
 	{
 		Vector3 pos = Camera.main.WorldToScreenPoint (transform.position);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 100, 50), "Vida: " + this.life);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 20, 100, 50), "Mine: " + this.isMine);
 		if (Input.GetMouseButton (1))
 			GUI.Label (new Rect (0, 0, 100, 50), "Attack!!!");
 	}

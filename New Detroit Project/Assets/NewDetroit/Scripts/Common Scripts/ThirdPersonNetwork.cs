@@ -21,6 +21,8 @@ void Awake()
 		//MINE: local player, simply enable the local scripts
 		cameraScript.enabled = true;
 		controllerScript.enabled = true;
+
+		this.orcControllerScript.setIsMine(true);
 	}
 	else
 	{           
@@ -28,6 +30,8 @@ void Awake()
 		
 		controllerScript.enabled = true;
 		controllerScript.isControllable = false;
+
+		this.orcControllerScript.setIsMine(false);
 	}
 
 	gameObject.name = gameObject.name + photonView.viewID;

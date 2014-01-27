@@ -92,13 +92,14 @@ public class OrcBasicAttack : MonoBehaviour {
 		this.hasCollided = false;
 		nameCollide = "";
 		lifeCollide = 0;
+		this.GetComponent<MeshRenderer> ().enabled = false;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		//move();
-		if (owner != null)
+		if (this.owner != null && this.owner.GetComponent<HeroeController> ().getIsMine ())
 		{
 			// If the orc is attacking
 			if (!this.owner.GetComponent<HeroeController> ().getAttackInstantiate())
