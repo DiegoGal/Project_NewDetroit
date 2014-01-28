@@ -383,4 +383,9 @@ public class NeutralTower : MonoBehaviour {
 	{
 		engineerQueue.Remove(unit);
 	}
+
+	public int GetTeamNumber()
+	{
+		return teamNumber;
+	}
 }

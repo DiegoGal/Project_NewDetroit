@@ -23,7 +23,6 @@ public class UnitEngineer : UnitController {
 		Conquering
 	}
 	private EngineerState currentEngineerState = EngineerState.None;
-	private EngineerState nextEngineerState = EngineerState.None;
 	
 	// referencia al item que se está construyendo, conquistando o reparando
 	private Transform currentItem;
@@ -83,7 +82,6 @@ public class UnitEngineer : UnitController {
 					// ha llegado a la posición de extracción
 					Debug.Log("comenzando reparacion!!!!!!!");
 					currentEngineerState = EngineerState.Repairing;
-					nextEngineerState = EngineerState.None;
 				}
 				else
 					base.Update();
@@ -94,7 +92,6 @@ public class UnitEngineer : UnitController {
 					// ha llegado a la posición de extracción
 					Debug.Log("comenzando conquista!!!!!!!!");
 					currentEngineerState = EngineerState.Conquering;
-					nextEngineerState = EngineerState.None;
 				}
 				else
 					base.Update();
@@ -144,7 +141,6 @@ public class UnitEngineer : UnitController {
 				currentItem.GetComponent<NeutralTower>().LeaveEngineerPosition(lastEngineerIndex);
 			else if (currentEngineerState == EngineerState.Waiting)
 				currentItem.GetComponent<NeutralTower>().LeaveQueue(this);
-			nextEngineerState = EngineerState.None;
 			currentEngineerState = EngineerState.None;
 			base.RightClickOnSelected(destiny, destTransform);
 		}
@@ -153,15 +149,23 @@ public class UnitEngineer : UnitController {
 			// actualizar la referencia de la última mina seleccionada
 			currentItem = destTransform;
 
-			Debug.Log("vamos a arreglar copon!");
+
 			if (currentEngineerState == EngineerState.None)
 			{
-
-				// Se va a la torre
-				currentEngineerState = EngineerState.GoingToItem;
-				GoTo(destiny);
-				nextEngineerState = EngineerState.Repairing;
-
+				if (currentItem.GetComponent<NeutralTower>().IsCurrentStateNeutral())
+				{
+					// Se va a la torre
+					Debug.Log("vamos a conquistar copon!");
+					currentEngineerState = EngineerState.GoingToItem;
+					GoTo(destiny);
+				}
+				else if (currentItem.GetComponent<NeutralTower>().GetTeamNumber() == teamNumber)
+				{
+					// Se va a la torre
+					Debug.Log("vamos a arreglar copon!");
+					currentEngineerState = EngineerState.GoingToItem;
+					GoTo(destiny);
+				}
 			}
 		}
 
@@ -190,7 +194,6 @@ public class UnitEngineer : UnitController {
 		{
 			Debug.Log("comenzando la reparacion...");
 			currentEngineerState = EngineerState.Repairing;
-			nextEngineerState = EngineerState.None;
 		}
 	}
 
@@ -201,7 +204,6 @@ public class UnitEngineer : UnitController {
 		{
 			Debug.Log("comenzando la conquista...");
 			currentEngineerState = EngineerState.Conquering;
-			nextEngineerState = EngineerState.None;
 		}
 	}
 }
