@@ -210,7 +210,7 @@ public class ThirdPersonController : MonoBehaviour
             // We store speed and direction seperately,
             // so that when the character stands still we still have a valid forward direction
             // moveDirection is always normalized, and we only update it if there is user input.
-            if (targetDirection != Vector3.zero && !animator.GetBool("isAttacking"))
+            if (targetDirection != Vector3.zero && currentHeroeState != HeroeState.Attack && currentHeroeState != HeroeState.SecondaryAttack) //!animator.GetBool("isAttacking"))
             {
                 // If we are really slow, just snap to the target direction
                 /*if (moveSpeed < walkSpeed * 0.9f && grounded)
@@ -236,8 +236,12 @@ public class ThirdPersonController : MonoBehaviour
             //_characterState = CharacterState.Idle;
 
 			// Pick speed modifier
-			if (currentHeroeState == HeroeState.Iddle || currentHeroeState == HeroeState.Attack || currentHeroeState == HeroeState.SecondaryAttack)
+			if (currentHeroeState == HeroeState.Iddle || 
+			    currentHeroeState == HeroeState.Attack || 
+			    (currentHeroeState == HeroeState.SecondaryAttack && secondAttack != ScondaryAttack.Attack3))
 				targetSpeed = 0;
+			else if (currentHeroeState == HeroeState.SecondaryAttack && secondAttack == ScondaryAttack.Attack3)
+				targetSpeed = 20;
 			else if (currentHeroeState == HeroeState.Walk)
 				targetSpeed = walkSpeed;
 			else if (currentHeroeState == HeroeState.Run)
