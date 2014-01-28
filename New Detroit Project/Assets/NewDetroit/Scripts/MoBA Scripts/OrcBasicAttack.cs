@@ -101,8 +101,8 @@ public class OrcBasicAttack : MonoBehaviour {
 		//move();
 		if (this.owner != null && this.owner.GetComponent<HeroeController> ().getIsMine ())
 		{
-			// If the orc is attacking
-			if (!this.owner.GetComponent<HeroeController> ().getAttackInstantiate())
+			// If the orc is in basic attack
+			if (!this.owner.GetComponent<HeroeController> ().isAttackBasic())
 			{
 				this.collider.enabled = false; // The collider is activated
 			}

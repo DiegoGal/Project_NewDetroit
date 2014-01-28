@@ -7,20 +7,34 @@ public abstract class HeroeController : MonoBehaviour
 	//=====     Attributes     =====
 	//==============================
 
+	// The state of the heroe
+	public enum StateHeroe
+	{
+		Dead, // When is dead
+		Recover, // After dead, he must be recovered
+		IdleWalkRun, // When he is doing nothing but walking or running, or idle
+		AttackBasic // When he is attacking with his basic attack 
+	}
+
 	public GameObject leftArm, rightArm;
 
-	private bool attackInstantiate;
+	protected bool attackInstantiate;
 
-	private const int LEVEL_1_2 = 200,
-					LEVEL_2_3 = 600,
-					LEVEL_3_4 = 1000;
-	protected int life, attackP, attackM, defP, defM, mana, adren, speedMov, level, experience;
-	protected double speedAtt;
-	protected bool hasNewLevel;
+	private const int LEVEL_1_2 = 200, // experience to improve from leve 1 to 2
+					LEVEL_2_3 = 600, // experience to improve from leve 2 to 3
+					LEVEL_3_4 = 1000; // experience to improve from leve 3 to 4
+
+	protected int life, totalLife, attackP, attackM, defP, defM, mana, adren, speedMov, level, experience; //Attributes
+	protected double speedAtt; // Attribute
+	protected bool hasNewLevel; // Tell us if the heroe has evolved  or not
 
 	protected Animator animator; //Animator
 
 	protected bool isMine; // Tell us if that instance if ours or not
+
+	protected Vector3 initialPosition; // The spawn position
+
+	protected StateHeroe state; // The state of the heroe
 
 	//===========================
 	//=====     Methods     =====
@@ -128,36 +142,38 @@ public abstract class HeroeController : MonoBehaviour
 
 	//PUBLIC
 
-	public bool getAttackInstantiate()
+	// Return if the heroe is attacking or not
+	public bool isAttackBasic()
 	{
-		return this.attackInstantiate;
+		//return this.attackInstantiate;
+		return this.state == StateHeroe.AttackBasic;
 	}
 
-	public void setAttackInstantiate(bool attackInstantiate)
-	{
-		this.attackInstantiate = attackInstantiate;
-	}
-
+	// Damage the heroe
 	public void damage(int life)
 	{
 		this.life -= life;
 	}
 
+	// Return the current life of the heroe
 	public int getLife()
 	{
 		return this.life;
 	}
 
+	// Set the lide of the heroe
 	public void setLife(int life)
 	{
 		this.life = life;
 	}
 
+	// Return if the heroe's instantiate is ours or not
 	public bool getIsMine()
 	{
 		return this.isMine;
 	}
 
+	// Set isMine to tell us if the heroe's instantiate is ours or not
 	public void setIsMine(bool isMine)
 	{
 		this.isMine = isMine;
@@ -181,28 +197,22 @@ public abstract class HeroeController : MonoBehaviour
 		animator = GetComponent<Animator> ();
 		if (!animator)
 			Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
-
-		//this.isMine = false;
+		//Set the initial position
+		this.initialPosition = transform.position;
+		//Set the initial state of the heroe
+		this.state = StateHeroe.IdleWalkRun;
 	}
 	
 	// Update is called once per frame
 	virtual public void Update () {
-		// If the hero is attacking (may be, we should do that in OrcController)
-		if ((animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") ||
-		    	animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") ||
-		    	animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3")) &&
-		    	animator.GetBool("isAttacking"))
+		//launchAttack();
+
+		// if is dead
+		if (this.life <= 0) 
 		{
-			//launchAttack();
-			if (!attackInstantiate)
-			{
-				this.attackInstantiate = true;
-			}
-		}
-		// Else if the hero is not attacking
-		else
-		{
-			this.attackInstantiate = false;
+			this.state = StateHeroe.IdleWalkRun; // This must be dead. I have to do that and the recover mode (in the beginning this will be by time)
+			this.transform.position = this.initialPosition;
+			this.life = this.totalLife;
 		}
 	}
 
