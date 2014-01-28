@@ -20,6 +20,7 @@ public class BaseController : MonoBehaviour
     public GameObject harvesterUnit;
 	public GameObject basicArtilleryUnit;
 	public GameObject heavyArtilleryUnit;
+	public GameObject engineerUnit;
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
@@ -89,6 +90,10 @@ public class BaseController : MonoBehaviour
 			case 2: // Heavy Artillery
 				newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
 					as GameObject;
+			break;
+			case 3: // Engineer
+			newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
+				as GameObject;
 			break;
 		}
 

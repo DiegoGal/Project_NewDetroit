@@ -14,7 +14,7 @@ public class NeutralTower : MonoBehaviour {
 		ShootingEnemies
 	}
 
-	private TowerState currentTowerState = TowerState.Iddle;
+	private TowerState currentTowerState = TowerState.Neutral;
 
 	private float alertHitTimer = 1.0f;
 	private float alertHitTimerAux = 0.0f;
@@ -37,8 +37,7 @@ public class NeutralTower : MonoBehaviour {
 	private float attackPower = 10;
 
 	//Conts for Tower conquest
-	private float contConq1 = 0.0f;
-	private float contConq2 = 0.0f;
+	private float[] contConq;
 
 	//Constant when the tower is conquered
 	private const float finalCont = 100.0f;
@@ -47,12 +46,66 @@ public class NeutralTower : MonoBehaviour {
 	private const float totalLife = 100.0f;
 
 	//The currentLife of the Tower
-	private float currentLife = 100.0f;
+	private float currentLife = 0.0f;
 
 	private List<UnitController> enemiesInside = new List<UnitController>();
 
+	//********************************************************************************
+	//For engineers
+	public float distanceToWait = 2.0f;
+	
+	public int numEngineerPositions = 8;
+	private Vector3[] engineerPositions;
+	private bool[] engineerPosTaken;
+	
+	// desplazamiento de los harvest positions
+	public float despPosition = 1.4f;
+
+	// Queue of units harversters which are waiting in the mine
+	private List<UnitEngineer> engineerQueue;
+
+	// for debugging
+	private GameObject[] cubes;
+
+	//********************************************************************************
+
 	// Use this for initialization
 	void Start () {
+	
+		contConq = new float[2];;
+		for (int i = 0; i < 2; i++)
+			contConq[i] = 0;
+
+		distanceToWait += transform.GetComponent<BoxCollider>().size.x + despPosition;
+
+		engineerPositions = new Vector3[numEngineerPositions];
+		engineerPosTaken = new bool[numEngineerPositions];
+		
+		cubes = new GameObject[numEngineerPositions];
+
+		float twoPi = Mathf.PI * 2;
+		Vector3 center = transform.position;
+		for (int i = 0; i < numEngineerPositions; i++)
+		{
+			Vector3 pos = new Vector3
+				(
+					center.x +
+					(transform.GetComponent<BoxCollider>().size.x + despPosition)*Mathf.Sin(i*(twoPi/numEngineerPositions)),
+					0,
+					center.z +
+					(transform.GetComponent<BoxCollider>().size.x + despPosition)*Mathf.Cos(i*(twoPi/numEngineerPositions))
+					);
+			engineerPositions[i] = pos;
+			engineerPosTaken[i] = false;
+			
+			cubes[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			cubes[i].transform.position = pos;
+			Destroy(cubes[i].GetComponent<BoxCollider>());
+			cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+			cubes[i].transform.parent = this.transform;
+		}
+
+		engineerQueue = new List<UnitEngineer>();
 
 		visionSphereRadious = transform.FindChild("TowerVisionSphere").GetComponent<SphereCollider>().radius;
 	}
@@ -164,24 +217,25 @@ public class NeutralTower : MonoBehaviour {
 	public void EnemyEntersInVisionSphere (UnitController enemy)
 	{
 		
-		if (enemiesInside.Count == 0) 
-		{
-			enemiesInside.Add(enemy);
-			Debug.Log ("First Enemy entered in TOWER");
-		}
-		else
-		{
-			if (!enemiesInside.Contains(enemy))
+		if (currentTowerState != TowerState.Neutral)
+			if (enemiesInside.Count == 0) 
 			{
 				enemiesInside.Add(enemy);
-				Debug.Log ("New Enemy entered in TOWER");
+				Debug.Log ("First Enemy entered in TOWER");
 			}
 			else
 			{
-				Debug.Log ("Enemy already entered in TOWER");
+				if (!enemiesInside.Contains(enemy))
+				{
+					enemiesInside.Add(enemy);
+					Debug.Log ("New Enemy entered in TOWER");
+				}
+				else
+				{
+					Debug.Log ("Enemy already entered in TOWER");
+				}
+				
 			}
-			
-		}
 	}
 	
 	public void EnemyExitsInVisionSphere (UnitController enemy)
@@ -190,22 +244,42 @@ public class NeutralTower : MonoBehaviour {
 		Debug.Log ("Enemy exits the TOWER");
 	}
 
+	public bool IsCurrentStateNeutral ()
+	{
+		return currentTowerState == TowerState.Neutral;
+	}
+
 	public bool Repair (float sum)
 	{
 		if (currentLife < totalLife)
 		{
 			currentLife += sum;
-			if (totalLife > currentLife)
+			if (totalLife < currentLife)
 				currentLife = totalLife;
 		}
 
 		if (currentLife == totalLife)
 		{
-			return false;
+			return true;
 		}
 		else
-			return true;
+			return false;
 
+	}
+
+	public bool Conquest (float sum, int team)
+	{
+		contConq[team] += sum;
+		if (contConq[team] >= finalCont) 
+		{
+			for (int i = 0; i < 2; i++)
+				contConq[i] = 0;
+			currentLife = 80.0f;
+			teamNumber = team;
+			currentTowerState = TowerState.Iddle;
+			return true;
+		}
+		return false;
 	}
 
 	public void Damage (float damage)
@@ -219,14 +293,94 @@ public class NeutralTower : MonoBehaviour {
 
 	}
 
+	void OnCollisionEnter (Collision collision)
+	{
+		UnitEngineer unit = collision.transform.GetComponent<UnitEngineer>();
+		if (unit != null)
+		{
+			//Debug.Log("COLISION2");
+			
+			// esto es interesante para instanciar partículas cuando se esté recolectando:
+			/*ContactPoint contact = collision.contacts[0];
+            Quaternion rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
+            Vector3 pos = contact.point;
+            Instantiate(explosionPrefab, pos, rot) as Transform;
+            Destroy(gameObject);*/
+			
+			//unit.StartChoping();
+		}
+	}
+
 	public virtual void OnGUI()
 	{
 		Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 
-		// rectángulo donde se dibujará la barra
-		Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f, 4.0f);
-		GUI.DrawTexture(rect1, progressBarEmpty);
-		Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f * (currentLife/totalLife), 4.0f);
-		GUI.DrawTexture(rect2, progressBarFull);
+		// rectángulo donde se dibujará la barra de conquista
+		if (currentTowerState == TowerState.Neutral) 
+		{
+				Rect rect3 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
+				GUI.DrawTexture (rect3, progressBarEmpty);
+				Rect rect4 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (contConq [0] / finalCont), 4.0f);
+				GUI.DrawTexture (rect4, progressBarFull);
+
+				// rectángulo donde se dibujará la barra de conquista
+				Rect rect5 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 80.0f, 120.0f, 4.0f);
+				GUI.DrawTexture (rect5, progressBarEmpty);
+				Rect rect6 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 80.0f, 120.0f * (contConq [1] / finalCont), 4.0f);
+				GUI.DrawTexture (rect6, progressBarFull);
+		}
+		else
+		{
+			
+			// rectángulo donde se dibujará la barra de vida
+			Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f, 4.0f);
+			GUI.DrawTexture(rect1, progressBarEmpty);
+			Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f * (currentLife/totalLife), 4.0f);
+			GUI.DrawTexture(rect2, progressBarFull);
+
+		}
+	}
+
+	public bool GetEngineerPosition (ref Vector3 pos, ref int index, UnitEngineer unit)
+	{
+		int i = 0; bool found = false;
+		while (!found && (i < numEngineerPositions))
+		{
+			if (!engineerPosTaken[i])
+			{
+				pos = engineerPositions[i];
+				index = i;
+				engineerPosTaken[i] = true;
+				cubes[i].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+				found = true;
+			}
+			else
+				i++;
+		}
+		if (!found)
+			engineerQueue.Add(unit);
+		return found;
+	}
+
+	public void LeaveEngineerPosition (int index)
+	{
+		engineerPosTaken[index] = false;
+		cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+		if (engineerQueue.Count > 0)
+		{
+			UnitEngineer unit = engineerQueue[0];
+			if (currentTowerState == TowerState.Neutral)
+				unit.FinishWaitingToConquest(engineerPositions[index], index);
+			else
+				unit.FinishWaitingToRepair(engineerPositions[index], index);
+			engineerQueue.RemoveAt(0);
+			engineerPosTaken[index] = true;
+			cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+		}
+	}
+	
+	public void LeaveQueue (UnitEngineer unit)
+	{
+		engineerQueue.Remove(unit);
 	}
 }
