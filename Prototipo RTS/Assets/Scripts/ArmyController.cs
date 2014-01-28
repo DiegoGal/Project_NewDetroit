@@ -196,6 +196,16 @@ public class ArmyController : MonoBehaviour
 			}
 		}
 
+		if (Input.GetKeyDown (KeyCode.I))
+		{
+			if (armyBase.GetComponent<CSelectable>().IsSelected())
+			{
+				// spawn a new unit
+				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(3);
+				unitList.Add(newUnit);
+			}
+		}
+
     } // Update ()
 
     void OnGUI ()

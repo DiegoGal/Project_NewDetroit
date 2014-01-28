@@ -62,8 +62,9 @@ public class UnitHarvester : UnitController
                 break;
             case HarvestState.GoingToMine:
                 // si la distancia a la mina es menor que la distanceToWait preguntamos si hay hueco
-                if (Vector3.Distance(transform.position, currentMine.position) <
-                    currentMine.GetComponent<CResources>().distanceToWait)
+				float distMine = Vector3.Distance(transform.position, currentMine.position);
+				float distToWait = currentMine.GetComponent<CResources>().distanceToWait;
+				if (distMine < distToWait)
                 {
                     if ( currentMine.GetComponent<CResources>().GetHarvestPosition(
                             ref lastHarvestPos,
