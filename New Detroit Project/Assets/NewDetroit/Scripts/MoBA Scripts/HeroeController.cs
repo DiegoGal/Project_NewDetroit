@@ -36,11 +36,15 @@ public abstract class HeroeController : MonoBehaviour
 
 	protected StateHeroe state; // The state of the heroe
 
+	private double timeCount; // Time counter
+
 	//===========================
 	//=====     Methods     =====
 	//===========================
 
-	//PROTECTED
+	//=========================
+	//====    PROTECTED    ====
+	//=========================
 
 	// Increment the level
 	protected void levelUp() 
@@ -140,7 +144,46 @@ public abstract class HeroeController : MonoBehaviour
 		//}
 	}
 
-	//PUBLIC
+	// Check dead condition
+	protected void checkDead()
+	{
+		// if is dead
+		if (this.life <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover) 
+		{
+			this.life = 0;
+			this.state = StateHeroe.Dead;
+			this.transform.position = this.initialPosition;
+			this.GetComponent<ThirdPersonController>().enabled = false;
+		}
+	}
+
+	// Check recover condition
+	protected void checkRecover()
+	{
+		if (this.state == StateHeroe.Dead)// && Input.GetKey(KeyCode.R))
+		{
+			this.state = StateHeroe.Recover;
+		}
+		else if (this.state == StateHeroe.Recover)
+		{
+			if (this.timeCount < 1)	this.timeCount += Time.deltaTime;
+			else
+			{
+				this.timeCount = 0;
+				this.life += 20;
+				if (this.life >= this.totalLife)
+				{
+					this.life = this.totalLife;
+					this.state = StateHeroe.IdleWalkRun;
+					this.GetComponent<ThirdPersonController>().enabled = true;
+				}
+			}
+		}
+	}
+
+	//======================
+	//====    PUBLIC    ====
+	//======================
 
 	// Return if the heroe is attacking or not
 	public bool isAttackBasic()
@@ -201,19 +244,16 @@ public abstract class HeroeController : MonoBehaviour
 		this.initialPosition = transform.position;
 		//Set the initial state of the heroe
 		this.state = StateHeroe.IdleWalkRun;
+		//Set the initial value of timeCount
+		this.timeCount = 0;
 	}
 	
 	// Update is called once per frame
 	virtual public void Update () {
 		//launchAttack();
 
-		// if is dead
-		if (this.life <= 0) 
-		{
-			this.state = StateHeroe.IdleWalkRun; // This must be dead. I have to do that and the recover mode (in the beginning this will be by time)
-			this.transform.position = this.initialPosition;
-			this.life = this.totalLife;
-		}
+		checkDead ();
+		checkRecover ();
 	}
 
 	void OnGUI ()
@@ -221,7 +261,6 @@ public abstract class HeroeController : MonoBehaviour
 		Vector3 pos = Camera.main.WorldToScreenPoint (transform.position);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 100, 50), "Vida: " + this.life);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 20, 100, 50), "Mine: " + this.isMine);
-		if (Input.GetMouseButton (1))
-			GUI.Label (new Rect (0, 0, 100, 50), "Attack!!!");
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 40, 100, 50), "State: " + this.state);
 	}
 }
