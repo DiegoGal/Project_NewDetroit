@@ -124,6 +124,11 @@ public class ThirdPersonController : MonoBehaviour
 	private bool splashActivated=false;
 	private float splashCD = 1.7f;
 
+	//Snot particle
+	public GameObject snot; 
+	private bool snotActivated=false;
+	private float snotCD = 1.7f;
+
 	//-----------------------------------------------------------------------------------------------------------------------
 
 
@@ -356,6 +361,19 @@ public class ThirdPersonController : MonoBehaviour
 			secondAttack = ScondaryAttack.Attack3;
 		}
 
+		if (snotActivated)
+		{
+			if (snotCD <= 0)
+			{
+				snotCD = 1.7f;
+				snotActivated = false;
+			}
+			else
+			{
+				snotCD -= Time.deltaTime;
+			}
+		}
+
 		if (splashActivated)
 		{
 			if (splashCD <= 0)
@@ -402,6 +420,14 @@ public class ThirdPersonController : MonoBehaviour
 					Object spl = Instantiate(splash,transform.position + new Vector3(0,-2,0),Quaternion.identity);
 					Destroy(spl,1.5f);
 					splashActivated = true;
+				}
+				else if (secondAttack == ScondaryAttack.Attack1)
+				{
+					transform.Translate(Vector3.forward*2 + Vector3.up);
+					Object snt = Instantiate(snot,transform.localPosition,transform.rotation);
+					transform.Translate(Vector3.back*2 + Vector3.down);
+					Destroy(snt,5f);
+					snotActivated = true;
 				}
 			}
 			else if (Input.GetMouseButton(0))
@@ -626,7 +652,6 @@ public class ThirdPersonController : MonoBehaviour
                         }
                         _animation.CrossFade(walkAnimation.name,0.3f);
                     }
-
                 }
             }
         }*/
