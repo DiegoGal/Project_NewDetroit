@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class NeutralTower : MonoBehaviour {
 
-	public int teamNumber;
+	public int teamNumber = -1;
 
 	private enum TowerState
 	{
@@ -216,26 +216,19 @@ public class NeutralTower : MonoBehaviour {
 	
 	public void EnemyEntersInVisionSphere (UnitController enemy)
 	{
-		
-		if (currentTowerState != TowerState.Neutral)
-			if (enemiesInside.Count == 0) 
+		if (enemiesInside.Count == 0) 
+		{
+			enemiesInside.Add(enemy);
+			Debug.Log ("First Enemy entered in TOWER");
+		}
+		else
+			if (!enemiesInside.Contains(enemy))
 			{
 				enemiesInside.Add(enemy);
-				Debug.Log ("First Enemy entered in TOWER");
+				Debug.Log ("New Enemy entered in TOWER");
 			}
 			else
-			{
-				if (!enemiesInside.Contains(enemy))
-				{
-					enemiesInside.Add(enemy);
-					Debug.Log ("New Enemy entered in TOWER");
-				}
-				else
-				{
-					Debug.Log ("Enemy already entered in TOWER");
-				}
-				
-			}
+				Debug.Log ("Enemy already entered in TOWER");
 	}
 	
 	public void EnemyExitsInVisionSphere (UnitController enemy)
@@ -257,14 +250,10 @@ public class NeutralTower : MonoBehaviour {
 			if (totalLife < currentLife)
 				currentLife = totalLife;
 		}
-
 		if (currentLife == totalLife)
-		{
 			return true;
-		}
 		else
 			return false;
-
 	}
 
 	public bool Conquest (float sum, int team)
@@ -277,6 +266,7 @@ public class NeutralTower : MonoBehaviour {
 			currentLife = 80.0f;
 			teamNumber = team;
 			currentTowerState = TowerState.Iddle;
+			UpdateEnemiesInside(team);
 			return true;
 		}
 		return false;
@@ -318,12 +308,19 @@ public class NeutralTower : MonoBehaviour {
 		// rectángulo donde se dibujará la barra de conquista
 		if (currentTowerState == TowerState.Neutral) 
 		{
-				Rect rect3 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
-				GUI.DrawTexture (rect3, progressBarEmpty);
-				Rect rect4 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (contConq [0] / finalCont), 4.0f);
-				GUI.DrawTexture (rect4, progressBarFull);
+				GUI.skin.label.fontSize = 10;
 
-				// rectángulo donde se dibujará la barra de conquista
+				// Team 0
+				GUI.Label(new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 130.0f, 120.0f, 50),
+			          "Team 0 conquered");
+				Rect rect3 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 110.0f, 120.0f, 4.0f);
+				GUI.DrawTexture (rect3, progressBarEmpty);
+				Rect rect4 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 110.0f, 120.0f * (contConq [0] / finalCont), 4.0f);
+				GUI.DrawTexture (rect4, progressBarFull);
+				
+				// Team 1
+				GUI.Label(new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 50),
+			          "Team 1 conquered");
 				Rect rect5 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 80.0f, 120.0f, 4.0f);
 				GUI.DrawTexture (rect5, progressBarEmpty);
 				Rect rect6 = new Rect (camPos.x - 60.0f, Screen.height - camPos.y - 80.0f, 120.0f * (contConq [1] / finalCont), 4.0f);
@@ -387,5 +384,24 @@ public class NeutralTower : MonoBehaviour {
 	public int GetTeamNumber()
 	{
 		return teamNumber;
+	}
+
+	private void UpdateEnemiesInside(int team)
+	{
+		int max = enemiesInside.Count;
+		int i = 0;
+		int cont = 0;
+		while(cont < max)
+		{
+			UnitController unit = enemiesInside[i].transform.GetComponent<UnitController>();
+			int teamUnit = unit.teamNumber;
+			if (teamUnit == team)
+			{
+				enemiesInside.Remove(unit);
+				i--;
+			}
+			i++;
+			cont++;
+		}
 	}
 }
