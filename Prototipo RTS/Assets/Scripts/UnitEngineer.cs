@@ -47,7 +47,7 @@ public class UnitEngineer : UnitController {
 				base.Update();
 				break;
 			case EngineerState.GoingToItem:
-				// si la distancia al item es menor que la distanceToWait preguntamos si hay hueco
+				// if the distance to the item is less than distanceToWait we ask if there is gap
 				float distItem = Vector3.Distance(transform.position, currentItem.position);
 				float distToWait = currentItem.GetComponent<NeutralTower>().distanceToWait;
 				if (distItem < 10.0f)
@@ -57,7 +57,7 @@ public class UnitEngineer : UnitController {
 						ref lastEngineerIndex,
 						this) )
 					{
-						// hay hueco y tenemos la posicion
+						// there is a gap and we have the position
 						if (currentItem.GetComponent<NeutralTower>().IsCurrentStateNeutral())
 							currentEngineerState = EngineerState.GoingToConquestPosition;
 						else
@@ -79,7 +79,7 @@ public class UnitEngineer : UnitController {
 			case EngineerState.GoingToRepairPosition:
 				if (currentState == State.Iddle)
 				{
-					// ha llegado a la posición de extracción
+					// when it have arrived to the repair position
 					Debug.Log("comenzando reparacion!!!!!!!");
 					currentEngineerState = EngineerState.Repairing;
 				}
@@ -89,7 +89,7 @@ public class UnitEngineer : UnitController {
 			case EngineerState.GoingToConquestPosition:
 				if (currentState == State.Iddle)
 				{
-					// ha llegado a la posición de extracción
+					// when it have arrived to the conquest position
 					Debug.Log("comenzando conquista!!!!!!!!");
 					currentEngineerState = EngineerState.Conquering;
 				}
@@ -102,7 +102,7 @@ public class UnitEngineer : UnitController {
 				if (actualEngineerTime >= engineerTime)
 				{
 					repaired = currentItem.GetComponent<NeutralTower>().Repair(amountPerAction);
-					// Se ha reparado el item
+					// The item has been repaired
 					if (repaired)
 					{
 						Debug.Log("Unidad Reparada");
@@ -117,7 +117,7 @@ public class UnitEngineer : UnitController {
 				if (actualEngineerTime >= engineerTime)
 				{
 					conquest = currentItem.GetComponent<NeutralTower>().Conquest(amountPerAction,teamNumber);
-					// Se ha reparado el item
+					// The item has been conquered
 					if (conquest)
 					{
 						Debug.Log("Unidad Conquistada!");
@@ -148,8 +148,6 @@ public class UnitEngineer : UnitController {
 		{
 			// actualizar la referencia de la última mina seleccionada
 			currentItem = destTransform;
-
-
 			if (currentEngineerState == EngineerState.None)
 			{
 				if (currentItem.GetComponent<NeutralTower>().IsCurrentStateNeutral())

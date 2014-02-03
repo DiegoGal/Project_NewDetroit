@@ -4,8 +4,12 @@ using System.Collections.Generic;
 
 public class NeutralTower : MonoBehaviour {
 
+	// the team number
 	public int teamNumber = -1;
 
+	// the number of teams playing
+	public int teamsPlaying = 1;
+	// enum for the four states of the tower
 	private enum TowerState
 	{
 		Neutral,
@@ -14,19 +18,21 @@ public class NeutralTower : MonoBehaviour {
 		ShootingEnemies
 	}
 
+	// the state of the tower
 	private TowerState currentTowerState = TowerState.Neutral;
-
+	
 	private float alertHitTimer = 1.0f;
 	private float alertHitTimerAux = 0.0f;
 
 	// the vision radious of the tower
 	protected float visionSphereRadious;
 
+	// the attack cadence
 	private float attackCadenceAux = 0.0f;
 
 	// frecuencia (en segundos) de ataque primario
 	public float attackCadence = 1.0f;
-
+	
 	protected UnitController lastEnemyAttacked;
 
 	public GameObject shotParticles;
@@ -34,6 +40,7 @@ public class NeutralTower : MonoBehaviour {
 	// health bar
 	public Texture2D progressBarEmpty, progressBarFull;
 
+	//attack power of the tower
 	private float attackPower = 10;
 
 	//Conts for Tower conquest
@@ -48,17 +55,21 @@ public class NeutralTower : MonoBehaviour {
 	//The currentLife of the Tower
 	private float currentLife = 0.0f;
 
+	//the list of enemies inside the tower vision
 	private List<UnitController> enemiesInside = new List<UnitController>();
 
 	//********************************************************************************
-	//For engineers
+	// For engineers
+
+	// the distance to conquest and repair
 	public float distanceToWait = 2.0f;
-	
+
+	// the number of the engineers that can conquest and repair the tower
 	public int numEngineerPositions = 8;
 	private Vector3[] engineerPositions;
 	private bool[] engineerPosTaken;
 	
-	// desplazamiento de los harvest positions
+	// displacement of the engineer positions
 	public float despPosition = 1.4f;
 
 	// Queue of units engineers which are waiting in the item
@@ -77,15 +88,19 @@ public class NeutralTower : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		contConq = new float[2];
-		actualTimeConquering = new float[2];
-		for (int i = 0; i < 2; i++)
+		// inicialization of the contConq and actualTimeConquering arrays depending of the number of teams playing
+		contConq = new float[teamsPlaying];
+		actualTimeConquering = new float[teamsPlaying];
+		for (int i = 0; i < teamsPlaying; i++)
 		{
 			contConq[i] = 0;
 			actualTimeConquering[i] = 0;
 		}
+
+		// setting of the distance to wait
 		distanceToWait += transform.GetComponent<BoxCollider>().size.x + despPosition;
 
+		// inicialization of the engineerPositions and engineerPosTaken arrays depending of tnumEngineerPositions
 		engineerPositions = new Vector3[numEngineerPositions];
 		engineerPosTaken = new bool[numEngineerPositions];
 		
@@ -113,6 +128,7 @@ public class NeutralTower : MonoBehaviour {
 			cubes[i].transform.parent = this.transform;
 		}
 
+		// inicialization of the engineer queue
 		engineerQueue = new List<UnitEngineer>();
 
 		visionSphereRadious = transform.FindChild("TowerVisionSphere").GetComponent<SphereCollider>().radius;
@@ -125,8 +141,8 @@ public class NeutralTower : MonoBehaviour {
 		{
 		case TowerState.Neutral:
 
-
-			for (int i = 0; i < 2; i++)
+			// we have to see if there are teams that aren't conquering
+			for (int i = 0; i < teamsPlaying; i++)
 			{
 				actualTimeConquering[i] += Time.deltaTime;
 				if (actualTimeConquering[i] > conqueringTime)
@@ -139,8 +155,10 @@ public class NeutralTower : MonoBehaviour {
 			
 		case TowerState.Iddle:
 
+			// we change the state to neutral if the tower dies
 			if (currentLife <= 0.0f)
 				currentTowerState = TowerState.Neutral;
+			// we change the state to Alert if there are enemies inside vision
 			if (enemiesInside.Count > 0)
 				currentTowerState = TowerState.Alert; 
 			break;
@@ -182,14 +200,17 @@ public class NeutralTower : MonoBehaviour {
 			{
 				alertHitTimerAux -= Time.deltaTime;
 			}
+			// we change the state to Iddle if there aren't enemies inside vision
 			if (enemiesInside.Count == 0)
 				currentTowerState = TowerState.Iddle;
+			// we change the state to neutral if the tower dies
 			if (currentLife <= 0.0f)
 				currentTowerState = TowerState.Neutral;
 			break;
 			
 		case TowerState.ShootingEnemies:
 
+			// if it can shoot
 			if (attackCadenceAux <= 0.0f)
 			{
 				// Attack!
@@ -223,16 +244,20 @@ public class NeutralTower : MonoBehaviour {
 			}
 			else
 				attackCadenceAux -= Time.deltaTime;
+			// we change the state to neutral if the tower dies
 			if (currentLife <= 0.0f)
 				currentTowerState = TowerState.Neutral;
+			// we change the state to Iddle if there aren't enemies inside vision
 			if (enemiesInside.Count == 0)
 				currentTowerState = TowerState.Iddle;
 			break;	
 		}
 	}
-	
+
+	// EnemyEntersInVisionSphere is called by the visions spheres
 	public void EnemyEntersInVisionSphere (UnitController enemy)
 	{
+		// Adition of the enemy in the array enemiesInside
 		if (enemiesInside.Count == 0) 
 		{
 			enemiesInside.Add(enemy);
@@ -247,20 +272,24 @@ public class NeutralTower : MonoBehaviour {
 			else
 				Debug.Log ("Enemy already entered in TOWER");
 	}
-	
+
+	// EnemyEntersInVisionSphere is called by the visions spheres
 	public void EnemyExitsInVisionSphere (UnitController enemy)
 	{
+		// Removal of the enemy in the array enemiesInside
 		enemiesInside.Remove(enemy);
 		Debug.Log ("Enemy exits the TOWER");
 	}
-
+	
 	public bool IsCurrentStateNeutral ()
 	{
 		return currentTowerState == TowerState.Neutral;
 	}
 
+	// Repair is called by the engineers
 	public bool Repair (float sum)
 	{
+		// increasement of the towers life
 		if (currentLife < totalLife)
 		{
 			currentLife += sum;
@@ -273,13 +302,14 @@ public class NeutralTower : MonoBehaviour {
 			return false;
 	}
 
+	// Repair is called by the engineers
 	public bool Conquest (float sum, int team)
 	{
 		actualTimeConquering[team] = 0;
 		contConq[team] += sum;
 		if (contConq[team] >= finalCont) 
 		{
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < teamsPlaying; i++)
 				contConq[i] = 0;
 			currentLife = 80.0f;
 			teamNumber = team;
@@ -290,6 +320,7 @@ public class NeutralTower : MonoBehaviour {
 		return false;
 	}
 
+	// It's called when a team isn't repairing and the state is neutral
 	private void lessConquest (int team)
 	{
 		if (contConq[team] > 0)
@@ -362,6 +393,7 @@ public class NeutralTower : MonoBehaviour {
 		}
 	}
 
+
 	public bool GetEngineerPosition (ref Vector3 pos, ref int index, UnitEngineer unit)
 	{
 		int i = 0; bool found = false;
@@ -410,6 +442,7 @@ public class NeutralTower : MonoBehaviour {
 		return teamNumber;
 	}
 
+	// It is called when a team has conquered it. The units of this team have to leave the array enemiesInside
 	private void UpdateEnemiesInside(int team)
 	{
 		int max = enemiesInside.Count;
