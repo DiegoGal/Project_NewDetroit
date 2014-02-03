@@ -61,7 +61,7 @@ public class NeutralTower : MonoBehaviour {
 	// desplazamiento de los harvest positions
 	public float despPosition = 1.4f;
 
-	// Queue of units harversters which are waiting in the mine
+	// Queue of units engineers which are waiting in the item
 	private List<UnitEngineer> engineerQueue;
 
 	// for debugging
@@ -69,13 +69,21 @@ public class NeutralTower : MonoBehaviour {
 
 	//********************************************************************************
 
+	// For decrease the contConq if it is not conquering
+	private float[] actualTimeConquering;
+	private float conqueringTime = 4;
+	private float amountToSubstract = 1;
+
 	// Use this for initialization
 	void Start () {
 	
-		contConq = new float[2];;
+		contConq = new float[2];
+		actualTimeConquering = new float[2];
 		for (int i = 0; i < 2; i++)
+		{
 			contConq[i] = 0;
-
+			actualTimeConquering[i] = 0;
+		}
 		distanceToWait += transform.GetComponent<BoxCollider>().size.x + despPosition;
 
 		engineerPositions = new Vector3[numEngineerPositions];
@@ -116,8 +124,17 @@ public class NeutralTower : MonoBehaviour {
 		switch (currentTowerState) 
 		{
 		case TowerState.Neutral:
-			
-			
+
+
+			for (int i = 0; i < 2; i++)
+			{
+				actualTimeConquering[i] += Time.deltaTime;
+				if (actualTimeConquering[i] > conqueringTime)
+				{
+					lessConquest(i);
+					actualTimeConquering[i] = 0;
+				}
+			}
 			break;
 			
 		case TowerState.Iddle:
@@ -258,6 +275,7 @@ public class NeutralTower : MonoBehaviour {
 
 	public bool Conquest (float sum, int team)
 	{
+		actualTimeConquering[team] = 0;
 		contConq[team] += sum;
 		if (contConq[team] >= finalCont) 
 		{
@@ -270,6 +288,12 @@ public class NeutralTower : MonoBehaviour {
 			return true;
 		}
 		return false;
+	}
+
+	private void lessConquest (int team)
+	{
+		if (contConq[team] > 0)
+			contConq[team] -= amountToSubstract;
 	}
 
 	public void Damage (float damage)
