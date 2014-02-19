@@ -196,12 +196,12 @@ public class ArmyController : MonoBehaviour
 			}
 		}
 
-		if (Input.GetKeyDown (KeyCode.D))
+		if (Input.GetKeyDown (KeyCode.I))
 		{
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
 			{
 				// spawn a new unit
-				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(2);
+				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(3);
 				unitList.Add(newUnit);
 			}
 		}
@@ -232,7 +232,6 @@ public class ArmyController : MonoBehaviour
 
 	private List<Vector3> CalculateMultipleDestiny (Vector3 destiny)
 	{
-		Debug.Log("WAAAAAAAAAAT");
 		List<Vector3> destinyList = new List<Vector3>();
 		double radious = System.Math.Sqrt(unitSelectedList.Count);
 		int truncateRadious = (int)System.Math.Truncate(radious);
@@ -644,6 +643,18 @@ public class ArmyController : MonoBehaviour
     public void IncreaseResources (int resources)
     {
         this.resources += resources;
+    }
+
+    public void UnitDied (GameObject unit)
+    {
+        // delete the unit from the unit list
+        unitList.Remove(unit);
+        // if the unit is selected, remove it from the selected list
+        if (unitSelectedList.Contains(unit))
+            unitSelectedList.Remove(unit);
+
+        // destroy the unit from the game
+        Destroy(unit, 0.5f);
     }
 
 } // class ArmyController

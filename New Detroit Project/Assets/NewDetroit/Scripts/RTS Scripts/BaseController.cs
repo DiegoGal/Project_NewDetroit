@@ -1,7 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
-public class BaseController : Photon.MonoBehaviour
+public class BaseController : MonoBehaviour
 {
 	public int teamNumber;
 
@@ -20,6 +20,7 @@ public class BaseController : Photon.MonoBehaviour
     public GameObject harvesterUnit;
 	public GameObject basicArtilleryUnit;
 	public GameObject heavyArtilleryUnit;
+	public GameObject engineerUnit;
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
@@ -79,16 +80,20 @@ public class BaseController : Photon.MonoBehaviour
 		switch (id)
 		{
 			case 0: // Harvester
-			newUnit = PhotonNetwork.Instantiate(harvesterUnit.name, spawnOrigin, new Quaternion(),0)
+		        newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion())
 					as GameObject;
 			break;
 			case 1: // Basic Artillery
-			newUnit = PhotonNetwork.Instantiate(basicArtilleryUnit.name, spawnOrigin, new Quaternion(),0)
+				newUnit = Instantiate(basicArtilleryUnit, spawnOrigin, new Quaternion())
 					as GameObject;
 			break;
 			case 2: // Heavy Artillery
-			newUnit = PhotonNetwork.Instantiate(heavyArtilleryUnit.name, spawnOrigin, new Quaternion(),0)
+				newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
 					as GameObject;
+			break;
+			case 3: // Engineer
+			newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
+				as GameObject;
 			break;
 		}
 
