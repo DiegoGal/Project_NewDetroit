@@ -30,8 +30,8 @@ public class UnitArtillery : UnitController
 
     public GameObject shotParticles;
 
-    protected List<UnitController> enemiesInside;
-    protected UnitController lastEnemyAttacked;
+	protected List<ControllableCharacter> enemiesInside;
+	protected ControllableCharacter lastEnemyAttacked;
 
     private float alertHitTimer = 1.0f;
     private float alertHitTimerAux = 0.0f;
@@ -49,7 +49,7 @@ public class UnitArtillery : UnitController
     {
         base.Start();
         
-        enemiesInside = new List<UnitController>();
+		enemiesInside = new List<ControllableCharacter>();
         visionSphereRadious = transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius;
     }
 
@@ -80,7 +80,7 @@ public class UnitArtillery : UnitController
                         if (Physics.Raycast(transform.position, fwd, out myHit, visionSphereRadious))
                         {
                             // the ray has hit something
-                            UnitController enemy = myHit.transform.GetComponent<UnitController>();
+							ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
                             if ( (enemy != null) && (enemy = enemiesInside[i]) )
                             {
                                 // this "something" is the enemy we are looking for...
@@ -166,7 +166,7 @@ public class UnitArtillery : UnitController
     {
         base.RightClickOnSelected(destiny, destTransform);
     } // RightClickOnSelected
-    public void EnemyEntersInVisionSphere (UnitController enemy)
+	public void EnemyEntersInVisionSphere (ControllableCharacter enemy)
     {
         //Debug.Log("ALERT");
         enemiesInside.Add(enemy);
@@ -174,7 +174,7 @@ public class UnitArtillery : UnitController
         alertHitTimerAux = 0.0f;
     }
 
-    public void EnemyLeavesVisionSphere (UnitController enemy)
+	public void EnemyLeavesVisionSphere (ControllableCharacter enemy)
     {
         enemiesInside.Remove(enemy);
         if (enemiesInside.Count == 0)

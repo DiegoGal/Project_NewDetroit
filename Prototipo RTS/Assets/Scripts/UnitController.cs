@@ -1,12 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UnitController : MonoBehaviour
+public class UnitController : ControllableCharacter
 {
-    public int teamNumber;
-    public float maximunLife = 100.0f;
-    protected float currentLife;
-
+    
     protected float basicAttackPower;
     protected float secondaryAttackPower;
 
@@ -30,11 +27,6 @@ public class UnitController : MonoBehaviour
     public Vector3 dirMovement = new Vector3();
     private Vector3 destiny = new Vector3();
     protected float destinyThreshold = 1.0f;
-
-    // referencia a la posición de la base de la unidad
-    protected Vector3 basePosition = new Vector3();
-    // referencia a la base
-    public BaseController baseController;
 
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
@@ -103,16 +95,6 @@ public class UnitController : MonoBehaviour
         GUI.DrawTexture(rect2, progressBarFull);
     }
 
-    public void SetBasePosition (Vector3 basePosition)
-    {
-        this.basePosition = basePosition;
-    }
-
-    public void SetArmyBase (BaseController baseController)
-    {
-        this.baseController = baseController;
-    }
-
     public void GoTo (Vector3 destiny)
     {
         this.destiny = destiny;
@@ -131,10 +113,10 @@ public class UnitController : MonoBehaviour
 
     }
 
-    public bool Damage (float damage)
+    public override bool Damage (float damage)
     {
-        //Debug.Log("damage");
-        currentLife -= damage;
+        base.Damage(damage);
+
         // blood!
         GameObject blood = (GameObject)Instantiate(bloodParticles,
             transform.position + transform.forward, transform.rotation);

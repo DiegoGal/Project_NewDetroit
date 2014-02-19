@@ -16,10 +16,10 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 	void OnTriggerEnter (Collider other)
 	{
         Debug.Log("trigger!");
-		UnitController unit = other.transform.GetComponent<UnitController>();
+		ControllableCharacter unit = other.transform.GetComponent<ControllableCharacter>();
 		if (unit != null)
 		{
-			NeutralTower selfUnit = transform.parent.GetComponent<NeutralTower>();
+			TowerNeutral selfUnit = transform.parent.GetComponent<TowerNeutral>();
 			if ( (selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber) )
 			{
 				selfUnit.EnemyEntersInVisionSphere(unit);
@@ -29,10 +29,10 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 
 	void OnTriggerExit (Collider other)
 	{
-		UnitController unit = other.transform.GetComponent<UnitController>();
+		ControllableCharacter unit = other.transform.GetComponent<ControllableCharacter>();
 		if (unit != null)
 		{
-			NeutralTower selfUnit = transform.parent.GetComponent<NeutralTower>();
+			TowerNeutral selfUnit = transform.parent.GetComponent<TowerNeutral>();
 			if ( (selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber) )
 			{
 				selfUnit.EnemyExitsInVisionSphere(unit);

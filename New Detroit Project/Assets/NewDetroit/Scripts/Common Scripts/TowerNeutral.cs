@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class NeutralTower : MonoBehaviour {
+public class TowerNeutral : MonoBehaviour {
 
 	// the team number
 	public int teamNumber = -1;
@@ -33,7 +33,7 @@ public class NeutralTower : MonoBehaviour {
 	// frecuencia (en segundos) de ataque primario
 	public float attackCadence = 1.0f;
 	
-	protected UnitController lastEnemyAttacked;
+	protected ControllableCharacter lastEnemyAttacked;
 
 	public GameObject shotParticles;
 
@@ -56,7 +56,7 @@ public class NeutralTower : MonoBehaviour {
 	private float currentLife = 0.0f;
 
 	//the list of enemies inside the tower vision
-	private List<UnitController> enemiesInside = new List<UnitController>();
+	private List<ControllableCharacter> enemiesInside = new List<ControllableCharacter>();
 
 	//********************************************************************************
 	// For engineers
@@ -182,7 +182,7 @@ public class NeutralTower : MonoBehaviour {
 					if (Physics.Raycast(transform.position, fwd, out myHit))
 					{
 						// the ray has hit something
-						UnitController enemy = myHit.transform.GetComponent<UnitController>();
+						ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
 						if ( (enemy != null) && (enemy == enemiesInside[i]) )
 						{
 							// this "something" is the enemy we are looking for...
@@ -222,7 +222,7 @@ public class NeutralTower : MonoBehaviour {
 				                                               transform.rotation);
 				Destroy(particles, 0.4f);
 				// first we check if the enemy is now alive
-				//UnitController lastEnemyAtackedUC = (UnitController)lastEnemyAttacked;
+				//ControllableCharacter lastEnemyAtackedUC = (ControllableCharacter)lastEnemyAttacked;
 				if (lastEnemyAttacked.Damage(attackPower))
 				{
 					// the enemy died, time to reset the lastEnemyAttacked reference
@@ -255,7 +255,7 @@ public class NeutralTower : MonoBehaviour {
 	}
 
 	// EnemyEntersInVisionSphere is called by the visions spheres
-	public void EnemyEntersInVisionSphere (UnitController enemy)
+	public void EnemyEntersInVisionSphere (ControllableCharacter enemy)
 	{
 		// Adition of the enemy in the array enemiesInside
 		if (enemiesInside.Count == 0) 
@@ -274,7 +274,7 @@ public class NeutralTower : MonoBehaviour {
 	}
 
 	// EnemyEntersInVisionSphere is called by the visions spheres
-	public void EnemyExitsInVisionSphere (UnitController enemy)
+	public void EnemyExitsInVisionSphere (ControllableCharacter enemy)
 	{
 		// Removal of the enemy in the array enemiesInside
 		enemiesInside.Remove(enemy);
@@ -450,7 +450,7 @@ public class NeutralTower : MonoBehaviour {
 		int cont = 0;
 		while(cont < max)
 		{
-			UnitController unit = enemiesInside[i].transform.GetComponent<UnitController>();
+			ControllableCharacter unit = enemiesInside[i].transform.GetComponent<ControllableCharacter>();
 			int teamUnit = unit.teamNumber;
 			if (teamUnit == team)
 			{

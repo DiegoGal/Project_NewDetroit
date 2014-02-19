@@ -18,7 +18,7 @@ public class CTriggerVisionSphere : MonoBehaviour
 
     void OnTriggerEnter (Collider other)
     {
-        UnitController unit = other.transform.GetComponent<UnitController>();
+		ControllableCharacter unit = other.transform.GetComponent<ControllableCharacter>();
         if (unit != null)
         {
             UnitArtillery selfUnit = transform.parent.GetComponent<UnitArtillery>();
@@ -31,7 +31,7 @@ public class CTriggerVisionSphere : MonoBehaviour
 
     void OnTriggerExit (Collider other)
     {
-        UnitController unit = other.transform.GetComponent<UnitController>();
+		ControllableCharacter unit = other.transform.GetComponent<ControllableCharacter>();
         if (unit != null)
         {
             UnitArtillery selfUnit = transform.parent.GetComponent<UnitArtillery>();

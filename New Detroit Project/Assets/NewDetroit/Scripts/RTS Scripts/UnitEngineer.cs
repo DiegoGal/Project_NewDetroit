@@ -49,16 +49,16 @@ public class UnitEngineer : UnitController {
 			case EngineerState.GoingToItem:
 				// if the distance to the item is less than distanceToWait we ask if there is gap
 				float distItem = Vector3.Distance(transform.position, currentItem.position);
-				float distToWait = currentItem.GetComponent<NeutralTower>().distanceToWait;
+				float distToWait = currentItem.GetComponent<TowerNeutral>().distanceToWait;
 				if (distItem < 10.0f)
 				{
-				if ( currentItem.GetComponent<NeutralTower>().GetEngineerPosition(
+				if ( currentItem.GetComponent<TowerNeutral>().GetEngineerPosition(
 						ref lastEngineerPos,
 						ref lastEngineerIndex,
 						this) )
 					{
 						// there is a gap and we have the position
-						if (currentItem.GetComponent<NeutralTower>().IsCurrentStateNeutral())
+						if (currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral())
 							currentEngineerState = EngineerState.GoingToConquestPosition;
 						else
 							currentEngineerState = EngineerState.GoingToRepairPosition;
@@ -101,7 +101,7 @@ public class UnitEngineer : UnitController {
 				bool repaired = false;
 				if (actualEngineerTime >= engineerTime)
 				{
-					repaired = currentItem.GetComponent<NeutralTower>().Repair(amountPerAction);
+					repaired = currentItem.GetComponent<TowerNeutral>().Repair(amountPerAction);
 					// The item has been repaired
 					if (repaired)
 					{
@@ -116,7 +116,7 @@ public class UnitEngineer : UnitController {
 				bool conquest = false;
 				if (actualEngineerTime >= engineerTime)
 				{
-					conquest = currentItem.GetComponent<NeutralTower>().Conquest(amountPerAction,teamNumber);
+					conquest = currentItem.GetComponent<TowerNeutral>().Conquest(amountPerAction,teamNumber);
 					// The item has been conquered
 					if (conquest)
 					{
@@ -138,26 +138,26 @@ public class UnitEngineer : UnitController {
 			    currentEngineerState == EngineerState.Repairing ||
 			    currentEngineerState == EngineerState.GoingToConquestPosition ||
 			    currentEngineerState == EngineerState.Conquering)
-				currentItem.GetComponent<NeutralTower>().LeaveEngineerPosition(lastEngineerIndex);
+				currentItem.GetComponent<TowerNeutral>().LeaveEngineerPosition(lastEngineerIndex);
 			else if (currentEngineerState == EngineerState.Waiting)
-				currentItem.GetComponent<NeutralTower>().LeaveQueue(this);
+				currentItem.GetComponent<TowerNeutral>().LeaveQueue(this);
 			currentEngineerState = EngineerState.None;
 			base.RightClickOnSelected(destiny, destTransform);
 		}
-		else if (destTransform.name == "NeutralTower")
+		else if (destTransform.name == "TowerNeutral")
 		{
 			// actualizar la referencia de la última mina seleccionada
 			currentItem = destTransform;
 			if (currentEngineerState == EngineerState.None)
 			{
-				if (currentItem.GetComponent<NeutralTower>().IsCurrentStateNeutral())
+				if (currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral())
 				{
 					// Se va a la torre
 					Debug.Log("vamos a conquistar copon!");
 					currentEngineerState = EngineerState.GoingToItem;
 					GoTo(destiny);
 				}
-				else if (currentItem.GetComponent<NeutralTower>().GetTeamNumber() == teamNumber)
+				else if (currentItem.GetComponent<TowerNeutral>().GetTeamNumber() == teamNumber)
 				{
 					// Se va a la torre
 					Debug.Log("vamos a arreglar copon!");
