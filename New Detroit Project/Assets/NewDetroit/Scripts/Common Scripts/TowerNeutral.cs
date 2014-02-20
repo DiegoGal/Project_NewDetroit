@@ -297,12 +297,15 @@ public class TowerNeutral : MonoBehaviour {
 				currentLife = totalLife;
 		}
 		if (currentLife == totalLife)
+		{
+			LeaveAllEngineerPositions ();
 			return true;
+		}
 		else
 			return false;
 	}
 
-	// Repair is called by the engineers
+	// Conquest is called by the engineers
 	public bool Conquest (float sum, int team)
 	{
 		actualTimeConquering[team] = 0;
@@ -315,6 +318,7 @@ public class TowerNeutral : MonoBehaviour {
 			teamNumber = team;
 			currentTowerState = TowerState.Iddle;
 			UpdateEnemiesInside(team);
+			LeaveAllEngineerPositions();
 			return true;
 		}
 		return false;
@@ -393,7 +397,6 @@ public class TowerNeutral : MonoBehaviour {
 		}
 	}
 
-
 	public bool GetEngineerPosition (ref Vector3 pos, ref int index, UnitEngineer unit)
 	{
 		int i = 0; bool found = false;
@@ -415,10 +418,19 @@ public class TowerNeutral : MonoBehaviour {
 		return found;
 	}
 
+	public void LeaveAllEngineerPositions ()
+	{
+		for (int i = 0; i < numEngineerPositions; i++)
+		{
+			LeaveEngineerPosition(i);
+		}
+	}
+
 	public void LeaveEngineerPosition (int index)
 	{
 		engineerPosTaken[index] = false;
 		cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+		// If there are more engineers waiting 
 		if (engineerQueue.Count > 0)
 		{
 			UnitEngineer unit = engineerQueue[0];

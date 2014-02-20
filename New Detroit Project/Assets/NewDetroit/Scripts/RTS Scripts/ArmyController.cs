@@ -156,7 +156,7 @@ public class ArmyController : MonoBehaviour
 				{
 					//Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
 					List<Vector3> destinyList;
-					destinyList = CalculateMultipleDestiny(destiny);
+					destinyList = SwarmAlgorithm(destiny);
 					int i = 0;
 					foreach (GameObject u in unitSelectedList)
 					{
@@ -230,7 +230,7 @@ public class ArmyController : MonoBehaviour
         }
     } // OnGUI()
 
-	private List<Vector3> CalculateMultipleDestiny (Vector3 destiny)
+	private List<Vector3> SwarmAlgorithm (Vector3 destiny)
 	{
 		List<Vector3> destinyList = new List<Vector3>();
 		double radious = System.Math.Sqrt(unitSelectedList.Count);

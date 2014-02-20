@@ -10,12 +10,13 @@ public class UnitEngineer : UnitController {
 	private float actualEngineerTime = 0;
 	
 	// cantidad de construccion, conquista y/o reparacion por unidad de recolección
-	public int amountPerAction = 2;
+	public int amountPerAction = 4;
 
 	private enum EngineerState
 	{
 		None,
-		GoingToItem,
+		GoingToRepairItem,
+		GoingToConquerableItem,
 		Waiting, // espera hasta que halla hueco en el item
 		GoingToConquestPosition,
 		GoingToRepairPosition,
@@ -46,22 +47,43 @@ public class UnitEngineer : UnitController {
 			case EngineerState.None:
 				base.Update();
 				break;
-			case EngineerState.GoingToItem:
+			case EngineerState.GoingToRepairItem:
 				// if the distance to the item is less than distanceToWait we ask if there is gap
 				float distItem = Vector3.Distance(transform.position, currentItem.position);
 				float distToWait = currentItem.GetComponent<TowerNeutral>().distanceToWait;
 				if (distItem < 10.0f)
 				{
-				if ( currentItem.GetComponent<TowerNeutral>().GetEngineerPosition(
+					if ( currentItem.GetComponent<TowerNeutral>().GetEngineerPosition(
+							ref lastEngineerPos,
+							ref lastEngineerIndex,
+							this) )
+						{
+							// there is a gap and we have the position
+							currentEngineerState = EngineerState.GoingToRepairPosition;
+							base.GoTo(lastEngineerPos);
+						}
+						else
+						{
+							currentEngineerState = EngineerState.Waiting;
+							GetComponent<NavMeshAgent>().destination = transform.position;
+						}
+				}
+				else
+					base.Update();
+				break;
+			case EngineerState.GoingToConquerableItem:
+				// if the distance to the item is less than distanceToWait we ask if there is gap
+				distItem = Vector3.Distance(transform.position, currentItem.position);
+				distToWait = currentItem.GetComponent<TowerNeutral>().distanceToWait;
+				if (distItem < 10.0f)
+				{
+					if ( currentItem.GetComponent<TowerNeutral>().GetEngineerPosition(
 						ref lastEngineerPos,
 						ref lastEngineerIndex,
 						this) )
 					{
 						// there is a gap and we have the position
-						if (currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral())
-							currentEngineerState = EngineerState.GoingToConquestPosition;
-						else
-							currentEngineerState = EngineerState.GoingToRepairPosition;
+						currentEngineerState = EngineerState.GoingToConquestPosition;
 						base.GoTo(lastEngineerPos);
 					}
 					else
@@ -154,14 +176,14 @@ public class UnitEngineer : UnitController {
 				{
 					// Se va a la torre
 					Debug.Log("vamos a conquistar copon!");
-					currentEngineerState = EngineerState.GoingToItem;
+					currentEngineerState = EngineerState.GoingToConquerableItem;
 					GoTo(destiny);
 				}
 				else if (currentItem.GetComponent<TowerNeutral>().GetTeamNumber() == teamNumber)
 				{
 					// Se va a la torre
-					Debug.Log("vamos a arreglar copon!");
-					currentEngineerState = EngineerState.GoingToItem;
+					Debug.Log("vamos a arreglar carayo!");
+					currentEngineerState = EngineerState.GoingToRepairItem;
 					GoTo(destiny);
 				}
 			}
@@ -187,8 +209,8 @@ public class UnitEngineer : UnitController {
 
 	public void StartRepairing ()
 	{
-		// cuando llegue a la mina pasar el estado a Choping
-		if (currentEngineerState == EngineerState.GoingToItem)
+		// cuando llegue al item pasar a Repairing
+		if (currentEngineerState == EngineerState.GoingToRepairItem)
 		{
 			Debug.Log("comenzando la reparacion...");
 			currentEngineerState = EngineerState.Repairing;
@@ -198,7 +220,7 @@ public class UnitEngineer : UnitController {
 	public void StartConquering ()
 	{
 		// cuando llegue a la mina pasar el estado a Choping
-		if (currentEngineerState == EngineerState.GoingToItem)
+		if (currentEngineerState == EngineerState.GoingToConquerableItem)
 		{
 			Debug.Log("comenzando la conquista...");
 			currentEngineerState = EngineerState.Conquering;
