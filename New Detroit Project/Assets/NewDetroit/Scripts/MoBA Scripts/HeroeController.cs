@@ -17,6 +17,8 @@ public abstract class HeroeController : MonoBehaviour
 	}
 
 	public GameObject leftArm, rightArm;
+	public Texture2D 	textureLifePositive, 
+						textureLifeNegative;
 
 	protected bool attackInstantiate;
 
@@ -262,5 +264,12 @@ public abstract class HeroeController : MonoBehaviour
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 100, 50), "Vida: " + this.life);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 20, 100, 50), "Mine: " + this.isMine);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 40, 100, 50), "State: " + this.state);
+
+		float positiveLife = (float) this.life / this.totalLife; // percentage of positive life
+		float negativeLife = 1 - positiveLife; //percentage of negative life
+		Rect rectanglePositive = new Rect (pos.x - 50, pos.y - 150, 100 * positiveLife, 10);
+		Rect rectangleNegative = new Rect (pos.x - 50 + 100 * positiveLife, pos.y - 150, 100 * negativeLife, 10);
+		GUI.DrawTexture (rectanglePositive, textureLifePositive); 
+		GUI.DrawTexture (rectangleNegative, textureLifeNegative); 
 	}
 }

@@ -75,7 +75,7 @@ public class OrcController : HeroeController
 	public override void Start ()
 	{
 		base.Start ();
-		this.life = 375;
+		this.life = 200;
 		this.attackP = 30;
 		this.attackM = 25;
 		this.speedAtt = 0.9f;
@@ -84,7 +84,7 @@ public class OrcController : HeroeController
 		this.mana = 175;
 		this.adren = 150;
 		this.speedMov = 50;
-		this.totalLife = this.life;
+		this.totalLife = 375;
 	}
 
 	// Update is called once per frame
