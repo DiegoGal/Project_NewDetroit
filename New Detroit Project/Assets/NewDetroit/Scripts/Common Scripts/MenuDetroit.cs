@@ -18,7 +18,7 @@ public class MenuDetroit : MonoBehaviour
 
     public static readonly string SceneNameMenu = "Menu";
 
-	public static readonly string SceneNameGame = "Union";
+	public static readonly string SceneNameGame = "NewDetroit";
 
     public void Awake()
     {
