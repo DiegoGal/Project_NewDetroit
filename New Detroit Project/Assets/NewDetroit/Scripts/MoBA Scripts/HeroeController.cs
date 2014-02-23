@@ -260,16 +260,27 @@ public abstract class HeroeController : MonoBehaviour
 
 	void OnGUI ()
 	{
+		// labels for debug
 		Vector3 pos = Camera.main.WorldToScreenPoint (transform.position);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 100, 50), "Vida: " + this.life);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 20, 100, 50), "Mine: " + this.isMine);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 40, 100, 50), "State: " + this.state);
+		//-------------------------------------------------------------------------------------------------
+		// Life
+		float distance = Vector3.Distance (transform.position, Camera.main.transform.position); // real distance from camera
+		float lengthLife = this.GetComponent<ThirdPersonCamera> ().distance / distance; // percentage of the distance
+		// Position of the life in the screen
+		Vector3 posLifeScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+		posLifeScene.y += 2f;
+		Vector3 posLife = Camera.main.WorldToScreenPoint (posLifeScene);
 
 		float positiveLife = (float) this.life / this.totalLife; // percentage of positive life
 		float negativeLife = 1 - positiveLife; //percentage of negative life
-		Rect rectanglePositive = new Rect (pos.x - 50, pos.y - 150, 100 * positiveLife, 10);
-		Rect rectangleNegative = new Rect (pos.x - 50 + 100 * positiveLife, pos.y - 150, 100 * negativeLife, 10);
-		GUI.DrawTexture (rectanglePositive, textureLifePositive); 
-		GUI.DrawTexture (rectangleNegative, textureLifeNegative); 
+		
+		Rect rectanglePositive = new Rect (posLife.x - 50 * lengthLife, Screen.height - posLife.y, 100 * positiveLife * lengthLife, 10 * lengthLife);
+		Rect rectangleNegative = new Rect (posLife.x - 50 * lengthLife + 100 * positiveLife * lengthLife, Screen.height - posLife.y, 
+		                                   100 * negativeLife * lengthLife, 10 * lengthLife);
+		GUI.DrawTexture (rectanglePositive, textureLifePositive);
+		GUI.DrawTexture (rectangleNegative, textureLifeNegative);
 	}
 }
