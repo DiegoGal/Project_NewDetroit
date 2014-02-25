@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BaseController : MonoBehaviour
+public class BaseController : Photon.MonoBehaviour
 {
 	public int teamNumber;
 
@@ -80,19 +80,19 @@ public class BaseController : MonoBehaviour
 		switch (id)
 		{
 			case 0: // Harvester
-		        newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion())
+			newUnit = PhotonNetwork.Instantiate("UnitHarvester", spawnOrigin, new Quaternion(),0)
 					as GameObject;
 			break;
 			case 1: // Basic Artillery
-				newUnit = Instantiate(basicArtilleryUnit, spawnOrigin, new Quaternion())
+			newUnit = PhotonNetwork.Instantiate("UnitBasicArtillery", spawnOrigin, new Quaternion(),0)
 					as GameObject;
 			break;
 			case 2: // Heavy Artillery
-				newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
+			newUnit = PhotonNetwork.Instantiate("UnitHeavyArtillery", spawnOrigin, new Quaternion(),0)
 					as GameObject;
 			break;
 			case 3: // Engineer
-			newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
+			newUnit = PhotonNetwork.Instantiate("UnitEngineer", spawnOrigin, new Quaternion(),0)
 				as GameObject;
 			break;
 		}
