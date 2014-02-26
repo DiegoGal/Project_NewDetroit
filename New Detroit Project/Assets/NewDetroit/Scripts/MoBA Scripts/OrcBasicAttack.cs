@@ -121,10 +121,14 @@ public class OrcBasicAttack : MonoBehaviour {
 		nameCollide = go.name;
 		if (nameCollide != this.owner.name)
 		{
-			HeroeController goHeroeController = go.GetComponent<HeroeController> ();
-			goHeroeController.damage (this.damage); // Damage the enemy
+			ControllableCharacter goControllableCharacter = go.GetComponent<ControllableCharacter> ();
+			if (goControllableCharacter == null) return;
+			if (goControllableCharacter.Damage (this.damage)) // Damage the enemy and check if it is dead
+			{
+				this.owner.GetComponent<HeroeController>().experienceUp(goControllableCharacter.getExperienceGived());
+			}
 			hasCollided = true;
-			lifeCollide = goHeroeController.getLife();
+			lifeCollide = (int)goControllableCharacter.getLife();
 		}
 		// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
 	}

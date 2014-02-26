@@ -11,7 +11,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 	ThirdPersonController controllerScript;
 	Animator animator;
 
-	private OrcController orcControllerScript;
+	private HeroeController heroeControlScript;
 
 	//============================
 	//====    MAIN METHODS    ====
@@ -22,7 +22,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		cameraScript = GetComponent<ThirdPersonCamera>();
 		controllerScript = GetComponent<ThirdPersonController>();
 		animator = GetComponent<Animator>();
-		orcControllerScript = GetComponent<OrcController> ();
+		heroeControlScript = GetComponent<HeroeController> ();
 		
 		if (photonView.isMine)
 		{
@@ -30,7 +30,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			cameraScript.enabled = true;
 			controllerScript.enabled = true;
 
-			this.orcControllerScript.setIsMine(true);
+			this.heroeControlScript.setIsMine(true);
 		}
 		else
 		{           
@@ -39,7 +39,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			controllerScript.enabled = true;
 			controllerScript.isControllable = false;
 
-			this.orcControllerScript.setIsMine(false);
+			this.heroeControlScript.setIsMine(false);
 		}
 
 		gameObject.name = gameObject.name + photonView.viewID;
@@ -49,8 +49,6 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 	{
 		if (stream.isWriting)
 		{
-			OrcBasicAttack leftAttack = orcControllerScript.leftArm.GetComponent<OrcBasicAttack>(),
-				rightAttack = orcControllerScript.rightArm.GetComponent<OrcBasicAttack>();
 			//We own this player: send the others our data
 			//stream.SendNext((int)controllerScript._characterState);
 			stream.SendNext(animator.GetBool("isRunning"));
@@ -62,27 +60,34 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			stream.SendNext(transform.position);
 			stream.SendNext(transform.rotation);
 
-			// if the left arm attack has collided with something
-			if (leftAttack.getHasCollided())
+			if (heroeControlScript.getType() == HeroeController.TypeHeroe.Orc)
 			{
-				stream.SendNext(leftAttack.getNameCollideOnce()); // Send the name of the object that has been collided with the left arm of an orc.
-				stream.SendNext(leftAttack.getLifeCollide()); // Send the life of the object that has been collided with the left arm of an orc.
-			}
-			else
-			{
-				stream.SendNext(null);
-				stream.SendNext(0);
-			}
-			// if the right arm attack has collided with something
-			if (rightAttack.getHasCollided())
-			{
-				stream.SendNext(rightAttack.getNameCollideOnce()); // Send the name of the object that has been collided with the right arm of an orc.
-				stream.SendNext(rightAttack.getLifeCollide()); // Send the life of the object that has been collided with the right arm of an orc.
-			}
-			else
-			{
-				stream.SendNext(null);
-				stream.SendNext(0);
+				OrcController orcControlScript = this.GetComponent<OrcController>();
+				OrcBasicAttack	leftAttack = orcControlScript.leftArm.GetComponent<OrcBasicAttack>(),
+								rightAttack = orcControlScript.rightArm.GetComponent<OrcBasicAttack>();
+
+				// if the left arm attack has collided with something
+				if (leftAttack.getHasCollided())
+				{
+					stream.SendNext(leftAttack.getNameCollideOnce()); // Send the name of the object that has been collided with the left arm of an orc.
+					stream.SendNext(leftAttack.getLifeCollide()); // Send the life of the object that has been collided with the left arm of an orc.
+				}
+				else
+				{
+					stream.SendNext(null);
+					stream.SendNext(0);
+				}
+				// if the right arm attack has collided with something
+				if (rightAttack.getHasCollided())
+				{
+					stream.SendNext(rightAttack.getNameCollideOnce()); // Send the name of the object that has been collided with the right arm of an orc.
+					stream.SendNext(rightAttack.getLifeCollide()); // Send the life of the object that has been collided with the right arm of an orc.
+				}
+				else
+				{
+					stream.SendNext(null);
+					stream.SendNext(0);
+				}
 			}
 		}
 		else

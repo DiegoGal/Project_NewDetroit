@@ -16,6 +16,8 @@ public class OrcController : HeroeController
 					IN_SPEED_MOV = 5;
 	private const double IN_SPEED_ATT = 0.1f;
 
+	public GameObject leftArm, rightArm;
+
 
 	//===========================
 	//=====     Methods     =====
@@ -75,7 +77,7 @@ public class OrcController : HeroeController
 	public override void Start ()
 	{
 		base.Start ();
-		this.life = 375;
+		this.currentLife = 375;
 		this.attackP = 30;
 		this.attackM = 25;
 		this.speedAtt = 0.9f;
@@ -84,7 +86,14 @@ public class OrcController : HeroeController
 		this.mana = 175;
 		this.adren = 150;
 		this.speedMov = 50;
-		this.totalLife = 375;
+		this.maximunLife = 375;
+
+		//Set the type of heroe
+		this.type = TypeHeroe.Orc;
+
+		//Set the owner in the basic attack
+		this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
+		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 	}
 
 	// Update is called once per frame
