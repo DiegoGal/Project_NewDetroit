@@ -12,7 +12,8 @@ public class CSelectable : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-		origColor = this.renderer.material.color;
+        if (this.renderer != null)
+		    origColor = this.renderer.material.color;
 		selected = false;
 	}
 	
@@ -25,13 +26,15 @@ public class CSelectable : MonoBehaviour
 	public void SetSelected ()
 	{
 		selected = true;
-		this.renderer.material.color = selectColor;
+        if (this.renderer != null)
+		    this.renderer.material.color = selectColor;
 	}
 	
 	public void SetDeselect ()
 	{
 		selected = false;
-		this.renderer.material.color = origColor;
+        if (this.renderer != null)
+		    this.renderer.material.color = origColor;
 	}
 	
 	public void SetSelected (bool selected)
