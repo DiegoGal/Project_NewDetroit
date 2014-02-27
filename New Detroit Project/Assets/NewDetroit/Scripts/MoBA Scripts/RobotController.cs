@@ -49,7 +49,7 @@ public class RobotController : HeroeController
 	public override void Start ()
 	{
 		base.Start ();
-		this.life = 375;
+		this.currentLife = 375;
 		this.attackP = 30;
 		this.attackM = 25;
 		this.speedAtt = 0.9f;

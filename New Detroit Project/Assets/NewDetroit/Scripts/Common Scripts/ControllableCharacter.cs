@@ -3,7 +3,10 @@ using System.Collections;
 
 public class ControllableCharacter : MonoBehaviour
 {
-    // number that identifies the team to which the character belongs
+	// --------------------------------------------------------------
+
+    
+	// number that identifies the team to which the character belongs
     public int teamNumber;
 
     // Life variables
@@ -14,6 +17,13 @@ public class ControllableCharacter : MonoBehaviour
     protected Vector3 basePosition = new Vector3();
     // Reference to the base
     public BaseController baseController;
+
+	//Experience that gives the unit when it dies
+	protected int experienceGived = 0;
+
+
+	// --------------------------------------------------------------
+
 
     public void SetBasePosition (Vector3 basePosition)
     {
@@ -31,5 +41,17 @@ public class ControllableCharacter : MonoBehaviour
         currentLife -= damage;
         return (currentLife <= 0);
     }
+
+	// Return the current life of the heroe
+	public float getLife()
+	{
+		return this.currentLife;
+	}
+
+	// Returns the gived experience when it dies
+	public int getExperienceGived()
+	{
+		return this.experienceGived;
+	}
 
 } // class ControllableCharacter

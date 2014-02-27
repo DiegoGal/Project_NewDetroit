@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class HeroeController : MonoBehaviour 
+public abstract class HeroeController : ControllableCharacter 
 {
 	//==============================
 	//=====     Attributes     =====
@@ -16,7 +16,16 @@ public abstract class HeroeController : MonoBehaviour
 		AttackBasic // When he is attacking with his basic attack 
 	}
 
-	public GameObject leftArm, rightArm;
+	// The type of the heroe
+	public enum TypeHeroe
+	{
+		Orc
+	}
+
+
+	// ------------------------------------------------------------------------------------------------------
+
+
 	public Texture2D 	textureLifePositive, 
 						textureLifeNegative;
 
@@ -26,7 +35,7 @@ public abstract class HeroeController : MonoBehaviour
 					LEVEL_2_3 = 600, // experience to improve from leve 2 to 3
 					LEVEL_3_4 = 1000; // experience to improve from leve 3 to 4
 
-	protected int life, totalLife, attackP, attackM, defP, defM, mana, adren, speedMov, level, experience; //Attributes
+	protected int attackP, attackM, defP, defM, mana, adren, speedMov, level, experience; //Attributes
 	protected double speedAtt; // Attribute
 	protected bool hasNewLevel; // Tell us if the heroe has evolved  or not
 
@@ -39,6 +48,8 @@ public abstract class HeroeController : MonoBehaviour
 	protected StateHeroe state; // The state of the heroe
 
 	private double timeCount; // Time counter
+
+	public TypeHeroe type;
 
 	//===========================
 	//=====     Methods     =====
@@ -58,7 +69,7 @@ public abstract class HeroeController : MonoBehaviour
 	// Increment the life
 	protected void lifeUp(int life)
 	{
-		this.life += life;
+		this.currentLife += life;
 	}
 
 	// Increment the physical attack
@@ -109,17 +120,6 @@ public abstract class HeroeController : MonoBehaviour
 		this.speedMov += speedMov;
 	}
 
-	// Increment the experience
-	protected void experienceUp(int experience)
-	{
-		this.experience += experience;
-		if (this.experience > LEVEL_3_4) this.experience = LEVEL_3_4;
-
-		if (this.level == 1 && this.experience >= LEVEL_1_2) this.levelUp ();
-		else if (this.level == 2 && this.experience >= LEVEL_2_3) this.levelUp ();
-		else if (this.level == 3 && this.experience >= LEVEL_3_4) this.levelUp ();
-	}
-
 	// Method that control the logic of the attack (now, it is not used)
 	protected void launchAttack()
 	{
@@ -137,9 +137,9 @@ public abstract class HeroeController : MonoBehaviour
 					transform.position.y + direction.y,
 					transform.position.z + direction.z*2);
 				//Se instancia el ataque
-				GameObject go = (GameObject) Instantiate(rightArm, position, new Quaternion());
+				//GameObject go = (GameObject) Instantiate(rightArm, position, new Quaternion());
 				//go.GetComponent<Attack>().setMovement(direction);
-				go.GetComponent<OrcBasicAttack>().setOwner(this.gameObject);
+				//go.GetComponent<OrcBasicAttack>().setOwner(this.gameObject);
 
 				//this.GetComponent<OrcBasicAttack> ().enable(false);
 			}
@@ -150,9 +150,9 @@ public abstract class HeroeController : MonoBehaviour
 	protected void checkDead()
 	{
 		// if is dead
-		if (this.life <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover) 
+		if (this.currentLife <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover) 
 		{
-			this.life = 0;
+			this.currentLife = 0;
 			this.state = StateHeroe.Dead;
 			this.transform.position = this.initialPosition;
 			this.GetComponent<ThirdPersonController>().enabled = false;
@@ -172,10 +172,10 @@ public abstract class HeroeController : MonoBehaviour
 			else
 			{
 				this.timeCount = 0;
-				this.life += 20;
-				if (this.life >= this.totalLife)
+				this.currentLife += 20;
+				if (this.currentLife >= this.maximunLife)
 				{
-					this.life = this.totalLife;
+					this.currentLife = this.maximunLife;
 					this.state = StateHeroe.IdleWalkRun;
 					this.GetComponent<ThirdPersonController>().enabled = true;
 				}
@@ -197,19 +197,19 @@ public abstract class HeroeController : MonoBehaviour
 	// Damage the heroe
 	public void damage(int life)
 	{
-		this.life -= life;
+		this.currentLife -= life;
 	}
 
 	// Return the current life of the heroe
-	public int getLife()
+	/*public float getLife()
 	{
-		return this.life;
-	}
+		return this.currentLife;
+	}*/
 
 	// Set the lide of the heroe
 	public void setLife(int life)
 	{
-		this.life = life;
+		this.currentLife = life;
 	}
 
 	// Return if the heroe's instantiate is ours or not
@@ -224,15 +224,29 @@ public abstract class HeroeController : MonoBehaviour
 		this.isMine = isMine;
 	}
 
+	// Returns the type of the heroe
+	public TypeHeroe getType()
+	{
+		return this.type;
+	}
+
+	// Increment the experience
+	public void experienceUp(int experience)
+	{
+		this.experience += experience;
+		if (this.experience > LEVEL_3_4) this.experience = LEVEL_3_4;
+		
+		if (this.level == 1 && this.experience >= LEVEL_1_2) this.levelUp ();
+		else if (this.level == 2 && this.experience >= LEVEL_2_3) this.levelUp ();
+		else if (this.level == 3 && this.experience >= LEVEL_3_4) this.levelUp ();
+	}
+
 	//================================
 	//=====     Main methods     =====
 	//================================
 
 	// Use this for initialization
 	virtual public void Start () {
-		//Set the owner in the basic attack
-		this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
-		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 		//Set initial values
 		this.level = 1;
 		this.experience = 0;
@@ -248,6 +262,8 @@ public abstract class HeroeController : MonoBehaviour
 		this.state = StateHeroe.IdleWalkRun;
 		//Set the initial value of timeCount
 		this.timeCount = 0;
+		//Experience that the heroe gives when he dies
+		this.experienceGived = 200;
 	}
 	
 	// Update is called once per frame
@@ -262,9 +278,12 @@ public abstract class HeroeController : MonoBehaviour
 	{
 		// labels for debug
 		Vector3 pos = Camera.main.WorldToScreenPoint (transform.position);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 100, 50), "Vida: " + this.life);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 100, 50), "Vida: " + this.currentLife);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 20, 100, 50), "Mine: " + this.isMine);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 40, 100, 50), "State: " + this.state);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 60, 100, 50), "Experience: " + this.experience);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 80, 100, 50), "Level: " + this.level);
+
 		//-------------------------------------------------------------------------------------------------
 		// Life
 		float distance = Vector3.Distance (transform.position, Camera.main.transform.position); // real distance from camera
@@ -274,7 +293,7 @@ public abstract class HeroeController : MonoBehaviour
 		posLifeScene.y += 2f;
 		Vector3 posLife = Camera.main.WorldToScreenPoint (posLifeScene);
 
-		float positiveLife = (float) this.life / this.totalLife; // percentage of positive life
+		float positiveLife = (float) this.currentLife / this.maximunLife; // percentage of positive life
 		float negativeLife = 1 - positiveLife; //percentage of negative life
 		
 		Rect rectanglePositive = new Rect (posLife.x - 50 * lengthLife, Screen.height - posLife.y, 100 * positiveLife * lengthLife, 10 * lengthLife);
