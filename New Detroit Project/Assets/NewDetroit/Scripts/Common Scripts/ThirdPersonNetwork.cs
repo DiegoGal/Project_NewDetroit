@@ -60,6 +60,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			stream.SendNext(transform.position);
 			stream.SendNext(transform.rotation);
 
+			// Life's orc
 			if (heroeControlScript.getType() == HeroeController.TypeHeroe.Orc)
 			{
 				OrcController orcControlScript = this.GetComponent<OrcController>();
@@ -89,7 +90,11 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 					stream.SendNext(0);
 				}
 			}
+
+			// Experience
+			stream.SendNext(heroeControlScript.getExperience());
 		}
+		// Is reading
 		else
 		{
 			//Network player, receive data
@@ -103,10 +108,14 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			correctPlayerPos = (Vector3)stream.ReceiveNext();
 			correctPlayerRot = (Quaternion)stream.ReceiveNext();
 
+			// Life's orc
 			nameOrcLA = (string) stream.ReceiveNext(); //Receive the name of the object that has been collided by an orc with his left arm
 			lifeOrcLA = (int) stream.ReceiveNext(); // Receive the life of the object that has been collided by an orc with his left arm
 			nameOrcRA = (string) stream.ReceiveNext(); // Receive the name of the object that has been collided by an orc with his right arm
 			lifeOrcRA = (int) stream.ReceiveNext(); // Receive the life of the object that has been collided by an orc with his right arm
+
+			// Experience
+			experience = (int) stream.ReceiveNext();
 		}
 	}
 
@@ -119,6 +128,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 	private string nameOrcRA; // The name of the collide object that an orc has collided with his rigth arm
 	private int lifeOrcLA; // The life of the collided object that has been hit with the left arm of an orc
 	private int lifeOrcRA; // The life of the collided object that has been hit with the right arm of an orc
+	private int experience;
 
 	void Update()
 	{
@@ -135,6 +145,8 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			animator.SetBool("isSecondAttack3", isSecondAttack3);
 
 			this.updateCollidedOrc();
+
+			heroeControlScript.setExperience(experience);
 		}
 	}
 

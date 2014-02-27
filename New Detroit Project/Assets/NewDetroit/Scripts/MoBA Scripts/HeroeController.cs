@@ -3,17 +3,26 @@ using System.Collections;
 
 public abstract class HeroeController : ControllableCharacter 
 {
-	//==============================
-	//=====     Attributes     =====
-	//==============================
-
 	// The state of the heroe
 	public enum StateHeroe
 	{
-		Dead, // When is dead
-		Recover, // After dead, he must be recovered
-		IdleWalkRun, // When he is doing nothing but walking or running, or idle
-		AttackBasic // When he is attacking with his basic attack 
+		Dead,			// When is dead
+		Recover,		// After dead, he must be recovered
+		IdleWalkRun,	// When he is doing nothing but walking or running, or idle
+		Iddle,
+		Walk,
+		Run,
+		AttackBasic,	// When he is attacking with his basic attack
+		AttackSecond	// When he is attacking with his secondary attack
+	}
+
+	// The state of secondary attack
+	public enum AttackSecond
+	{
+		None,
+		Attack1,
+		Attack2,
+		Attack3,
 	}
 
 	// The type of the heroe
@@ -49,21 +58,21 @@ public abstract class HeroeController : ControllableCharacter
 
 	private double timeCount; // Time counter
 
-	public TypeHeroe type;
+	public TypeHeroe type;	// Type of heroe
 
-	//===========================
-	//=====     Methods     =====
-	//===========================
+	public bool ability1, ability2, ability3;	// Booleans to unlock the abilities of heroe when up the level
+	private int counterAbility;
 
-	//=========================
-	//====    PROTECTED    ====
-	//=========================
+
+	// ------------------------------------------------------------------------------------------------------
+
 
 	// Increment the level
 	protected void levelUp() 
 	{
 		this.level ++;
 		this.hasNewLevel = true;
+		counterAbility ++;
 	}
 
 	// Increment the life
@@ -183,9 +192,42 @@ public abstract class HeroeController : ControllableCharacter
 		}
 	}
 
-	//======================
-	//====    PUBLIC    ====
-	//======================
+	// Check if we unlock some abilitie
+	protected void unlockAbilities()
+	{
+		if (counterAbility > 0)
+		{
+			if (!ability3 && level == 4)
+			{
+				ability3 = true;
+				counterAbility --;
+			}
+			else if (!ability1 && Input.GetKey(KeyCode.Alpha1))
+			{
+				ability1 = true;
+				counterAbility --;
+			}
+			else if (!ability2 && Input.GetKey(KeyCode.Alpha2))
+			{
+				ability2 = true;
+				counterAbility --;
+			}
+		}
+	}
+
+	// Check if we have to improve our level
+	protected void checkLevel()
+	{
+		if (this.experience > LEVEL_3_4) this.experience = LEVEL_3_4;
+		
+		if (this.level == 1 && this.experience >= LEVEL_1_2) this.levelUp ();
+		else if (this.level == 2 && this.experience >= LEVEL_2_3) this.levelUp ();
+		else if (this.level == 3 && this.experience >= LEVEL_3_4) this.levelUp ();
+	}
+
+
+	// ------------------------------------------------------------------------------------------------------
+
 
 	// Return if the heroe is attacking or not
 	public bool isAttackBasic()
@@ -234,16 +276,25 @@ public abstract class HeroeController : ControllableCharacter
 	public void experienceUp(int experience)
 	{
 		this.experience += experience;
-		if (this.experience > LEVEL_3_4) this.experience = LEVEL_3_4;
-		
-		if (this.level == 1 && this.experience >= LEVEL_1_2) this.levelUp ();
-		else if (this.level == 2 && this.experience >= LEVEL_2_3) this.levelUp ();
-		else if (this.level == 3 && this.experience >= LEVEL_3_4) this.levelUp ();
+		this.checkLevel ();
 	}
 
-	//================================
-	//=====     Main methods     =====
-	//================================
+	// Get the current experience
+	public int getExperience()
+	{
+		return experience;
+	}
+
+	// Set the current experience and update the current level
+	public void setExperience(int experience)
+	{
+		this.experience = experience;
+		this.checkLevel ();
+	}
+
+
+	// ------------------------------------------------------------------------------------------------------
+
 
 	// Use this for initialization
 	virtual public void Start () {
@@ -264,6 +315,9 @@ public abstract class HeroeController : ControllableCharacter
 		this.timeCount = 0;
 		//Experience that the heroe gives when he dies
 		this.experienceGived = 200;
+		// Initialize the booleans of abilities
+		ability1 = ability2 = ability3 = false;
+		counterAbility = 0;
 	}
 	
 	// Update is called once per frame
@@ -272,6 +326,9 @@ public abstract class HeroeController : ControllableCharacter
 
 		checkDead ();
 		checkRecover ();
+
+		// Test if we have abilites to unlock
+		unlockAbilities ();
 	}
 
 	void OnGUI ()
@@ -283,6 +340,7 @@ public abstract class HeroeController : ControllableCharacter
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 40, 100, 50), "State: " + this.state);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 60, 100, 50), "Experience: " + this.experience);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 80, 100, 50), "Level: " + this.level);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 100, 100, 50), "Maxima vida: " + this.maximunLife);
 
 		//-------------------------------------------------------------------------------------------------
 		// Life
@@ -302,4 +360,5 @@ public abstract class HeroeController : ControllableCharacter
 		GUI.DrawTexture (rectanglePositive, textureLifePositive);
 		GUI.DrawTexture (rectangleNegative, textureLifeNegative);
 	}
+
 }

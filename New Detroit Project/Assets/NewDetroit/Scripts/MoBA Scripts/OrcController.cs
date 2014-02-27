@@ -29,8 +29,12 @@ public class OrcController : HeroeController
 	{
 		if (this.hasNewLevel) 
 		{
-			this.lifeUp(IN_LIFE);
-			this.attackPUp(IN_ATT_P);
+			float percentage = (float)IN_LIFE / this.maximunLife;
+			this.maximunLife += IN_LIFE;
+			this.currentLife = (1 + percentage)*currentLife;
+
+
+			/*this.attackPUp(IN_ATT_P);
 			this.attackMUp(IN_ATT_M);
 			this.speedAttUp(IN_SPEED_ATT);
 			this.defPUp(IN_DEF_P);
@@ -39,7 +43,9 @@ public class OrcController : HeroeController
 			else if (this.level == 3) this.manaUp(IN_MANA_2_3);
 			else this.manaUp(IN_MANA_3_4);
 			this.adrenUp(IN_ADREN);
-			this.speedMovUp(IN_SPEED_MOV);
+			this.speedMovUp(IN_SPEED_MOV);*/
+
+			this.hasNewLevel = false;
 		}
 	}
 
@@ -102,7 +108,7 @@ public class OrcController : HeroeController
 		base.Update ();
 		this.attack ();
 
-		//this.newLevel ();
+		this.newLevel ();
 	}
 }
 
