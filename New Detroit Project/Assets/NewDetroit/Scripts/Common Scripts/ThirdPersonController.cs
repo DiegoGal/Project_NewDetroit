@@ -12,22 +12,22 @@ public enum CharacterState
     Jumping = 4,
 }
 
-public enum HeroeState
+/*public enum HeroeState
 {
 	Iddle,
 	Walk,
 	Run,
 	Attack,
 	SecondaryAttack
-}
+}*/
 
-public enum ScondaryAttack
+/*public enum ScondaryAttack
 {
 	None,
 	Attack1,
 	Attack2,
 	Attack3,
-}
+}*/
 
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -51,7 +51,8 @@ public class ThirdPersonController : MonoBehaviour
     private Animator animator;
 
 	//current states of heroe.
-	private HeroeState currentHeroeState;
+	//private HeroeState currentHeroeState;
+	private HeroeController.StateHeroe currentHeroeState;
     public CharacterState _characterState;
 
     // The speed when walking
@@ -116,7 +117,7 @@ public class ThirdPersonController : MonoBehaviour
 	private Vector3 lastPos;
 
 	//Secondary attack selected
-	private ScondaryAttack secondAttack;
+	private HeroeController.AttackSecond secondAttack;
 	private float timerSecondAttack;
 
 	//Splash particle
@@ -168,10 +169,10 @@ public class ThirdPersonController : MonoBehaviour
         }
 
 		//initialize the current heroe state.
-		currentHeroeState = HeroeState.Iddle;
+		currentHeroeState = HeroeController.StateHeroe.Iddle;
 
 		// Initial secondary attack (no secondary attack in the beginning).
-		secondAttack = ScondaryAttack.None;
+		secondAttack = HeroeController.AttackSecond.None;
 		timerSecondAttack = 0;
     }
 
@@ -215,7 +216,7 @@ public class ThirdPersonController : MonoBehaviour
             // We store speed and direction seperately,
             // so that when the character stands still we still have a valid forward direction
             // moveDirection is always normalized, and we only update it if there is user input.
-            if (targetDirection != Vector3.zero && currentHeroeState != HeroeState.Attack && currentHeroeState != HeroeState.SecondaryAttack) //!animator.GetBool("isAttacking"))
+			if (targetDirection != Vector3.zero && currentHeroeState != HeroeController.StateHeroe.AttackBasic && currentHeroeState != HeroeController.StateHeroe.AttackSecond) //!animator.GetBool("isAttacking"))
             {
                 // If we are really slow, just snap to the target direction
                 /*if (moveSpeed < walkSpeed * 0.9f && grounded)
@@ -241,15 +242,15 @@ public class ThirdPersonController : MonoBehaviour
             //_characterState = CharacterState.Idle;
 
 			// Pick speed modifier
-			if (currentHeroeState == HeroeState.Iddle || 
-			    currentHeroeState == HeroeState.Attack || 
-			    (currentHeroeState == HeroeState.SecondaryAttack && secondAttack != ScondaryAttack.Attack3))
+			if (currentHeroeState == HeroeController.StateHeroe.Iddle || 
+			    currentHeroeState == HeroeController.StateHeroe.AttackBasic || 
+			    (currentHeroeState == HeroeController.StateHeroe.AttackSecond && secondAttack != HeroeController.AttackSecond.Attack3))
 				targetSpeed = 0;
-			else if (currentHeroeState == HeroeState.SecondaryAttack && secondAttack == ScondaryAttack.Attack3)
+			else if (currentHeroeState == HeroeController.StateHeroe.AttackSecond && secondAttack == HeroeController.AttackSecond.Attack3)
 				targetSpeed = 20;
-			else if (currentHeroeState == HeroeState.Walk)
+			else if (currentHeroeState == HeroeController.StateHeroe.Walk)
 				targetSpeed = walkSpeed;
-			else if (currentHeroeState == HeroeState.Run)
+			else if (currentHeroeState == HeroeController.StateHeroe.Run)
 				targetSpeed = runSpeed;
 
 			/*else if ( Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
@@ -348,17 +349,18 @@ public class ThirdPersonController : MonoBehaviour
 	// Update the secondary attack
 	void UpdateSecondAttack()
 	{
-		if (Input.GetKey(KeyCode.Alpha1))
+		HeroeController hc = this.GetComponent<HeroeController> ();
+		if (Input.GetKey(KeyCode.Alpha1) && hc.ability1)
 		{
-			secondAttack = ScondaryAttack.Attack1;
+			secondAttack = HeroeController.AttackSecond.Attack1;
 		}
-		else if (Input.GetKey(KeyCode.Alpha2))
+		else if (Input.GetKey(KeyCode.Alpha2) && hc.ability2)
 		{
-			secondAttack = ScondaryAttack.Attack2;
+			secondAttack = HeroeController.AttackSecond.Attack2;
 		}
-		else if (Input.GetKey(KeyCode.Alpha3))
+		else if (Input.GetKey(KeyCode.Alpha3) && hc.ability3)
 		{
-			secondAttack = ScondaryAttack.Attack3;
+			secondAttack = HeroeController.AttackSecond.Attack3;
 		}
 
 		if (snotActivated)
@@ -400,28 +402,28 @@ public class ThirdPersonController : MonoBehaviour
             }*/
 
 			//update the current heroe state.
-			if (currentHeroeState == HeroeState.SecondaryAttack)
+			if (currentHeroeState == HeroeController.StateHeroe.AttackSecond)
 			{
 				timerSecondAttack += Time.deltaTime;
-				if ((secondAttack == ScondaryAttack.Attack1 && timerSecondAttack >= 3.3) || 
-				    (secondAttack == ScondaryAttack.Attack2 && timerSecondAttack >= 1.633) ||
-				    (secondAttack == ScondaryAttack.Attack3 && timerSecondAttack >= 1.633))
+				if ((secondAttack == HeroeController.AttackSecond.Attack1 && timerSecondAttack >= 3.3) || 
+				    (secondAttack == HeroeController.AttackSecond.Attack2 && timerSecondAttack >= 1.633) ||
+				    (secondAttack == HeroeController.AttackSecond.Attack3 && timerSecondAttack >= 1.633))
 				{
-					secondAttack = ScondaryAttack.None;
-					currentHeroeState = HeroeState.Iddle;
+					secondAttack = HeroeController.AttackSecond.None;
+					currentHeroeState = HeroeController.StateHeroe.Iddle;
 				}
 			}
-			else if (Input.GetKey(KeyCode.Space) && secondAttack != ScondaryAttack.None)
+			else if (Input.GetKey(KeyCode.Space) && secondAttack != HeroeController.AttackSecond.None)
 			{
-				currentHeroeState = HeroeState.SecondaryAttack;
+				currentHeroeState = HeroeController.StateHeroe.AttackSecond;
 				timerSecondAttack = 0;
-				if (secondAttack == ScondaryAttack.Attack2)
+				if (secondAttack == HeroeController.AttackSecond.Attack2)
 				{
 					Object spl = Instantiate(splash,transform.position + new Vector3(0,-2,0),Quaternion.identity);
 					Destroy(spl,1.5f);
 					splashActivated = true;
 				}
-				else if (secondAttack == ScondaryAttack.Attack1)
+				else if (secondAttack == HeroeController.AttackSecond.Attack1)
 				{
 					transform.Translate(Vector3.forward*2 + Vector3.up);
 					Object snt = Instantiate(snot,transform.localPosition,transform.rotation);
@@ -432,18 +434,18 @@ public class ThirdPersonController : MonoBehaviour
 			}
 			else if (Input.GetMouseButton(0))
 			{
-				currentHeroeState = HeroeState.Attack;
+				currentHeroeState = HeroeController.StateHeroe.AttackBasic;
 			}
 			else if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
 			{
 				if (Input.GetKey(KeyCode.LeftShift))
-					currentHeroeState = HeroeState.Run;
+					currentHeroeState = HeroeController.StateHeroe.Run;
 				else
-					currentHeroeState = HeroeState.Walk;
+					currentHeroeState = HeroeController.StateHeroe.Walk;
 			}
 			else 
 			{
-				currentHeroeState = HeroeState.Iddle;
+				currentHeroeState = HeroeController.StateHeroe.Iddle;
 			}
 
 
@@ -491,13 +493,13 @@ public class ThirdPersonController : MonoBehaviour
 				}*/
 
 				// Secondary attack
-				/*if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack1)
+				/*if (Input.GetKey(KeyCode.Space) && secondAttack == HeroeController.AttackSecond.Attack1)
 				{
 					animator.SetBool("isSecondAttack1", true);
 					animator.SetBool("isSecondAttack2", false);
 					animator.SetBool("isSecondAttack3", false);
 				}
-				else if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack2)
+				else if (Input.GetKey(KeyCode.Space) && secondAttack == HeroeController.AttackSecond.Attack2)
 				{
 					animator.SetBool("isSecondAttack2", true);
 					animator.SetBool("isSecondAttack1", false);
@@ -510,7 +512,7 @@ public class ThirdPersonController : MonoBehaviour
 						splashActivated=true;
 					}
 				}
-				else if (Input.GetKey(KeyCode.Space) && secondAttack == ScondaryAttack.Attack3)
+				else if (Input.GetKey(KeyCode.Space) && secondAttack == HeroeController.AttackSecond.Attack3)
 				{
 					animator.SetBool("isSecondAttack3", true);
 					animator.SetBool("isSecondAttack1", false);
@@ -547,7 +549,7 @@ public class ThirdPersonController : MonoBehaviour
 				}*/
 
 				//animate the animator
-				if (currentHeroeState == HeroeState.Iddle)
+				if (currentHeroeState == HeroeController.StateHeroe.Iddle)
 				{
 					animator.SetBool ("isRunning", false);
 					animator.SetFloat ("Speed", 0);
@@ -556,16 +558,16 @@ public class ThirdPersonController : MonoBehaviour
 					animator.SetBool ("isSecondAttack2", false);
 					animator.SetBool ("isSecondAttack3", false);
 				}
-				else if (currentHeroeState == HeroeState.SecondaryAttack)
+				else if (currentHeroeState == HeroeController.StateHeroe.AttackSecond)
 				{
-					if (secondAttack == ScondaryAttack.Attack1)
+					if (secondAttack == HeroeController.AttackSecond.Attack1)
 						animator.SetBool ("isSecondAttack1", true);
-					else if (secondAttack == ScondaryAttack.Attack2)
+					else if (secondAttack == HeroeController.AttackSecond.Attack2)
 						animator.SetBool ("isSecondAttack2", true);
 					else
 						animator.SetBool ("isSecondAttack3", true);
 				}
-				else if (currentHeroeState == HeroeState.Attack)
+				else if (currentHeroeState == HeroeController.StateHeroe.AttackBasic)
 				{
 					animator.SetFloat ("Speed", 0);
 					animator.SetBool ("isRunning", false);
@@ -574,7 +576,7 @@ public class ThirdPersonController : MonoBehaviour
 					animator.SetBool ("isSecondAttack2", false);
 					animator.SetBool ("isSecondAttack3", false);
 				}
-				else if (currentHeroeState == HeroeState.Walk)
+				else if (currentHeroeState == HeroeController.StateHeroe.Walk)
 				{
 					animator.SetFloat ("Speed", 1);
 					animator.SetBool ("isRunning", false);
@@ -583,7 +585,7 @@ public class ThirdPersonController : MonoBehaviour
 					animator.SetBool ("isSecondAttack2", false);
 					animator.SetBool ("isSecondAttack3", false);
 				}
-				else if (currentHeroeState == HeroeState.Run)
+				else if (currentHeroeState == HeroeController.StateHeroe.Run)
 				{
 					animator.SetFloat ("Speed", 1);
 					animator.SetBool ("isRunning", true);
