@@ -130,6 +130,12 @@ public class ThirdPersonController : MonoBehaviour
 	private bool snotActivated=false;
 	private float snotCD = 1.7f;
 
+	//Smoke particle
+	public GameObject smoke; 
+	private bool smokeActivated=false;
+	private float smokeCD = 1.7f;
+	private GameObject smokeInst; //Smoke instantation
+
 	//-----------------------------------------------------------------------------------------------------------------------
 
 
@@ -388,6 +394,24 @@ public class ThirdPersonController : MonoBehaviour
 				splashCD -= Time.deltaTime;
 			}
 		}
+
+		if (smokeActivated)
+		{
+			if (smokeInst!=null)
+			{
+				smokeInst.transform.position= transform.position;
+				smokeInst.transform.Translate(Vector3.down*2);
+			}
+			if (smokeCD <= 0)
+			{
+				smokeCD = 1.7f;
+				smokeActivated = false;
+			}
+			else
+			{
+				smokeCD -= Time.deltaTime;
+			}
+		}
 	}
 
     Vector3 velocity = Vector3.zero;
@@ -430,6 +454,14 @@ public class ThirdPersonController : MonoBehaviour
 					transform.Translate(Vector3.back*2 + Vector3.down);
 					Destroy(snt,5f);
 					snotActivated = true;
+				}
+				else if (secondAttack == HeroeController.AttackSecond.Attack3)
+				{
+					transform.Translate(Vector3.down*2);
+					smokeInst = (GameObject)Instantiate(smoke,transform.localPosition,transform.localRotation);
+					transform.Translate(Vector3.up*2);
+					Destroy(smokeInst,3f);
+					smokeActivated = true;
 				}
 			}
 			else if (Input.GetMouseButton(0))
