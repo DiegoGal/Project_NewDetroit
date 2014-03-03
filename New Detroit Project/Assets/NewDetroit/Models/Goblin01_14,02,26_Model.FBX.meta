@@ -82,7 +82,7 @@ ModelImporter:
     400072: Goblin_01
     4300000: Goblin_01
     7400000: Iddle01
-    7400002: Iddle02
+    7400002: Idle Wait
     7400004: Idle Carga
     7400006: Walk
     7400008: Walk Carga
@@ -227,7 +227,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Iddle02
+      name: Idle Wait
       takeName: Take 001
       firstFrame: 52
       lastFrame: 103

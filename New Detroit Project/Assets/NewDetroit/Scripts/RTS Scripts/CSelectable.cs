@@ -7,13 +7,23 @@ public class CSelectable : MonoBehaviour
 	private Color origColor;
 	private Color selectColor = Color.yellow;
 
+    public Material origMaterial;
+    public Material selectMaterial;
+
 	private bool selected;
 
 	// Use this for initialization
 	void Start ()
     {
-        if (this.renderer != null)
-		    origColor = this.renderer.material.color;
+        /*if (this.renderer != null)
+		    origColor = this.renderer.material.color;*/
+
+        Transform model = transform.FindChild("Model");
+        if (model != null)
+        {
+            model.renderer.material = origMaterial;
+        }
+
 		selected = false;
 	}
 	

@@ -37,6 +37,11 @@ public class ArmyController : MonoBehaviour
         resources = 0;
         lastCrowdAngle = 0;
 
+        // agregamos las unidades que tengamos del ejército por el escenario
+        GameObject go = GameObject.Find("Goblin01_Harvester");
+        if (go.GetComponent<UnitController>().teamNumber == teamNumber)
+            unitList.Add(go);
+
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
 		// Bit shift the index of the layer (8) to get a bit mask
 		layerMask = 1 << 8 | 1 << 2;

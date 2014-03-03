@@ -89,7 +89,7 @@ ModelImporter:
     4300002: Box002
     4300004: Box004
     4300006: Cylinder002
-    7400000: Iddle
+    7400000: Iddle01
     7400002: Idle Wait
     7400004: Walk
     7400006: Muerte
@@ -113,7 +113,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Iddle
+      name: Iddle01
       takeName: Take 001
       firstFrame: 0
       lastFrame: 51

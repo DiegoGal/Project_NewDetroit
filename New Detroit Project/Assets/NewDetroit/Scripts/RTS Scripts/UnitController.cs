@@ -31,6 +31,14 @@ public class UnitController : ControllableCharacter
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
 
+    // modelo del asset (el que contiene las animaciones)
+    protected Transform model;
+
+    public virtual void Awake()
+    {
+        model = transform.FindChild("Model");
+    }
+
     // Use this for initialization
     public virtual void Start ()
     {
@@ -39,6 +47,10 @@ public class UnitController : ControllableCharacter
 
         if (destiny == Vector3.zero)
             destiny = transform.position;
+
+        //model = transform.FindChild("Model");
+        //model.animation.Play("Walk");
+        animation.Play("Iddle01");
     }
 
     // Update is called once per frame
