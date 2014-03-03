@@ -29,18 +29,39 @@ public class UnitEngineer : UnitController {
 	
 	private Vector3 lastEngineerPos;
 	private int lastEngineerIndex;
+    // To instanciate a towerGoblin
+    public GameObject towerGoblin;
+    private GameObject tower;
+    private bool newConstruct = false;
+    Vector3 constructDestiny = new Vector3();
+
 
     public override void Start ()
     {
         base.Start();
-
         basicAttackPower = secondaryAttackPower = attackPower;
     }
 	
 	// Update is called once per frame
 	public override void Update () 
 	{
-
+        // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
+        if (Input.GetKeyDown(KeyCode.C) && (this.GetComponent<CSelectable>().IsSelected()))
+        {
+            newConstruct = true;
+            tower = Instantiate(towerGoblin, constructDestiny, new Quaternion(-90, -180, -180, 0))
+            as GameObject; //rotation (-90, -180, 0)
+            
+        }
+        // When the construction has to be done
+        if (newConstruct && Input.GetMouseButtonDown(0))
+        {
+            constructDestiny = Input.mousePosition;
+            tower.transform.GetComponent<TowerGoblin>().Construct(constructDestiny);
+            //tower.Construct(constructDestiny);
+            newConstruct = false;
+        }
+      
 		switch (currentEngineerState)
 		{
 			case EngineerState.None:

@@ -40,13 +40,13 @@ public class TowerGoblin : Tower
         layerMask = ~layerMask;
 
 		base.Start();
-		//transform.Rotate(new Vector3(270, 180, 0));
 	}
 
-    public void Construct()
+    public void Construct(Vector3 destiny)
     {
         active = true;
         renderer.material = activeMaterial;
+		this.GetComponent<NavMeshObstacle>().enabled = true;
     }
 
 	// Update is called once per frame
@@ -218,5 +218,14 @@ public class TowerGoblin : Tower
 			engineerPosTaken[index] = true;
 			cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
 		}
+	}
+
+	private bool CanConstruct()
+	{
+        RaycastHit theHit; // Structure used to get information back from a raycast.
+        Ray aRay; // the ray
+
+        aRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        return true;
 	}
 }

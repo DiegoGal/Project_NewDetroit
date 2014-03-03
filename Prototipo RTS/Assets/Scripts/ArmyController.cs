@@ -25,8 +25,6 @@ public class ArmyController : MonoBehaviour
 
 	private int layerMask; // para obviar la capa de la niebla
 
-    private bool constructing = true;
-
     // Use this for initialization
     void Start ()
     {
@@ -60,14 +58,14 @@ public class ArmyController : MonoBehaviour
 
             lastCrowdAngle = 0;
         }
-        
+        /*
         if (mouseButtonPreshed && constructing)
         {
             TowerGoblin selfUnitG = tower.transform.GetComponent<TowerGoblin>();
 
             selfUnitG.Construct();
             constructing = false;
-        }
+        }*/
         // se levanta el botón izquierdo del ratón
         if (mouseButtonPreshed && Input.GetMouseButtonUp(0))
             mouseButtonPreshed = false;
@@ -167,7 +165,7 @@ public class ArmyController : MonoBehaviour
 				{
 					//Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
 					List<Vector3> destinyList;
-					destinyList = CalculateMultipleDestiny(destiny);
+                    destinyList = SwarmAlgorithm(destiny);
 					int i = 0;
 					foreach (GameObject u in unitSelectedList)
 					{
@@ -241,7 +239,7 @@ public class ArmyController : MonoBehaviour
         }
     } // OnGUI()
 
-	private List<Vector3> CalculateMultipleDestiny (Vector3 destiny)
+    private List<Vector3> SwarmAlgorithm(Vector3 destiny)
 	{
 		List<Vector3> destinyList = new List<Vector3>();
 		double radious = System.Math.Sqrt(unitSelectedList.Count);
