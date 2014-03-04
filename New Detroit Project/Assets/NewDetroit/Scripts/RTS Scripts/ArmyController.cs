@@ -44,6 +44,9 @@ public class ArmyController : MonoBehaviour
         go = GameObject.Find("Goblin02_Artillery");
         if (go.GetComponent<UnitController>().teamNumber == teamNumber)
             unitList.Add(go);
+        go = GameObject.Find("Goblin03_Artillery");
+        if (go.GetComponent<UnitController>().teamNumber == teamNumber)
+            unitList.Add(go);
 
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
 		// Bit shift the index of the layer (8) to get a bit mask
@@ -107,7 +110,7 @@ public class ArmyController : MonoBehaviour
                 myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
                 {
-                    //Debug.Log("he tocado: " + myHit.transform.name);
+                    Debug.Log("he tocado: " + myHit.transform.name);
 					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
 					if (objSel != null)
 					{
