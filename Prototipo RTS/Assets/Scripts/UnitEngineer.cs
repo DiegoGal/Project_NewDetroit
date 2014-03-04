@@ -53,7 +53,7 @@ public class UnitEngineer : UnitController {
         if (Input.GetKeyDown(KeyCode.C) && (this.GetComponent<CSelectable>().IsSelected()))
         {
             newConstruct = true;
-            tower = Instantiate(towerGoblin, constructDestiny, new Quaternion(-90, -180, -180, 0))
+            tower = Instantiate(towerGoblin, constructDestiny, new Quaternion(0, 0, 0, 0))
             as GameObject; //rotation (-90, -180, 0)
             
         }
@@ -200,7 +200,6 @@ public class UnitEngineer : UnitController {
                 break;
 			case EngineerState.Constructing:
 				actualEngineerTime += Time.deltaTime;
-				bool construct = false;
 				if (actualEngineerTime >= engineerTime)
 				{
 					conquest = currentItem.GetComponent<TowerGoblin>().Construct(amountPerAction);
@@ -209,7 +208,8 @@ public class UnitEngineer : UnitController {
 					{
 						Debug.Log("Torre construida!");
 						currentEngineerState = EngineerState.None;
-					}
+						//currentItem.GetComponent<TowerGoblin>().SetActive(true);					
+                    }
 					actualEngineerTime = 0;
 				}
 				break;
@@ -224,7 +224,7 @@ public class UnitEngineer : UnitController {
             Debug.Log("vamos a construir copon!");
 			currentItem = destTransform;
             currentEngineerState = EngineerState.GoingToConstructItem;
-            GoTo(destiny);
+            GoTo(new Vector3(destiny.x, 0, destiny.z));
             constructDestiny = Input.mousePosition;
             tower.transform.GetComponent<TowerGoblin>().Construct(constructDestiny);
             //tower.Construct(constructDestiny);

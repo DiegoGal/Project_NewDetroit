@@ -64,7 +64,7 @@ public class Tower : MonoBehaviour {
 
 
 	// Use this for initialization
-	protected virtual void Start () 
+	public virtual void Start () 
     {
 
         // setting of the distance to wait
@@ -107,7 +107,7 @@ public class Tower : MonoBehaviour {
 	
 
 	// Update is called once per frame
-    protected virtual void Update() 
+	public virtual void Update() 
     {
 	    
 	}

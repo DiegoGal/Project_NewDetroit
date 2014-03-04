@@ -31,7 +31,7 @@ public class TowerNeutral : Tower
 	private float amountToSubstract = 1;
 
 	// Use this for initialization
-	protected override void Start ()
+	public override void Start ()
     {
         base.Start();
 
@@ -46,7 +46,7 @@ public class TowerNeutral : Tower
 	}
 	
 	// Update is called once per frame
-    protected override void Update()
+	public override void Update()
     {
         base.Update();
 		

@@ -13,6 +13,8 @@ public class TowerGoblin : Tower
     
     public Material activeMaterial;
 
+	private Transform model;
+
     // enum for the four states of the tower
     private enum TowerState
     {
@@ -25,9 +27,13 @@ public class TowerGoblin : Tower
     // the state of the tower
     private TowerState currentTowerState = TowerState.Iddle;
 
-   
+   	public void Awake ()
+	{
+		model = transform.FindChild("GoblinTower");
+	}
+
 	// Use this for initialization
-	protected override void Start () 
+	public override void Start () 
     {
 		base.Start();
         myHit = new RaycastHit();
@@ -45,12 +51,12 @@ public class TowerGoblin : Tower
     public void Construct(Vector3 destiny)
     {
         active = true;
-        renderer.material = activeMaterial;
+        model.renderer.material = activeMaterial;
 		this.GetComponent<NavMeshObstacle>().enabled = true;
     }
 
 	// Update is called once per frame
-    protected override void Update() 
+	public override void Update() 
     {
         base.Update();
         if (!active)
