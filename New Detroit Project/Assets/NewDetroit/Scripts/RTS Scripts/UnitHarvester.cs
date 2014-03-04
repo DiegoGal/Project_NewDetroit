@@ -79,6 +79,8 @@ public class UnitHarvester : UnitController
                     {
                         currentHarvestState = HarvestState.Waiting;
                         GetComponent<NavMeshAgent>().destination = transform.position;
+                        animation.Play("Iddle Wait");
+                        animation.PlayQueued("Iddle01");
                     }
                 }
                 else
@@ -92,9 +94,7 @@ public class UnitHarvester : UnitController
                 if (currentState == State.Iddle)
                 {
                     // ha llegado a la posición de extracción
-                    Debug.Log("comenzando cosecha...");
-                    currentHarvestState = HarvestState.Choping;
-                    nextHarvestState = HarvestState.ReturningToBase;
+                    StartChoping();
                 }
                 else
                     base.Update();
@@ -126,6 +126,7 @@ public class UnitHarvester : UnitController
 						newCoin.transform.parent = transform;
 
                         GoTo(lastBasePos);
+                        animation.Play("Walk Carga");
                     }
                     actualHarvestTime = 0;
                 }
@@ -147,11 +148,11 @@ public class UnitHarvester : UnitController
 
 		GUI.skin.label.fontSize = 10;
         
-		GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
+		GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
 		    currentState.ToString());
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 35, 100, 50),
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 55, 100, 50),
             currentHarvestState.ToString());
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 65, 100, 50),
             "resources: " + resourcesLoaded);
     }
 
@@ -169,14 +170,14 @@ public class UnitHarvester : UnitController
             currentHarvestState = HarvestState.None;
             base.RightClickOnSelected(destiny, destTransform);
         }
-        else if (destTransform.name == "ResourcesMine")
+        else if (destTransform.name == "Resources Mine")
         {
             // actualizar la referencia de la última mina seleccionada
             currentMine = destTransform;
             // actualizar la posición de la base donde se dejarán los recursos
             float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
                 (currentMine.transform.position.z - basePosition.z));
-            float radius = 14.0f;
+            float radius = 6.0f;//.14.0f;
             lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
             lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
             /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -251,12 +252,10 @@ public class UnitHarvester : UnitController
     public void StartChoping ()
     {
         // cuando llegue a la mina pasar el estado a Choping
-        if (currentHarvestState == HarvestState.GoingToMine)
-        {
-            Debug.Log("comenzando cosecha...");
-            currentHarvestState = HarvestState.Choping;
-			nextHarvestState = HarvestState.ReturningToBase;
-        }
+        Debug.Log("comenzando cosecha...");
+        animation.Play("Picar");
+        currentHarvestState = HarvestState.Choping;
+        nextHarvestState = HarvestState.ReturningToBase;
     }
 
     public override void ArrivedToBase ()

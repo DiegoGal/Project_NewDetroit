@@ -90,12 +90,13 @@ ModelImporter:
     4300004: Box004
     4300006: Cylinder002
     7400000: Iddle01
-    7400002: Idle Wait
+    7400002: Iddle Wait
     7400004: Walk
     7400006: Muerte
     7400008: Ataque1
     7400010: Ataque2
     9500000: //RootNode
+    11100000: //RootNode
     13700000: Goblin_01
   materials:
     importMaterials: 0
@@ -117,12 +118,12 @@ ModelImporter:
       takeName: Take 001
       firstFrame: 0
       lastFrame: 51
-      wrapMode: 0
+      wrapMode: 2
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -240,7 +241,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Idle Wait
+      name: Iddle Wait
       takeName: Take 001
       firstFrame: 52
       lastFrame: 153
@@ -249,7 +250,7 @@ ModelImporter:
       level: 0
       cycleOffset: 0
       loop: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -371,12 +372,12 @@ ModelImporter:
       takeName: Take 001
       firstFrame: 155
       lastFrame: 179
-      wrapMode: 0
+      wrapMode: 2
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -503,7 +504,7 @@ ModelImporter:
       level: 0
       cycleOffset: 0
       loop: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -625,12 +626,12 @@ ModelImporter:
       takeName: Take 001
       firstFrame: 209
       lastFrame: 235
-      wrapMode: 0
+      wrapMode: 2
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -752,12 +753,12 @@ ModelImporter:
       takeName: Take 001
       firstFrame: 236
       lastFrame: 256
-      wrapMode: 0
+      wrapMode: 2
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -909,5 +910,5 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 1
   userData: 

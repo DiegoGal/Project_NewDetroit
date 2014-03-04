@@ -56,6 +56,8 @@ public class UnitArtillery : UnitController
 	// Update is called once per frame
     public override void Update ()
     {
+        base.Update();
+
         switch (currentArtilleryState)
         {
             case ArtilleryState.None:
@@ -156,9 +158,9 @@ public class UnitArtillery : UnitController
 
         GUI.skin.label.fontSize = 10;
 
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 25, 100, 50),
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
             currentState.ToString());
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 35, 100, 50),
+        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 55, 100, 50),
             currentArtilleryState.ToString());
     } // OnGUI
 
@@ -166,6 +168,7 @@ public class UnitArtillery : UnitController
     {
         base.RightClickOnSelected(destiny, destTransform);
     } // RightClickOnSelected
+
 	public void EnemyEntersInVisionSphere (ControllableCharacter enemy)
     {
         //Debug.Log("ALERT");

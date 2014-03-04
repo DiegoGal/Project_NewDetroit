@@ -3,6 +3,8 @@ using System.Collections;
 
 public class BaseController : Photon.MonoBehaviour
 {
+    public bool isOnline = false;
+
 	public int teamNumber;
 
     // referencia al controlador del ejército
@@ -31,7 +33,8 @@ public class BaseController : Photon.MonoBehaviour
 
         spawnDestiny = new Vector3(
             this.transform.position.x + 5.5f,
-            this.transform.position.y,
+            //this.transform.position.y,
+            0.0f,
             this.transform.position.z - 5.5f
         );
 
@@ -77,25 +80,50 @@ public class BaseController : Photon.MonoBehaviour
 	{
 		GameObject newUnit = null;
 
-		switch (id)
-		{
-			case 0: // Harvester
-			newUnit = PhotonNetwork.Instantiate("UnitHarvester", spawnOrigin, new Quaternion(),0)
-					as GameObject;
-			break;
-			case 1: // Basic Artillery
-			newUnit = PhotonNetwork.Instantiate("UnitBasicArtillery", spawnOrigin, new Quaternion(),0)
-					as GameObject;
-			break;
-			case 2: // Heavy Artillery
-			newUnit = PhotonNetwork.Instantiate("UnitHeavyArtillery", spawnOrigin, new Quaternion(),0)
-					as GameObject;
-			break;
-			case 3: // Engineer
-			newUnit = PhotonNetwork.Instantiate("UnitEngineer", spawnOrigin, new Quaternion(),0)
-				as GameObject;
-			break;
-		}
+        if (isOnline)
+        {
+            switch (id)
+            {
+                case 0: // Harvester
+                    newUnit = PhotonNetwork.Instantiate("UnitHarvester", spawnOrigin, new Quaternion(), 0)
+                            as GameObject;
+                    break;
+                case 1: // Basic Artillery
+                    newUnit = PhotonNetwork.Instantiate("UnitBasicArtillery", spawnOrigin, new Quaternion(), 0)
+                            as GameObject;
+                    break;
+                case 2: // Heavy Artillery
+                    newUnit = PhotonNetwork.Instantiate("UnitHeavyArtillery", spawnOrigin, new Quaternion(), 0)
+                            as GameObject;
+                    break;
+                case 3: // Engineer
+                    newUnit = PhotonNetwork.Instantiate("UnitEngineer", spawnOrigin, new Quaternion(), 0)
+                        as GameObject;
+                    break;
+            }
+        }
+        else
+        {
+            switch (id)
+            {
+                case 0: // Harvester
+                    newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion())
+                        as GameObject;
+                    break;
+                case 1: // Basic Artillery
+                    newUnit = Instantiate(basicArtilleryUnit, spawnOrigin, new Quaternion())
+                        as GameObject;
+                    break;
+                case 2: // Heavy Artillery
+                    newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
+                        as GameObject;
+                    break;
+                case 3: // Engineer
+                    newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
+                        as GameObject;
+                    break;
+            }
+        }
 
 		newUnit.GetComponent<UnitController>().SetArmyBase(this);
 		newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);

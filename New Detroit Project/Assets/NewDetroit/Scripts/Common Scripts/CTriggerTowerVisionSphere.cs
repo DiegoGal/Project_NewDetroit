@@ -15,7 +15,7 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other)
 	{
-        Debug.Log("trigger!");
+        //Debug.Log("trigger!");
 		ControllableCharacter unit = other.transform.GetComponent<ControllableCharacter>();
 		if (unit != null)
 		{

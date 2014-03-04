@@ -41,6 +41,9 @@ public class ArmyController : MonoBehaviour
         GameObject go = GameObject.Find("Goblin01_Harvester");
         if (go.GetComponent<UnitController>().teamNumber == teamNumber)
             unitList.Add(go);
+        go = GameObject.Find("Goblin02_Artillery");
+        if (go.GetComponent<UnitController>().teamNumber == teamNumber)
+            unitList.Add(go);
 
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
 		// Bit shift the index of the layer (8) to get a bit mask

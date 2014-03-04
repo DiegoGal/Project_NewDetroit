@@ -10,6 +10,8 @@ public class CSelectable : MonoBehaviour
     public Material origMaterial;
     public Material selectMaterial;
 
+    private Transform model;
+
 	private bool selected;
 
 	// Use this for initialization
@@ -18,11 +20,9 @@ public class CSelectable : MonoBehaviour
         /*if (this.renderer != null)
 		    origColor = this.renderer.material.color;*/
 
-        Transform model = transform.FindChild("Model");
+        model = transform.FindChild("Model");
         if (model != null)
-        {
             model.renderer.material = origMaterial;
-        }
 
 		selected = false;
 	}
@@ -36,14 +36,18 @@ public class CSelectable : MonoBehaviour
 	public void SetSelected ()
 	{
 		selected = true;
-        if (this.renderer != null)
+        if (model != null)
+            model.renderer.material = selectMaterial;
+        else if (this.renderer != null)
 		    this.renderer.material.color = selectColor;
 	}
 	
 	public void SetDeselect ()
 	{
 		selected = false;
-        if (this.renderer != null)
+        if (model != null)
+            model.renderer.material = origMaterial;
+        else if (this.renderer != null)
 		    this.renderer.material.color = origColor;
 	}
 	

@@ -16,7 +16,6 @@ public class UnitController : ControllableCharacter
     {
         Iddle,	// reposo
         GoingTo,
-        /*Harvesting,*/
         Attacking
     }
 	protected State currentState = State.Iddle;
@@ -26,7 +25,7 @@ public class UnitController : ControllableCharacter
     public float rotationVelocity = 10.0f;
     public Vector3 dirMovement = new Vector3();
     private Vector3 destiny = new Vector3();
-    protected float destinyThreshold = 1.0f;
+    protected float destinyThreshold = 0.5f;
 
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
@@ -34,7 +33,7 @@ public class UnitController : ControllableCharacter
     // modelo del asset (el que contiene las animaciones)
     protected Transform model;
 
-    public virtual void Awake()
+    public virtual void Awake ()
     {
         model = transform.FindChild("Model");
     }
@@ -46,11 +45,15 @@ public class UnitController : ControllableCharacter
         GetComponent<NavMeshAgent>().speed = velocity;
 
         if (destiny == Vector3.zero)
+        {
             destiny = transform.position;
-
-        //model = transform.FindChild("Model");
-        //model.animation.Play("Walk");
-        animation.Play("Iddle01");
+            animation.Play("Iddle01");
+        }
+        else
+        {
+            currentState = State.GoingTo;
+            animation.Play("Walk");
+        }
     }
 
     // Update is called once per frame
@@ -63,8 +66,7 @@ public class UnitController : ControllableCharacter
                 break;
             case State.GoingTo:
                 //Vector3 direction = destiny - transform.position;
-                Vector3 direction = new Vector3(destiny.x - transform.position.x, 0,
-                    destiny.z - transform.position.z);
+                Vector3 direction = destiny - transform.position;
                 if (direction.magnitude >= destinyThreshold)
                 {
                     /*Quaternion qu = new Quaternion();
@@ -79,7 +81,10 @@ public class UnitController : ControllableCharacter
                     //GetComponent<NavMeshAgent>().destination = destiny;
                 }
                 else
+                {
                     currentState = State.Iddle;
+                    animation.Play("Iddle01");
+                }
                 break;
         }
     }
@@ -101,9 +106,9 @@ public class UnitController : ControllableCharacter
         GUI.EndGroup();*/
 
         // rectángulo donde se dibujará la barra
-        Rect rect1 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 14.0f, 20.0f, 4.0f);
+        Rect rect1 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 30.0f, 20.0f, 4.0f);
         GUI.DrawTexture(rect1, progressBarEmpty);
-        Rect rect2 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 14.0f, 20.0f * (currentLife/maximunLife), 4.0f);
+        Rect rect2 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 30.0f, 20.0f * (currentLife/maximunLife), 4.0f);
         GUI.DrawTexture(rect2, progressBarFull);
     }
 
@@ -112,6 +117,8 @@ public class UnitController : ControllableCharacter
         this.destiny = destiny;
         GetComponent<NavMeshAgent>().destination = destiny;
         currentState = State.GoingTo;
+
+        animation.Play("Walk");
     }
 
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
