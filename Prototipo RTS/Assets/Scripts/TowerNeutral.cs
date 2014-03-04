@@ -31,7 +31,7 @@ public class TowerNeutral : Tower
 	private float amountToSubstract = 1;
 
 	// Use this for initialization
-	void Start ()
+	protected override void Start ()
     {
         base.Start();
 
@@ -46,8 +46,9 @@ public class TowerNeutral : Tower
 	}
 	
 	// Update is called once per frame
-	void Update () 
+    protected override void Update()
     {
+        base.Update();
 		
 		switch (currentTowerState) 
 		{
@@ -195,8 +196,7 @@ public class TowerNeutral : Tower
     {
         return currentTowerState == TowerState.Neutral;
     }
-
-
+    
 	public virtual void OnGUI()
 	{
 		Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
@@ -232,44 +232,5 @@ public class TowerNeutral : Tower
 			GUI.DrawTexture(rect2, progressBarFull);
 
 		}
-	}
-
-    public bool GetEngineerPosition(ref Vector3 pos, ref int index, UnitEngineer unit)
-    {
-        int i = 0; bool found = false;
-        while (!found && (i < numEngineerPositions))
-        {
-            if (!engineerPosTaken[i])
-            {
-                pos = engineerPositions[i];
-                index = i;
-                engineerPosTaken[i] = true;
-                cubes[i].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
-                found = true;
-            }
-            else
-                i++;
-        }
-        if (!found)
-            engineerQueue.Add(unit);
-        return found;
-    }
-
-    public void LeaveEngineerPosition(int index)
-    {
-        engineerPosTaken[index] = false;
-        cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
-        if (engineerQueue.Count > 0)
-        {
-            UnitEngineer unit = engineerQueue[0];
-            if (currentTowerState == TowerState.Neutral)
-                unit.FinishWaitingToConquest(engineerPositions[index], index);
-            else
-                unit.FinishWaitingToRepair(engineerPositions[index], index);
-            engineerQueue.RemoveAt(0);
-            engineerPosTaken[index] = true;
-            cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
-        }
-    }
-	
+	}	
 }

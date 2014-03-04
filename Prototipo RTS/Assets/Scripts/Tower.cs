@@ -7,6 +7,8 @@ public class Tower : MonoBehaviour {
     // the team number
     public int teamNumber = -1;
 
+    public bool canBeConquered;
+
     protected float alertHitTimer = 1.0f;
     protected float alertHitTimerAux = 0.0f;
 
@@ -33,7 +35,7 @@ public class Tower : MonoBehaviour {
     protected const float totalLife = 100.0f;
 
     //The currentLife of the Tower
-    protected float currentLife = 100.0f;
+    protected float currentLife = 0.0f;
 
     //the list of enemies inside the tower vision
     protected List<ControllableCharacter> enemiesInside = new List<ControllableCharacter>();
@@ -62,7 +64,7 @@ public class Tower : MonoBehaviour {
 
 
 	// Use this for initialization
-	protected void Start () 
+	protected virtual void Start () 
     {
 
         // setting of the distance to wait
@@ -105,7 +107,7 @@ public class Tower : MonoBehaviour {
 	
 
 	// Update is called once per frame
-	void Update () 
+    protected virtual void Update() 
     {
 	    
 	}
@@ -210,5 +212,69 @@ public class Tower : MonoBehaviour {
             i++;
             cont++;
         }
+    }
+
+    public void LeaveEngineerPositionConquest(int index)
+    {
+        engineerPosTaken[index] = false;
+        cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+        if (engineerQueue.Count > 0)
+        {
+            UnitEngineer unit = engineerQueue[0];
+            
+            unit.FinishWaitingToConquest(engineerPositions[index], index);
+            engineerQueue.RemoveAt(0);
+            engineerPosTaken[index] = true;
+            cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+        }
+    }
+
+    public void LeaveEngineerPositionRepair(int index)
+    {
+        engineerPosTaken[index] = false;
+        cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+        if (engineerQueue.Count > 0)
+        {
+            UnitEngineer unit = engineerQueue[0];
+            unit.FinishWaitingToRepair(engineerPositions[index], index);
+            engineerQueue.RemoveAt(0);
+            engineerPosTaken[index] = true;
+            cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+        }
+    }
+
+    public void LeaveEngineerPositionConstruct(int index)
+    {
+        engineerPosTaken[index] = false;
+        cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+        if (engineerQueue.Count > 0)
+        {
+            UnitEngineer unit = engineerQueue[0];
+            unit.FinishWaitingToConstruct(engineerPositions[index], index);
+            engineerQueue.RemoveAt(0);
+            engineerPosTaken[index] = true;
+            cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+        }
+    }
+
+    public bool GetEngineerPosition(ref Vector3 pos, ref int index, UnitEngineer unit)
+    {
+        int i = 0; bool found = false;
+        while (!found && (i < numEngineerPositions))
+        {
+            if (!engineerPosTaken[i])
+            {
+                pos = engineerPositions[i];
+                index = i;
+                engineerPosTaken[i] = true;
+                cubes[i].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+                found = true;
+            }
+            else
+                i++;
+        }
+        if (!found)
+            engineerQueue.Add(unit);
+        return found;
     }
 }

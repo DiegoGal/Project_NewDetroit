@@ -27,9 +27,9 @@ public class TowerGoblin : Tower
 
    
 	// Use this for initialization
-	void Start () 
+	protected override void Start () 
     {
-       	
+		base.Start();
         myHit = new RaycastHit();
         // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
         // Bit shift the index of the layer (8) to get a bit mask
@@ -39,7 +39,7 @@ public class TowerGoblin : Tower
         // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
         layerMask = ~layerMask;
 
-		base.Start();
+
 	}
 
     public void Construct(Vector3 destiny)
@@ -50,9 +50,9 @@ public class TowerGoblin : Tower
     }
 
 	// Update is called once per frame
-	void Update () 
+    protected override void Update() 
     {
-       
+        base.Update();
         if (!active)
         {
             myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -185,41 +185,6 @@ public class TowerGoblin : Tower
 
 	}
 
-	public bool GetEngineerPosition(ref Vector3 pos, ref int index, UnitEngineer unit)
-	{
-		int i = 0; bool found = false;
-		while (!found && (i < numEngineerPositions))
-		{
-			if (!engineerPosTaken[i])
-			{
-				pos = engineerPositions[i];
-				index = i;
-				engineerPosTaken[i] = true;
-				cubes[i].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
-				found = true;
-			}
-			else
-				i++;
-		}
-		if (!found)
-			engineerQueue.Add(unit);
-		return found;
-	}
-	
-	public void LeaveEngineerPosition(int index)
-	{
-		engineerPosTaken[index] = false;
-		cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
-		if (engineerQueue.Count > 0)
-		{
-			UnitEngineer unit = engineerQueue[0];
-			unit.FinishWaitingToRepair(engineerPositions[index], index);
-			engineerQueue.RemoveAt(0);
-			engineerPosTaken[index] = true;
-			cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
-		}
-	}
-
 	private bool CanConstruct()
 	{
         RaycastHit theHit; // Structure used to get information back from a raycast.
@@ -227,5 +192,21 @@ public class TowerGoblin : Tower
 
         aRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         return true;
+	}
+
+	// Construct is called by the engineers
+	public bool Construct(float sum)
+	{
+		// increasement of the towers life
+		if (currentLife < totalLife)
+		{
+			currentLife += sum;
+			if (totalLife < currentLife)
+				currentLife = totalLife;
+		}
+		if (currentLife == totalLife)
+			return true;
+		else
+			return false;
 	}
 }
