@@ -458,9 +458,9 @@ public class ThirdPersonController : MonoBehaviour
 				else if (secondAttack == HeroeController.AttackSecond.Attack3)
 				{
 					transform.Translate(Vector3.down*2);
-					smokeInst = (GameObject)Instantiate(smoke,transform.localPosition,transform.localRotation);
+					smokeInst = (GameObject)Instantiate(smoke,transform.localPosition,transform.rotation);
 					transform.Translate(Vector3.up*2);
-					Destroy(smokeInst,3f);
+					Destroy(smokeInst,5f);
 					smokeActivated = true;
 				}
 			}
