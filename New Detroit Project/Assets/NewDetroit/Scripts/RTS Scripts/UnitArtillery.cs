@@ -158,10 +158,10 @@ public class UnitArtillery : UnitController
 
         GUI.skin.label.fontSize = 10;
 
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
+        /*GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
             currentState.ToString());
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 55, 100, 50),
-            currentArtilleryState.ToString());
+            currentArtilleryState.ToString());*/
     } // OnGUI
 
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)

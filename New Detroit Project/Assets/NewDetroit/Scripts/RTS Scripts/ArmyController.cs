@@ -38,7 +38,7 @@ public class ArmyController : MonoBehaviour
         lastCrowdAngle = 0;
 
         // agregamos las unidades que tengamos del ejército por el escenario
-        GameObject go = GameObject.Find("Goblin01_Harvester");
+        /*GameObject go = GameObject.Find("Goblin01_Harvester");
         if (go.GetComponent<UnitController>().teamNumber == teamNumber)
             unitList.Add(go);
         go = GameObject.Find("Goblin02_Artillery");
@@ -49,7 +49,7 @@ public class ArmyController : MonoBehaviour
             unitList.Add(go);
         go = GameObject.Find("Goblin01_Explorer");
         if (go.GetComponent<UnitController>().teamNumber == teamNumber)
-            unitList.Add(go);
+            unitList.Add(go);*/
 
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
 		// Bit shift the index of the layer (8) to get a bit mask
@@ -113,7 +113,7 @@ public class ArmyController : MonoBehaviour
                 myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
                 {
-                    Debug.Log("he tocado: " + myHit.transform.name);
+                    //Debug.Log("he tocado: " + myHit.transform.name);
 					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
 					if (objSel != null)
 					{

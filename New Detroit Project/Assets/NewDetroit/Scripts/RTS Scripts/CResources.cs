@@ -14,13 +14,15 @@ public class CResources : MonoBehaviour
     private bool[] harvestPosTaken;
 
     // desplazamiento de los harvest positions
-    public float despPosition = 0.4f;
+    public float despPosition = 0.8f;
 
     // Queue of units harversters which are waiting in the mine
     private List<UnitHarvester> harvesterQueue;
 
     // for debugging
     private GameObject[] cubes;
+
+    public bool createCubes = false;
 
     void Start ()
     {
@@ -34,7 +36,10 @@ public class CResources : MonoBehaviour
         cubes = new GameObject[numHarvestPositions];
         
         float twoPi = Mathf.PI * 2;
-        Vector3 center = transform.Find("center").position;
+        Vector3 center = transform.position;
+        Transform aux = transform.Find("center");
+        if (aux != null)
+            center = aux.position;
         for (int i = 0; i < numHarvestPositions; i++)
         {
             Vector3 pos = new Vector3
@@ -53,6 +58,7 @@ public class CResources : MonoBehaviour
             Destroy(cubes[i].GetComponent<BoxCollider>());
             cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
             cubes[i].transform.parent = this.transform;
+            cubes[i].SetActive(createCubes);
         }
 
         harvesterQueue = new List<UnitHarvester>();

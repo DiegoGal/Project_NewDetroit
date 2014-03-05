@@ -335,12 +335,12 @@ public abstract class HeroeController : ControllableCharacter
 	{
 		// labels for debug
 		Vector3 pos = Camera.main.WorldToScreenPoint (transform.position);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 100, 50), "Vida: " + this.currentLife);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 20, 100, 50), "Mine: " + this.isMine);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 40, 100, 50), "State: " + this.state);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 60, 100, 50), "Experience: " + this.experience);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 80, 100, 50), "Level: " + this.level);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 100, 100, 50), "Maxima vida: " + this.maximunLife);
+		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 100, 50), "Vida: " + this.currentLife);
+		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 20, 100, 50), "Mine: " + this.isMine);
+		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 40, 100, 50), "State: " + this.state);
+		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 60, 100, 50), "Experience: " + this.experience);
+		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 80, 100, 50), "Level: " + this.level);
+		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 100, 100, 50), "Maxima vida: " + this.maximunLife);
 
 		//-------------------------------------------------------------------------------------------------
 		// Life
@@ -357,8 +357,8 @@ public abstract class HeroeController : ControllableCharacter
 		Rect rectanglePositive = new Rect (posLife.x - 50 * lengthLife, Screen.height - posLife.y, 100 * positiveLife * lengthLife, 10 * lengthLife);
 		Rect rectangleNegative = new Rect (posLife.x - 50 * lengthLife + 100 * positiveLife * lengthLife, Screen.height - posLife.y, 
 		                                   100 * negativeLife * lengthLife, 10 * lengthLife);
-		GUI.DrawTexture (rectanglePositive, textureLifePositive);
-		GUI.DrawTexture (rectangleNegative, textureLifeNegative);
+		//GUI.DrawTexture (rectanglePositive, textureLifePositive);
+		//GUI.DrawTexture (rectangleNegative, textureLifeNegative);
 	}
 
 }

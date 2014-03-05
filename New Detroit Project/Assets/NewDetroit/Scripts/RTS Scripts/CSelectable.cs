@@ -17,8 +17,8 @@ public class CSelectable : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        /*if (this.renderer != null)
-		    origColor = this.renderer.material.color;*/
+        if (this.renderer != null)
+		    origColor = this.renderer.material.color;
 
         model = transform.FindChild("Model");
         if (model != null)

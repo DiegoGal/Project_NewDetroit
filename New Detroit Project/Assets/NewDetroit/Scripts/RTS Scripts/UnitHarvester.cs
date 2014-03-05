@@ -53,7 +53,7 @@ public class UnitHarvester : UnitController
         basicAttackPower = secondaryAttackPower = attackPower;
     }
     
-    public override void Update()
+    public override void Update ()
     {
         switch (currentHarvestState)
         {
@@ -140,7 +140,7 @@ public class UnitHarvester : UnitController
         }
     } // Update
 
-    public override void OnGUI()
+    public override void OnGUI ()
     {
         base.OnGUI();
 
@@ -148,15 +148,15 @@ public class UnitHarvester : UnitController
 
 		GUI.skin.label.fontSize = 10;
         
-		GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
+		/*GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
 		    currentState.ToString());
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 55, 100, 50),
             currentHarvestState.ToString());
         GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 65, 100, 50),
-            "resources: " + resourcesLoaded);
+            "resources: " + resourcesLoaded);*/
     }
 
-    public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
+    public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
         if (destTransform.name == "WorldFloor")
         {
@@ -170,20 +170,22 @@ public class UnitHarvester : UnitController
             currentHarvestState = HarvestState.None;
             base.RightClickOnSelected(destiny, destTransform);
         }
-        else if (destTransform.name == "Resources Mine")
+        else if ((destTransform.name == "Resources Mine") || (destTransform.name == "Metro") )
         {
             // actualizar la referencia de la última mina seleccionada
             currentMine = destTransform;
             // actualizar la posición de la base donde se dejarán los recursos
             float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
                 (currentMine.transform.position.z - basePosition.z));
-            float radius = 6.0f;//.14.0f;
-            lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
-            lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
+            //lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
+            //lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
+            lastBasePos.x = baseController.transform.position.x + (Mathf.Cos(alpha) * baseController.GetRadious());
+            lastBasePos.z = baseController.transform.position.z + (Mathf.Sin(alpha) * baseController.GetRadious());
+
             /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.position = lastBasePos;
             cube.renderer.material.color = Color.red;
-            cube.transform.parent = this;*/
+            cube.transform.parent = baseController.transform;*/
 
             Debug.Log("vamos pa la mina!");
             if (currentHarvestState == HarvestState.None)
@@ -223,7 +225,7 @@ public class UnitHarvester : UnitController
                 }
             }
         }
-        else if (destTransform.name == "Army Base")
+        else if ((destTransform.name == "Army Base") || (destTransform.name == "The Stinky Squid"))
         {
             // vuelve a la base, si tiene recursos los deja
             if (resourcesLoaded > 0)

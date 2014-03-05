@@ -106,9 +106,9 @@ public class UnitController : ControllableCharacter
         GUI.EndGroup();*/
 
         // rectángulo donde se dibujará la barra
-        Rect rect1 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 30.0f, 20.0f, 4.0f);
+        Rect rect1 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 30.0f, 20.0f, 3.0f);
         GUI.DrawTexture(rect1, progressBarEmpty);
-        Rect rect2 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 30.0f, 20.0f * (currentLife/maximunLife), 4.0f);
+        Rect rect2 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 30.0f, 20.0f * (currentLife/maximunLife), 3.0f);
         GUI.DrawTexture(rect2, progressBarFull);
     }
 
