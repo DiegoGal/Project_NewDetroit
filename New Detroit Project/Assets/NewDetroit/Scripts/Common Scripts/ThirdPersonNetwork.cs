@@ -30,7 +30,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			cameraScript.enabled = true;
 			controllerScript.enabled = true;
 
-			this.heroeControlScript.setIsMine(true);
+			this.heroeControlScript.isMine = true;
 		}
 		else
 		{           
@@ -39,7 +39,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			controllerScript.enabled = true;
 			controllerScript.isControllable = false;
 
-			this.heroeControlScript.setIsMine(false);
+			this.heroeControlScript.isMine = false;
 		}
 
 		gameObject.name = gameObject.name + photonView.viewID;
@@ -61,7 +61,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			stream.SendNext(transform.rotation);
 
 			// Life's orc
-			if (heroeControlScript.getType() == HeroeController.TypeHeroe.Orc)
+			if (heroeControlScript.type == HeroeController.TypeHeroe.Orc)
 			{
 				OrcController orcControlScript = this.GetComponent<OrcController>();
 				OrcBasicAttack	leftAttack = orcControlScript.leftArm.GetComponent<OrcBasicAttack>(),
@@ -92,7 +92,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			}
 
 			// Experience
-			stream.SendNext(heroeControlScript.getExperience());
+			stream.SendNext(heroeControlScript.experience);
 		}
 		// Is reading
 		else
@@ -146,7 +146,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 
 			this.updateCollidedOrc();
 
-			heroeControlScript.setExperience(experience);
+			heroeControlScript.experience = experience;
 		}
 	}
 
@@ -162,8 +162,8 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		if (this.nameOrcLA != null && this.nameOrcRA != null && this.nameOrcLA == this.nameOrcRA)
 		{
 			GameObject go = GameObject.Find(nameOrcLA);
-			if (this.lifeOrcLA <= this.lifeOrcRA) go.GetComponent<HeroeController>().setLife(lifeOrcLA);
-			else go.GetComponent<HeroeController>().setLife(lifeOrcRA);
+			if (this.lifeOrcLA <= this.lifeOrcRA) go.GetComponent<HeroeController>().currentLife = lifeOrcLA;
+			else go.GetComponent<HeroeController>().currentLife = lifeOrcRA;
 
 			this.nameOrcLA = null;
 			this.nameOrcRA = null;
@@ -174,7 +174,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			if (nameOrcLA != null)
 			{
 				GameObject go = GameObject.Find(nameOrcLA);
-				go.GetComponent<HeroeController>().setLife(lifeOrcLA);
+				go.GetComponent<HeroeController>().currentLife = lifeOrcLA;
 				this.nameOrcLA = null;
 				// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
 			}
@@ -182,7 +182,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			if (nameOrcRA != null)
 			{
 				GameObject go = GameObject.Find(nameOrcRA);
-				go.GetComponent<HeroeController>().setLife(lifeOrcRA);
+				go.GetComponent<HeroeController>().currentLife = lifeOrcRA;
 				this.nameOrcRA = null;
 				// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
 			}

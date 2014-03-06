@@ -11,7 +11,7 @@ public class ControllableCharacter : MonoBehaviour
 
     // Life variables
     public float maximunLife = 100.0f;
-    protected float currentLife;
+    public float currentLife;
 
     // Reference to the position of the unit team base
     protected Vector3 basePosition = new Vector3();
@@ -19,7 +19,7 @@ public class ControllableCharacter : MonoBehaviour
     public BaseController baseController;
 
 	//Experience that gives the unit when it dies
-	protected int experienceGived = 0;
+	public int experienceGived = 0;
 
 
 	// --------------------------------------------------------------
