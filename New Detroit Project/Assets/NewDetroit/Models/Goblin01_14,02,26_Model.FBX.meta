@@ -81,9 +81,9 @@ ModelImporter:
     400070: //RootNode
     400072: Goblin_01
     4300000: Goblin_01
-    7400000: Iddle01
-    7400002: Iddle Wait
-    7400004: Iddle Carga
+    7400000: Idle01
+    7400002: Idle Wait
+    7400004: Idle Carga
     7400006: Walk
     7400008: Walk Carga
     7400010: Ataque
@@ -108,7 +108,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Iddle01
+      name: Idle01
       takeName: Take 001
       firstFrame: 0
       lastFrame: 51
@@ -228,7 +228,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Iddle Wait
+      name: Idle Wait
       takeName: Take 001
       firstFrame: 52
       lastFrame: 103
@@ -348,7 +348,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Iddle Carga
+      name: Idle Carga
       takeName: Take 001
       firstFrame: 104
       lastFrame: 155

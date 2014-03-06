@@ -89,8 +89,8 @@ ModelImporter:
     4300002: Box002
     4300004: Box004
     4300006: Cylinder002
-    7400000: Iddle01
-    7400002: Iddle Wait
+    7400000: Idle01
+    7400002: Idle Wait
     7400004: Walk
     7400006: Muerte
     7400008: Ataque1
@@ -114,7 +114,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Iddle01
+      name: Idle01
       takeName: Take 001
       firstFrame: 0
       lastFrame: 51
@@ -241,7 +241,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Iddle Wait
+      name: Idle Wait
       takeName: Take 001
       firstFrame: 52
       lastFrame: 153
@@ -626,7 +626,7 @@ ModelImporter:
       takeName: Take 001
       firstFrame: 209
       lastFrame: 235
-      wrapMode: 2
+      wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
@@ -753,7 +753,7 @@ ModelImporter:
       takeName: Take 001
       firstFrame: 236
       lastFrame: 256
-      wrapMode: 2
+      wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0

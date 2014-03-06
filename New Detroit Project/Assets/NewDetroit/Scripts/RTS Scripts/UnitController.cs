@@ -14,12 +14,12 @@ public class UnitController : ControllableCharacter
 
     protected enum State
     {
-        Iddle,	// reposo
+        Idle,	// reposo
         GoingTo,
         Attacking
     }
-	protected State currentState = State.Iddle;
-    private State lastState = State.Iddle;
+	protected State currentState = State.Idle;
+    private State lastState = State.Idle;
 	
     public float velocity = 3.5f;
     public float rotationVelocity = 10.0f;
@@ -47,7 +47,7 @@ public class UnitController : ControllableCharacter
         if (destiny == Vector3.zero)
         {
             destiny = transform.position;
-            animation.Play("Iddle01");
+            animation.Play("Idle01");
         }
         else
         {
@@ -61,7 +61,7 @@ public class UnitController : ControllableCharacter
     {
         switch (currentState)
         {
-            case State.Iddle:
+            case State.Idle:
 
                 break;
             case State.GoingTo:
@@ -82,8 +82,8 @@ public class UnitController : ControllableCharacter
                 }
                 else
                 {
-                    currentState = State.Iddle;
-                    animation.CrossFade("Iddle01");
+                    currentState = State.Idle;
+                    animation.CrossFade("Idle01");
                 }
                 break;
         }
@@ -119,6 +119,15 @@ public class UnitController : ControllableCharacter
         currentState = State.GoingTo;
 
         animation.CrossFade("Walk");
+    }
+
+    protected void StopMoving ()
+    {
+        destiny = transform.position;
+        GetComponent<NavMeshAgent>().destination = destiny;
+        currentState = State.Idle;
+
+        animation.CrossFade("Idle01");
     }
 
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)

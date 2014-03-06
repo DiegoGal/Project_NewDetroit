@@ -11,10 +11,10 @@ public class CameraRTSController : MonoBehaviour
 
     public float panSpeed = 10.0f;
 
-    public Vector2 zoomRange = new Vector2(-28.0f, 5.0f);
+    public Vector2 zoomRange = new Vector2(-20.0f, 2.0f);
     private float currentZoom = 0.0f;
     public float zoomSpeed = 1000.0f;
-    public float zoomRotation = 1.0f;
+    public float zoomRotation = 1.4f;
 
     public float smooth = 1.5f; // The relative speed at which the camera will catch up.
 

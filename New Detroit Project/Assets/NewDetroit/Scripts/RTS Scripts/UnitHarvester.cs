@@ -84,16 +84,29 @@ public class UnitHarvester : UnitController
             (
                 Resources.Load("GoblinHarvesterHelmet"),
                 dummyHead.transform.position,
-                new Quaternion()
+                dummyHead.transform.rotation
             );
         else
             helmet = (GameObject)Instantiate
             (
                 Resources.Load("GoblinHarvesterCone"),
                 dummyHead.transform.position,
+                dummyHead.transform.rotation
+            );
+        helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
+        helmet.transform.parent = dummyHead;
+        if (Random.value <= 0.5f)
+        {
+            GameObject backpack = (GameObject)Instantiate
+            (
+                Resources.Load("GoblinHarvesterBackpack"),
+                dummyBackPack.transform.position,
                 new Quaternion()
             );
-        helmet.transform.parent = dummyHead;
+            backpack.transform.parent = dummyBackPack;
+        }
+
+        // instanciamos aleatóriamente una mochila detrás
         
         /*GameObject newPack = Instantiate
         (
@@ -132,8 +145,8 @@ public class UnitHarvester : UnitController
                     {
                         currentHarvestState = HarvestState.Waiting;
                         GetComponent<NavMeshAgent>().destination = transform.position;
-                        animation.CrossFade("Iddle Wait");
-                        animation.CrossFadeQueued("Iddle01");
+                        animation.CrossFade("Idle Wait");
+                        animation.CrossFadeQueued("Idle01");
                         //animation.PlayQueued("Iddle01");
                     }
                 }
@@ -145,7 +158,7 @@ public class UnitHarvester : UnitController
                 break;
             case HarvestState.GoingToChopPosition:
                 //if (Vector3.Distance(transform.position, lastHarvestPos) < destinyThreshold)
-                if (currentState == State.Iddle)
+                if (currentState == State.Idle)
                 {
                     // ha llegado a la posición de extracción
                     StartChoping();
@@ -187,7 +200,7 @@ public class UnitHarvester : UnitController
                 }
                 break;
             case HarvestState.ReturningToBase:
-                if (currentState == State.Iddle)
+                if (currentState == State.Idle)
                     ArrivedToBase();
                 else
                     base.Update();

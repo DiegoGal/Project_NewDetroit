@@ -72,8 +72,8 @@ ModelImporter:
     400064: headusOBJexport
     400066: mortero espalda
     4300000: headusOBJexport
-    7400000: Iddle01
-    7400002: Iddle Wait
+    7400000: Idle01
+    7400002: Idle Wait
     7400004: Walk
     7400006: Ataque1
     7400008: Deployment-prepare
@@ -101,7 +101,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Iddle01
+      name: Idle01
       takeName: Take 001
       firstFrame: 0
       lastFrame: 50
@@ -217,7 +217,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Iddle Wait
+      name: Idle Wait
       takeName: Take 001
       firstFrame: 51
       lastFrame: 128

@@ -99,7 +99,7 @@ public class UnitEngineer : UnitController {
 				
 				break;
 			case EngineerState.GoingToRepairPosition:
-				if (currentState == State.Iddle)
+				if (currentState == State.Idle)
 				{
 					// when it have arrived to the repair position
 					Debug.Log("comenzando reparacion!!!!!!!");
@@ -109,7 +109,7 @@ public class UnitEngineer : UnitController {
 					base.Update();
 				break;
 			case EngineerState.GoingToConquestPosition:
-				if (currentState == State.Iddle)
+				if (currentState == State.Idle)
 				{
 					// when it have arrived to the conquest position
 					Debug.Log("comenzando conquista!!!!!!!!");
