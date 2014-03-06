@@ -43,6 +43,28 @@ public class TowerNeutral : Tower
             contConq[i] = 0;
             actualTimeConquering[i] = 0;
         }
+
+		float twoPi = Mathf.PI * 2;
+		Vector3 center = transform.position;
+		for (int i = 0; i < numEngineerPositions; i++)
+		{
+			Vector3 pos = new Vector3
+				(
+					center.x +
+					(transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
+					0,
+					center.z +
+					(transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
+					);
+			engineerPositions[i] = pos;
+			engineerPosTaken[i] = false;
+			
+			cubes[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			cubes[i].transform.position = pos;
+			Destroy(cubes[i].GetComponent<BoxCollider>());
+			cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+			cubes[i].transform.parent = this.transform;
+		}
 	}
 	
 	// Update is called once per frame
@@ -180,6 +202,10 @@ public class TowerNeutral : Tower
 			teamNumber = team;
 			currentTowerState = TowerState.Iddle;
 			UpdateEnemiesInside(team);
+			RemoveEngineersInQueue();
+			for (int i = 0; i < numEngineerPositions; i++)
+				cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+
 			return true;
 		}
 		return false;
@@ -224,7 +250,6 @@ public class TowerNeutral : Tower
 		}
 		else
 		{
-			
 			// rectángulo donde se dibujará la barra de vida
 			Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f, 4.0f);
 			GUI.DrawTexture(rect1, progressBarEmpty);
