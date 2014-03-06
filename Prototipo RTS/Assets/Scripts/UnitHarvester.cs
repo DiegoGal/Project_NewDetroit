@@ -24,6 +24,16 @@ public class UnitHarvester : UnitController
 	// referencia a la moneda
 	public GameObject coin;
 
+	// referencia al item que se está curando
+	private Transform currentItem;
+
+	// tiempo en segundos que la unidad tarda en realizar una curacion
+	public int harvestHealTime = 1;
+	private float actualHarvestHealTime = 0;
+
+	// cantidad de curación
+	public int amountPerActionHeal = 5;
+
     private enum HarvestState
     {
         None,
@@ -31,7 +41,9 @@ public class UnitHarvester : UnitController
         Waiting, // espera hasta que halla hueco en la mina
         GoingToChopPosition,
         Choping, // picando
-        ReturningToBase
+        ReturningToBase,
+		GoingToHealUnit,
+		Healing
     }
     private HarvestState currentHarvestState = HarvestState.None;
     private HarvestState nextHarvestState = HarvestState.None;
@@ -136,6 +148,42 @@ public class UnitHarvester : UnitController
                 else
                     base.Update();
                 break;
+			case HarvestState.GoingToHealUnit:
+				float distItem = Vector3.Distance(transform.position, currentItem.position);
+				base.GoTo(currentItem.position);
+				if (distItem < 6.0f)
+				{
+					currentHarvestState = HarvestState.Healing;
+				}
+				else
+					base.Update();
+				break;
+			case HarvestState.Healing:
+				actualHarvestHealTime += Time.deltaTime;
+				distItem = Vector3.Distance(transform.position, currentItem.position);
+				bool healed = false;
+				if (distItem < 4.0f)
+				{
+					base.GoTo(transform.position);
+				}
+				else if (distItem > 8.0f)
+				{
+					currentHarvestState = HarvestState.None;
+					nextHarvestState = HarvestState.None;
+				}
+				if (actualHarvestHealTime >= harvestHealTime)
+				{
+					healed = currentItem.GetComponent<UnitExplorer>().Heal(amountPerActionHeal);
+					// The item has been repaired
+					if (healed)
+					{
+						Debug.Log("Unidad curada");
+						currentHarvestState = HarvestState.None;
+						nextHarvestState = HarvestState.None;
+					}
+					actualHarvestHealTime = 0;
+				}
+				break;
         }
     } // Update
 
@@ -238,6 +286,12 @@ public class UnitHarvester : UnitController
             }
             nextHarvestState = HarvestState.None;
         }
+		else if (destTransform.name == "UnitExplorer")
+		{
+			Debug.Log("¡A curar!");
+			currentItem = destTransform;
+			currentHarvestState = HarvestState.GoingToHealUnit;
+		}
     } // RightClickOnSelected
 
     public void FinishWaiting (Vector3 chopPosition, int chopIndex)
