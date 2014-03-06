@@ -3,52 +3,80 @@ using System.Collections;
 
 public class OrcController : HeroeController
 {
-	//==============================
-	//=====     Attributes     =====
-	//==============================
-	private const int IN_LIFE = 175,
-					IN_ATT_P = 15,
-					IN_ATT_M = 10,
-					IN_DEF_P = 5,
-					IN_DEF_M = 5,
-					IN_MANA_1_2 = 75, IN_MANA_2_3 = 100, IN_MANA_3_4 = 150,
-					IN_ADREN = 100,
-					IN_SPEED_MOV = 5;
-	private const double IN_SPEED_ATT = 0.1f;
-
+	private const int 		LIFE_1 = 		375, 	LIFE_2 = 		550, 	LIFE_3 = 		725, 	LIFE_4 = 		900,
+							ATT_P_1 = 		30, 	ATT_P_2 = 		45, 	ATT_P_3 = 		60, 	ATT_P_4 = 		75,
+							ATT_M_1 = 		25, 	ATT_M_2 = 		35, 	ATT_M_3 = 		45, 	ATT_M_4 = 		55;
+	private const double 	ATT_SPEED_1 = 	0.9, 	ATT_SPEED_2 = 	1, 		ATT_SPEED_3 = 	1.1, 	ATT_SPEED_4 = 	1.2;
+	private const int 		DEF_P_1 = 		25, 	DEF_P_2 = 		30, 	DEF_P_3 = 		35, 	DEF_P_4 = 		40,
+							DEF_M_1 = 		20, 	DEF_M_2 = 		25, 	DEF_M_3 = 		30, 	DEF_M_4 = 		35,
+							MANA_1 = 		175, 	MANA_2 = 		250, 	MANA_3 = 		350, 	MANA_4 = 		500,
+							ADREN_1 = 		150, 	ADREN_2 = 		250, 	ADREN_3 = 		350, 	ADREN_4 = 		450,
+							MOV_SPEED_1 = 	50, 	MOV_SPEED_2 = 	55, 	MOV_SPEED_3 = 	60, 	MOV_SPEED_4 = 	35;
+	
+	
+	//-----------------------------------------------------------------------------------------------------------------
 	public GameObject leftArm, rightArm;
-
-
-	//===========================
-	//=====     Methods     =====
-	//===========================
-
-	//PRIVATE
-
+	
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	// PRIVATE
 	private void newLevel()
 	{
 		if (this.hasNewLevel) 
 		{
-			float percentage = (float)IN_LIFE / this.maximunLife;
-			this.maximunLife += IN_LIFE;
-			this.currentLife = (1 + percentage)*currentLife;
-
-
-			/*this.attackPUp(IN_ATT_P);
-			this.attackMUp(IN_ATT_M);
-			this.speedAttUp(IN_SPEED_ATT);
-			this.defPUp(IN_DEF_P);
-			this.defMUp(IN_DEF_M);
-			if (this.level == 2) this.manaUp(IN_MANA_1_2);
-			else if (this.level == 3) this.manaUp(IN_MANA_2_3);
-			else this.manaUp(IN_MANA_3_4);
-			this.adrenUp(IN_ADREN);
-			this.speedMovUp(IN_SPEED_MOV);*/
-
-			this.hasNewLevel = false;
+			int maxLife = (int) maximunLife,
+			maxAdren = adren,
+			maxMana = mana;
+			switch (level)
+			{
+			case 2:
+				this.maximunLife = LIFE_2;
+				this.attackP = ATT_P_2;
+				this.attackM = ATT_M_2;
+				this.speedAtt = ATT_SPEED_2;
+				this.defP = DEF_P_2;
+				this.defM = DEF_M_2;
+				this.mana = MANA_2;
+				this.adren = ADREN_2;
+				this.speedMov = MOV_SPEED_2;
+				break;
+			case 3:
+				this.maximunLife = LIFE_3;
+				this.attackP = ATT_P_3;
+				this.attackM = ATT_M_3;
+				this.speedAtt = ATT_SPEED_3;
+				this.defP = DEF_P_3;
+				this.defM = DEF_M_3;
+				this.mana = MANA_3;
+				this.adren = ADREN_3;
+				this.speedMov = MOV_SPEED_3;
+				break;
+			case 4:
+				this.maximunLife = LIFE_4;
+				this.attackP = ATT_P_4;
+				this.attackM = ATT_M_4;
+				this.speedAtt = ATT_SPEED_4;
+				this.defP = DEF_P_4;
+				this.defM = DEF_M_4;
+				this.mana = MANA_4;
+				this.adren = ADREN_4;
+				this.speedMov = MOV_SPEED_4;
+				break;
+			}//end switch (level)
+			
+			float percentage = (float)(maximunLife - maxLife) / maxLife;
+			currentLife = (1 + percentage) * currentLife;
+			
+			percentage = (float)(adren - maxAdren) / maxAdren;
+			currentAdren = (int) ((1 + percentage) * currentAdren);
+			
+			percentage = (float)(mana - maxMana) / maxMana;
+			currentMana = (int) ((1 + percentage) * currentMana);
+			
+			hasNewLevel = false;
 		}
 	}
-
+	
 	private void attack()
 	{
 		// if the orc is not dead and is not recovering after his dead
@@ -74,40 +102,43 @@ public class OrcController : HeroeController
 			}
 		}
 	}
-
-	//================================
-	//=====     Main methods     =====
-	//================================
 	
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	// MAIN
 	// Use this for initialization
 	public override void Start ()
 	{
 		base.Start ();
-		this.currentLife = 375;
-		this.attackP = 30;
-		this.attackM = 25;
-		this.speedAtt = 0.9f;
-		this.defP = 25;
-		this.defM = 20;
-		this.mana = 175;
-		this.adren = 150;
-		this.speedMov = 50;
-		this.maximunLife = 375;
-
+		
+		this.currentLife = LIFE_1;
+		this.currentMana = MANA_1;
+		this.currentAdren = ADREN_1;
+		
+		this.maximunLife = LIFE_1;
+		this.attackP = ATT_P_1;
+		this.attackM = ATT_M_1;
+		this.speedAtt = ATT_SPEED_1;
+		this.defP = DEF_P_1;
+		this.defM = DEF_M_1;
+		this.mana = MANA_1;
+		this.adren = ADREN_1;
+		this.speedMov = MOV_SPEED_1;
+		
 		//Set the type of heroe
 		this.type = TypeHeroe.Orc;
-
+		
 		//Set the owner in the basic attack
 		this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 	}
-
+	
 	// Update is called once per frame
 	public override void Update ()
 	{
 		base.Update ();
+		
 		this.attack ();
-
 		this.newLevel ();
 	}
 }

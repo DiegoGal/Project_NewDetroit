@@ -8,43 +8,43 @@ public class RobotController : HeroeController
 	//==============================
 	
 	private const int IN_LIFE = 200,
-					IN_ATT_P = 10,
-					IN_ATT_M = 15,
-					IN_DEF_P = 5,
-					IN_DEF_M = 5,
-					IN_MANA_1_2 = 100, IN_MANA_2_3 = 150, IN_MANA_3_4 = 150,
-					IN_ADREN = 75,
-					IN_SPEED_MOV = 5;
+	IN_ATT_P = 10,
+	IN_ATT_M = 15,
+	IN_DEF_P = 5,
+	IN_DEF_M = 5,
+	IN_MANA_1_2 = 100, IN_MANA_2_3 = 150, IN_MANA_3_4 = 150,
+	IN_ADREN = 75,
+	IN_SPEED_MOV = 5;
 	private const double IN_SPEED_ATT = 0.1f;
 	
 	//===========================
 	//=====     Methods     =====
 	//===========================
-
+	
 	//PRIVATE
-
+	
 	private void newLevel()
 	{
-		if (this.hasNewLevel) 
+		if (hasNewLevel) 
 		{
-			this.lifeUp(IN_LIFE);
-			this.attackPUp(IN_ATT_P);
-			this.attackMUp(IN_ATT_M);
-			this.speedAttUp(IN_SPEED_ATT);
-			this.defPUp(IN_DEF_P);
-			this.defMUp(IN_DEF_M);
-			if (this.level == 2) this.manaUp(IN_MANA_1_2);
-			else if (this.level == 3) this.manaUp(IN_MANA_2_3);
-			else this.manaUp(IN_MANA_3_4);
-			this.adrenUp(IN_ADREN);
-			this.speedMovUp(IN_SPEED_MOV);
+			currentLife += IN_LIFE;
+			attackP += IN_ATT_P;
+			attackM += IN_ATT_M;
+			speedAtt += IN_SPEED_ATT;
+			defP += IN_DEF_P;
+			defM += IN_DEF_M;
+			if (level == 2) mana += IN_MANA_1_2;
+			else if (level == 3) mana += IN_MANA_2_3;
+			else mana += IN_MANA_3_4;
+			adren += IN_ADREN;
+			speedMov += IN_SPEED_MOV;
 		}
 	}
 	
 	//================================
 	//=====     Main methods     =====
 	//================================
-
+	
 	// Use this for initialization
 	public override void Start ()
 	{
@@ -59,7 +59,7 @@ public class RobotController : HeroeController
 		this.adren = 150;
 		this.speedMov = 50;
 	}
-
+	
 	// Update is called once per frame
 	public override void Update ()
 	{
@@ -67,4 +67,5 @@ public class RobotController : HeroeController
 		this.newLevel ();
 	}
 }
+
 

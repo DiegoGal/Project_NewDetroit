@@ -2,29 +2,17 @@
 using System.Collections;
 
 public class OrcBasicAttack : MonoBehaviour {
-	//==============================
-	//=====     Attributes     =====
-	//==============================
-
-	//PUBLIC
-
-	Vector3 movement; // Movement
-
-	//PRIVATE
-
-	private int damage; // Damage
+	public Vector3 movement; // Movement
+	
+	//private int damage; // Damage
 	private GameObject owner; // Owner
-	//private Collider collideObject; // collide object
 	private bool hasCollided; // Tell us if the attack has collided with something
 	private string nameCollide; // Tell us the name of the collided object
 	private int lifeCollide; // Tell us the life of the collided object
-
-	//==========================
-	//=====    Methods     =====
-	//==========================
-
-	//PRIVATE
-
+	
+	
+	//------------------------------------------------------------------------------------------
+	// PRIVATE
 	// To move the attack
 	private void move()
 	{
@@ -34,60 +22,53 @@ public class OrcBasicAttack : MonoBehaviour {
 			this.transform.position.z + this.movement.z * Time.deltaTime);
 		this.transform.position = position;
 	}
-
-	//PUBLIC
-
+	
+	
+	//------------------------------------------------------------------------------------------
+	// PUBLIC
 	// Update the movement vector
 	public void setMovement(Vector3 movement)
 	{
 		this.movement = movement;
 	}
-
+	
 	// Update the owner
 	public void setOwner(GameObject owner)
 	{
 		this.owner = owner;
 	}
-
+	
 	// Get hasCollided
 	public bool getHasCollided()
 	{
 		return this.hasCollided;
 	}
-
+	
 	// Get the name
 	public string getNameCollide()
 	{
 		return this.nameCollide;
 	}
-
+	
 	// Get the name that de object that has collided and put hasCollided to false
 	public string getNameCollideOnce()
 	{
 		this.hasCollided = false;
 		return this.nameCollide;
 	}
-
+	
 	// Get the life of the collided object
 	public int getLifeCollide()
 	{
 		return lifeCollide;
 	}
-
-	// Get damage
-	public int getDamage()
-	{
-		return this.damage;
-	}
-
-	//================================
-	//=====     Main methods     =====
-	//================================
-
+	
+	
+	//------------------------------------------------------------------------------------------
+	// MAIN
 	// Use this for initialization
 	void Awake () 
 	{
-		this.damage = 50;
 		this.collider.enabled = false;
 		this.hasCollided = false;
 		nameCollide = "";
@@ -99,21 +80,21 @@ public class OrcBasicAttack : MonoBehaviour {
 	void Update () 
 	{
 		//move();
-		if (this.owner != null && this.owner.GetComponent<HeroeController> ().getIsMine ())
+		if (this.owner != null && this.owner.GetComponent<HeroeController> ().isMine)
 		{
-			// If the orc is in basic attack
-			if (!this.owner.GetComponent<HeroeController> ().isAttackBasic())
+			// If the orc is not in basic attack
+			if (this.owner.GetComponent<HeroeController> ().state != HeroeController.StateHeroe.AttackBasic)
 			{
 				this.collider.enabled = false; // The collider is activated
 			}
-			// Else if the orc is not attacking
+			// Else if the orc is attacking
 			else
 			{
 				this.collider.enabled = true; // The collider is desactivated
 			}
 		}
 	}
-
+	
 	//Detect all object that collide with this
 	void OnTriggerEnter(Collider collisionInfo)
 	{
@@ -123,9 +104,9 @@ public class OrcBasicAttack : MonoBehaviour {
 		{
 			ControllableCharacter goControllableCharacter = go.GetComponent<ControllableCharacter> ();
 			if (goControllableCharacter == null) return;
-			if (goControllableCharacter.Damage (this.damage)) // Damage the enemy and check if it is dead
+			if (goControllableCharacter.Damage (this.owner.GetComponent<HeroeController>().attackP)) // Damage the enemy and check if it is dead
 			{
-				this.owner.GetComponent<HeroeController>().experienceUp(goControllableCharacter.getExperienceGived());
+				this.owner.GetComponent<HeroeController>().experienceUp(goControllableCharacter.experienceGived);
 			}
 			hasCollided = true;
 			lifeCollide = (int)goControllableCharacter.getLife();
