@@ -25,7 +25,11 @@ public class UnitHarvester : UnitController
 	public GameObject mineralPack;
 
     // dummy donde se instanciará el pack de minerales
-    public Transform dummyPack;
+    public Transform dummyMineralPack;
+    public Transform dummyHand;
+    public Transform dummyGlasses;
+    public Transform dummyHead;
+    public Transform dummyBackPack;
 
     private enum HarvestState
     {
@@ -49,12 +53,48 @@ public class UnitHarvester : UnitController
     // es el punto más cercano de la base a la mina de recursos actual
     private Vector3 lastBasePos = new Vector3();
 
+    public override void Awake ()
+    {
+        base.Awake();
+
+        // Por si no se han establecido las referencias a los dummys del modelo
+        // en el editor de Unity las buscamos ahora:
+        if (dummyMineralPack == null)
+            dummyMineralPack = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Dummy Mineral");
+        if (dummyHand == null)
+            dummyHand = transform.FindChild("Bip001 L Hand/Dummy Pico");
+        if (dummyGlasses == null)
+            dummyGlasses = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/Dummy Gafas");
+        if (dummyHead == null)
+            dummyHead = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/Dummy Sombrero");
+        if (dummyBackPack == null)
+            dummyBackPack = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Dummy Espalda");
+    }
+
     public override void Start ()
     {
         base.Start();
 
         basicAttackPower = secondaryAttackPower = attackPower;
 
+        // instanciamos un casco o un cono encima de la cabeza
+        GameObject helmet;
+        if (Random.value <= 0.5f)
+            helmet = (GameObject)Instantiate
+            (
+                Resources.Load("GoblinHarvesterHelmet"),
+                dummyHead.transform.position,
+                new Quaternion()
+            );
+        else
+            helmet = (GameObject)Instantiate
+            (
+                Resources.Load("GoblinHarvesterCone"),
+                dummyHead.transform.position,
+                new Quaternion()
+            );
+        helmet.transform.parent = dummyHead;
+        
         /*GameObject newPack = Instantiate
         (
             mineralPack,
@@ -129,15 +169,15 @@ public class UnitHarvester : UnitController
 					    nextHarvestState = HarvestState.GoingToMine;
 
 						// intanciamos un pack de minerales encima de la unidad
-                        Debug.Log("Dummy position: " + dummyPack.transform.position);
+                        Debug.Log("Dummy position: " + dummyMineralPack.transform.position);
                         GameObject newPack = Instantiate
                         (
                             mineralPack,
-                            dummyPack.transform.position,
+                            dummyMineralPack.transform.position,
                             new Quaternion()
                         ) as GameObject;
                         newPack.transform.name = "MineralPack";
-                        newPack.transform.parent = dummyPack;
+                        newPack.transform.parent = dummyMineralPack;
                         newPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));
 
                         GoTo(lastBasePos);
@@ -285,7 +325,7 @@ public class UnitHarvester : UnitController
             resourcesLoaded = 0;
 
 			// eliminamos el pack de minerales
-			Transform pack = dummyPack.transform.FindChild("MineralPack");
+            Transform pack = dummyMineralPack.transform.FindChild("MineralPack");
             if (pack != null)
                 GameObject.Destroy(pack.gameObject);
 

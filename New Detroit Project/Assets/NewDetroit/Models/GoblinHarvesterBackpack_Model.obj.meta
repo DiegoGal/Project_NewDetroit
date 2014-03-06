@@ -1,15 +1,15 @@
 fileFormatVersion: 2
-guid: 36132c4f249793146a40a81db2bb671d
+guid: d02fdeb1c822aaf42b30bd7517bda737
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Object020
+    100002: Object024
     400000: //RootNode
-    400002: Object020
-    2300000: Object020
-    3300000: Object020
-    4300000: Object020
+    400002: Object024
+    2300000: Object024
+    3300000: Object024
+    4300000: Object024
     9500000: //RootNode
   materials:
     importMaterials: 0

@@ -1,0 +1,12 @@
+C:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.csprojResolveAssemblyReference.cache
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.CSharp.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.CSharp.pdb
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEditor.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEngine.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Mono.Cecil.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\nunit.framework.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Unity.DataContract.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.pdb
