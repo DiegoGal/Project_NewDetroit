@@ -18,7 +18,7 @@ public class Tower : MonoBehaviour {
     // the attack cadence
     protected float attackCadenceAux = 0.0f;
 
-    // frecuencia (en segundos) de ataque primario
+    // frecuency (in secs) of the primary attack
     public float attackCadence = 1.0f;
 
     protected ControllableCharacter lastEnemyAttacked;
@@ -43,10 +43,10 @@ public class Tower : MonoBehaviour {
     //********************************************************************************
     // For engineers
 
-    // the distance to conquest and repair
+    // the distance to construct, conquest and repair
     public float distanceToWait = 2.0f;
 
-    // the number of the engineers that can conquest and repair the tower
+	// the number of the engineers that can construct, conquest and repair the tower
     public int numEngineerPositions = 8;
     protected Vector3[] engineerPositions;
     protected bool[] engineerPosTaken;
@@ -62,7 +62,6 @@ public class Tower : MonoBehaviour {
 
     //********************************************************************************
 
-
 	// Use this for initialization
 	public virtual void Start () 
     {
@@ -75,30 +74,7 @@ public class Tower : MonoBehaviour {
         engineerPosTaken = new bool[numEngineerPositions];
 
         cubes = new GameObject[numEngineerPositions];
-
-        float twoPi = Mathf.PI * 2;
-        Vector3 center = transform.position;
-        for (int i = 0; i < numEngineerPositions; i++)
-        {
-            Vector3 pos = new Vector3
-                (
-                    center.x +
-                    (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
-                    0,
-                    center.z +
-                    (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
-                    );
-            engineerPositions[i] = pos;
-            engineerPosTaken[i] = false;
-
-            cubes[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cubes[i].transform.position = pos;
-            Destroy(cubes[i].GetComponent<BoxCollider>());
-            cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
-            cubes[i].transform.parent = this.transform;
-        }
-
-        // inicialization of the engineer queue
+	    // inicialization of the engineer queue
         engineerQueue = new List<UnitEngineer>();
 
         visionSphereRadious = transform.FindChild("TowerVisionSphere").GetComponent<SphereCollider>().radius;
@@ -150,8 +126,13 @@ public class Tower : MonoBehaviour {
                 currentLife = totalLife;
         }
         if (currentLife == totalLife)
-            return true;
-        else
+		{
+			RemoveEngineersInQueue();
+			for (int i = 0; i < numEngineerPositions; i++)
+				cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+			return true;
+		}
+		else
             return false;
     }
 
@@ -187,7 +168,7 @@ public class Tower : MonoBehaviour {
     public void LeaveQueue(UnitEngineer unit)
     {
         engineerQueue.Remove(unit);
-    }
+	}
 
     public int GetTeamNumber()
     {
@@ -221,8 +202,7 @@ public class Tower : MonoBehaviour {
         if (engineerQueue.Count > 0)
         {
             UnitEngineer unit = engineerQueue[0];
-            
-            unit.FinishWaitingToConquest(engineerPositions[index], index);
+            unit.FinishWaitingToRepair(engineerPositions[index], index);
             engineerQueue.RemoveAt(0);
             engineerPosTaken[index] = true;
             cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
@@ -277,4 +257,21 @@ public class Tower : MonoBehaviour {
             engineerQueue.Add(unit);
         return found;
     }
+
+	public void SetTeamNumber(int teamNumber)
+	{
+		this.teamNumber = teamNumber;
+	}
+
+	protected void RemoveEngineersInQueue()
+	{
+		engineerQueue.Clear ();
+		for (int i = 0; i < numEngineerPositions; i++)
+			engineerPosTaken [i] = false;
+	}
+
+	public bool HasTotalLife()
+	{
+		return currentLife == totalLife;
+	}
 }

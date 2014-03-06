@@ -12,6 +12,8 @@ public class TowerGoblin : Tower
     private Vector3 destiny;
     
     public Material activeMaterial;
+    public Material canConstructMaterial;
+    public Material cantConstructMaterial;
 
 	private Transform model;
 
@@ -27,7 +29,18 @@ public class TowerGoblin : Tower
     // the state of the tower
     private TowerState currentTowerState = TowerState.Iddle;
 
-   	public void Awake ()
+	// Conts for Tower conquest
+	private float contConstr;
+	
+	// Constant when the tower is conquered
+	private const float finalCont = 100.0f;
+	// The distance over the floor
+	private const int delta = 7;
+
+	private bool constructed = false;
+    private bool canConstruct = true;
+
+    public void Awake ()
 	{
 		model = transform.FindChild("GoblinTower");
 	}
@@ -38,21 +51,50 @@ public class TowerGoblin : Tower
 		base.Start();
         myHit = new RaycastHit();
         // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
-        // Bit shift the index of the layer (8) to get a bit mask
-        layerMask = 1 << 8 | 1 << 2;
-
-        // This would cast rays only against colliders in layer 8 and 2.
-        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
-        layerMask = ~layerMask;
-
-
+        // Bit shift the index of the layer (9) to get a bit mask
+        layerMask = 1 << 9;
 	}
 
-    public void Construct(Vector3 destiny)
+    public bool StartConstruct(Vector3 destiny)
     {
-        active = true;
+        if (canConstruct)
+        {
+            this.GetComponent<NavMeshObstacle>().enabled = true;
+            Vector3 posN = transform.position;
+            posN.y = 0;
+            transform.position = posN;
+            active = true;
+
+            float twoPi = Mathf.PI * 2;
+            Vector3 center = transform.position;
+            for (int i = 0; i < numEngineerPositions; i++)
+            {
+                Vector3 pos = new Vector3
+                    (
+                        center.x +
+                        (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
+                        0,
+                        center.z +
+                        (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
+                        );
+                engineerPositions[i] = pos;
+                engineerPosTaken[i] = false;
+
+                cubes[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cubes[i].transform.position = pos;
+                Destroy(cubes[i].GetComponent<BoxCollider>());
+                cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+                cubes[i].transform.parent = this.transform;
+            }
+            DestroyUnnecessaryGameobjects();
+            return true;
+        }
+        return false;
+    }
+
+    public void SetActiveMaterial()
+    {
         model.renderer.material = activeMaterial;
-		this.GetComponent<NavMeshObstacle>().enabled = true;
     }
 
 	// Update is called once per frame
@@ -61,11 +103,22 @@ public class TowerGoblin : Tower
         base.Update();
         if (!active)
         {
-            myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-
+            Light light = transform.FindChild("LightTower").light;
+            if (canConstruct)
+            {
+                
+                light.color = Color.green;
+                model.renderer.material = canConstructMaterial;
+            }
+            else
+            {
+                light.color = Color.red;
+                model.renderer.material = cantConstructMaterial;
+            }
+			myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
             {
-				destiny = new Vector3 (myHit.point.x, 0, myHit.point.z);
+				destiny = new Vector3 (myHit.point.x, myHit.point.y + delta, myHit.point.z);
 				transform.position = destiny;
             }
         }
@@ -182,37 +235,78 @@ public class TowerGoblin : Tower
 	public virtual void OnGUI()
 	{
 		Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
-			
-		// rectángulo donde se dibujará la barra de vida
-		Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f, 4.0f);
+		Rect rect1;
+		Rect rect2;
+		if (constructed)
+		{
+			rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
+			rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (currentLife/totalLife), 4.0f);
+		}
+		else
+		{
+			rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
+			rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (contConstr/finalCont), 4.0f);
+		}
 		GUI.DrawTexture(rect1, progressBarEmpty);
-		Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f * (currentLife/totalLife), 4.0f);
 		GUI.DrawTexture(rect2, progressBarFull);
 
 	}
 
-	private bool CanConstruct()
+	/*private bool CanConstruct()
 	{
         RaycastHit theHit; // Structure used to get information back from a raycast.
         Ray aRay; // the ray
 
         aRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         return true;
-	}
+	}*/
+
+    public void SetCanConstruct(bool b)
+    {
+        canConstruct = b;
+    }
+
+    public void DestroyUnnecessaryGameobjects()
+    {
+        // Remove unnecessary GameObjects
+        Destroy(transform.FindChild("TowerBoxConstruct").gameObject);
+    }
 
 	// Construct is called by the engineers
 	public bool Construct(float sum)
 	{
 		// increasement of the towers life
-		if (currentLife < totalLife)
+		if (!constructed)
 		{
-			currentLife += sum;
-			if (totalLife < currentLife)
-				currentLife = totalLife;
+			if (contConstr < finalCont)
+			{
+				contConstr += sum;
+				if (finalCont < contConstr)
+					contConstr = finalCont;
+			}
+			if (contConstr == finalCont)
+			{
+				currentLife = 50.0f;
+				UpdateEnemiesInside(this.teamNumber);
+				RemoveEngineersInQueue();
+				for (int i = 0; i < numEngineerPositions; i++)
+					cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+				constructed = true;
+				return true;
+			}
+			else
+				return false;
 		}
-		if (currentLife == totalLife)
-			return true;
-		else
-			return false;
+		return true;
+	}
+
+	public bool HasATeam()
+	{
+		return teamNumber != -1;
+	}
+
+	public bool IsConstructed()
+	{
+		return constructed;
 	}
 }

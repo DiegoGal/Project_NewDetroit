@@ -25,6 +25,7 @@ public class ArmyController : MonoBehaviour
 
 	private int layerMask; // para obviar la capa de la niebla
 
+
     // Use this for initialization
     void Start ()
     {
@@ -58,14 +59,6 @@ public class ArmyController : MonoBehaviour
 
             lastCrowdAngle = 0;
         }
-        /*
-        if (mouseButtonPreshed && constructing)
-        {
-            TowerGoblin selfUnitG = tower.transform.GetComponent<TowerGoblin>();
-
-            selfUnitG.Construct();
-            constructing = false;
-        }*/
         // se levanta el botón izquierdo del ratón
         if (mouseButtonPreshed && Input.GetMouseButtonUp(0))
             mouseButtonPreshed = false;
@@ -184,6 +177,16 @@ public class ArmyController : MonoBehaviour
 
             }
         }
+
+		// If "C" is pulsed and there are only one engineer selected, it can construct
+		if ((Input.GetKeyDown (KeyCode.C)) && (unitSelectedList.Count == 1)) 
+		{
+			UnitEngineer unit = unitSelectedList[0].GetComponent<UnitEngineer>();
+			if (unit != null && !unit.IsNewConstructing())
+			{
+				unit.SetCanConstruct();
+			}
+		}
 
 		if (Input.GetKeyDown (KeyCode.A))
 		{
