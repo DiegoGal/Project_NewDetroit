@@ -21,8 +21,11 @@ public class UnitHarvester : UnitController
     // capacidad total de recursos recolectados por la unidad
     private int totalHarvest = 0;
 
-	// referencia a la moneda
-	public GameObject coin;
+	// referencia al pack de minerales
+	public GameObject mineralPack;
+
+    // dummy donde se instanciará el pack de minerales
+    public Transform dummyPack;
 
     private enum HarvestState
     {
@@ -51,6 +54,16 @@ public class UnitHarvester : UnitController
         base.Start();
 
         basicAttackPower = secondaryAttackPower = attackPower;
+
+        /*GameObject newPack = Instantiate
+        (
+            mineralPack,
+            dummyPack.transform.position,
+            new Quaternion()
+        ) as GameObject;
+        newPack.transform.name = "MineralPack";
+        newPack.transform.parent = dummyPack;
+        newPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));*/
     }
     
     public override void Update ()
@@ -106,7 +119,7 @@ public class UnitHarvester : UnitController
                     resourcesLoaded +=
                         currentMine.GetComponent<CResources>().GetResources(amountOfResourcesPerHarvest);
                     //Debug.Log("Chop! " + resourcesLoaded);
-                    if (resourcesLoaded == harvestCapacity)
+                    if (resourcesLoaded >= harvestCapacity)
                     {
                         // la unidad se ha "llenado"
                         Debug.Log("Estoy lleno, vamos pa la base");
@@ -114,16 +127,17 @@ public class UnitHarvester : UnitController
                         currentHarvestState = HarvestState.ReturningToBase;
 					    nextHarvestState = HarvestState.GoingToMine;
 
-						// intanciamos una monedita encima de la unidad
-						Vector3 coinPosition = new Vector3
+						// intanciamos un pack de minerales encima de la unidad
+                        Debug.Log("Dummy position: " + dummyPack.transform.position);
+                        GameObject newPack = Instantiate
                         (
-                            transform.position.x,
-						    transform.position.y + 2.2f,
-						    transform.position.z
-                        );
-						GameObject newCoin = Instantiate(coin, coinPosition, new Quaternion()) as GameObject;
-						newCoin.transform.name = "coin";
-						newCoin.transform.parent = transform;
+                            mineralPack,
+                            dummyPack.transform.position,
+                            new Quaternion()
+                        ) as GameObject;
+                        newPack.transform.name = "MineralPack";
+                        newPack.transform.parent = dummyPack;
+                        newPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));
 
                         GoTo(lastBasePos);
                         animation.Play("Walk Carga");
@@ -269,10 +283,10 @@ public class UnitHarvester : UnitController
             totalHarvest += resourcesLoaded;
             resourcesLoaded = 0;
 
-			// eliminamos la moneda de la cabeza
-			Transform coin = transform.FindChild("coin");
-			if (coin != null)
-				GameObject.Destroy(coin.gameObject);
+			// eliminamos el pack de minerales
+			Transform pack = dummyPack.transform.FindChild("MineralPack");
+            if (pack != null)
+                GameObject.Destroy(pack.gameObject);
 
 			if (nextHarvestState == HarvestState.GoingToMine)
             {

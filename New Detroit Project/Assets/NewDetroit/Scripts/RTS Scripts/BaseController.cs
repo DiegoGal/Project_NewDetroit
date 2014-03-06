@@ -32,7 +32,6 @@ public class BaseController : Photon.MonoBehaviour
 	void Start ()
     {
         spawnOrigin = transform.FindChild("SpawnPoint").position;
-        Debug.Log("WAT1: " + spawnOrigin);
         /*spawnDestiny = new Vector3(
             this.transform.position.x + 5.5f,
             //this.transform.position.y,
