@@ -92,8 +92,9 @@ public class UnitHarvester : UnitController
                     {
                         currentHarvestState = HarvestState.Waiting;
                         GetComponent<NavMeshAgent>().destination = transform.position;
-                        animation.Play("Iddle Wait");
-                        animation.PlayQueued("Iddle01");
+                        animation.CrossFade("Iddle Wait");
+                        animation.CrossFadeQueued("Iddle01");
+                        //animation.PlayQueued("Iddle01");
                     }
                 }
                 else
@@ -140,7 +141,7 @@ public class UnitHarvester : UnitController
                         newPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));
 
                         GoTo(lastBasePos);
-                        animation.Play("Walk Carga");
+                        animation.CrossFade("Walk Carga");
                     }
                     actualHarvestTime = 0;
                 }
@@ -269,7 +270,7 @@ public class UnitHarvester : UnitController
     {
         // cuando llegue a la mina pasar el estado a Choping
         Debug.Log("comenzando cosecha...");
-        animation.Play("Picar");
+        animation.CrossFade("Picar");
         currentHarvestState = HarvestState.Choping;
         nextHarvestState = HarvestState.ReturningToBase;
     }

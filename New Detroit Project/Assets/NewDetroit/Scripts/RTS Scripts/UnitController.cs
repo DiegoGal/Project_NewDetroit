@@ -83,7 +83,7 @@ public class UnitController : ControllableCharacter
                 else
                 {
                     currentState = State.Iddle;
-                    animation.Play("Iddle01");
+                    animation.CrossFade("Iddle01");
                 }
                 break;
         }
@@ -118,7 +118,7 @@ public class UnitController : ControllableCharacter
         GetComponent<NavMeshAgent>().destination = destiny;
         currentState = State.GoingTo;
 
-        animation.Play("Walk");
+        animation.CrossFade("Walk");
     }
 
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
