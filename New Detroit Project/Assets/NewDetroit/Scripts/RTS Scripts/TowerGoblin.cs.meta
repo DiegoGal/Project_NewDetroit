@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f2835e08383b02f4190cf70b12d7a0b1
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - shotParticles: {instanceID: 0}
+  - progressBarEmpty: {fileID: 2800000, guid: 8ff75535e1a07364ea0532d96f39336c, type: 3}
+  - progressBarFull: {fileID: 2800000, guid: 1b1d14c3f4fb8864e930e1cd88e3a906, type: 3}
+  - activeMaterial: {fileID: 2100000, guid: 584e97254280f06478533ae94095a591, type: 2}
+  - canConstructMaterial: {fileID: 2100000, guid: a0a37867747e7c54394b7e3f825a97cc,
+      type: 2}
+  - cantConstructMaterial: {fileID: 2100000, guid: 9486ee6ab30e04d42973fd74c93da21a,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

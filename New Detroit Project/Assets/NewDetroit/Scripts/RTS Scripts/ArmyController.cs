@@ -190,6 +190,16 @@ public class ArmyController : MonoBehaviour
             }
         }
 
+        // If "C" is pulsed and there are only one engineer selected, it can construct
+        if ((Input.GetKeyDown(KeyCode.C)) && (unitSelectedList.Count == 1))
+        {
+            UnitEngineer unit = unitSelectedList[0].GetComponent<UnitEngineer>();
+            if (unit != null && !unit.IsNewConstructing())
+            {
+                unit.SetCanConstruct();
+            }
+        }
+
 		if (Input.GetKeyDown (KeyCode.A))
 		{
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
