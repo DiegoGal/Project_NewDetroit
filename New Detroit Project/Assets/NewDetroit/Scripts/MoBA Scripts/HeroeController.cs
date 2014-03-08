@@ -36,8 +36,9 @@ public abstract class HeroeController : ControllableCharacter
 	
 	
 	// ------------------------------------------------------------------------------------------------------
-	public Texture2D 	textureLifePositive, 
-	textureLifeNegative;
+	public Texture2D 	textureLifePositive, textureLifeNegative,
+						textureAdrenPositive, textureAdrenNegative,
+						textureManaPositive, textureManaNegative;
 	public int 		attackP, 
 					attackM, 
 					defP, 
@@ -217,7 +218,7 @@ public abstract class HeroeController : ControllableCharacter
 	
 	void OnGUI ()
 	{
-		// labels for debug
+		// DEBUG
 		Vector3 pos = Camera.main.WorldToScreenPoint (transform.position);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 200, 50), "Vida: " + this.currentLife);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 10, 200, 50), "Experience: " + this.experience);
@@ -228,26 +229,51 @@ public abstract class HeroeController : ControllableCharacter
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 60, 200, 50), "Velocidad ataque: " + this.speedAtt);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 70, 200, 50), "Defensa fisica: " + this.defP);
 		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 80, 200, 50), "Defensa magica: " + this.defM);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 90, 200, 50), "Mana: " + this.mana);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 100, 200, 50), "Adrenalina: " + this.adren);
-		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 110, 200, 50), "Velocidad mvto: " + this.speedMov);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 90, 200, 50), "Mana: " + this.currentMana);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 100, 200, 50), "Maximo Mana: " + this.mana);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 110, 200, 50), "Adrenalina: " + this.currentAdren);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 120, 200, 50), "Maxima Adrenalina: " + this.adren);
+		GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 130, 200, 50), "Velocidad mvto: " + this.speedMov);
 		
 		//-------------------------------------------------------------------------------------------------
-		// Life
+		// Life, Mana and Adrenaline
 		float distance = Vector3.Distance (transform.position, Camera.main.transform.position); // real distance from camera
 		float lengthLife = this.GetComponent<ThirdPersonCamera> ().distance / distance; // percentage of the distance
 		// Position of the life in the screen
 		Vector3 posLifeScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
 		posLifeScene.y += 2f;
 		Vector3 posLife = Camera.main.WorldToScreenPoint (posLifeScene);
-		
+		Vector3 posAdrenScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+		posAdrenScene.y += 1.7f;
+		Vector3 posAdren = Camera.main.WorldToScreenPoint (posAdrenScene);
+		Vector3 posManaScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+		posManaScene.y += 1.55f;
+		Vector3 posMana = Camera.main.WorldToScreenPoint (posManaScene);
+
+		// Life
 		float positiveLife = (float) this.currentLife / this.maximunLife; // percentage of positive life
 		float negativeLife = 1 - positiveLife; //percentage of negative life
-		
-		Rect rectanglePositive = new Rect (posLife.x - 50 * lengthLife, Screen.height - posLife.y, 100 * positiveLife * lengthLife, 10 * lengthLife);
-		Rect rectangleNegative = new Rect (posLife.x - 50 * lengthLife + 100 * positiveLife * lengthLife, Screen.height - posLife.y, 
-		                                   100 * negativeLife * lengthLife, 10 * lengthLife);
-		GUI.DrawTexture (rectanglePositive, textureLifePositive);
-		GUI.DrawTexture (rectangleNegative, textureLifeNegative);
+		Rect rectanglePositiveLife = new Rect (posLife.x - 50 * lengthLife, Screen.height - posLife.y, 100 * positiveLife * lengthLife, 10 * lengthLife);
+		Rect rectangleNegativeLife = new Rect (posLife.x - 50 * lengthLife + 100 * positiveLife * lengthLife, Screen.height - posLife.y,
+		                                       100 * negativeLife * lengthLife, 10 * lengthLife);
+		// Adrenaline
+		float positiveAdren = (float) this.currentAdren / this.adren;
+		float negativeAdren = 1 - positiveAdren;
+		Rect rectanglePositiveAdren = new Rect (posAdren.x - 50 * lengthLife, Screen.height - posAdren.y, 100 * positiveAdren * lengthLife, 5 * lengthLife);
+		Rect rectangleNegativeAdren = new Rect (posAdren.x - 50 * lengthLife + 100 * positiveAdren * lengthLife, Screen.height - posAdren.y, 
+		                                        100 * negativeAdren * lengthLife, 10 * lengthLife);
+		// Mana
+		float positiveMana = (float) this.currentMana / this.mana;
+		float negativeMana = 1 - positiveMana;
+		Rect rectanglePositiveMana = new Rect (posMana.x - 50 * lengthLife, Screen.height - posMana.y, 100 * positiveMana * lengthLife, 5 * lengthLife);
+		Rect rectangleNegativeMana = new Rect (posMana.x - 50 * lengthLife + 100 * positiveMana * lengthLife, Screen.height - posMana.y, 
+		                                       100 * negativeMana * lengthLife, 10 * lengthLife);
+
+		GUI.DrawTexture (rectanglePositiveLife, textureLifePositive);
+		GUI.DrawTexture (rectangleNegativeLife, textureLifeNegative);
+		GUI.DrawTexture (rectanglePositiveAdren, textureAdrenPositive);
+		GUI.DrawTexture (rectangleNegativeAdren, textureAdrenNegative);
+		GUI.DrawTexture (rectanglePositiveMana, textureManaPositive);
+		GUI.DrawTexture (rectangleNegativeMana, textureManaNegative);
 	}//OnGUI	
 }
