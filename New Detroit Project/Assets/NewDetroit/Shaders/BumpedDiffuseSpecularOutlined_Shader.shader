@@ -1,17 +1,54 @@
 // Shader created with Shader Forge Beta 0.25 
 // Shader Forge (c) Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
-/*SF_DATA;ver:0.25;sub:START;pass:START;ps:flbk:,lico:1,lgpr:1,nrmq:1,limd:1,uamb:True,mssp:True,lmpd:False,lprd:False,enco:False,frtr:True,vitr:True,dbil:False,rmgx:True,hqsc:True,hqlp:False,blpr:0,bsrc:0,bdst:0,culm:0,dpts:2,wrdp:True,ufog:True,aust:True,igpj:False,qofs:0,qpre:1,rntp:1,fgom:False,fgoc:False,fgod:False,fgor:False,fgmd:0,fgcr:0.5,fgcg:0.5,fgcb:0.5,fgca:1,fgde:0.01,fgrn:0,fgrf:300,ofsf:0,ofsu:0;n:type:ShaderForge.SFN_Final,id:1,x:32719,y:32712|diff-2-RGB,spec-19-OUT,normal-5-RGB;n:type:ShaderForge.SFN_Tex2d,id:2,x:33196,y:32582,ptlb:diffuse&specula,tex:66321cc856b03e245ac41ed8a53e0ecc,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Tex2d,id:5,x:33069,y:32941,ptlb:normal,tex:cb6c5165ed180c543be39ed70e72abc8,ntxv:3,isnm:True;n:type:ShaderForge.SFN_Color,id:18,x:33184,y:32787,ptlb:SpecularColor,c1:1,c2:1,c3:1,c4:1;n:type:ShaderForge.SFN_Multiply,id:19,x:32989,y:32743|A-2-A,B-18-RGB;proporder:2-5-18;pass:END;sub:END;*/
+/*SF_DATA;ver:0.25;sub:START;pass:START;ps:flbk:,lico:1,lgpr:1,nrmq:1,limd:1,uamb:True,mssp:True,lmpd:False,lprd:False,enco:False,frtr:True,vitr:True,dbil:True,rmgx:True,hqsc:True,hqlp:False,blpr:0,bsrc:0,bdst:1,culm:0,dpts:2,wrdp:True,ufog:True,aust:True,igpj:False,qofs:0,qpre:1,rntp:1,fgom:False,fgoc:False,fgod:False,fgor:False,fgmd:0,fgcr:0.5,fgcg:0.5,fgcb:0.5,fgca:1,fgde:0.01,fgrn:0,fgrf:300,ofsf:0,ofsu:0;n:type:ShaderForge.SFN_Final,id:0,x:32373,y:32853|diff-138-RGB,spec-347-OUT,gloss-144-OUT,normal-123-RGB,olwid-327-OUT,olcol-252-RGB;n:type:ShaderForge.SFN_Tex2d,id:123,x:32878,y:33116,ptlb:Normal,tex:bbab0a6f7bae9cf42bf057d8ee2755f6,ntxv:3,isnm:True;n:type:ShaderForge.SFN_Tex2d,id:138,x:33088,y:32555,ptlb:Diffuse,tex:b66bceaf0cc0ace4e9bdc92f14bba709,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Slider,id:144,x:33088,y:33060,ptlb:Gloss,min:0,cur:0.5,max:1;n:type:ShaderForge.SFN_Color,id:252,x:32718,y:33401,ptlb:Outline Color,c1:0,c2:1,c3:1,c4:1;n:type:ShaderForge.SFN_ValueProperty,id:327,x:32918,y:33334,ptlb:Outline Width,v1:0.1;n:type:ShaderForge.SFN_Multiply,id:333,x:32910,y:32725|A-138-A,B-354-OUT;n:type:ShaderForge.SFN_Color,id:345,x:33128,y:32883,ptlb:Specular Color,c1:1,c2:1,c3:1,c4:1;n:type:ShaderForge.SFN_Multiply,id:347,x:32722,y:32848|A-333-OUT,B-345-RGB;n:type:ShaderForge.SFN_ValueProperty,id:354,x:33156,y:32759,ptlb:Specular Intensity,v1:1;proporder:138-123-354-144-345-327-252;pass:END;sub:END;*/
 
-Shader "Shader Forge/Bumped Diffuse Specular" {
+Shader "Custom/Bumped Diffuse Specular Outlined" {
     Properties {
-        _diffusespecula ("diffuse&specula", 2D) = "white" {}
-        _normal ("normal", 2D) = "bump" {}
-        _SpecularColor ("SpecularColor", Color) = (1,1,1,1)
+        _Diffuse ("Diffuse", 2D) = "white" {}
+        _Normal ("Normal", 2D) = "bump" {}
+        _SpecularIntensity ("Specular Intensity", Float ) = 1
+        _Gloss ("Gloss", Range(0, 1)) = 0.5
+        _SpecularColor ("Specular Color", Color) = (1,1,1,1)
+        _OutlineWidth ("Outline Width", Float ) = 0.1
+        _OutlineColor ("Outline Color", Color) = (0,1,1,1)
     }
     SubShader {
         Tags {
             "RenderType"="Opaque"
+        }
+        Pass {
+            Name "Outline"
+            Tags {
+            }
+            Cull Front
+            
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            #pragma fragmentoption ARB_precision_hint_fastest
+            #pragma multi_compile_shadowcaster
+            #pragma exclude_renderers gles xbox360 ps3 flash 
+            #pragma target 3.0
+            uniform float4 _OutlineColor;
+            uniform float _OutlineWidth;
+            struct VertexInput {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+            };
+            struct VertexOutput {
+                float4 pos : SV_POSITION;
+            };
+            VertexOutput vert (VertexInput v) {
+                VertexOutput o;
+                o.pos = mul(UNITY_MATRIX_MVP, float4(v.vertex.xyz + v.normal*_OutlineWidth,1));
+                return o;
+            }
+            fixed4 frag(VertexOutput i) : COLOR {
+                return fixed4(_OutlineColor.rgb,0);
+            }
+            ENDCG
         }
         Pass {
             Name "ForwardBase"
@@ -27,12 +64,14 @@ Shader "Shader Forge/Bumped Diffuse Specular" {
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #pragma multi_compile_fwdbase_fullshadows
-            #pragma exclude_renderers xbox360 ps3 flash 
+            #pragma exclude_renderers gles xbox360 ps3 flash 
             #pragma target 3.0
             uniform float4 _LightColor0;
-            uniform sampler2D _diffusespecula; uniform float4 _diffusespecula_ST;
-            uniform sampler2D _normal; uniform float4 _normal_ST;
+            uniform sampler2D _Normal; uniform float4 _Normal_ST;
+            uniform sampler2D _Diffuse; uniform float4 _Diffuse_ST;
+            uniform float _Gloss;
             uniform float4 _SpecularColor;
+            uniform float _SpecularIntensity;
             struct VertexInput {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
@@ -64,27 +103,27 @@ Shader "Shader Forge/Bumped Diffuse Specular" {
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.binormalDir, i.normalDir);
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 /////// Normals:
-                float2 node_44 = i.uv0;
-                float3 normalLocal = UnpackNormal(tex2D(_normal,TRANSFORM_TEX(node_44.rg, _normal))).rgb;
+                float2 node_363 = i.uv0;
+                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_363.rg, _Normal))).rgb;
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
                 float3 halfDirection = normalize(viewDirection+lightDirection);
 ////// Lighting:
-                float attenuation = LIGHT_ATTENUATION(i);
+                float attenuation = LIGHT_ATTENUATION(i)*2;
                 float3 attenColor = attenuation * _LightColor0.xyz;
 /////// Diffuse:
                 float NdotL = dot( normalDirection, lightDirection );
-                float3 diffuse = max( 0.0, NdotL) * attenColor + UNITY_LIGHTMODEL_AMBIENT.xyz;
+                float3 diffuse = max( 0.0, NdotL) * attenColor + UNITY_LIGHTMODEL_AMBIENT.xyz*2;
 ///////// Gloss:
-                float gloss = exp2(0.5*10.0+1.0);
+                float gloss = exp2(_Gloss*10.0+1.0);
 ////// Specular:
                 NdotL = max(0.0, NdotL);
-                float4 node_2 = tex2D(_diffusespecula,TRANSFORM_TEX(node_44.rg, _diffusespecula));
-                float3 specularColor = (node_2.a*_SpecularColor.rgb);
+                float4 node_138 = tex2D(_Diffuse,TRANSFORM_TEX(node_363.rg, _Diffuse));
+                float3 specularColor = ((node_138.a*_SpecularIntensity)*_SpecularColor.rgb);
                 float3 specular = (floor(attenuation) * _LightColor0.xyz) * pow(max(0,dot(halfDirection,normalDirection)),gloss) * specularColor;
                 float3 finalColor = 0;
                 float3 diffuseLight = diffuse;
-                finalColor += diffuseLight * node_2.rgb;
+                finalColor += diffuseLight * node_138.rgb;
                 finalColor += specular;
 /// Final Color:
                 return fixed4(finalColor,1);
@@ -107,12 +146,14 @@ Shader "Shader Forge/Bumped Diffuse Specular" {
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #pragma multi_compile_fwdadd_fullshadows
-            #pragma exclude_renderers xbox360 ps3 flash 
+            #pragma exclude_renderers gles xbox360 ps3 flash 
             #pragma target 3.0
             uniform float4 _LightColor0;
-            uniform sampler2D _diffusespecula; uniform float4 _diffusespecula_ST;
-            uniform sampler2D _normal; uniform float4 _normal_ST;
+            uniform sampler2D _Normal; uniform float4 _Normal_ST;
+            uniform sampler2D _Diffuse; uniform float4 _Diffuse_ST;
+            uniform float _Gloss;
             uniform float4 _SpecularColor;
+            uniform float _SpecularIntensity;
             struct VertexInput {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
@@ -144,27 +185,27 @@ Shader "Shader Forge/Bumped Diffuse Specular" {
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.binormalDir, i.normalDir);
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 /////// Normals:
-                float2 node_45 = i.uv0;
-                float3 normalLocal = UnpackNormal(tex2D(_normal,TRANSFORM_TEX(node_45.rg, _normal))).rgb;
+                float2 node_364 = i.uv0;
+                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_364.rg, _Normal))).rgb;
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
                 float3 halfDirection = normalize(viewDirection+lightDirection);
 ////// Lighting:
-                float attenuation = LIGHT_ATTENUATION(i);
+                float attenuation = LIGHT_ATTENUATION(i)*2;
                 float3 attenColor = attenuation * _LightColor0.xyz;
 /////// Diffuse:
                 float NdotL = dot( normalDirection, lightDirection );
                 float3 diffuse = max( 0.0, NdotL) * attenColor;
 ///////// Gloss:
-                float gloss = exp2(0.5*10.0+1.0);
+                float gloss = exp2(_Gloss*10.0+1.0);
 ////// Specular:
                 NdotL = max(0.0, NdotL);
-                float4 node_2 = tex2D(_diffusespecula,TRANSFORM_TEX(node_45.rg, _diffusespecula));
-                float3 specularColor = (node_2.a*_SpecularColor.rgb);
+                float4 node_138 = tex2D(_Diffuse,TRANSFORM_TEX(node_364.rg, _Diffuse));
+                float3 specularColor = ((node_138.a*_SpecularIntensity)*_SpecularColor.rgb);
                 float3 specular = attenColor * pow(max(0,dot(halfDirection,normalDirection)),gloss) * specularColor;
                 float3 finalColor = 0;
                 float3 diffuseLight = diffuse;
-                finalColor += diffuseLight * node_2.rgb;
+                finalColor += diffuseLight * node_138.rgb;
                 finalColor += specular;
 /// Final Color:
                 return fixed4(finalColor * 1,0);
