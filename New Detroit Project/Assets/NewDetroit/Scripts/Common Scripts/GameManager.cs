@@ -91,12 +91,14 @@ public class GameManager : Photon.MonoBehaviour
 				}
 				if (selInt==2) // Rob Army
 				{
+					Camera.main.GetComponent<CameraMOBAController>().enabled = false;
 					redBase.GetComponent<CSelectable>().enabled=true;
 					redBase.GetComponent<BaseController>().enabled=true;
 					redBase.GetComponent<FogOfWarUnit>().enabled=true;
 				}
 				if (selInt==3) // Skelter Army
 				{
+					Camera.main.GetComponent<CameraMOBAController>().enabled = false;
 					redBase.GetComponent<CSelectable>().enabled=true;
 					redBase.GetComponent<BaseController>().enabled=true;
 					redBase.GetComponent<FogOfWarUnit>().enabled=true;

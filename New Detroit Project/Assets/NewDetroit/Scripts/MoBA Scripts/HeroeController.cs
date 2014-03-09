@@ -242,32 +242,53 @@ public abstract class HeroeController : ControllableCharacter
 		// Position of the life in the screen
 		Vector3 posLifeScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
 		posLifeScene.y += 2f;
-		Vector3 posLife = Camera.main.WorldToScreenPoint (posLifeScene);
+		Vector3 posLife = Camera.main.WorldToScreenPoint (posLifeScene);		
+		Vector3 posLifeSceneEnd = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+		posLifeSceneEnd.y += 1.71f;
+		Vector3 posLifeEnd = Camera.main.WorldToScreenPoint (posLifeSceneEnd);
+		float heightLife = posLife.y - posLifeEnd.y;
+		
+		// Position of the adrenaline in the screen
 		Vector3 posAdrenScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
 		posAdrenScene.y += 1.7f;
-		Vector3 posAdren = Camera.main.WorldToScreenPoint (posAdrenScene);
+		Vector3 posAdren = Camera.main.WorldToScreenPoint (posAdrenScene);		
+		Vector3 posAdrenSceneEnd = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+		posAdrenSceneEnd.y += 1.56f;
+		Vector3 posAdrenEnd = Camera.main.WorldToScreenPoint (posAdrenSceneEnd);
+		float heightAdren = posAdren.y - posAdrenEnd.y;
+		
+		// Position of the mana in the screen
 		Vector3 posManaScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
 		posManaScene.y += 1.55f;
-		Vector3 posMana = Camera.main.WorldToScreenPoint (posManaScene);
-
+		Vector3 posMana = Camera.main.WorldToScreenPoint (posManaScene);		
+		Vector3 posManaSceneEnd = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+		posManaSceneEnd.y += 1.41f;
+		Vector3 posManaEnd = Camera.main.WorldToScreenPoint (posManaSceneEnd);
+		float heightMana = posMana.y - posManaEnd.y;
+		
 		// Life
 		float positiveLife = (float) this.currentLife / this.maximunLife; // percentage of positive life
 		float negativeLife = 1 - positiveLife; //percentage of negative life
-		Rect rectanglePositiveLife = new Rect (posLife.x - 50 * lengthLife, Screen.height - posLife.y, 100 * positiveLife * lengthLife, 10 * lengthLife);
+		Rect rectanglePositiveLife = new Rect (	posLife.x - 50 * lengthLife, Screen.height - posLife.y, 
+		                                       100 * positiveLife * lengthLife, heightLife * lengthLife);
 		Rect rectangleNegativeLife = new Rect (posLife.x - 50 * lengthLife + 100 * positiveLife * lengthLife, Screen.height - posLife.y,
-		                                       100 * negativeLife * lengthLife, 10 * lengthLife);
+		                                       100 * negativeLife * lengthLife, heightLife * lengthLife);
+		                                       
 		// Adrenaline
 		float positiveAdren = (float) this.currentAdren / this.adren;
 		float negativeAdren = 1 - positiveAdren;
-		Rect rectanglePositiveAdren = new Rect (posAdren.x - 50 * lengthLife, Screen.height - posAdren.y, 100 * positiveAdren * lengthLife, 5 * lengthLife);
+		Rect rectanglePositiveAdren = new Rect (posAdren.x - 50 * lengthLife, Screen.height - posAdren.y, 
+												100 * positiveAdren * lengthLife, heightAdren * lengthLife);
 		Rect rectangleNegativeAdren = new Rect (posAdren.x - 50 * lengthLife + 100 * positiveAdren * lengthLife, Screen.height - posAdren.y, 
-		                                        100 * negativeAdren * lengthLife, 10 * lengthLife);
+		                                        100 * negativeAdren * lengthLife, heightAdren * lengthLife);
+		                                        
 		// Mana
 		float positiveMana = (float) this.currentMana / this.mana;
 		float negativeMana = 1 - positiveMana;
-		Rect rectanglePositiveMana = new Rect (posMana.x - 50 * lengthLife, Screen.height - posMana.y, 100 * positiveMana * lengthLife, 5 * lengthLife);
+		Rect rectanglePositiveMana = new Rect (	posMana.x - 50 * lengthLife, Screen.height - posMana.y, 
+												100 * positiveMana * lengthLife, heightMana * lengthLife);
 		Rect rectangleNegativeMana = new Rect (posMana.x - 50 * lengthLife + 100 * positiveMana * lengthLife, Screen.height - posMana.y, 
-		                                       100 * negativeMana * lengthLife, 10 * lengthLife);
+		                                       100 * negativeMana * lengthLife, heightMana * lengthLife);
 
 		GUI.DrawTexture (rectanglePositiveLife, textureLifePositive);
 		GUI.DrawTexture (rectangleNegativeLife, textureLifeNegative);
