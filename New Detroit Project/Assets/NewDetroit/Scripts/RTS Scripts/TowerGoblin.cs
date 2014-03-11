@@ -201,7 +201,7 @@ public class TowerGoblin : Tower
 					Destroy(particles, 0.4f);
 					// first we check if the enemy is now alive
 					//ControllableCharacter lastEnemyAtackedUC = (ControllableCharacter)lastEnemyAttacked;
-					if (lastEnemyAttacked.Damage(attackPower))
+					if (lastEnemyAttacked.Damage(attackPower,'P'))
 					{
 						// the enemy died, time to reset the lastEnemyAttacked reference
 						enemiesInside.Remove(lastEnemyAttacked);

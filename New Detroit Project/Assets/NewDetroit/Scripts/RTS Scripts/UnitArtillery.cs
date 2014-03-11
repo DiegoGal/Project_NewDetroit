@@ -224,7 +224,7 @@ public class UnitArtillery : UnitController
                     Destroy(particles1, 0.4f);
                     Destroy(particles2, 0.4f);
                     // first we check if the enemy is now alive
-                    if (lastEnemyAttacked.Damage(basicAttackPower))
+                    if (lastEnemyAttacked.Damage(basicAttackPower,'P'))
                     {
                         // the enemy died, time to reset the lastEnemyAttacked reference
                         enemiesInside.Remove(lastEnemyAttacked);

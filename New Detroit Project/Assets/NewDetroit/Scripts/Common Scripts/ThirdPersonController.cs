@@ -136,6 +136,8 @@ public class ThirdPersonController : MonoBehaviour
 	private float smokeCD = 1.7f;
 	private GameObject smokeInst; //Smoke instantation
 
+    // this is done because of 2 controllers (orc and thirdPerson)
+    private OrcController orcController;
 	//-----------------------------------------------------------------------------------------------------------------------
 
 
@@ -174,12 +176,15 @@ public class ThirdPersonController : MonoBehaviour
             Debug.Log("No jump animation found and the character has canJump enabled. Turning off animations.");
         }
 
-		//initialize the current heroe state.
+		// Initialize the current heroe state.
 		currentHeroeState = HeroeController.StateHeroe.Iddle;
 
 		// Initial secondary attack (no secondary attack in the beginning).
 		secondAttack = HeroeController.AttackSecond.None;
 		timerSecondAttack = 0;
+
+        // Get the Orc Controller
+        orcController = this.GetComponent<OrcController>();
     }
 
     void UpdateSmoothedMovementDirection()
@@ -450,7 +455,8 @@ public class ThirdPersonController : MonoBehaviour
 				else if (secondAttack == HeroeController.AttackSecond.Attack1)
 				{
 					transform.Translate(Vector3.forward*2 + Vector3.up);
-					Object snt = Instantiate(snot,transform.localPosition,transform.rotation);
+                    GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
+                    snt.GetComponent<ParticleDamage>().setDamage(orcController.attackM);
 					transform.Translate(Vector3.back*2 + Vector3.down);
 					Destroy(snt,5f);
 					snotActivated = true;

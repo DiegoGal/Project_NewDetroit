@@ -20,6 +20,7 @@ public class OrcController : HeroeController
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// PRIVATE
+    
 	private void newLevel()
 	{
 		if (this.hasNewLevel) 
@@ -137,9 +138,12 @@ public class OrcController : HeroeController
 	public override void Update ()
 	{
 		base.Update ();
-		
+        
 		this.attack ();
 		this.newLevel ();
 	}
+
+    
+   
 }
 

@@ -65,7 +65,9 @@ public abstract class HeroeController : ControllableCharacter
 	
 	private double timeCount; // Time counter
 	private int counterAbility;
-	
+    //This is for the particles that collides with the hero
+    private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
+    
 	
 	// ------------------------------------------------------------------------------------------------------
 	// PRIVATE
@@ -129,9 +131,14 @@ public abstract class HeroeController : ControllableCharacter
 	
 	// ------------------------------------------------------------------------------------------------------
 	// PUBLIC
-	public override bool Damage (float damage)
+    // if type == 'P' is phisical damage if type == 'M' is magical damage
+	public override bool Damage (float damage,char type)
 	{
-		currentLife -= damage - defP;
+        if (type == 'P')
+		    currentLife -= damage - defP;
+        else
+            if (type == 'M')
+                currentLife -= damage - defM;
 		return (currentLife <= 0);
 	}
 	
@@ -215,8 +222,27 @@ public abstract class HeroeController : ControllableCharacter
 			}
 		}
 	}//Update
-	
-	void OnGUI ()
+
+    // Cool Down for detecting less time the collision with particles
+    private float CDParticleCollision; 
+    //This is for the particles that collides with the orc
+    void OnParticleCollision(GameObject other)
+    {
+        if (CDParticleCollision > 0)
+            CDParticleCollision -= Time.deltaTime;
+        else
+        {
+            // get the particle system
+            ParticleSystem particleSystem;
+            particleSystem = other.GetComponent<ParticleSystem>();
+
+            if (particleSystem.tag == "Moco")
+                Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
+            CDParticleCollision = 0.1f; // 5 deltatime aprox
+        }
+    }
+
+    void OnGUI ()
 	{
 		// DEBUG
 		Vector3 pos = Camera.main.WorldToScreenPoint (transform.position);

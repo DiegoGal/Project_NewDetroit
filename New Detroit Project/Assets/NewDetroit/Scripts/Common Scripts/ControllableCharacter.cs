@@ -35,7 +35,8 @@ public class ControllableCharacter : MonoBehaviour
         this.baseController = baseController;
     }
 
-    public virtual bool Damage (float damage)
+    // if type == 'P' is phisical damage if type == 'M' is magical damage
+    public virtual bool Damage (float damage,char type)
     {
         //Debug.Log("damage");
         currentLife -= damage;

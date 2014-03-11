@@ -141,9 +141,9 @@ public class UnitController : ControllableCharacter
 
     }
 
-    public override bool Damage (float damage)
+    public override bool Damage (float damage, char type)
     {
-        base.Damage(damage);
+        base.Damage(damage,type);
 
         // blood!
         GameObject blood = (GameObject)Instantiate(bloodParticles,

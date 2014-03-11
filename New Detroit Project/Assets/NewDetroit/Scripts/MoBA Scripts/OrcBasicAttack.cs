@@ -104,7 +104,7 @@ public class OrcBasicAttack : MonoBehaviour {
 		{
 			ControllableCharacter goControllableCharacter = go.GetComponent<ControllableCharacter> ();
 			if (goControllableCharacter == null) return;
-			if (goControllableCharacter.Damage (this.owner.GetComponent<HeroeController>().attackP)) // Damage the enemy and check if it is dead
+			if (goControllableCharacter.Damage (this.owner.GetComponent<HeroeController>().attackP,'P')) // Damage the enemy and check if it is dead
 			{
 				this.owner.GetComponent<HeroeController>().experienceUp(goControllableCharacter.experienceGived);
 			}
