@@ -71,7 +71,8 @@ public class GameManager : Photon.MonoBehaviour
 			{
 				if (selInt==0) // Instantiate ROB RENDER
 				{
-					PhotonNetwork.Instantiate("Rob Render", transform.position, Quaternion.identity, 0);
+					GameObject heroe = PhotonNetwork.Instantiate("Rob Render", transform.position, Quaternion.identity, 0);
+					Camera.main.GetComponent<CameraMOBAController>().heroe = heroe.GetComponent<HeroeController>();
 					DestroyObject (fogPlane);
 					DestroyObject (redArmyManager);
 					Camera.main.GetComponent<CameraRTSController>().enabled=false;
@@ -81,7 +82,8 @@ public class GameManager : Photon.MonoBehaviour
 				}
 				if (selInt==1) // Instantiate SKELTERBOT
 				{
-					PhotonNetwork.Instantiate("Rob Render", transform.position, Quaternion.identity, 0);
+					GameObject heroe = PhotonNetwork.Instantiate("Rob Render", transform.position, Quaternion.identity, 0);
+					Camera.main.GetComponent<CameraMOBAController>().heroe = heroe.GetComponent<HeroeController>();
 					DestroyObject(fogPlane);
 					DestroyObject (redArmyManager);
 					Camera.main.GetComponent<CameraRTSController>().enabled=false;
