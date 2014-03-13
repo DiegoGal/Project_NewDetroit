@@ -212,16 +212,14 @@ public class UnitHarvester : UnitController
     {
         base.OnGUI();
 
-        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
-
 		GUI.skin.label.fontSize = 10;
-        
-		/*GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
+
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
 		    currentState.ToString());
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 55, 100, 50),
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
             currentHarvestState.ToString());
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 65, 100, 50),
-            "resources: " + resourcesLoaded);*/
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
+            "resources: " + resourcesLoaded);
     }
 
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)

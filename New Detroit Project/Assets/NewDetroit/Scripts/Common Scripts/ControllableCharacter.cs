@@ -21,9 +21,23 @@ public class ControllableCharacter : MonoBehaviour
 	//Experience that gives the unit when it dies
 	public int experienceGived = 0;
 
+    // Indicates if the unit can receive damage or not
+    public bool invincible = false;
+
+    // the screen position of the character
+    protected Vector3 screenPosition;
 
 	// --------------------------------------------------------------
 
+    public virtual void Start ()
+    {
+        screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+    }
+
+    public virtual void OnGUI ()
+    {
+        screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+    }
 
     public void SetBasePosition (Vector3 basePosition)
     {
@@ -39,7 +53,8 @@ public class ControllableCharacter : MonoBehaviour
     public virtual bool Damage (float damage,char type)
     {
         //Debug.Log("damage");
-        currentLife -= damage;
+        if (!invincible)
+            currentLife -= damage;
         return (currentLife <= 0);
     }
 
