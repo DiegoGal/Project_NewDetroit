@@ -3,7 +3,10 @@ using System.Collections;
 
 public class CameraMOBAController : MonoBehaviour
 {
-	public Texture2D backgroundHUDTexture;
+	public Texture2D 	backgroundHUDTexture,
+						lifeTexture,
+						adrenTexture,
+						manaTexture;
 	public HeroeController heroe;
 	
 	
@@ -69,9 +72,9 @@ public class CameraMOBAController : MonoBehaviour
 					rectangleAdren = new Rect(beginWidthLifeManaAdrenSkills + 3, beginHeightAdren + 3, widthAdren - 6*positiveAdren, heightLifeManaAdren - 6),
 					rectangleMana = new Rect(beginWidthLifeManaAdrenSkills + 3, beginHeightMana + 3, widthMana - 6*positiveMana, heightLifeManaAdren - 6);
 			// Draw
-			GUI.DrawTexture (rectangleLife, heroe.textureLifePositive);
-			GUI.DrawTexture (rectangleAdren, heroe.textureAdrenPositive);
-			GUI.DrawTexture (rectangleMana, heroe.textureManaPositive);
+			GUI.DrawTexture (rectangleLife, lifeTexture);
+			GUI.DrawTexture (rectangleAdren, adrenTexture);
+			GUI.DrawTexture (rectangleMana, manaTexture);
 			// Labels for life, adrenaline and mana
 			float 	beginWidthLabelLifeAdrenMana = beginWidthLifeManaAdrenSkills + widthLifeManaAdrenSkills/2 - 40;
 			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
