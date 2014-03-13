@@ -14,6 +14,8 @@ public class CSelectable : MonoBehaviour
 
 	private bool selected;
 
+    private UnitController unitReference = null;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -25,12 +27,8 @@ public class CSelectable : MonoBehaviour
             model.renderer.material = origMaterial;
 
 		selected = false;
-	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-	
+
+        unitReference = GetComponent<UnitController>();
 	}
 
 	public void SetSelected ()
@@ -40,6 +38,9 @@ public class CSelectable : MonoBehaviour
             model.renderer.material = selectMaterial;
         else if (this.renderer != null)
 		    this.renderer.material.color = selectColor;
+
+        if (unitReference)
+            unitReference.isSelected = true;
 	}
 	
 	public void SetDeselect ()
@@ -49,6 +50,9 @@ public class CSelectable : MonoBehaviour
             model.renderer.material = origMaterial;
         else if (this.renderer != null)
 		    this.renderer.material.color = origColor;
+
+        if (unitReference)
+            unitReference.isSelected = false;
 	}
 	
 	public void SetSelected (bool selected)

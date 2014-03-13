@@ -34,6 +34,7 @@ public class UnitArtillery : UnitController
     public Transform dummyRightWeapon;
     public Transform dummyLeftWeaponGunBarrel;
     public Transform dummyRightWeaponGunBarrel;
+    protected short numberOfWeapons;
 
     public GameObject shotParticles;
 
@@ -141,15 +142,13 @@ public class UnitArtillery : UnitController
     {
         base.OnGUI();
 
-        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
-
         GUI.skin.label.fontSize = 10;
 
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 45, 100, 50),
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
             currentState.ToString());
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 55, 100, 50),
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
             moveMode.ToString());
-        GUI.Label(new Rect(camPos.x - 10, Screen.height - camPos.y - 65, 100, 50),
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
             currentArtilleryState.ToString());
     } // OnGUI
 
@@ -218,11 +217,14 @@ public class UnitArtillery : UnitController
                     GameObject particles1 = (GameObject)Instantiate(shotParticles,
                         dummyLeftWeaponGunBarrel.transform.position,
                         transform.rotation);
-                    GameObject particles2 = (GameObject)Instantiate(shotParticles,
-                        dummyRightWeaponGunBarrel.transform.position,
-                        transform.rotation);
                     Destroy(particles1, 0.4f);
-                    Destroy(particles2, 0.4f);
+                    if (dummyRightWeaponGunBarrel != null)
+                    {
+                        GameObject particles2 = (GameObject)Instantiate(shotParticles,
+                            dummyRightWeaponGunBarrel.transform.position,
+                            transform.rotation);
+                        Destroy(particles2, 0.4f);
+                    }
                     // first we check if the enemy is now alive
                     if (lastEnemyAttacked.Damage(basicAttackPower,'P'))
                     {

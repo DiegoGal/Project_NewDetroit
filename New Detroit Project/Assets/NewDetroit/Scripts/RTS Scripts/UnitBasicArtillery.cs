@@ -11,6 +11,7 @@ public class UnitBasicArtillery : UnitArtillery
     {
         base.Awake();
 
+        numberOfWeapons = 2;
         // Por si no se han establecido las referencias a los dummys del modelo
         // en el editor de Unity las buscamos ahora:
         if (dummyLeftWeapon == null)
