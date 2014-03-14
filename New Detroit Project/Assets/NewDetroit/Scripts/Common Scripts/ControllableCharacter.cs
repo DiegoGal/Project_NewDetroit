@@ -50,7 +50,7 @@ public class ControllableCharacter : MonoBehaviour
     }
 
     // if type == 'P' is phisical damage if type == 'M' is magical damage
-    public virtual bool Damage (float damage,char type)
+    public virtual bool Damage (float damage, char type)
     {
         //Debug.Log("damage");
         if (!invincible)
@@ -58,14 +58,29 @@ public class ControllableCharacter : MonoBehaviour
         return (currentLife <= 0);
     }
 
+    public virtual bool Heal (float life)
+    {
+        if (currentLife < maximunLife)
+        {
+            currentLife += life;
+            // si lo hemos curado "de más" le damos el valor máximo
+            if (maximunLife < currentLife)
+                currentLife = maximunLife;
+        }
+        if (currentLife == maximunLife)
+            return true;
+        else
+            return false;
+    }
+
 	// Return the current life of the heroe
-	public float getLife()
+	public float getLife ()
 	{
 		return this.currentLife;
 	}
 
 	// Returns the gived experience when it dies
-	public int getExperienceGived()
+	public int getExperienceGived ()
 	{
 		return this.experienceGived;
 	}

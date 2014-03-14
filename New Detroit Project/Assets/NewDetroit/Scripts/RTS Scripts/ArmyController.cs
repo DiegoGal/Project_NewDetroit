@@ -24,6 +24,11 @@ public class ArmyController : MonoBehaviour
 
 	private int layerMask; // para obviar la capa de la niebla
 
+    // Attributes necessary for the scouts patrol
+    public int maxPatrolPoints = 5;
+    private List<Vector3> patrolPosList = new List<Vector3>();
+    private bool keyPPressed = false;
+
     // Use this for initialization
     void Start ()
     {
@@ -38,18 +43,14 @@ public class ArmyController : MonoBehaviour
         lastCrowdAngle = 0;
 
         // agregamos las unidades que tengamos del ejército por el escenario
-        /*GameObject go = GameObject.Find("Goblin01_Harvester");
-        if (go.GetComponent<UnitController>().teamNumber == teamNumber)
-            unitList.Add(go);
-        go = GameObject.Find("Goblin02_Artillery");
-        if (go.GetComponent<UnitController>().teamNumber == teamNumber)
-            unitList.Add(go);
-        go = GameObject.Find("Goblin03_Artillery");
-        if (go.GetComponent<UnitController>().teamNumber == teamNumber)
-            unitList.Add(go);
-        go = GameObject.Find("Goblin01_Explorer");
-        if (go.GetComponent<UnitController>().teamNumber == teamNumber)
-            unitList.Add(go);*/
+        // OJO! FindObjectsOfType es MUY lento, cuidado co ello
+        GameObject[] objects = FindObjectsOfType(typeof(GameObject)) as GameObject[];
+        foreach (GameObject go in objects)
+        {
+            UnitController unit = go.GetComponent<UnitController>();
+            if ((unit != null) && (unit.teamNumber == teamNumber))
+                unitList.Add(go);
+        }
 
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
 		// Bit shift the index of the layer (8) to get a bit mask
@@ -100,13 +101,30 @@ public class ArmyController : MonoBehaviour
             //Debug.Log("fin seleccion: " + Input.mousePosition);
             selecting = false;
         }
-        else
+        else if (Input.GetMouseButtonUp(0))
         {
             // hacemos click izquierdo
+            if (keyPPressed)
+            {
+                // selección de puntos para la patrulla de unidades exploradoras
+                if (patrolPosList.Count < maxPatrolPoints)
+                {
+                    // lanzamos rayo y recogemos donde choca
+                    myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    if (
+                         Physics.Raycast(myRay, out myHit, 1000f, layerMask) &&
+                         (myHit.transform.name == "WorldFloor")
+                       )
+                    {
+                        //Debug.Log("Añadimos punto a la ruta");
+                        Vector3 destiny = myHit.point;
+                        patrolPosList.Add(destiny);
+                    }
+                }
+            }
             // seleccion simple: si se levanta el botón y la posición del ratón
             // es la misma que cuando se pulso por última vez
-            if ((Input.mousePosition == lastClick) &&
-                    Input.GetMouseButtonUp(0))
+            else if (Input.mousePosition == lastClick)
             {
                 //selecting = true;
                 // lanzamos rayo y recogemos donde choca
@@ -190,6 +208,33 @@ public class ArmyController : MonoBehaviour
             }
         }
 
+        // Scout Patrol Control
+        if (Input.GetKeyDown(KeyCode.P))
+            keyPPressed = true;
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            Debug.Log("finalizar puntos de ruta");
+            keyPPressed = false;
+            bool allExplorers = true;
+            foreach (GameObject u in unitSelectedList)
+            {
+                UnitScout unit = u.GetComponent<UnitScout>();
+                if (!unit)
+                {
+                    allExplorers = false;
+                    return;
+                }
+            }
+
+            if (allExplorers)
+            {
+                Debug.Log("lista de posiciones: " + patrolPosList);
+                foreach (GameObject u in unitSelectedList)
+                    u.GetComponent<UnitScout>().StartPatrol(patrolPosList);
+                patrolPosList.Clear();
+            }
+        }
+
         // If "C" is pulsed and there are only one engineer selected, it can construct
         if ((Input.GetKeyDown(KeyCode.C)) && (unitSelectedList.Count == 1))
         {
@@ -200,35 +245,52 @@ public class ArmyController : MonoBehaviour
             }
         }
 
-		if (Input.GetKeyDown (KeyCode.A))
+        // Spawn units
+		if (Input.GetKeyDown(KeyCode.Alpha1))
 		{
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
 			{
-				// spawn a new unit
+				// spawn a new harvester
 				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(0);
 				unitList.Add(newUnit);
 			}
 		}
-
-		if (Input.GetKeyDown (KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
 		{
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
 			{
-				// spawn a new unit
+				// spawn a new basic artillery
 				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(1);
 				unitList.Add(newUnit);
 			}
 		}
-
-		if (Input.GetKeyDown (KeyCode.I))
+		if (Input.GetKeyDown(KeyCode.Alpha3))
 		{
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
 			{
-				// spawn a new unit
-				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(3);
+				// spawn a new heavy artillery
+				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(2);
 				unitList.Add(newUnit);
 			}
 		}
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            if (armyBase.GetComponent<CSelectable>().IsSelected())
+            {
+                // spawn a new engineer
+                GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(3);
+                unitList.Add(newUnit);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            if (armyBase.GetComponent<CSelectable>().IsSelected())
+            {
+                // spawn a new scout
+                GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(4);
+                unitList.Add(newUnit);
+            }
+        }
 
     } // Update ()
 
