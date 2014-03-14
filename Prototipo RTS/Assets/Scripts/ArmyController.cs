@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class ArmyController : MonoBehaviour
 {
 	public int teamNumber;
+	public int maxNumberPatrol = 4;
 
 	public GameObject armyBase;
     public List<GameObject> unitList = new List<GameObject>();
@@ -14,6 +15,9 @@ public class ArmyController : MonoBehaviour
     private RaycastHit myHit; // Structure used to get information back from a raycast.
     private Ray myRay;
 
+	public List<Vector3> positionList = new List<Vector3>();
+
+	public bool KeyPPressed;
     private bool selecting;
     private Vector3 lastClick;
     private bool mouseButtonPreshed;
@@ -31,6 +35,7 @@ public class ArmyController : MonoBehaviour
     {
         myHit = new RaycastHit();
         selecting = false;
+		KeyPPressed = false;
         lastClick = new Vector3();
         mouseButtonPreshed = false;
         squareSelectionPointsScreen = new Vector3[4];
@@ -88,69 +93,142 @@ public class ArmyController : MonoBehaviour
             //Debug.Log("fin seleccion: " + Input.mousePosition);
             selecting = false;
         }
-        else
+		else if (Input.GetMouseButtonUp(0))
         {
-            // hacemos click izquierdo
-            // seleccion simple: si se levanta el botón y la posición del ratón
-            // es la misma que cuando se pulso por última vez
-            if ((Input.mousePosition == lastClick) &&
-                    Input.GetMouseButtonUp(0))
-            {
-                //selecting = true;
-                // lanzamos rayo y recogemos donde choca
-                myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
-                {
-                    //Debug.Log("he tocado: " + myHit.transform.name);
-					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
-					if (objSel != null)
-					{
-						// la marcamos como seleccionada
-						objSel.SetSelected();
+			if (KeyPPressed)
+			{
+				if (positionList.Count < maxNumberPatrol)
+				{
+					//lastClick = Input.mousePosition;
+					//positionList.Add (lastClick);
 
-						//Miramos si el objeto es una unidad
-						UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
-						if (unitCont != null)
+					// lanzamos rayo y recogemos donde choca
+					myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+					if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+					{
+						Debug.Log("He tocado: " + myHit.transform.tag);
+						if (myHit.transform.name == "WorldFloor")
 						{
-							// si NO tenemos control pulsada, se deselecciona lo que hubiera
-							// y se selecciona la nueva unidad
-							if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
+							Debug.Log("Añadimos punto a la ruta");
+							Vector3 destiny = myHit.point;
+							positionList.Add (destiny);
+						}
+					}
+				}
+			}
+			else
+			{
+	            // hacemos click izquierdo
+	            // seleccion simple: si se levanta el botón y la posición del ratón
+	            // es la misma que cuando se pulso por última vez
+	            if (Input.mousePosition == lastClick)
+	            {
+	                //selecting = true;
+	                // lanzamos rayo y recogemos donde choca
+	                myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+	                if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+	                {
+	                    //Debug.Log("he tocado: " + myHit.transform.name);
+						CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
+						if (objSel != null)
+						{
+							// la marcamos como seleccionada
+							objSel.SetSelected();
+
+							//Miramos si el objeto es una unidad
+							UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
+							if (unitCont != null)
+							{
+								// si NO tenemos control pulsada, se deselecciona lo que hubiera
+								// y se selecciona la nueva unidad
+								if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
+								{
+									DeselectAll();
+								}
+								// seleccionamos la nueva unidad
+								GameObject unit = (GameObject)myHit.transform.gameObject;
+								// la añadimos a la lista de seleccionados
+								unitSelectedList.Add(unit);
+								// y la marcamos como seleccionada
+								unit.GetComponent<CSelectable>().SetSelected();
+							}
+							else
 							{
 								DeselectAll();
+								
+								BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
+								if (baseCont != null)
+								{
+									// seleccionamos la nueva unidad
+									armyBase.GetComponent<CSelectable>().SetSelected();
+								}
 							}
-							// seleccionamos la nueva unidad
-							GameObject unit = (GameObject)myHit.transform.gameObject;
-							// la añadimos a la lista de seleccionados
-							unitSelectedList.Add(unit);
-							// y la marcamos como seleccionada
-							unit.GetComponent<CSelectable>().SetSelected();
 						}
 						else
 						{
+							//Deseleccionar las unidades
 							DeselectAll();
-							
-							BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
-							if (baseCont != null)
-							{
-								// seleccionamos la nueva unidad
-								armyBase.GetComponent<CSelectable>().SetSelected();
-							}
 						}
-					}
-					else
-					{
-						//Deseleccionar las unidades
-						DeselectAll();
-					}
-                }
-            }
+	                }
+	            }
+			}
         }
+
+		if (Input.GetKeyDown (KeyCode.P))
+			KeyPPressed = true;
+		if (Input.GetKeyUp (KeyCode.P))
+		{
+			Debug.Log("finalizar puntos de ruta");
+
+			KeyPPressed = false;
+
+			bool allExplorers = true;
+			foreach (GameObject u in unitSelectedList)
+			{
+				UnitExplorer unit = u.GetComponent<UnitExplorer>();
+				if (unit == null)
+					allExplorers = false;
+			}
+
+			if (allExplorers && positionList.Count > 1)
+			{
+				Debug.Log("lista de posiciones: " + positionList);
+				foreach (GameObject u in unitSelectedList)
+				{
+					u.GetComponent<UnitExplorer>().changeStateAndTakeList(positionList);
+				}
+				positionList.Clear();
+			}
+		}
 
         // hacemos click derecho
         if (Input.GetMouseButtonDown(1))
         {
-            // lanzamos rayo y recogemos donde choca
-            myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+
+			//-------------------------------------------------------------------------
+
+
+
+			/*if (KeyPPressed  && (unitSelectedList.Count >= 1))
+			{
+				bool allExplorers = true;
+				foreach (GameObject u in unitSelectedList)
+				{
+					UnitExplorer unit = u.GetComponent<UnitExplorer>();
+					if (unit == null)
+						allExplorers = false;
+				}
+				if (allExplorers)
+				{
+					lastClick = Input.mousePosition;
+					positionList.Add (lastClick);
+				}
+			}*/
+			//----------------------------------------------------------
+
+			// lanzamos rayo y recogemos donde choca
+			myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 			if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
             {
                 Vector3 destiny = myHit.point;
@@ -174,9 +252,8 @@ public class ArmyController : MonoBehaviour
 					//u.GetComponent<UnitController>().GoTo(destiny);
 					u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
 				}
-
-            }
-        }
+    		}
+		}
 
 		// If "C" is pulsed and there are only one engineer selected, it can construct
 		if ((Input.GetKeyDown (KeyCode.C)) && (unitSelectedList.Count == 1)) 
@@ -187,6 +264,8 @@ public class ArmyController : MonoBehaviour
 				unit.SetCanConstruct();
 			}
 		}
+
+
 
 		if (Input.GetKeyDown (KeyCode.A))
 		{
