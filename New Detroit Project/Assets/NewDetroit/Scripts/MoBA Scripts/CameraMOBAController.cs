@@ -17,6 +17,7 @@ public class CameraMOBAController : MonoBehaviour
 					rectangleLabelMDefense,
 					rectangleLabelSAttack,
 					rectangleLabelSMov,
+					rectangleLabelLevel,
 					rectangleLife,
 					rectangleAdren,
 					rectangleMana,
@@ -35,60 +36,81 @@ public class CameraMOBAController : MonoBehaviour
 	private void GUIRects()
 	{
 		// Background for attributes
-		float 	widthAttributes = Screen.width/8,
-				heightAttributes = Screen.height/4,
-				beginWidthAttributes = Screen.width - widthAttributes,
-				beginHeightAttributes = Screen.height - heightAttributes;
-		rectangleAttributes = new Rect (beginWidthAttributes, beginHeightAttributes, widthAttributes, heightAttributes);
+		float 	width = Screen.width/8,
+				height = Screen.height/4,
+				x = Screen.width - width,
+				y = Screen.height - height;
+		rectangleAttributes = new Rect (x, y, width, height);
 		// Background for life, adrenaline, mana and skills
-		float 	widthLifeManaAdrenSkills = Screen.width/3,
-				heightLifeManaAdrenSkills = heightAttributes,
-				beginWidthLifeManaAdrenSkills = Screen.width/2 - widthLifeManaAdrenSkills/2,
-				beginHeightLifeManaAdrenSkills = Screen.height - heightLifeManaAdrenSkills;
-		rectangleLifeManaAdrenSkills = new Rect (beginWidthLifeManaAdrenSkills, beginHeightLifeManaAdrenSkills, 
-		                                              widthLifeManaAdrenSkills, heightLifeManaAdrenSkills);
+		width = Screen.width/3;
+		x = Screen.width/2 - width/2;
+		y = Screen.height - rectangleAttributes.height;
+		rectangleLifeManaAdrenSkills = new Rect (x, y, width, rectangleAttributes.height);
 		// Labels for heroe's attributes
-		float heightLabelAttr = heightAttributes/6;
-		rectangleLabelPAttack = new Rect(beginWidthAttributes + 10, beginHeightAttributes, widthAttributes, heightLabelAttr);
-		rectangleLabelMAttack = new Rect(beginWidthAttributes + 10, beginHeightAttributes + heightLabelAttr, widthAttributes, heightLabelAttr);
-		rectangleLabelPDefense = new Rect(beginWidthAttributes + 10, beginHeightAttributes + 2*heightLabelAttr, widthAttributes, heightLabelAttr);
-		rectangleLabelMDefense = new Rect(beginWidthAttributes + 10, beginHeightAttributes + 3*heightLabelAttr, widthAttributes, heightLabelAttr);
-		rectangleLabelSAttack = new Rect(beginWidthAttributes + 10, beginHeightAttributes + 4*heightLabelAttr, widthAttributes, heightLabelAttr);
-		rectangleLabelSMov = new Rect(beginWidthAttributes + 10, beginHeightAttributes + 5*heightLabelAttr, widthAttributes, heightLabelAttr);
+		height = rectangleAttributes.height/7;
+		rectangleLabelPAttack = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y, rectangleAttributes.width, height);
+		rectangleLabelMAttack = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + height, rectangleAttributes.width, height);
+		rectangleLabelPDefense = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + 2*height, rectangleAttributes.width, height);
+		rectangleLabelMDefense = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + 3*height, rectangleAttributes.width, height);
+		rectangleLabelSAttack = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + 4*height, rectangleAttributes.width, height);
+		rectangleLabelSMov = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + 5*height, rectangleAttributes.width, height);
+		rectangleLabelLevel = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + 6*height,rectangleAttributes.width, height);
 		// Bars for life, adrenaline and mana
 		float 	positiveLife = (float) heroe.currentLife / heroe.maximunLife, // percentage of positive life
 				positiveAdren = (float) heroe.currentAdren / heroe.adren, // percentage of positive adrenaline
-				positiveMana = (float) heroe.currentMana / heroe.mana, // percentage of positive mana
-				beginHeightLifeManaAdren = beginHeightLifeManaAdrenSkills + heightLifeManaAdrenSkills/2,
-				widthLife = widthLifeManaAdrenSkills*positiveLife,
-				widthAdren = widthLifeManaAdrenSkills*positiveAdren,
-				widthMana = widthLifeManaAdrenSkills*positiveMana,
-				heightLifeManaAdren = heightLifeManaAdrenSkills/6,
-				beginHeightLife = beginHeightLifeManaAdren,
-				beginHeightAdren = beginHeightLifeManaAdren + heightLifeManaAdren,
-				beginHeightMana = beginHeightLifeManaAdren + 2*heightLifeManaAdren;
-		rectangleLife = new Rect(beginWidthLifeManaAdrenSkills + 3, beginHeightLife + 3, widthLife - 6*positiveLife, heightLifeManaAdren - 6);
-		rectangleAdren = new Rect(beginWidthLifeManaAdrenSkills + 3, beginHeightAdren + 3, widthAdren - 6*positiveAdren, heightLifeManaAdren - 6);
-		rectangleMana = new Rect(beginWidthLifeManaAdrenSkills + 3, beginHeightMana + 3, widthMana - 6*positiveMana, heightLifeManaAdren - 6);
+				positiveMana = (float) heroe.currentMana / heroe.mana; // percentage of positive mana
+		y = rectangleLifeManaAdrenSkills.y + rectangleLifeManaAdrenSkills.height/2;
+		width = rectangleLifeManaAdrenSkills.width*positiveLife;
+		height = rectangleLifeManaAdrenSkills.height/6;
+		rectangleLife = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, width - 6*positiveLife, height - 6);
+		y = y + height;
+		width = rectangleLifeManaAdrenSkills.width*positiveAdren;
+		rectangleAdren = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, width - 6*positiveAdren, height - 6);
+		y = y + height;
+		width = rectangleLifeManaAdrenSkills.width*positiveMana;
+		rectangleMana = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, width - 6*positiveMana, height - 6);
 		// Labels for life, adrenaline and mana
-		float beginWidthLabelLifeAdrenMana = beginWidthLifeManaAdrenSkills + widthLifeManaAdrenSkills/2;
-		rectangleLabelLife = new Rect(beginWidthLabelLifeAdrenMana - 40, beginHeightLife, 80, heightLifeManaAdren);
-		rectangleLabelAdren = new Rect(beginWidthLabelLifeAdrenMana - 40, beginHeightAdren, 80, heightLifeManaAdren);
-		rectangleLabelMana = new Rect(beginWidthLabelLifeAdrenMana - 40, beginHeightMana, 80, heightLifeManaAdren);
+		x = rectangleLifeManaAdrenSkills.x + rectangleLifeManaAdrenSkills.width/2;
+		rectangleLabelLife = new Rect(x - 40, rectangleLife.y, 80, rectangleLife.height);
+		rectangleLabelAdren = new Rect(x - 40, rectangleAdren.y, 80, rectangleLife.height);
+		rectangleLabelMana = new Rect(x - 40, rectangleMana.y, 80, rectangleLife.height);
 		// Skills
-		float 	widthSkill = widthLifeManaAdrenSkills/3,
-				heightSkill = heightLifeManaAdrenSkills/2,
-				beginWidthSkill1 = beginWidthLifeManaAdrenSkills,
-				beginWidthSkill2 = beginWidthLifeManaAdrenSkills + widthSkill,
-				beginWidthSkill3 = beginWidthLifeManaAdrenSkills + 2*widthSkill;
-		rectangleButtonSkill1 = new Rect(beginWidthSkill1 + 3, beginHeightLifeManaAdrenSkills + 3, widthSkill - 6, heightSkill - 6);
-		rectangleButtonSkill2 = new Rect(beginWidthSkill2 + 3, beginHeightLifeManaAdrenSkills + 3, widthSkill - 6, heightSkill - 6);
-		rectangleButtonSkill3 = new Rect(beginWidthSkill3 + 3, beginHeightLifeManaAdrenSkills + 3, widthSkill - 6, heightSkill - 6);
+		width = rectangleLifeManaAdrenSkills.width/3;
+		height = rectangleLifeManaAdrenSkills.height/2;
+		rectangleButtonSkill1 = new Rect(rectangleLifeManaAdrenSkills.x + 3, rectangleLifeManaAdrenSkills.y + 3, width - 6, height - 6);
+		x = rectangleLifeManaAdrenSkills.x + width;
+		rectangleButtonSkill2 = new Rect(x + 3, rectangleLifeManaAdrenSkills.y + 3, width - 6, height - 6);
+		x = x + width;
+		rectangleButtonSkill3 = new Rect(x + 3, rectangleLifeManaAdrenSkills.y + 3, width - 6, height - 6);
 		// Select skills
-		float beginHeightSelectSkills = beginHeightLifeManaAdrenSkills - heightSkill;
-		rectangleSelectSkill1 = new Rect(beginWidthSkill1 + 3, beginHeightSelectSkills + 3, widthSkill - 6, heightSkill - 6);
-		rectangleSelectSkill2 = new Rect(beginWidthSkill2 + 3, beginHeightSelectSkills + 3, widthSkill - 6, heightSkill - 6);
-		rectangleSelectSkill3 = new Rect(beginWidthSkill3 + 3, beginHeightSelectSkills + 3, widthSkill - 6, heightSkill - 6);
+		y = rectangleLifeManaAdrenSkills.y - height;
+		rectangleSelectSkill1 = new Rect(rectangleButtonSkill1.x + 3, y + 3, width - 6, height - 6);
+		rectangleSelectSkill2 = new Rect(rectangleButtonSkill2.x + 3, y + 3, width - 6, height - 6);
+		rectangleSelectSkill3 = new Rect(rectangleButtonSkill3.x + 3, y + 3, width - 6, height - 6);
+	}
+
+	private void clickRects()
+	{
+		// Select new skill
+		if (heroe.counterAbility > 0)
+		{
+			if (Input.GetMouseButtonUp(0))
+			{
+				Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+				if (!heroe.ability1 && rectangleSelectSkill1.Contains(mousePosition))
+				{
+					heroe.ability1 = true;
+				}
+				else if (!heroe.ability2 && rectangleSelectSkill2.Contains(mousePosition))
+				{
+					heroe.ability2 = true;
+				}
+				else if (!heroe.ability3 && heroe.level == 4 && rectangleSelectSkill3.Contains(mousePosition))
+				{
+					heroe.ability3 = true;
+				}
+			}
+		}
 	}
 
 
@@ -102,7 +124,11 @@ public class CameraMOBAController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (heroe != null) GUIRects();
+		if (heroe != null) 
+		{
+			GUIRects();
+			clickRects();
+		}
 	}
 
 	void OnGUI ()
@@ -121,6 +147,7 @@ public class CameraMOBAController : MonoBehaviour
 			GUI.Label (	rectangleLabelMDefense, "M. defense " + heroe.defM);
 			GUI.Label (	rectangleLabelSAttack, "S. attack " + heroe.speedAtt);
 			GUI.Label (	rectangleLabelSMov, "S. move " + heroe.speedMov);
+			GUI.Label ( rectangleLabelLevel, "Level " + heroe.level);
 			GUI.skin.label.alignment = ta;
 			// Life, Mana, Adrenaline
 			GUI.DrawTexture (rectangleLife, lifeTexture);
@@ -137,10 +164,6 @@ public class CameraMOBAController : MonoBehaviour
 			GUI.skin.label.fontStyle = fs;
 			GUI.skin.label.alignment = ta;
 			// Skills
-			int left = GUI.skin.button.border.left,
-				right = GUI.skin.button.border.right,
-				top = GUI.skin.button.border.top,
-				bottom = GUI.skin.button.border.bottom;
 			GUI.enabled = heroe.ability1;
 			GUI.Button(rectangleButtonSkill1, "Skill 1");
 			GUI.enabled = heroe.ability2;
@@ -149,9 +172,22 @@ public class CameraMOBAController : MonoBehaviour
 			GUI.Button(rectangleButtonSkill3, "Skill 3");
 			GUI.enabled = true;
 
-			GUI.Button(rectangleSelectSkill1, "Select Skill 1");
-			GUI.Button(rectangleSelectSkill2, "Select Skill 2");
-			GUI.Button(rectangleSelectSkill3, "Select Skill 3");
+			if (heroe.counterAbility > 0)
+			{
+				if (!heroe.ability1) GUI.Button(rectangleSelectSkill1, "Select Skill 1");
+				if (!heroe.ability2) GUI.Button(rectangleSelectSkill2, "Select Skill 2");
+				if (heroe.level == 4)
+					if (!heroe.ability3) GUI.Button(rectangleSelectSkill3, "Select Skill 3");
+			}
+
+			//DEBUG
+			Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+			GUI.Label(new Rect(Screen.width - 200, 0, 200, 20), "mouse (" + mousePosition.x + ","
+			          												+ mousePosition.y + ")");
+			GUI.Label(new Rect(Screen.width - 200, 10, 200, 20), "Select Skill1 (" + rectangleSelectSkill1.x + ","
+			          												+ rectangleSelectSkill1.y + ","
+			          												+ rectangleSelectSkill1.width + ","
+			          												+ rectangleSelectSkill1.height + ")");
 		}
 	}
 }

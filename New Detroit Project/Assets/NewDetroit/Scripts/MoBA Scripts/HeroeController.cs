@@ -64,7 +64,7 @@ public abstract class HeroeController : ControllableCharacter
 	protected Vector3 initialPosition; // The spawn position
 	
 	private double timeCount; // Time counter
-	private int counterAbility;
+	public int counterAbility;
     //This is for the particles that collides with the hero
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
     
