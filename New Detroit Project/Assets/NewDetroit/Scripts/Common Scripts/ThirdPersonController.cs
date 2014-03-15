@@ -448,13 +448,15 @@ public class ThirdPersonController : MonoBehaviour
 				timerSecondAttack = 0;
 				if (secondAttack == HeroeController.AttackSecond.Attack2)
 				{
-					Object spl = Instantiate(splash,transform.position + new Vector3(0,-2,0),Quaternion.identity);
+                    GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
+                    spl.GetComponent<OrcSplashAttack>().setDamage(orcController.attackM + 40);
+                    spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
 					Destroy(spl,1.5f);
 					splashActivated = true;
 				}
 				else if (secondAttack == HeroeController.AttackSecond.Attack1)
 				{
-					transform.Translate(Vector3.forward*2 + Vector3.up);
+                    transform.Translate(Vector3.forward * 2 + Vector3.up);                    
                     GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
                     snt.GetComponent<ParticleDamage>().setDamage(orcController.attackM);
 					transform.Translate(Vector3.back*2 + Vector3.down);

@@ -228,18 +228,23 @@ public abstract class HeroeController : ControllableCharacter
     //This is for the particles that collides with the orc
     void OnParticleCollision(GameObject other)
     {
-        if (CDParticleCollision > 0)
-            CDParticleCollision -= Time.deltaTime;
-        else
+        
+        // get the particle system
+        ParticleSystem particleSystem;
+        particleSystem = other.GetComponent<ParticleSystem>();
+        //If the particle is a Moco    
+        if (particleSystem.tag == "Moco")
         {
-            // get the particle system
-            ParticleSystem particleSystem;
-            particleSystem = other.GetComponent<ParticleSystem>();
-
-            if (particleSystem.tag == "Moco")
-                Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
+            if (CDParticleCollision > 0)
+                CDParticleCollision -= Time.deltaTime;
+            else
+            {
+            Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
             CDParticleCollision = 0.1f; // 5 deltatime aprox
+            }
         }
+           
+         
     }
 
     void OnGUI ()
