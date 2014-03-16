@@ -177,7 +177,7 @@ public class ThirdPersonController : MonoBehaviour
         }
 
 		// Initialize the current heroe state.
-		currentHeroeState = HeroeController.StateHeroe.Iddle;
+		currentHeroeState = HeroeController.StateHeroe.Idle;
 
 		// Initial secondary attack (no secondary attack in the beginning).
 		secondAttack = HeroeController.AttackSecond.None;
@@ -253,7 +253,7 @@ public class ThirdPersonController : MonoBehaviour
             //_characterState = CharacterState.Idle;
 
 			// Pick speed modifier
-			if (currentHeroeState == HeroeController.StateHeroe.Iddle || 
+			if (currentHeroeState == HeroeController.StateHeroe.Idle || 
 			    currentHeroeState == HeroeController.StateHeroe.AttackBasic || 
 			    (currentHeroeState == HeroeController.StateHeroe.AttackSecond && secondAttack != HeroeController.AttackSecond.Attack3))
 				targetSpeed = 0;
@@ -439,7 +439,7 @@ public class ThirdPersonController : MonoBehaviour
 				    (secondAttack == HeroeController.AttackSecond.Attack3 && timerSecondAttack >= 1.633))
 				{
 					secondAttack = HeroeController.AttackSecond.None;
-					currentHeroeState = HeroeController.StateHeroe.Iddle;
+					currentHeroeState = HeroeController.StateHeroe.Idle;
 				}
 			}
 			else if (Input.GetKey(KeyCode.Space) && secondAttack != HeroeController.AttackSecond.None)
@@ -485,7 +485,7 @@ public class ThirdPersonController : MonoBehaviour
 			}
 			else 
 			{
-				currentHeroeState = HeroeController.StateHeroe.Iddle;
+				currentHeroeState = HeroeController.StateHeroe.Idle;
 			}
 
 
@@ -589,7 +589,7 @@ public class ThirdPersonController : MonoBehaviour
 				}*/
 
 				//animate the animator
-				if (currentHeroeState == HeroeController.StateHeroe.Iddle)
+				if (currentHeroeState == HeroeController.StateHeroe.Idle)
 				{
 					animator.SetBool ("isRunning", false);
 					animator.SetFloat ("Speed", 0);

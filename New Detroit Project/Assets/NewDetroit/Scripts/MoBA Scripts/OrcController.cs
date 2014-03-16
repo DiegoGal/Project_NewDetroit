@@ -78,32 +78,6 @@ public class OrcController : HeroeController
 		}
 	}
 	
-	private void attack()
-	{
-		// if the orc is not dead and is not recovering after his dead
-		if (this.state != StateHeroe.Dead && this.state != StateHeroe.Recover)
-		{
-			// If the hero is attacking
-			if ((animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") ||
-			     animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") ||
-			     animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3")) &&
-			    animator.GetBool("isAttacking"))
-			{
-				/*if (!attackInstantiate)
-				{
-					this.attackInstantiate = true;
-				}*/
-				this.state = StateHeroe.AttackBasic;
-			}
-			// Else if the hero is not attacking
-			else
-			{
-				//this.attackInstantiate = false;
-				this.state = StateHeroe.IdleWalkRun;
-			}
-		}
-	}
-	
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// MAIN
@@ -138,8 +112,7 @@ public class OrcController : HeroeController
 	public override void Update ()
 	{
 		base.Update ();
-        
-		this.attack ();
+
 		this.newLevel ();
 	}
 
