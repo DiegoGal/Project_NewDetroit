@@ -79,6 +79,7 @@ public class GameManager : Photon.MonoBehaviour
 					redBase.GetComponent<CSelectable>().enabled=false;
 					redBase.GetComponent<BaseController>().enabled=false;
 					redBase.GetComponent<FogOfWarUnit>().enabled=true;
+					heroe.GetComponent<ThirdPersonController>().enabled = false;
 				}
 				if (selInt==1) // Instantiate SKELTERBOT
 				{

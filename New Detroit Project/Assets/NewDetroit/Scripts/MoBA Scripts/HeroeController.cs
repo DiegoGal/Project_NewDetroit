@@ -13,10 +13,9 @@ public abstract class HeroeController : ControllableCharacter
 	{
 		Dead,			// When is dead
 		Recover,		// After dead, he must be recovered
-		IdleWalkRun,	// When he is doing nothing but walking or running, or idle
-		Iddle,
-		Walk,
-		Run,
+		Idle,			// When is rest
+		Walk,			// When is walking
+		Run,			// When is running
 		AttackBasic,	// When he is attacking with his basic attack
 		AttackSecond	// When he is attacking with his secondary attack
 	}
@@ -34,8 +33,46 @@ public abstract class HeroeController : ControllableCharacter
 		Orc
 	}
 	
-	
-	// ------------------------------------------------------------------------------------------------------
+
+	//---------------------------------------------------------------------------------------------
+	// CONTROL HERO
+	public bool isControllable = true;
+	private Vector3 moveDirection = Vector3.zero; // The current move direction in x-z
+	private float moveSpeed = 0.0f; // The current x-z move speed
+	private float verticalSpeed = 0.0f; // The current vertical speed
+	private Vector3 inAirVelocity = Vector3.zero;
+	private CollisionFlags collisionFlags; // The last collision flags returned from controller.Move
+	private Vector3 velocity = Vector3.zero;
+	private Vector3 lastPos;
+	private float lastGroundedTime = 0.0f;
+	private bool movingBack = false; // Are we moving backwards (This locks the camera to not do a 180 degree spin)
+	private bool isMoving = false; // Is the user pressing any keys?
+	private float lockCameraTimer = 0.0f; // The camera doesnt start following the target immediately but waits for a split second to avoid too much waving around.
+	private float rotateSpeed = 500.0f;
+	private float speedSmoothing = 10.0f;
+	private float extraRunSpeed = 20.0f;
+	private float runSpeed = 12.0f; // when pressing "shift left" button (cmd) we start running
+	private float walkSpeed = 6.0f; // The speed when walking
+	private float walkTimeStart = 0.0f; // When did the user start walking (Used for going into trot after a while)
+	private float inAirControlAcceleration = 3.0f;
+	public float gravity = 20.0f; // The gravity for the character
+	private bool jumping = false; // Are we jumping? (Initiated with jump button and not grounded yet)
+	//---------------------------------------------------------------------------------------------
+	// PARTICLES
+	// Snot particle
+	public GameObject snot; 
+	private bool snotActivated = false;
+	private float snotCD = 1.7f;
+	// Splash particle
+	public GameObject splash; 
+	private bool splashActivated = false;
+	private float splashCD = 1.7f;
+	// Smoke particle
+	public GameObject smoke; 
+	private bool smokeActivated = false;
+	private float smokeCD = 1.7f;
+	private GameObject smokeInst; // Smoke instantiation
+	//---------------------------------------------------------------------------------------------
 	public Texture2D 	textureLifePositive, textureLifeNegative,
 						textureAdrenPositive, textureAdrenNegative,
 						textureManaPositive, textureManaNegative;
@@ -55,6 +92,7 @@ public abstract class HeroeController : ControllableCharacter
 	public bool isMine; // Tell us if that instance if ours or not
 	public TypeHeroe type;	// Type of heroe
 	public StateHeroe state; // The state of the heroe
+	public AttackSecond stateAttackSecond;	// The state of secondary attack
 	public bool ability1, 
 				ability2, 
 				ability3;
@@ -64,7 +102,7 @@ public abstract class HeroeController : ControllableCharacter
 	protected Vector3 initialPosition; // The spawn position
 	
 	private double timeCount; // Time counter
-	private int counterAbility;
+	public int counterAbility;
     //This is for the particles that collides with the hero
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
     
@@ -165,13 +203,16 @@ public abstract class HeroeController : ControllableCharacter
 		this.initialPosition = transform.position;	// Set the initial position
 		this.timeCount = 0;							// Set the initial value of timeCount
 		this.experienceGived = EXPERIENCE_TO_GIVE;	// Experience that the heroe gives when he dies
-		this.state = StateHeroe.IdleWalkRun;		// Set the initial state of the heroe
 		// Get the animator
 		animator = GetComponent<Animator> ();
 		if (!animator) Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
 		// Initialize the booleans of abilities
 		ability1 = ability2 = ability3 = false;
 		counterAbility = 0;
+		// Initialize the animation
+		animation.Play ("Iddle01");
+		state = StateHeroe.Idle;				// Set the initial state of the hero
+		stateAttackSecond = AttackSecond.None;		// Set the initial state of secondary attack of hero
 	}//Start
 	
 	// Update is called once per frame
@@ -196,7 +237,7 @@ public abstract class HeroeController : ControllableCharacter
 				if (this.currentLife >= this.maximunLife)
 				{
 					this.currentLife = this.maximunLife;
-					this.state = StateHeroe.IdleWalkRun;
+					this.state = StateHeroe.Idle;
 					this.GetComponent<ThirdPersonController>().enabled = true;
 				}
 			}
@@ -221,6 +262,10 @@ public abstract class HeroeController : ControllableCharacter
 				counterAbility --;
 			}
 		}
+
+		UpdateControl (); // Update control
+		UpdateState (); // Update state
+		UpdateParticles (); // Update particles
 	}//Update
 
     // Cool Down for detecting less time the collision with particles
@@ -228,18 +273,23 @@ public abstract class HeroeController : ControllableCharacter
     //This is for the particles that collides with the orc
     void OnParticleCollision(GameObject other)
     {
-        if (CDParticleCollision > 0)
-            CDParticleCollision -= Time.deltaTime;
-        else
+        
+        // get the particle system
+        ParticleSystem particleSystem;
+        particleSystem = other.GetComponent<ParticleSystem>();
+        //If the particle is a Moco    
+        if (particleSystem.tag == "Moco")
         {
-            // get the particle system
-            ParticleSystem particleSystem;
-            particleSystem = other.GetComponent<ParticleSystem>();
-
-            if (particleSystem.tag == "Moco")
-                Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
+            if (CDParticleCollision > 0)
+                CDParticleCollision -= Time.deltaTime;
+            else
+            {
+            Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
             CDParticleCollision = 0.1f; // 5 deltatime aprox
+            }
         }
+           
+         
     }
 
     void OnGUI ()
@@ -329,5 +379,265 @@ public abstract class HeroeController : ControllableCharacter
 		GUI.DrawTexture (rectangleNegativeAdren, textureAdrenNegative);
 		GUI.DrawTexture (rectanglePositiveMana, textureManaPositive);
 		GUI.DrawTexture (rectangleNegativeMana, textureManaNegative);
-	}//OnGUI	
+	}//OnGUI
+
+
+	//----------------------------------------------------------------------------------------------------------------------------------------
+	// CONTROL HERO
+	protected void UpdateControl()
+	{
+		if (isControllable)
+		{			
+			// Update the movement direction
+			UpdateSmoothedMovementDirection();	
+			
+			// Apply gravity
+			ApplyGravity();		
+			
+			// Calculate actual motion
+			Vector3 movement = moveDirection * moveSpeed + new Vector3(0, verticalSpeed, 0) + inAirVelocity;
+			movement *= Time.deltaTime;
+			
+			// Move the controller
+			CharacterController controller = GetComponent<CharacterController>();
+			collisionFlags = controller.Move(movement);
+		}
+		velocity = (transform.position - lastPos)*25;
+		
+		// Set rotation to the move direction
+		if (IsGrounded()) transform.rotation = Quaternion.LookRotation(moveDirection);
+		
+		// We are in jump mode but just became grounded
+		if (IsGrounded())
+		{
+			lastGroundedTime = Time.time;
+			inAirVelocity = Vector3.zero;
+		}	
+		
+		lastPos = transform.position;
+	}
+	
+	protected void UpdateSmoothedMovementDirection()
+	{
+		Transform cameraTransform = Camera.main.transform;
+		bool grounded = IsGrounded();
+		
+		// Forward vector relative to the camera along the x-z plane	
+		Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);
+		forward.y = 0;
+		forward = forward.normalized;
+		
+		// Right vector relative to the camera
+		// Always orthogonal to the forward vector
+		Vector3 right = new Vector3(forward.z, 0, -forward.x);
+		
+		float v = Input.GetAxisRaw("Vertical");
+		float h = Input.GetAxisRaw("Horizontal");
+		
+		// Are we moving backwards or looking backwards
+		if (v < -0.2f) movingBack = true;
+		else movingBack = false;
+		
+		bool wasMoving = isMoving;
+		isMoving = Mathf.Abs(h) > 0.1f || Mathf.Abs(v) > 0.1f;
+		
+		// Target direction relative to the camera
+		Vector3 targetDirection = h * right + v * forward;
+		
+		// Grounded controls
+		if (grounded)
+		{
+			// Lock camera for short period when transitioning moving & standing still
+			lockCameraTimer += Time.deltaTime;
+			if (isMoving != wasMoving) lockCameraTimer = 0.0f;
+			
+			// We store speed and direction seperately,
+			// so that when the character stands still we still have a valid forward direction
+			// moveDirection is always normalized, and we only update it if there is user input.
+			bool isOrcAttacking = state == HeroeController.StateHeroe.AttackBasic || state == HeroeController.StateHeroe.AttackSecond;
+			if (targetDirection != Vector3.zero)
+			{
+				moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+				moveDirection = moveDirection.normalized;
+			}
+			
+			// Smooth the speed based on the current target direction
+			float curSmooth = speedSmoothing * Time.deltaTime;
+			
+			// Choose target speed
+			//* We want to support analog input but make sure you cant walk faster diagonally than just forward or sideways
+			float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);
+			
+			// Pick speed modifier
+			if (animation.IsPlaying("BullStrike")) targetSpeed = extraRunSpeed;
+			else if (!animation.IsPlaying("FloorHit") && (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W)))
+			{
+				if (Input.GetKey(KeyCode.LeftShift)) targetSpeed = runSpeed;
+				else targetSpeed = walkSpeed;
+			}
+			else targetSpeed = 0;
+			
+			moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
+			
+			// Reset walk time start when we slow down
+			if (moveSpeed < walkSpeed * 0.3f)
+				walkTimeStart = Time.time;
+		}
+		// In air controls
+		else if (isMoving) inAirVelocity += targetDirection.normalized * Time.deltaTime * inAirControlAcceleration;
+	}
+	
+	protected  void ApplyGravity()
+	{
+		if (isControllable)	// don't move player at all if not controllable.
+		{			
+			if (IsGrounded()) verticalSpeed = 0.0f;
+			else verticalSpeed -= gravity * Time.deltaTime;
+		}
+	}
+	
+	protected bool IsGrounded()
+	{
+		return (collisionFlags & CollisionFlags.CollidedBelow) != 0;
+	}
+	
+	public float GetLockCameraTimer()
+	{
+		return lockCameraTimer;
+	}
+	
+	public bool IsMovingBackwards()
+	{
+		return movingBack;
+	}
+	
+	public bool IsJumping()
+	{
+		return jumping;
+	}
+	//----------------------------------------------------------------------------------------------------------------------------------------
+	// STATE & ANIMATION
+	protected void UpdateState()
+	{
+		// Only can do an action if hero don't do a secondary attack
+		if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
+		{
+			// Secondary attack
+			if (Input.GetKey (KeyCode.Alpha1) && ability1) 
+			{
+				state = StateHeroe.AttackSecond;
+				stateAttackSecond = AttackSecond.Attack1;
+				animation.CrossFade("Burp");
+				//--------------------------
+				transform.Translate(Vector3.forward*2 + Vector3.up);
+				GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
+				snt.GetComponent<ParticleDamage>().setDamage(attackM);
+				transform.Translate(Vector3.back*2 + Vector3.down);
+				Destroy(snt, 5f);
+				snotActivated = true;
+			}
+			else if (Input.GetKey (KeyCode.Alpha2) && ability2) 
+			{
+				state = StateHeroe.AttackSecond;
+				stateAttackSecond = AttackSecond.Attack2;
+				animation.CrossFade("FloorHit");
+				//------------------------------
+				GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
+				spl.GetComponent<OrcSplashAttack>().setDamage(attackM + 40);
+				spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
+				Destroy(spl,1.5f);
+				splashActivated = true;
+			}
+			else if (Input.GetKey (KeyCode.Alpha3) && ability3) 
+			{
+				state = StateHeroe.AttackSecond;
+				stateAttackSecond = AttackSecond.Attack3;
+				animation.CrossFade("BullStrike");
+				//--------------------------------
+				transform.Translate(Vector3.down*2);
+				smokeInst = (GameObject)Instantiate(smoke, transform.localPosition,transform.rotation);
+				transform.Translate(Vector3.up*2);
+				Destroy(smokeInst, 5f);
+				smokeActivated = true;
+			}
+			// Basic attack
+			else if (Input.GetMouseButton(0))
+			{
+				state = StateHeroe.AttackBasic;
+				stateAttackSecond = AttackSecond.None;
+				if (!animation.IsPlaying("Attack01") && !animation.IsPlaying("Attack02") && !animation.IsPlaying("Attack03"))
+				{
+					animation.CrossFade("Attack01");
+					animation.CrossFadeQueued("Attack02");
+					animation.CrossFadeQueued("Attack03");
+				}
+			}
+			// Movement
+			else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
+			{
+				if (Input.GetKey(KeyCode.LeftShift)) 
+				{
+					state = StateHeroe.Run;
+					animation.CrossFade("Run");
+				}
+				else 
+				{
+					state = StateHeroe.Walk;
+					animation.CrossFade("Walk");
+				}
+				stateAttackSecond = AttackSecond.None;
+			}
+			// Idle
+			else 
+			{
+				state = StateHeroe.Idle;
+				stateAttackSecond = AttackSecond.None;
+				if (!animation.IsPlaying("Iddle01") && !animation.IsPlaying("Iddle02"))
+				{
+					animation.CrossFade("Iddle01");
+					animation.CrossFadeQueued("Iddle02");
+				} 
+				
+			}
+		}
+	}
+	
+	protected void UpdateParticles()
+	{
+		if (snotActivated)
+		{
+			if (snotCD <= 0)
+			{
+				snotCD = 1.7f;
+				snotActivated = false;
+			}
+			else snotCD -= Time.deltaTime;
+		}
+		
+		if (splashActivated)
+		{
+			if (splashCD <= 0)
+			{
+				splashCD = 1.7f;
+				splashActivated = false;
+			}
+			else splashCD -= Time.deltaTime;
+		}	
+		
+		if (smokeActivated)
+		{
+			if (smokeInst!=null)
+			{
+				smokeInst.transform.position= transform.position;
+				smokeInst.transform.Translate(Vector3.down*2);
+			}
+			if (smokeCD <= 0)
+			{
+				smokeCD = 1.7f;
+				smokeActivated = false;
+			}
+			else smokeCD -= Time.deltaTime;
+		}
+	}
+	//----------------------------------------------------------------------------------------------------------------------------------------
 }

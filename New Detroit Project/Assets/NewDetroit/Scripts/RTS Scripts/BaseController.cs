@@ -18,11 +18,11 @@ public class BaseController : Photon.MonoBehaviour
 	private RaycastHit myHit; // Structure used to get information back from a raycast.
 	private Ray myRay;
 
-	public GameObject basicUnit;
     public GameObject harvesterUnit;
 	public GameObject basicArtilleryUnit;
 	public GameObject heavyArtilleryUnit;
 	public GameObject engineerUnit;
+    public GameObject scoutUnit;
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
@@ -102,6 +102,10 @@ public class BaseController : Photon.MonoBehaviour
                     newUnit = PhotonNetwork.Instantiate("UnitEngineer", spawnOrigin, new Quaternion(), 0)
                         as GameObject;
                     break;
+                case 4: // Scout
+                    newUnit = PhotonNetwork.Instantiate("UnitScout", spawnOrigin, new Quaternion(), 0)
+                        as GameObject;
+                    break;
             }
         }
         else
@@ -122,6 +126,10 @@ public class BaseController : Photon.MonoBehaviour
                     break;
                 case 3: // Engineer
                     newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
+                        as GameObject;
+                    break;
+                case 4: // Scout
+                    newUnit = Instantiate(scoutUnit, spawnOrigin, new Quaternion())
                         as GameObject;
                     break;
             }

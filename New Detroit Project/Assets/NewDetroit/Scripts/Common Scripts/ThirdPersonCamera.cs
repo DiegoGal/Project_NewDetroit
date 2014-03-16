@@ -32,7 +32,8 @@ public class ThirdPersonCamera : MonoBehaviour
     private float heightVelocity = 0.0f;
     private float angleVelocity = 0.0f;
     private bool snap = false;
-    private ThirdPersonController controller;
+	//private ThirdPersonController controller;
+	private HeroeController controller;
     private float targetHeight = 100000.0f;
 
     void OnEnable()
@@ -49,7 +50,8 @@ public class ThirdPersonCamera : MonoBehaviour
         _target = transform;
         if (_target)
         {
-            controller = _target.GetComponent<ThirdPersonController>();
+            //controller = _target.GetComponent<ThirdPersonController>();
+			controller = _target.GetComponent<HeroeController>();
         }
 
         if (controller)

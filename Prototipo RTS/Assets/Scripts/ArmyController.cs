@@ -10,7 +10,6 @@ public class ArmyController : MonoBehaviour
 	public GameObject armyBase;
     public List<GameObject> unitList = new List<GameObject>();
     public List<GameObject> unitSelectedList = new List<GameObject>();
-    public GameObject tower;
     
     // Warehouses & Base
     public List<CResourceBuilding> resourceBuildingList = new List<CResourceBuilding>();
@@ -49,6 +48,10 @@ public class ArmyController : MonoBehaviour
 
 	private int layerMask; // para obviar la capa de la niebla
 
+    // Attributes necessary for the scouts patrol
+    public int maxPatrolPoints = 5;
+    private List<Vector3> patrolPosList = new List<Vector3>();
+    private bool keyPPressed = false;
 
     // Use this for initialization
     void Start ()
@@ -63,6 +66,16 @@ public class ArmyController : MonoBehaviour
 
         resources = 0;
         lastCrowdAngle = 0;
+
+        // agregamos las unidades que tengamos del ejército por el escenario
+        // OJO! FindObjectsOfType es MUY lento, cuidado co ello
+        GameObject[] objects = FindObjectsOfType(typeof(GameObject)) as GameObject[];
+        foreach (GameObject go in objects)
+        {
+            UnitController unit = go.GetComponent<UnitController>();
+            if ((unit != null) && (unit.teamNumber == teamNumber))
+                unitList.Add(go);
+        }
 
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
 		// Bit shift the index of the layer (8) to get a bit mask
@@ -115,142 +128,86 @@ public class ArmyController : MonoBehaviour
             //Debug.Log("fin seleccion: " + Input.mousePosition);
             selecting = false;
         }
-		else if (Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(0))
         {
-			if (KeyPPressed)
-			{
-				if (positionList.Count < maxNumberPatrol)
-				{
-					//lastClick = Input.mousePosition;
-					//positionList.Add (lastClick);
-
-					// lanzamos rayo y recogemos donde choca
-					myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-					if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+            // hacemos click izquierdo
+            if (keyPPressed)
+            {
+                // selección de puntos para la patrulla de unidades exploradoras
+                if (patrolPosList.Count < maxPatrolPoints)
+                {
+                    // lanzamos rayo y recogemos donde choca
+                    myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    if (
+                         Physics.Raycast(myRay, out myHit, 1000f, layerMask) &&
+                         (myHit.transform.name == "WorldFloor")
+                       )
+                    {
+                        //Debug.Log("Añadimos punto a la ruta");
+                        Vector3 destiny = myHit.point;
+                        patrolPosList.Add(destiny);
+                    }
+                }
+            }
+            // seleccion simple: si se levanta el botón y la posición del ratón
+            // es la misma que cuando se pulso por última vez
+            else if (Input.mousePosition == lastClick)
+            {
+                //selecting = true;
+                // lanzamos rayo y recogemos donde choca
+                myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+                {
+                    //Debug.Log("he tocado: " + myHit.transform.name);
+					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
+					if (objSel != null)
 					{
-						Debug.Log("He tocado: " + myHit.transform.tag);
-						if (myHit.transform.name == "WorldFloor")
-						{
-							Debug.Log("Añadimos punto a la ruta");
-							Vector3 destiny = myHit.point;
-							positionList.Add (destiny);
-						}
-					}
-				}
-			}
-			else
-			{
-	            // hacemos click izquierdo
-	            // seleccion simple: si se levanta el botón y la posición del ratón
-	            // es la misma que cuando se pulso por última vez
-	            if (Input.mousePosition == lastClick)
-	            {
-	                //selecting = true;
-	                // lanzamos rayo y recogemos donde choca
-	                myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-	                if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
-	                {
-	                    //Debug.Log("he tocado: " + myHit.transform.name);
-						CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
-						if (objSel != null)
-						{
-							// la marcamos como seleccionada
-							objSel.SetSelected();
+						// la marcamos como seleccionada
+						objSel.SetSelected();
 
-							//Miramos si el objeto es una unidad
-							UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
-							if (unitCont != null)
-							{
-								// si NO tenemos control pulsada, se deselecciona lo que hubiera
-								// y se selecciona la nueva unidad
-								if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
-								{
-									DeselectAll();
-								}
-								// seleccionamos la nueva unidad
-								GameObject unit = (GameObject)myHit.transform.gameObject;
-								// la añadimos a la lista de seleccionados
-								unitSelectedList.Add(unit);
-								// y la marcamos como seleccionada
-								unit.GetComponent<CSelectable>().SetSelected();
-							}
-							else
+						//Miramos si el objeto es una unidad
+						UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
+						if (unitCont != null)
+						{
+							// si NO tenemos control pulsada, se deselecciona lo que hubiera
+							// y se selecciona la nueva unidad
+							if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
 							{
 								DeselectAll();
-								
-								BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
-								if (baseCont != null)
-								{
-									// seleccionamos la nueva unidad
-									armyBase.GetComponent<CSelectable>().SetSelected();
-								}
 							}
+							// seleccionamos la nueva unidad
+							GameObject unit = (GameObject)myHit.transform.gameObject;
+							// la añadimos a la lista de seleccionados
+							unitSelectedList.Add(unit);
+							// y la marcamos como seleccionada
+							unit.GetComponent<CSelectable>().SetSelected();
 						}
 						else
 						{
-							//Deseleccionar las unidades
 							DeselectAll();
+							
+							BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
+							if (baseCont != null)
+							{
+								// seleccionamos la nueva unidad
+								armyBase.GetComponent<CSelectable>().SetSelected();
+							}
 						}
-	                }
-	            }
-			}
+					}
+					else
+					{
+						//Deseleccionar las unidades
+						DeselectAll();
+					}
+                }
+            }
         }
-
-		if (Input.GetKeyDown (KeyCode.P))
-			KeyPPressed = true;
-		if (Input.GetKeyUp (KeyCode.P))
-		{
-			Debug.Log("finalizar puntos de ruta");
-
-			KeyPPressed = false;
-
-			bool allExplorers = true;
-			foreach (GameObject u in unitSelectedList)
-			{
-				UnitExplorer unit = u.GetComponent<UnitExplorer>();
-				if (unit == null)
-					allExplorers = false;
-			}
-
-			if (allExplorers && positionList.Count > 1)
-			{
-				Debug.Log("lista de posiciones: " + positionList);
-				foreach (GameObject u in unitSelectedList)
-				{
-					u.GetComponent<UnitExplorer>().changeStateAndTakeList(positionList);
-				}
-				positionList.Clear();
-			}
-		}
 
         // hacemos click derecho
         if (Input.GetMouseButtonDown(1))
         {
-
-
-			//-------------------------------------------------------------------------
-
-
-
-			/*if (KeyPPressed  && (unitSelectedList.Count >= 1))
-			{
-				bool allExplorers = true;
-				foreach (GameObject u in unitSelectedList)
-				{
-					UnitExplorer unit = u.GetComponent<UnitExplorer>();
-					if (unit == null)
-						allExplorers = false;
-				}
-				if (allExplorers)
-				{
-					lastClick = Input.mousePosition;
-					positionList.Add (lastClick);
-				}
-			}*/
-			//----------------------------------------------------------
-
-			// lanzamos rayo y recogemos donde choca
-			myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            // lanzamos rayo y recogemos donde choca
+            myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 			if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
             {
                 Vector3 destiny = myHit.point;
@@ -258,7 +215,7 @@ public class ArmyController : MonoBehaviour
 				{
 					//Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
 					List<Vector3> destinyList;
-                    destinyList = SwarmAlgorithm(destiny);
+					destinyList = SwarmAlgorithm(destiny);
 					int i = 0;
 					foreach (GameObject u in unitSelectedList)
 					{
@@ -274,8 +231,9 @@ public class ArmyController : MonoBehaviour
 					//u.GetComponent<UnitController>().GoTo(destiny);
 					u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
 				}
-    		}
-		}
+
+            }
+        }
 
 		// If "T" or "W" is pulsed and there are only one engineer selected, it can construct
         if (unitSelectedList.Count == 1)
@@ -297,37 +255,83 @@ public class ArmyController : MonoBehaviour
                 }
             }
         }
+	 // Scout Patrol Control
+        if (Input.GetKeyDown(KeyCode.P))
+            keyPPressed = true;
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            Debug.Log("finalizar puntos de ruta");
+            keyPPressed = false;
+            bool allExplorers = true;
+            foreach (GameObject u in unitSelectedList)
+            {
+                UnitScout unit = u.GetComponent<UnitScout>();
+                if (!unit)
+                {
+                    allExplorers = false;
+                    return;
+                }
+            }
+
+            if (allExplorers)
+            {
+                Debug.Log("lista de posiciones: " + patrolPosList);
+                foreach (GameObject u in unitSelectedList)
+                    u.GetComponent<UnitScout>().StartPatrol(patrolPosList);
+                patrolPosList.Clear();
+            }
+        }
 
 
-		if (Input.GetKeyDown (KeyCode.A))
+            }
+        }
+
+        // Spawn units
+		if (Input.GetKeyDown(KeyCode.Alpha1))
 		{
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
 			{
-				// spawn a new unit
+				// spawn a new harvester
 				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(0);
 				unitList.Add(newUnit);
 			}
 		}
-
-		if (Input.GetKeyDown (KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
 		{
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
 			{
-				// spawn a new unit
+				// spawn a new basic artillery
 				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(1);
 				unitList.Add(newUnit);
 			}
 		}
-
-		if (Input.GetKeyDown (KeyCode.I))
+		if (Input.GetKeyDown(KeyCode.Alpha3))
 		{
 			if (armyBase.GetComponent<CSelectable>().IsSelected())
 			{
-				// spawn a new unit
-				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(3);
+				// spawn a new heavy artillery
+				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(2);
 				unitList.Add(newUnit);
 			}
 		}
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            if (armyBase.GetComponent<CSelectable>().IsSelected())
+            {
+                // spawn a new engineer
+                GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(3);
+                unitList.Add(newUnit);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            if (armyBase.GetComponent<CSelectable>().IsSelected())
+            {
+                // spawn a new scout
+                GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(4);
+                unitList.Add(newUnit);
+            }
+        }
 
     } // Update ()
 
@@ -353,7 +357,7 @@ public class ArmyController : MonoBehaviour
         }
     } // OnGUI()
 
-    private List<Vector3> SwarmAlgorithm(Vector3 destiny)
+	private List<Vector3> SwarmAlgorithm (Vector3 destiny)
 	{
 		List<Vector3> destinyList = new List<Vector3>();
 		double radious = System.Math.Sqrt(unitSelectedList.Count);
@@ -895,46 +899,3 @@ public class ArmyController : MonoBehaviour
     }
 
 } // class ArmyController
-
-
-
-/*
-  if (!resourceBuildingList.Contains(w))
-        {
-            resourceBuildingList.Add(w);
-            Debug.Log("Warehouse agregada");
-            // Link the nearest mine to this warehouse
-            float min = -1;
-            float dist;
-            int index = -1;
-            int i = 0;
-            Vector3 posWare = new Vector3(w.transform.position.x, 0, w.transform.position.z);
-            Vector3 posMine = new Vector3(0, 0, 0);
-            foreach (CResources c in resourceMineList)
-            {
-                posMine.x = c.transform.Find("center").position.x;
-                posMine.z = c.transform.Find("center").position.z;
-                dist = Vector3.Distance(c.transform.position, posWare);
-                if (min < 0)
-                {
-                    min = dist;
-                    index = i;
-                }
-                else if (dist < min)
-                {
-                    min = dist;
-                    index = i;
-                }
-                i++;
-            }
-            if (min == -1)
-                Debug.Log("Link NO realizado");
-            else
-            {
-                buildingMineLink.Add(new resourcesLinkStruct(resourceBuildingList.Count - 1, index, min));
-                Debug.Log("Link realizado");
-            }
-        }
-        else Debug.Log("Warehouse NO agregada");
- 
- */
