@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TowerBoxConstruct : MonoBehaviour {
+public class BoxConstruct : MonoBehaviour {
 
     private List<Collider> colliderList = new List<Collider>();
 	// Use this for initialization
@@ -22,8 +22,14 @@ public class TowerBoxConstruct : MonoBehaviour {
             Debug.Log("No puedes construir");
             colliderList.Add(other);
             TowerGoblin selfUnit = transform.parent.GetComponent<TowerGoblin>();
-            if (colliderList.Count == 1)
+            if (selfUnit != null && colliderList.Count == 1)
                 selfUnit.SetCanConstruct(false);
+            else
+            {
+                Warehouse selfUnitWH = transform.parent.GetComponent<Warehouse>();
+                if (selfUnitWH != null && colliderList.Count == 1)
+                    selfUnitWH.SetCanConstruct(false);
+            }
         }
     }
 
@@ -34,10 +40,19 @@ public class TowerBoxConstruct : MonoBehaviour {
             Debug.Log("No puedes construir");
             colliderList.Remove(other);
             TowerGoblin selfUnit = transform.parent.GetComponent<TowerGoblin>();
-            if (colliderList.Count == 0)
+            if (selfUnit != null && colliderList.Count == 0)
             {
                 selfUnit.SetCanConstruct(true);
                 Debug.Log("Puedes construir");
+            }
+            else
+            {
+                Warehouse selfUnitWH = transform.parent.GetComponent<Warehouse>();
+                if (selfUnitWH != null && colliderList.Count == 0)
+                {
+                    selfUnitWH.SetCanConstruct(true);
+                    Debug.Log("Puedes construir");
+                }
             }
         }
 	}

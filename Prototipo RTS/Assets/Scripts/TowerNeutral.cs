@@ -257,5 +257,20 @@ public class TowerNeutral : Tower
 			GUI.DrawTexture(rect2, progressBarFull);
 
 		}
-	}	
+	}
+
+    public void LeaveEngineerPositionConquest(int index)
+    {
+        engineerPosTaken[index] = false;
+        cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+        if (engineerQueue.Count > 0)
+        {
+            UnitEngineer unit = engineerQueue[0];
+            unit.FinishWaitingToRepair(engineerPositions[index], index);
+            engineerQueue.RemoveAt(0);
+            engineerPosTaken[index] = true;
+            cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+        }
+    }
+
 }

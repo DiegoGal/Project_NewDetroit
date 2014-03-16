@@ -1,14 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BaseController : MonoBehaviour
+public class BaseController : CResourceBuilding
 {
-	public int teamNumber;
-
-    // referencia al controlador del ejército
-    public ArmyController armyController;
-
-	//Donde van a aparecer las unidades
+	
+    //Donde van a aparecer las unidades
 	private Vector3 spawnDestiny;
 	//Donde van a aparecer las unidades
 	private Vector3 spawnOrigin;
@@ -25,8 +21,32 @@ public class BaseController : MonoBehaviour
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
 	// Use this for initialization
-	void Start ()
+    public override void Start()
     {
+        base.Start();
+
+        float twoPi = Mathf.PI * 2;
+        Vector3 center = transform.position;
+        for (int i = 0; i < numEngineerPositions; i++)
+        {
+            Vector3 pos = new Vector3
+                (
+                    center.x +
+                    (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
+                    0,
+                    center.z +
+                    (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
+                    );
+            engineerPositions[i] = pos;
+            engineerPosTaken[i] = false;
+
+            cubes[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cubes[i].transform.position = pos;
+            Destroy(cubes[i].GetComponent<BoxCollider>());
+            cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+            cubes[i].transform.parent = this.transform;
+        }
+
         spawnOrigin = transform.FindChild("SpawnPoint").position;
 
         spawnDestiny = new Vector3(
@@ -41,11 +61,14 @@ public class BaseController : MonoBehaviour
         // eliminamos el colisionador del cubo:
         Destroy(cubeSpawnDest.GetComponent<BoxCollider>());
         cubeSpawnDest.transform.position = spawnDestiny;
+        currentLife = totalLife;
 	}
 	
 	// Update is called once per frame
-	void Update ()
+    public override void Update()
     {
+        base.Update();
+
 		// hacemos click derecho
 		if (this.GetComponent<CSelectable>().IsSelected() && Input.GetMouseButtonDown(1))
 		{
@@ -105,9 +128,22 @@ public class BaseController : MonoBehaviour
 		return  newUnit;
 	}
 
-    public void DownloadResources(int resources)
+    public ArmyController GetArmyController()
     {
-        armyController.IncreaseResources(resources);
+        return armyController;
     }
 
+    public virtual void OnGUI()
+    {
+        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
+        Rect rect1;
+        Rect rect2;
+
+        rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 50.0f, 120.0f, 4.0f);
+        rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 50.0f, 120.0f * (currentLife / totalLife), 4.0f);
+        
+        GUI.DrawTexture(rect1, progressBarEmpty);
+        GUI.DrawTexture(rect2, progressBarFull);
+
+    }
 } // class BaseController

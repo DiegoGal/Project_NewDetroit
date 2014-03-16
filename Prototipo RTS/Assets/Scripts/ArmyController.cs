@@ -5,15 +5,39 @@ using System.Collections.Generic;
 public class ArmyController : MonoBehaviour
 {
 	public int teamNumber;
+	public int maxNumberPatrol = 4;
 
 	public GameObject armyBase;
     public List<GameObject> unitList = new List<GameObject>();
     public List<GameObject> unitSelectedList = new List<GameObject>();
     public GameObject tower;
+    
+    // Warehouses & Base
+    public List<CResourceBuilding> resourceBuildingList = new List<CResourceBuilding>();
+    // Mines
+    public List<CResources> resourceMineList = new List<CResources>();
+    public class resourcesLinkStruct
+    {
+        public int buildingIndex;
+        public int mineIndex;
+        public float distance;
+
+        public resourcesLinkStruct(int buildingIndex, int mineIndex, float distance)
+        {
+            this.buildingIndex = buildingIndex;
+            this.mineIndex = mineIndex;
+            this.distance = distance;
+        }
+
+    }
+    public List<resourcesLinkStruct> buildingMineLink = new List<resourcesLinkStruct>();
 
     private RaycastHit myHit; // Structure used to get information back from a raycast.
     private Ray myRay;
 
+	public List<Vector3> positionList = new List<Vector3>();
+
+	public bool KeyPPressed;
     private bool selecting;
     private Vector3 lastClick;
     private bool mouseButtonPreshed;
@@ -31,6 +55,7 @@ public class ArmyController : MonoBehaviour
     {
         myHit = new RaycastHit();
         selecting = false;
+		KeyPPressed = false;
         lastClick = new Vector3();
         mouseButtonPreshed = false;
         squareSelectionPointsScreen = new Vector3[4];
@@ -46,6 +71,8 @@ public class ArmyController : MonoBehaviour
 		// This would cast rays only against colliders in layer 8 and 2.
 		// But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
 		layerMask = ~layerMask;
+
+        resourceBuildingList.Add(armyBase.GetComponent<CResourceBuilding>());
     }
 
     // Update is called once per frame
@@ -88,69 +115,142 @@ public class ArmyController : MonoBehaviour
             //Debug.Log("fin seleccion: " + Input.mousePosition);
             selecting = false;
         }
-        else
+		else if (Input.GetMouseButtonUp(0))
         {
-            // hacemos click izquierdo
-            // seleccion simple: si se levanta el botón y la posición del ratón
-            // es la misma que cuando se pulso por última vez
-            if ((Input.mousePosition == lastClick) &&
-                    Input.GetMouseButtonUp(0))
-            {
-                //selecting = true;
-                // lanzamos rayo y recogemos donde choca
-                myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
-                {
-                    //Debug.Log("he tocado: " + myHit.transform.name);
-					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
-					if (objSel != null)
-					{
-						// la marcamos como seleccionada
-						objSel.SetSelected();
+			if (KeyPPressed)
+			{
+				if (positionList.Count < maxNumberPatrol)
+				{
+					//lastClick = Input.mousePosition;
+					//positionList.Add (lastClick);
 
-						//Miramos si el objeto es una unidad
-						UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
-						if (unitCont != null)
+					// lanzamos rayo y recogemos donde choca
+					myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+					if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+					{
+						Debug.Log("He tocado: " + myHit.transform.tag);
+						if (myHit.transform.name == "WorldFloor")
 						{
-							// si NO tenemos control pulsada, se deselecciona lo que hubiera
-							// y se selecciona la nueva unidad
-							if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
+							Debug.Log("Añadimos punto a la ruta");
+							Vector3 destiny = myHit.point;
+							positionList.Add (destiny);
+						}
+					}
+				}
+			}
+			else
+			{
+	            // hacemos click izquierdo
+	            // seleccion simple: si se levanta el botón y la posición del ratón
+	            // es la misma que cuando se pulso por última vez
+	            if (Input.mousePosition == lastClick)
+	            {
+	                //selecting = true;
+	                // lanzamos rayo y recogemos donde choca
+	                myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+	                if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+	                {
+	                    //Debug.Log("he tocado: " + myHit.transform.name);
+						CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
+						if (objSel != null)
+						{
+							// la marcamos como seleccionada
+							objSel.SetSelected();
+
+							//Miramos si el objeto es una unidad
+							UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
+							if (unitCont != null)
+							{
+								// si NO tenemos control pulsada, se deselecciona lo que hubiera
+								// y se selecciona la nueva unidad
+								if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
+								{
+									DeselectAll();
+								}
+								// seleccionamos la nueva unidad
+								GameObject unit = (GameObject)myHit.transform.gameObject;
+								// la añadimos a la lista de seleccionados
+								unitSelectedList.Add(unit);
+								// y la marcamos como seleccionada
+								unit.GetComponent<CSelectable>().SetSelected();
+							}
+							else
 							{
 								DeselectAll();
+								
+								BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
+								if (baseCont != null)
+								{
+									// seleccionamos la nueva unidad
+									armyBase.GetComponent<CSelectable>().SetSelected();
+								}
 							}
-							// seleccionamos la nueva unidad
-							GameObject unit = (GameObject)myHit.transform.gameObject;
-							// la añadimos a la lista de seleccionados
-							unitSelectedList.Add(unit);
-							// y la marcamos como seleccionada
-							unit.GetComponent<CSelectable>().SetSelected();
 						}
 						else
 						{
+							//Deseleccionar las unidades
 							DeselectAll();
-							
-							BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
-							if (baseCont != null)
-							{
-								// seleccionamos la nueva unidad
-								armyBase.GetComponent<CSelectable>().SetSelected();
-							}
 						}
-					}
-					else
-					{
-						//Deseleccionar las unidades
-						DeselectAll();
-					}
-                }
-            }
+	                }
+	            }
+			}
         }
+
+		if (Input.GetKeyDown (KeyCode.P))
+			KeyPPressed = true;
+		if (Input.GetKeyUp (KeyCode.P))
+		{
+			Debug.Log("finalizar puntos de ruta");
+
+			KeyPPressed = false;
+
+			bool allExplorers = true;
+			foreach (GameObject u in unitSelectedList)
+			{
+				UnitExplorer unit = u.GetComponent<UnitExplorer>();
+				if (unit == null)
+					allExplorers = false;
+			}
+
+			if (allExplorers && positionList.Count > 1)
+			{
+				Debug.Log("lista de posiciones: " + positionList);
+				foreach (GameObject u in unitSelectedList)
+				{
+					u.GetComponent<UnitExplorer>().changeStateAndTakeList(positionList);
+				}
+				positionList.Clear();
+			}
+		}
 
         // hacemos click derecho
         if (Input.GetMouseButtonDown(1))
         {
-            // lanzamos rayo y recogemos donde choca
-            myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+
+			//-------------------------------------------------------------------------
+
+
+
+			/*if (KeyPPressed  && (unitSelectedList.Count >= 1))
+			{
+				bool allExplorers = true;
+				foreach (GameObject u in unitSelectedList)
+				{
+					UnitExplorer unit = u.GetComponent<UnitExplorer>();
+					if (unit == null)
+						allExplorers = false;
+				}
+				if (allExplorers)
+				{
+					lastClick = Input.mousePosition;
+					positionList.Add (lastClick);
+				}
+			}*/
+			//----------------------------------------------------------
+
+			// lanzamos rayo y recogemos donde choca
+			myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 			if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
             {
                 Vector3 destiny = myHit.point;
@@ -174,19 +274,30 @@ public class ArmyController : MonoBehaviour
 					//u.GetComponent<UnitController>().GoTo(destiny);
 					u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
 				}
+    		}
+		}
 
+		// If "T" or "W" is pulsed and there are only one engineer selected, it can construct
+        if (unitSelectedList.Count == 1)
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                UnitEngineer unit = unitSelectedList[0].GetComponent<UnitEngineer>();
+                if (unit != null && !unit.IsNewConstructing())
+                {
+                    unit.SetCanConstruct(0);
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.W))
+            {
+                UnitEngineer unit = unitSelectedList[0].GetComponent<UnitEngineer>();
+                if (unit != null && !unit.IsNewConstructing())
+                {
+                    unit.SetCanConstruct(1);
+                }
             }
         }
 
-		// If "C" is pulsed and there are only one engineer selected, it can construct
-		if ((Input.GetKeyDown (KeyCode.C)) && (unitSelectedList.Count == 1)) 
-		{
-			UnitEngineer unit = unitSelectedList[0].GetComponent<UnitEngineer>();
-			if (unit != null && !unit.IsNewConstructing())
-			{
-				unit.SetCanConstruct();
-			}
-		}
 
 		if (Input.GetKeyDown (KeyCode.A))
 		{
@@ -669,4 +780,161 @@ public class ArmyController : MonoBehaviour
         Destroy(unit, 0.5f);
     }
 
+    public void addWarehouse(CResourceBuilding w)
+    {
+        if (!resourceBuildingList.Contains(w))
+        {
+            resourceBuildingList.Add(w);
+            Debug.Log("Warehouse agregada");
+            // Link the nearest mine to this warehouse
+            float dist;
+            int index = -1;
+            Vector3 posWare = new Vector3(w.transform.position.x, 0, w.transform.position.z);
+            Vector3 posMine = new Vector3(0, 0, 0);
+            float currentDist = -1;
+            int i = 0;
+            foreach (CResources c in resourceMineList) // Foreach mines
+            {
+                // The distance to the current mine/CResourceBuilding
+                bool found = false;
+                int maxCount = buildingMineLink.Count;
+                int j = 0;
+                while ((j < maxCount) && !found)
+                {
+                    if (buildingMineLink[j].mineIndex == i)// If the mine is found
+                    {
+                        currentDist = buildingMineLink[j].distance;
+                        found = true;
+                    }
+                    j++;
+                }
+                posMine.x = c.transform.Find("center").position.x;
+                posMine.z = c.transform.Find("center").position.z;
+                dist = Vector3.Distance(c.transform.position, posWare);
+
+                if ((currentDist != -1) && (dist < currentDist)) // Update the new warehouse to the mine
+                {
+                    buildingMineLink[j-1].distance = dist;
+                    buildingMineLink[j-1].buildingIndex = resourceBuildingList.Count - 1;
+                }
+                i++;
+            }
+            
+        }
+        else Debug.Log("Warehouse NO agregada");
+    }
+
+    public void UpdateMines(Transform mineTransform)
+    {
+        CResources mine = mineTransform.GetComponent<CResources>();
+        if (!resourceMineList.Contains(mine))
+        {
+            resourceMineList.Add(mine);
+            // Update Links
+            Vector3 posMine = new Vector3(0, 0, 0);
+            float dist = -1;
+            float min = -1;
+            int index = -1;
+            int i = 0;
+            posMine.x = mineTransform.Find("center").position.x;
+            posMine.z = mineTransform.Find("center").position.z;
+            foreach (CResourceBuilding c in resourceBuildingList) // Foreach mines
+            {
+                // We have to create the link
+                Vector3 posBR = new Vector3(0, 0, 0);
+                posBR.x = c.transform.position.x;
+                posBR.z = c.transform.position.z;
+
+                dist = Vector3.Distance(posMine, posBR);
+                if (min < 0)
+                {
+                    min = dist;
+                    index = i;
+                }
+                else if (dist < min)
+                {
+                    min = dist;
+                    index = i;
+                }
+                i++;
+            }
+            if (min == -1)
+                Debug.Log("Link NO realizado");
+            else
+            {
+                buildingMineLink.Add(new resourcesLinkStruct(index, resourceMineList.Count - 1, min));
+                Debug.Log("Link realizado");
+            }
+        }
+    }
+
+    private CResourceBuilding FindResourceBuilding(CResources mine)
+    {
+        // We have to find the mine in the resourceMineList
+        int posMine = resourceMineList.IndexOf(mine);
+        // We have to see the linked index in the 
+        int posRBuilding = -1;
+        int count = buildingMineLink.Count;
+        bool found = false;
+        int i = 0;
+        while ((i < count) && !found)
+        {
+            if (buildingMineLink[i].mineIndex == posMine)
+            {
+                posRBuilding = buildingMineLink[i].buildingIndex;
+                found = true;
+            }
+            i++;
+        }
+        //we have to find the resourceBuilding in the resourceBuildingList
+        return resourceBuildingList[posRBuilding];
+    }
+    public Vector3 GetResourceBuilding(CResources mine)
+    {
+        return FindResourceBuilding(mine).transform.position;
+    }
+
 } // class ArmyController
+
+
+
+/*
+  if (!resourceBuildingList.Contains(w))
+        {
+            resourceBuildingList.Add(w);
+            Debug.Log("Warehouse agregada");
+            // Link the nearest mine to this warehouse
+            float min = -1;
+            float dist;
+            int index = -1;
+            int i = 0;
+            Vector3 posWare = new Vector3(w.transform.position.x, 0, w.transform.position.z);
+            Vector3 posMine = new Vector3(0, 0, 0);
+            foreach (CResources c in resourceMineList)
+            {
+                posMine.x = c.transform.Find("center").position.x;
+                posMine.z = c.transform.Find("center").position.z;
+                dist = Vector3.Distance(c.transform.position, posWare);
+                if (min < 0)
+                {
+                    min = dist;
+                    index = i;
+                }
+                else if (dist < min)
+                {
+                    min = dist;
+                    index = i;
+                }
+                i++;
+            }
+            if (min == -1)
+                Debug.Log("Link NO realizado");
+            else
+            {
+                buildingMineLink.Add(new resourcesLinkStruct(resourceBuildingList.Count - 1, index, min));
+                Debug.Log("Link realizado");
+            }
+        }
+        else Debug.Log("Warehouse NO agregada");
+ 
+ */

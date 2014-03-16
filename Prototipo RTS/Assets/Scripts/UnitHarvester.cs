@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UnitHarvester : UnitController
 {
@@ -136,7 +137,13 @@ public class UnitHarvester : UnitController
 						GameObject newCoin = Instantiate(coin, coinPosition, new Quaternion()) as GameObject;
 						newCoin.transform.name = "coin";
 						newCoin.transform.parent = transform;
-
+                        // actualizar la posición de la base donde se dejarán los recursos por si hay uno más cercano
+                        float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
+                            (currentMine.transform.position.z - basePosition.z));
+                        float radius = 6.0f;
+                        Vector3 resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
+                        lastBasePos.x = resourceBuilding.x - (Mathf.Sin(alpha) * radius);
+                        lastBasePos.z = resourceBuilding.z - (Mathf.Cos(alpha) * radius);
                         GoTo(lastBasePos);
                     }
                     actualHarvestTime = 0;
@@ -144,7 +151,9 @@ public class UnitHarvester : UnitController
                 break;
             case HarvestState.ReturningToBase:
                 if (currentState == State.Iddle)
+                {
                     ArrivedToBase();
+                }
                 else
                     base.Update();
                 break;
@@ -219,14 +228,18 @@ public class UnitHarvester : UnitController
         }
         else if (destTransform.name == "ResourcesMine")
         {
+            baseController.GetArmyController().UpdateMines(destTransform);
             // actualizar la referencia de la última mina seleccionada
             currentMine = destTransform;
             // actualizar la posición de la base donde se dejarán los recursos
             float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
                 (currentMine.transform.position.z - basePosition.z));
             float radius = 6.0f;
-            lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
-            lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
+            Vector3 resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
+            lastBasePos.x = resourceBuilding.x - (Mathf.Sin(alpha) * radius);
+            lastBasePos.z = resourceBuilding.z - (Mathf.Cos(alpha) * radius);
+            //lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
+            //lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
             /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.position = lastBasePos;
             cube.renderer.material.color = Color.red;
@@ -337,5 +350,6 @@ public class UnitHarvester : UnitController
             }
         }
     }
+
 
 } // class UnitHarvester

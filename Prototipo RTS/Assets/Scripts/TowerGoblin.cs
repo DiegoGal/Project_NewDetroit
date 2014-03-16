@@ -32,7 +32,7 @@ public class TowerGoblin : Tower
 	// Conts for Tower conquest
 	private float contConstr;
 	
-	// Constant when the tower is conquered
+	// Constant when the tower is constructed
 	private const float finalCont = 100.0f;
 	// The distance over the floor
 	private const int delta = 7;
@@ -269,7 +269,7 @@ public class TowerGoblin : Tower
     public void DestroyUnnecessaryGameobjects()
     {
         // Remove unnecessary GameObjects
-        Destroy(transform.FindChild("TowerBoxConstruct").gameObject);
+        Destroy(transform.FindChild("BoxConstruct").gameObject);
     }
 
 	// Construct is called by the engineers
@@ -309,4 +309,18 @@ public class TowerGoblin : Tower
 	{
 		return constructed;
 	}
+
+    public void LeaveEngineerPositionConstruct(int index)
+    {
+        engineerPosTaken[index] = false;
+        cubes[index].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+        if (engineerQueue.Count > 0)
+        {
+            UnitEngineer unit = engineerQueue[0];
+            unit.FinishWaitingToConstruct(engineerPositions[index], index);
+            engineerQueue.RemoveAt(0);
+            engineerPosTaken[index] = true;
+            cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
+        }
+    }
 }

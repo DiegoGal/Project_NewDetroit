@@ -33,9 +33,13 @@ public class UnitEngineer : UnitController {
 	
 	private Vector3 lastEngineerPos;
 	private int lastEngineerIndex;
-    // To instanciate a towerGoblin
-    public GameObject towerGoblin;
-    private GameObject tower;
+    // To instanciate a towerGoblin and warehouse
+    public GameObject towerGoblinPrefab;
+    public GameObject warehousePrefab;
+    // The items towerGoblin and warehouse
+    private GameObject towerGoblin;
+    private GameObject warehouse;
+
     private bool newConstruct = false;
     Vector3 constructDestiny = new Vector3();
 
@@ -50,10 +54,11 @@ public class UnitEngineer : UnitController {
 	public override void Update () 
 	{
         // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
-        if (Input.anyKeyDown && !Input.GetKeyDown(KeyCode.C) && newConstruct && !Input.GetMouseButtonDown(1))
+        if ( Input.anyKeyDown && newConstruct && !Input.GetMouseButtonDown(1) && (!Input.GetKeyDown(KeyCode.T) && (!Input.GetKeyDown(KeyCode.W))))
         {
             newConstruct = false;
-			Destroy(tower);
+			Destroy(towerGoblin);
+            Destroy(warehouse);
         }
 
         switch (currentEngineerState)
@@ -64,10 +69,10 @@ public class UnitEngineer : UnitController {
             case EngineerState.GoingToRepairItem:
                 // if the distance to the item is less than distanceToWait we ask if there is gap
                 float distItem = Vector3.Distance(transform.position, currentItem.position);
-                float distToWait = currentItem.GetComponent<Tower>().distanceToWait;
+                float distToWait = currentItem.GetComponent<BuildingController>().distanceToWait;
                 if (distItem < 10.0f)
                 {
-                    if (currentItem.GetComponent<Tower>().GetEngineerPosition(
+                    if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
                             ref lastEngineerPos,
                             ref lastEngineerIndex,
                             this))
@@ -88,10 +93,10 @@ public class UnitEngineer : UnitController {
             case EngineerState.GoingToConquerableItem:
                 // if the distance to the item is less than distanceToWait we ask if there is gap
                 distItem = Vector3.Distance(transform.position, currentItem.position);
-                distToWait = currentItem.GetComponent<Tower>().distanceToWait;
+                distToWait = currentItem.GetComponent<BuildingController>().distanceToWait;
                 if (distItem < 10.0f)
                 {
-                    if (currentItem.GetComponent<Tower>().GetEngineerPosition(
+                    if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
                         ref lastEngineerPos,
                         ref lastEngineerIndex,
                         this))
@@ -112,10 +117,10 @@ public class UnitEngineer : UnitController {
             case EngineerState.GoingToConstructItem:
                 // if the distance to the item is less than distanceToWait we ask if there is gap
                 distItem = Vector3.Distance(transform.position, currentItem.position);
-                distToWait = currentItem.GetComponent<Tower>().distanceToWait;
+                distToWait = currentItem.GetComponent<BuildingController>().distanceToWait;
                 if (distItem < 10.0f)
                 {
-                    if (currentItem.GetComponent<Tower>().GetEngineerPosition(
+                    if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
                             ref lastEngineerPos,
                             ref lastEngineerIndex,
                             this))
@@ -171,9 +176,9 @@ public class UnitEngineer : UnitController {
                 bool repaired = false;
                 if (actualEngineerTime >= engineerTime)
                 {
-                    repaired = currentItem.GetComponent<Tower>().Repair(amountPerAction);
+                    repaired = currentItem.GetComponent<BuildingController>().Repair(amountPerAction);
                     // The item has been repaired
-					if (repaired || currentItem.GetComponent<Tower>().HasTotalLife())
+                    if (repaired || currentItem.GetComponent<BuildingController>().HasTotalLife())
                     {
                         Debug.Log("Torre Reparada");
                         currentEngineerState = EngineerState.None;
@@ -199,18 +204,38 @@ public class UnitEngineer : UnitController {
 			case EngineerState.Constructing:
 				actualEngineerTime += Time.deltaTime;
 				bool construct = false;
-				if (actualEngineerTime >= engineerTime)
-				{
-					construct = currentItem.GetComponent<TowerGoblin>().Construct(amountPerAction);
-					// The item has been constructed
-					if (construct)
-					{
-						Debug.Log("Torre construida!");
-						currentEngineerState = EngineerState.None;
-						currentItem.GetComponent<TowerGoblin>().SetActiveMaterial();					
+                if (currentItem.GetComponent<TowerGoblin>() != null)
+                {
+                    if (actualEngineerTime >= engineerTime)
+                    {
+                        construct = currentItem.GetComponent<TowerGoblin>().Construct(amountPerAction);
+                        // The item has been constructed
+                        if (construct)
+                        {
+                            Debug.Log("Torre construida!");
+                            currentEngineerState = EngineerState.None;
+                            currentItem.GetComponent<TowerGoblin>().SetActiveMaterial();
+                        }
+                        actualEngineerTime = 0;
                     }
-					actualEngineerTime = 0;
-				}
+                }
+                else if (currentItem.GetComponent<Warehouse>() != null)
+                {
+                    if (actualEngineerTime >= engineerTime)
+                    {
+                        construct = currentItem.GetComponent<Warehouse>().Construct(amountPerAction);
+                        // The item has been constructed
+                        if (construct)
+                        {
+                            Debug.Log("Almacen construido!");
+                            currentEngineerState = EngineerState.None;
+                            currentItem.GetComponent<Warehouse>().SetActiveMaterial();
+
+                            baseController.GetArmyController().addWarehouse(currentItem.GetComponent<CResourceBuilding>());
+                        }
+                        actualEngineerTime = 0;
+                    }
+                } 
 				break;
         } // Switch
 	} // Update
@@ -222,60 +247,81 @@ public class UnitEngineer : UnitController {
 			if (currentEngineerState == EngineerState.GoingToConquestPosition ||
 			    currentEngineerState == EngineerState.Conquering)
 			{
-				currentItem.GetComponent<Tower>().LeaveEngineerPositionConquest(lastEngineerIndex);
-				
+				currentItem.GetComponent<TowerNeutral>().LeaveEngineerPositionConquest(lastEngineerIndex);	
 			}
 			else if (currentEngineerState == EngineerState.GoingToRepairPosition ||
 			         currentEngineerState == EngineerState.Repairing)
 			{
-				currentItem.GetComponent<Tower>().LeaveEngineerPositionRepair(lastEngineerIndex);
+				currentItem.GetComponent<BuildingController>().LeaveEngineerPositionRepair(lastEngineerIndex);
 				
 			}
 			else if (currentEngineerState == EngineerState.GoingToConstructPosition ||
 			         currentEngineerState == EngineerState.Constructing)
 			{
-				currentItem.GetComponent<Tower>().LeaveEngineerPositionConstruct(lastEngineerIndex);
+				if (currentItem.GetComponent<TowerGoblin>() != null)
+                    currentItem.GetComponent<TowerGoblin>().LeaveEngineerPositionConstruct(lastEngineerIndex);
+                else if (currentItem.GetComponent<Warehouse>() != null)
+                    currentItem.GetComponent<Warehouse>().LeaveEngineerPositionConstruct(lastEngineerIndex);
 				
 			}
 			else if (currentEngineerState == EngineerState.Waiting)
-				currentItem.GetComponent<Tower>().LeaveQueue(this);
-            // Se va a la torre
-            if (tower.transform.GetComponent<TowerGoblin>().StartConstruct(constructDestiny))
-            {
-                Debug.Log("vamos a construir copon!");
-                currentItem = destTransform;
-                currentEngineerState = EngineerState.GoingToConstructItem;
-                GoTo(new Vector3(destiny.x, 0, destiny.z));
-                constructDestiny = Input.mousePosition;
-                currentItem = tower.transform;
-                newConstruct = false;
+				currentItem.GetComponent<BuildingController>().LeaveQueue(this);
+           
+            if (towerGoblin != null)
+            {    // It goes to the tower
+                if (towerGoblin.transform.GetComponent<TowerGoblin>().StartConstruct(constructDestiny))
+                {
+                    Debug.Log("vamos a construir una Torreta copon!");
+                    currentItem = destTransform;
+                    currentEngineerState = EngineerState.GoingToConstructItem;
+                    GoTo(new Vector3(destiny.x, 0, destiny.z));
+                    constructDestiny = Input.mousePosition;
+                    currentItem = towerGoblin.transform;
+                    newConstruct = false;
 
+                }
+            }
+            else
+            {    // It goes to the warehouse
+                if (warehouse.transform.GetComponent<Warehouse>().StartConstruct(constructDestiny))
+                {
+                    Debug.Log("vamos a construir un almacen copon!");
+                    currentItem = destTransform;
+                    currentEngineerState = EngineerState.GoingToConstructItem;
+                    GoTo(new Vector3(destiny.x, 0, destiny.z));
+                    constructDestiny = Input.mousePosition;
+                    currentItem = warehouse.transform;
+                    newConstruct = false;
+
+                }
             }
         }// NewConstruct
-        else if (destTransform.name == "TowerNeutral" || destTransform.name == "TowerGoblin" || destTransform.name == "WorldFloor")
+        else if (destTransform.name == "TowerNeutral" || destTransform.name == "TowerGoblin" || destTransform.name == "Warehouse" || destTransform.name == "WorldFloor")
 		{
             destiny.y = 0;
             // actualizar la referencia de la última torre seleccionada
             if (currentEngineerState == EngineerState.GoingToConquestPosition ||
               currentEngineerState == EngineerState.Conquering)
             {
-                currentItem.GetComponent<Tower>().LeaveEngineerPositionConquest(lastEngineerIndex);
+                currentItem.GetComponent<TowerNeutral>().LeaveEngineerPositionConquest(lastEngineerIndex);
 
             }
             else if (currentEngineerState == EngineerState.GoingToRepairPosition ||
                 currentEngineerState == EngineerState.Repairing)
             {
-                currentItem.GetComponent<Tower>().LeaveEngineerPositionRepair(lastEngineerIndex);
+                currentItem.GetComponent<BuildingController>().LeaveEngineerPositionRepair(lastEngineerIndex);
 
             }
             else if (currentEngineerState == EngineerState.GoingToConstructPosition ||
                 currentEngineerState == EngineerState.Constructing)
             {
-                currentItem.GetComponent<Tower>().LeaveEngineerPositionConstruct(lastEngineerIndex);
-
+                if (currentItem.GetComponent<TowerGoblin>() != null)
+                    currentItem.GetComponent<TowerGoblin>().LeaveEngineerPositionConstruct(lastEngineerIndex);
+                else if (currentItem.GetComponent<Warehouse>() != null)
+                    currentItem.GetComponent<Warehouse>().LeaveEngineerPositionConstruct(lastEngineerIndex);
             }
             else if (currentEngineerState == EngineerState.Waiting)
-                currentItem.GetComponent<Tower>().LeaveQueue(this);
+                currentItem.GetComponent<BuildingController>().LeaveQueue(this);
             if (destTransform.name == "WorldFloor")
             {
                 currentEngineerState = EngineerState.None;
@@ -283,28 +329,32 @@ public class UnitEngineer : UnitController {
             }
 
             currentItem = destTransform;
-            if (currentItem.name == "TowerNeutral" || currentItem.name == "TowerGoblin") 
-                if ( currentItem.GetComponent<Tower>().canBeConquered && currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral())
+            if (currentItem.name == "TowerNeutral" || currentItem.name == "TowerGoblin"|| destTransform.name == "Warehouse") 
+                // When it's a TowerNeutral and has to be conquered
+                if ((currentItem.GetComponent<Tower>() != null) && currentItem.GetComponent<Tower>().canBeConquered && currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral())
 				{
 					// Se va a la torre
 					Debug.Log("vamos a conquistar copon!");
 					currentEngineerState = EngineerState.GoingToConquerableItem;
 					GoTo(destiny);
-				}
-				else if (currentItem.GetComponent<Tower>().GetTeamNumber() == teamNumber)
+                }
+                // When it's in the same team and has not to be conquered
+				else if (currentItem.GetComponent<BuildingController>().GetTeamNumber() == teamNumber)
 				{
-					// If it's the TowerNeutral
-					if (currentItem.GetComponent<Tower>().canBeConquered)
+					// If it's the TowerNeutral, it has to be repaired
+					if ((currentItem.GetComponent<Tower>() != null) && currentItem.GetComponent<Tower>().canBeConquered)
 					{
 						// Se va a la torre
 						Debug.Log("vamos a arreglar la TN copon!");
 						currentEngineerState = EngineerState.GoingToRepairItem;
 						GoTo(destiny);
 					}
-					else if (currentItem.GetComponent<TowerGoblin>().IsConstructed()) // If it has to repair
+                    // If it's the TowerGoblin or the warehouse and is constructed, it has to be repaired
+                    else if ((currentItem.GetComponent<TowerGoblin>() != null) && currentItem.GetComponent<TowerGoblin>().IsConstructed() ||
+                             (currentItem.GetComponent<Warehouse>() != null) && currentItem.GetComponent<Warehouse>().IsConstructed()) // If it has to repair
 					{
 						// Se va a la torre
-						Debug.Log("vamos a arreglar la TG copon!");
+						Debug.Log("vamos a arreglar!");
 						currentEngineerState = EngineerState.GoingToRepairItem;
 						GoTo(new Vector3(destiny.x, 0, destiny.z));					
 					}
@@ -368,12 +418,24 @@ public class UnitEngineer : UnitController {
 		return newConstruct;
 	}
 
-	public void SetCanConstruct()
+	public void SetCanConstruct(int item)
 	{
 		newConstruct = true;
-		tower = Instantiate(towerGoblin, new Vector3(Input.mousePosition.x, 0, Input.mousePosition.z), new Quaternion(0, 0, 0, 0))
-			as GameObject; //rotation (-90, -180, 0)
-		tower.name = tower.name.Replace("(Clone)", "");
-		tower.GetComponent<TowerGoblin>().SetTeamNumber(this.teamNumber);
+        switch (item)
+        {
+            case 0:
+                towerGoblin = Instantiate(towerGoblinPrefab, new Vector3(Input.mousePosition.x, 0, Input.mousePosition.z), new Quaternion(0, 0, 0, 0))
+			        as GameObject; //rotation (-90, -180, 0)
+		        towerGoblin.name = towerGoblin.name.Replace("(Clone)", "");
+		        towerGoblin.GetComponent<TowerGoblin>().SetTeamNumber(this.teamNumber);
+                break;
+            case 1:
+                warehouse = Instantiate(warehousePrefab, new Vector3(Input.mousePosition.x, 0, Input.mousePosition.z), new Quaternion(0, 0, 0, 0))
+			        as GameObject; //rotation (-90, -180, 0)
+                warehouse.name = warehouse.name.Replace("(Clone)", "");
+                warehouse.GetComponent<Warehouse>().SetTeamNumber(this.teamNumber);
+                break;
+        }
+        
 	}
 }
