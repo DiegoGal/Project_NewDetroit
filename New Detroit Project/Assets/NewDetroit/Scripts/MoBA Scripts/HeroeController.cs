@@ -455,7 +455,7 @@ public abstract class HeroeController : ControllableCharacter
 			// so that when the character stands still we still have a valid forward direction
 			// moveDirection is always normalized, and we only update it if there is user input.
 			bool isOrcAttacking = state == HeroeController.StateHeroe.AttackBasic || state == HeroeController.StateHeroe.AttackSecond;
-			if (targetDirection != Vector3.zero)// && !isOrcAttacking)
+			if (targetDirection != Vector3.zero)
 			{
 				moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 				moveDirection = moveDirection.normalized;
@@ -542,8 +542,10 @@ public abstract class HeroeController : ControllableCharacter
 				stateAttackSecond = AttackSecond.Attack2;
 				animation.CrossFade("FloorHit");
 				//------------------------------
-				Object spl = Instantiate(splash, transform.position + new Vector3(0,-2,0), Quaternion.identity);
-				Destroy(spl, 1.5f);
+				GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
+				spl.GetComponent<OrcSplashAttack>().setDamage(attackM + 40);
+				spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
+				Destroy(spl,1.5f);
 				splashActivated = true;
 			}
 			else if (Input.GetKey (KeyCode.Alpha3) && ability3) 
