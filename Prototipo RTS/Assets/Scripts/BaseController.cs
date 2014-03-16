@@ -3,14 +3,8 @@ using System.Collections;
 
 public class BaseController : CResourceBuilding
 {
-    public bool isOnline = false;
-
-	public int teamNumber;
-
-    // referencia al controlador del ejército
-    public ArmyController armyController;
-
-	//Donde van a aparecer las unidades
+	
+    //Donde van a aparecer las unidades
 	private Vector3 spawnDestiny;
 	//Donde van a aparecer las unidades
 	private Vector3 spawnOrigin;
@@ -19,16 +13,16 @@ public class BaseController : CResourceBuilding
 	private Ray myRay;
 
     public GameObject harvesterUnit;
-	public GameObject basicArtilleryUnit;
-	public GameObject heavyArtilleryUnit;
-	public GameObject engineerUnit;
+    public GameObject basicArtilleryUnit;
+    public GameObject heavyArtilleryUnit;
+    public GameObject engineerUnit;
     public GameObject scoutUnit;
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
     public float radius = 14.0f;//6.0f;
-
-	// Use this for initialization
+	
+    // Use this for initialization
     public override void Start()
     {
         base.Start();
@@ -56,13 +50,12 @@ public class BaseController : CResourceBuilding
         }
 
         spawnOrigin = transform.FindChild("SpawnPoint").position;
-        /*spawnDestiny = new Vector3(
+
+        spawnDestiny = new Vector3(
             this.transform.position.x + 5.5f,
-            //this.transform.position.y,
-            0.0f,
+            this.transform.position.y,
             this.transform.position.z - 5.5f
-        );*/
-        spawnDestiny = new Vector3(spawnOrigin.x - 2.0f, 0.0f, spawnOrigin.z);
+        );
 
         // colocamos una caja en el spawnDestiny
         cubeSpawnDest = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -109,58 +102,29 @@ public class BaseController : CResourceBuilding
 	{
 		GameObject newUnit = null;
 
-        if (isOnline)
-        {
-            switch (id)
-            {
-                case 0: // Harvester
-                    newUnit = PhotonNetwork.Instantiate("UnitHarvester", spawnOrigin, new Quaternion(), 0)
-                            as GameObject;
-                    break;
-                case 1: // Basic Artillery
-                    newUnit = PhotonNetwork.Instantiate("UnitBasicArtillery", spawnOrigin, new Quaternion(), 0)
-                            as GameObject;
-                    break;
-                case 2: // Heavy Artillery
-                    newUnit = PhotonNetwork.Instantiate("UnitHeavyArtillery", spawnOrigin, new Quaternion(), 0)
-                            as GameObject;
-                    break;
-                case 3: // Engineer
-                    newUnit = PhotonNetwork.Instantiate("UnitEngineer", spawnOrigin, new Quaternion(), 0)
-                        as GameObject;
-                    break;
-                case 4: // Scout
-                    newUnit = PhotonNetwork.Instantiate("UnitScout", spawnOrigin, new Quaternion(), 0)
-                        as GameObject;
-                    break;
-            }
-        }
-        else
-        {
-            switch (id)
-            {
-                case 0: // Harvester
-                    newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
-                    break;
-                case 1: // Basic Artillery
-                    newUnit = Instantiate(basicArtilleryUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
-                    break;
-                case 2: // Heavy Artillery
-                    newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
-                    break;
-                case 3: // Engineer
-                    newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
-                    break;
-                case 4: // Scout
+		switch (id)
+		{
+			case 0: // Harvester
+		        newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion())
+					as GameObject;
+			break;
+			case 1: // Basic Artillery
+				newUnit = Instantiate(basicArtilleryUnit, spawnOrigin, new Quaternion())
+					as GameObject;
+			break;
+			case 2: // Heavy Artillery
+				newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
+					as GameObject;
+			break;
+			case 3: // Engineer
+			newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
+				as GameObject;
+			break;
+			case 4: // Scout
                     newUnit = Instantiate(scoutUnit, spawnOrigin, new Quaternion())
                         as GameObject;
                     break;
-            }
-        }
+		}
 
 		newUnit.GetComponent<UnitController>().SetArmyBase(this);
 		newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
@@ -175,16 +139,6 @@ public class BaseController : CResourceBuilding
         return armyController;
     }
 
-    public Vector3 GetSpawnOrigin ()
-    {
-        return spawnOrigin;
-    }
-
-    public float GetRadious ()
-    {
-        return radius;
-    }
-
     public virtual void OnGUI()
     {
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
@@ -197,5 +151,15 @@ public class BaseController : CResourceBuilding
         GUI.DrawTexture(rect1, progressBarEmpty);
         GUI.DrawTexture(rect2, progressBarFull);
 
+    }
+	
+	    public Vector3 GetSpawnOrigin ()
+    {
+        return spawnOrigin;
+    }
+
+    public float GetRadious ()
+    {
+        return radius;
     }
 } // class BaseController

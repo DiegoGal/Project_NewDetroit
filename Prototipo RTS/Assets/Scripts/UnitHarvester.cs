@@ -102,7 +102,7 @@ public class UnitHarvester : UnitController
                 break;
             case HarvestState.GoingToChopPosition:
                 //if (Vector3.Distance(transform.position, lastHarvestPos) < destinyThreshold)
-                if (currentState == State.Iddle)
+                if (currentState == State.Idle)
                 {
                     // ha llegado a la posición de extracción
                     Debug.Log("comenzando cosecha...");
@@ -150,7 +150,7 @@ public class UnitHarvester : UnitController
                 }
                 break;
             case HarvestState.ReturningToBase:
-                if (currentState == State.Iddle)
+                if (currentState == State.Idle)
                 {
                     ArrivedToBase();
                 }
@@ -182,7 +182,7 @@ public class UnitHarvester : UnitController
 				}
 				if (actualHarvestHealTime >= harvestHealTime)
 				{
-					healed = currentItem.GetComponent<UnitExplorer>().Heal(amountPerActionHeal);
+					healed = currentItem.GetComponent<UnitScout>().Heal(amountPerActionHeal);
 					// The item has been repaired
 					if (healed)
 					{

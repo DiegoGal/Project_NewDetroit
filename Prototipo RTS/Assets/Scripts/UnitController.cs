@@ -16,16 +16,17 @@ public class UnitController : ControllableCharacter
     {
         Idle,	// reposo
         GoingTo,
+        /*Harvesting,*/
         Attacking
     }
-	protected State currentState = State.Idle;
+    protected State currentState = State.Idle;
     private State lastState = State.Idle;
 	
     public float velocity = 3.5f;
     public float rotationVelocity = 10.0f;
     public Vector3 dirMovement = new Vector3();
     private Vector3 destiny = new Vector3();
-    protected float destinyThreshold = 0.5f;
+    protected float destinyThreshold = 1.0f;
 
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
@@ -36,29 +37,19 @@ public class UnitController : ControllableCharacter
     // indicates if the CSelectable component of the unit is marked selected
     public bool isSelected = false;
 
-    public virtual void Awake ()
+    public virtual void Awake()
     {
         model = transform.FindChild("Model");
     }
 
     // Use this for initialization
-    public override void Start ()
+    public virtual void Start ()
     {
-        base.Start();
-
         currentLife = maximunLife;
         GetComponent<NavMeshAgent>().speed = velocity;
 
         if (destiny == Vector3.zero)
-        {
             destiny = transform.position;
-            animation.Play("Idle01");
-        }
-        else
-        {
-            currentState = State.GoingTo;
-            animation.Play("Walk");
-        }
     }
 
     // Update is called once per frame
@@ -71,7 +62,8 @@ public class UnitController : ControllableCharacter
                 break;
             case State.GoingTo:
                 //Vector3 direction = destiny - transform.position;
-                Vector3 direction = destiny - transform.position;
+                Vector3 direction = new Vector3(destiny.x - transform.position.x, 0,
+                    destiny.z - transform.position.z);
                 if (direction.magnitude >= destinyThreshold)
                 {
                     /*Quaternion qu = new Quaternion();
@@ -86,21 +78,18 @@ public class UnitController : ControllableCharacter
                     //GetComponent<NavMeshAgent>().destination = destiny;
                 }
                 else
-                {
                     currentState = State.Idle;
-                    animation.CrossFade("Idle01");
-                }
                 break;
         }
     }
 
-    public override void OnGUI ()
+    public virtual void OnGUI()
     {
-        base.OnGUI();
+        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
         /*Vector2 size = new Vector2(48.0f, 12.0f);
 
         // draw the background:
-        GUI.BeginGroup(new Rect(screenPosition.x, Screen.height - screenPosition.y, size.x, size.y));
+        GUI.BeginGroup(new Rect(camPos.x, Screen.height - camPos.y, size.x, size.y));
             GUI.Box(new Rect(0, 0, size.x, size.y), progressBarEmpty);
 
             // draw the filled-in part:
@@ -111,9 +100,9 @@ public class UnitController : ControllableCharacter
         GUI.EndGroup();*/
 
         // rectángulo donde se dibujará la barra
-        Rect rect1 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f, 3.0f);
+        Rect rect1 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 14.0f, 20.0f, 4.0f);
         GUI.DrawTexture(rect1, progressBarEmpty);
-        Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (currentLife / maximunLife), 3.0f);
+        Rect rect2 = new Rect(camPos.x - 10.0f, Screen.height - camPos.y - 14.0f, 20.0f * (currentLife/maximunLife), 4.0f);
         GUI.DrawTexture(rect2, progressBarFull);
     }
 
@@ -122,11 +111,9 @@ public class UnitController : ControllableCharacter
         this.destiny = destiny;
         GetComponent<NavMeshAgent>().destination = destiny;
         currentState = State.GoingTo;
-
-        animation.CrossFade("Walk");
     }
 
-    protected void StopMoving ()
+    protected void StopMoving()
     {
         destiny = transform.position;
         GetComponent<NavMeshAgent>().destination = destiny;
@@ -148,7 +135,7 @@ public class UnitController : ControllableCharacter
 
     public override bool Damage (float damage, char type)
     {
-        base.Damage(damage,type);
+        base.Damage(damage, type);
 
         // blood!
         GameObject blood = (GameObject)Instantiate(bloodParticles,

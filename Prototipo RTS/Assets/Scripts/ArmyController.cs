@@ -282,10 +282,6 @@ public class ArmyController : MonoBehaviour
             }
         }
 
-
-            }
-        }
-
         // Spawn units
 		if (Input.GetKeyDown(KeyCode.Alpha1))
 		{
