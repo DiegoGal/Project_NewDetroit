@@ -111,6 +111,23 @@ public class CameraMOBAController : MonoBehaviour
 				}
 			}
 		}
+		// Use skills
+		if (Input.GetMouseButtonUp(0))
+		{
+			Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+			if  (heroe.ability1 && rectangleButtonSkill1.Contains(mousePosition))
+			{
+				heroe.UpdateState(true, false, false);
+			}
+			else if (heroe.ability2 && rectangleButtonSkill2.Contains(mousePosition))
+			{
+				heroe.UpdateState(false, true, false);
+			}
+			else if (heroe.ability3 && rectangleButtonSkill3.Contains(mousePosition))
+			{
+				heroe.UpdateState(false, false, true);
+			}
+		}
 	}
 
 
@@ -179,15 +196,6 @@ public class CameraMOBAController : MonoBehaviour
 				if (heroe.level == 4)
 					if (!heroe.ability3) GUI.Button(rectangleSelectSkill3, "Select Skill 3");
 			}
-
-			//DEBUG
-			Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-			GUI.Label(new Rect(Screen.width - 200, 0, 200, 20), "mouse (" + mousePosition.x + ","
-			          												+ mousePosition.y + ")");
-			GUI.Label(new Rect(Screen.width - 200, 10, 200, 20), "Select Skill1 (" + rectangleSelectSkill1.x + ","
-			          												+ rectangleSelectSkill1.y + ","
-			          												+ rectangleSelectSkill1.width + ","
-			          												+ rectangleSelectSkill1.height + ")");
 		}
 	}
 }

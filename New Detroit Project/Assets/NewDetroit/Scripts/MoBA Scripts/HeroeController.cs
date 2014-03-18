@@ -105,7 +105,14 @@ public abstract class HeroeController : ControllableCharacter
 	public int counterAbility;
     //This is for the particles that collides with the hero
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
-    
+	// ------------------------------------------------------------------------------------------------------
+	// GUI
+	private Rect 	rectanglePositiveLife,
+					rectangleNegativeLife,
+					rectanglePositiveAdren,
+					rectangleNegativeAdren,
+					rectanglePositiveMana,
+					rectangleNegativeMana;
 	
 	// ------------------------------------------------------------------------------------------------------
 	// PRIVATE
@@ -165,8 +172,65 @@ public abstract class HeroeController : ControllableCharacter
 			}
 		}
 	}
-	
-	
+	// ------------------------------------------------------------------------------------------------------
+	// GUI
+	private void GUIRects()
+	{
+		float 	distance = Vector3.Distance (transform.position, Camera.main.transform.position), // real distance from camera
+				lengthLifeAdrenMana = this.GetComponent<ThirdPersonCamera> ().distance / distance, // percentage of the distance
+				widthAll = Screen.width / 10,
+				widthHalf = widthAll / 2,
+				positiveLife = (float) this.currentLife / this.maximunLife, // percentage of positive life
+				positiveAdren = (float) this.currentAdren / this.adren, // percentage of positive adrenaline
+				positiveMana = (float) this.currentMana / this.mana; // percentage of positive mana
+		// Life
+		Vector3 posScene = new Vector3 (transform.position.x, transform.position.y + 2f, transform.position.z),
+				posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.8f, transform.position.z),
+				pos = Camera.main.WorldToScreenPoint (posScene),
+				posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
+
+		float 	x = pos.x - widthHalf * lengthLifeAdrenMana,
+				y = Screen.height - pos.y,
+				width = widthAll * positiveLife * lengthLifeAdrenMana,
+				height = (pos.y - posEnd.y) * lengthLifeAdrenMana;	
+		rectanglePositiveLife = new Rect (x, y, width, height);
+
+		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveLife * lengthLifeAdrenMana;
+		width = widthAll * (1 - positiveLife) * lengthLifeAdrenMana;
+		rectangleNegativeLife = new Rect (x, y, width, height);
+		// Adrenaline
+		posScene = new Vector3 (transform.position.x, transform.position.y + 1.78f, transform.position.z);
+		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.68f, transform.position.z);
+		pos = Camera.main.WorldToScreenPoint (posScene);
+		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
+
+		x = pos.x - widthHalf * lengthLifeAdrenMana;
+		y = Screen.height - pos.y;
+		width = widthAll * positiveAdren * lengthLifeAdrenMana;
+		height = (pos.y - posEnd.y) * lengthLifeAdrenMana;
+		rectanglePositiveAdren = new Rect (x, y, width, height);
+
+		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveAdren * lengthLifeAdrenMana;
+		width = widthAll * (1 - positiveAdren) * lengthLifeAdrenMana;
+		rectangleNegativeAdren = new Rect (x, y, width, height);
+		// Mana
+		posScene = new Vector3 (transform.position.x, transform.position.y + 1.66f, transform.position.z);
+		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.56f, transform.position.z);
+		pos = Camera.main.WorldToScreenPoint (posScene);
+		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
+
+		x = pos.x - widthHalf * lengthLifeAdrenMana;
+		y = Screen.height - pos.y;
+		width = widthAll * positiveMana * lengthLifeAdrenMana;
+		height = (pos.y - posEnd.y) * lengthLifeAdrenMana;
+		rectanglePositiveMana = new Rect (x, y, width, height);
+
+		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveMana * lengthLifeAdrenMana;
+		width = widthAll * (1 - positiveMana) * lengthLifeAdrenMana;
+		rectangleNegativeMana = new Rect (x, y, width, height);
+	}
+
+
 	// ------------------------------------------------------------------------------------------------------
 	// PUBLIC
     // if type == 'P' is phisical damage if type == 'M' is magical damage
@@ -264,8 +328,11 @@ public abstract class HeroeController : ControllableCharacter
 		}
 
 		UpdateControl (); // Update control
-		UpdateState (); // Update state
+		UpdateState (false, false, false); // Update state
 		UpdateParticles (); // Update particles
+
+		// GUI
+		GUIRects();
 	}//Update
 
     // Cool Down for detecting less time the collision with particles
@@ -294,92 +361,13 @@ public abstract class HeroeController : ControllableCharacter
 
     void OnGUI ()
 	{
-		// DEBUG
-		//Vector3 pos = Camera.main.WorldToScreenPoint (transform.position);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y, 200, 50), "Vida: " + this.currentLife);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 10, 200, 50), "Experience: " + this.experience);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 20, 200, 50), "Level: " + this.level);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 30, 200, 50), "Maxima vida: " + this.maximunLife);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 40, 200, 50), "Ataque fisico: " + this.attackP);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 50, 200, 50), "Ataque magico: " + this.attackM);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 60, 200, 50), "Velocidad ataque: " + this.speedAtt);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 70, 200, 50), "Defensa fisica: " + this.defP);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 80, 200, 50), "Defensa magica: " + this.defM);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 90, 200, 50), "Mana: " + this.currentMana);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 100, 200, 50), "Maximo Mana: " + this.mana);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 110, 200, 50), "Adrenalina: " + this.currentAdren);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 120, 200, 50), "Maxima Adrenalina: " + this.adren);
-		//GUI.Label (new Rect (pos.x + 20, Screen.height - pos.y + 130, 200, 50), "Velocidad mvto: " + this.speedMov);
-		
-		//-------------------------------------------------------------------------------------------------
-		// Position of the life, mana and adrenaline in the screen
-		Vector3 posLifeScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z),
-				posLifeSceneEnd = new Vector3 (transform.position.x, transform.position.y, transform.position.z),
-				posAdrenScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z),
-				posAdrenSceneEnd = new Vector3 (transform.position.x, transform.position.y, transform.position.z),
-				posManaScene = new Vector3 (transform.position.x, transform.position.y, transform.position.z),
-				posManaSceneEnd = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
-		posLifeScene.y += 2f;
-		posLifeSceneEnd.y += 1.8f;
-		posAdrenScene.y += 1.78f;
-		posAdrenSceneEnd.y += 1.68f;
-		posManaScene.y += 1.66f;
-		posManaSceneEnd.y += 1.56f;
-		Vector3 posLife = Camera.main.WorldToScreenPoint (posLifeScene),
-				posLifeEnd = Camera.main.WorldToScreenPoint (posLifeSceneEnd),
-				posAdren = Camera.main.WorldToScreenPoint (posAdrenScene),
-				posAdrenEnd = Camera.main.WorldToScreenPoint (posAdrenSceneEnd),
-				posMana = Camera.main.WorldToScreenPoint (posManaScene),
-				posManaEnd = Camera.main.WorldToScreenPoint (posManaSceneEnd);
-		// Life, Adrenaline and Mana
-		float 	distance = Vector3.Distance (transform.position, Camera.main.transform.position), // real distance from camera
-				lengthLifeAdrenMana = this.GetComponent<ThirdPersonCamera> ().distance / distance, // percentage of the distance
-				heightPosLife = posLife.y - posLifeEnd.y,
-				heightPosAdren = posAdren.y - posAdrenEnd.y,
-				heightPosMana = posMana.y - posManaEnd.y,
-				widthAll = Screen.width / 10,
-				widthHalf = widthAll / 2,
-				positiveLife = (float) this.currentLife / this.maximunLife, // percentage of positive life
-				negativeLife = 1 - positiveLife, //percentage of negative life
-				positiveAdren = (float) this.currentAdren / this.adren,
-				negativeAdren = 1 - positiveAdren,
-				positiveMana = (float) this.currentMana / this.mana,
-				negativeMana = 1 - positiveMana,				
-				beginWidthPositiveLife = posLife.x - widthHalf * lengthLifeAdrenMana,
-				beginHeightLife = Screen.height - posLife.y,
-				widthPositiveLife = widthAll * positiveLife * lengthLifeAdrenMana,
-				heightLife = heightPosLife * lengthLifeAdrenMana,				
-				beginWidthNegativeLife = posLife.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveLife * lengthLifeAdrenMana,
-				widthNegativeLife = widthAll * negativeLife * lengthLifeAdrenMana,				
-				beginWidthPositiveAdren = posAdren.x - widthHalf * lengthLifeAdrenMana,
-				beginHeightAdren = Screen.height - posAdren.y,
-				widthPositiveAdren = widthAll * positiveAdren * lengthLifeAdrenMana,
-				heightAdren = heightPosAdren * lengthLifeAdrenMana,
-				beginWidthNegativeAdren = posAdren.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveAdren * lengthLifeAdrenMana,
-				widthNegativeAdren = widthAll * negativeAdren * lengthLifeAdrenMana,				
-				beginWidthPositiveMana = posMana.x - widthHalf * lengthLifeAdrenMana,
-				beginHeightMana = Screen.height - posMana.y,
-				widthPositiveMana = widthAll * positiveMana * lengthLifeAdrenMana,
-				heightMana = heightPosMana * lengthLifeAdrenMana,
-				beginWidthNegativeMana = posMana.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveMana * lengthLifeAdrenMana,
-				widthNegativeMana = widthAll * negativeMana * lengthLifeAdrenMana;		
-		// Life	
-		Rect rectanglePositiveLife = new Rect (beginWidthPositiveLife, beginHeightLife, widthPositiveLife, heightLife);
-		Rect rectangleNegativeLife = new Rect (beginWidthNegativeLife, beginHeightLife, widthNegativeLife, heightLife);
-		// Adrenaline
-		Rect rectanglePositiveAdren = new Rect (beginWidthPositiveAdren, beginHeightAdren, widthPositiveAdren, heightAdren);
-		Rect rectangleNegativeAdren = new Rect (beginWidthNegativeAdren, beginHeightAdren, widthNegativeAdren, heightAdren);
-		// Mana
-		Rect rectanglePositiveMana = new Rect (beginWidthPositiveMana, beginHeightMana, widthPositiveMana, heightMana);
-		Rect rectangleNegativeMana = new Rect (beginWidthNegativeMana, beginHeightMana, widthNegativeMana, heightMana);
-		// Draw
 		GUI.DrawTexture (rectanglePositiveLife, textureLifePositive);
 		GUI.DrawTexture (rectangleNegativeLife, textureLifeNegative);
 		GUI.DrawTexture (rectanglePositiveAdren, textureAdrenPositive);
 		GUI.DrawTexture (rectangleNegativeAdren, textureAdrenNegative);
 		GUI.DrawTexture (rectanglePositiveMana, textureManaPositive);
 		GUI.DrawTexture (rectangleNegativeMana, textureManaNegative);
-	}//OnGUI
+	}
 
 
 	//----------------------------------------------------------------------------------------------------------------------------------------
@@ -517,13 +505,13 @@ public abstract class HeroeController : ControllableCharacter
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	// STATE & ANIMATION
-	protected void UpdateState()
+	public void UpdateState(bool useSkill1, bool useSkill2, bool useSkill3)
 	{
 		// Only can do an action if hero don't do a secondary attack
 		if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
 		{
 			// Secondary attack
-			if (Input.GetKey (KeyCode.Alpha1) && ability1) 
+			if ((Input.GetKey (KeyCode.Alpha1) || useSkill1) && ability1) 
 			{
 				state = StateHeroe.AttackSecond;
 				stateAttackSecond = AttackSecond.Attack1;
@@ -536,7 +524,7 @@ public abstract class HeroeController : ControllableCharacter
 				Destroy(snt, 5f);
 				snotActivated = true;
 			}
-			else if (Input.GetKey (KeyCode.Alpha2) && ability2) 
+			else if ((Input.GetKey (KeyCode.Alpha2) || useSkill2) && ability2) 
 			{
 				state = StateHeroe.AttackSecond;
 				stateAttackSecond = AttackSecond.Attack2;
@@ -548,7 +536,7 @@ public abstract class HeroeController : ControllableCharacter
 				Destroy(spl,1.5f);
 				splashActivated = true;
 			}
-			else if (Input.GetKey (KeyCode.Alpha3) && ability3) 
+			else if ((Input.GetKey (KeyCode.Alpha3) || useSkill3) && ability3) 
 			{
 				state = StateHeroe.AttackSecond;
 				stateAttackSecond = AttackSecond.Attack3;
