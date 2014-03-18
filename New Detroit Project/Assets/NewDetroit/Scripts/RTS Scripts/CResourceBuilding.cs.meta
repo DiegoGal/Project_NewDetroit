@@ -1,12 +1,12 @@
 fileFormatVersion: 2
-guid: fcf804256e099654f8935c4ba149056d
+guid: 815b2575b38c4fd47bb41baf11cfe0dc
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - progressBarEmpty: {fileID: 2800000, guid: 8ff75535e1a07364ea0532d96f39336c, type: 3}
   - progressBarFull: {fileID: 2800000, guid: 1b1d14c3f4fb8864e930e1cd88e3a906, type: 3}
-  - damageParticles: {fileID: 100000, guid: 80cd87e5e66b84b35b29f75198eeda8b, type: 2}
   - shotParticles: {fileID: 100000, guid: f9659d4eb47f3984e9ad69ecd0e62f0a, type: 2}
+  - armyController: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

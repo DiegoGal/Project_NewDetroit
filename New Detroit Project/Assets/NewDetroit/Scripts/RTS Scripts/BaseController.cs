@@ -1,14 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BaseController : Photon.MonoBehaviour
+public class BaseController : CResourceBuilding
 {
     public bool isOnline = false;
-
-	public int teamNumber;
-
-    // referencia al controlador del ejército
-    public ArmyController armyController;
 
 	//Donde van a aparecer las unidades
 	private Vector3 spawnDestiny;
@@ -29,8 +24,10 @@ public class BaseController : Photon.MonoBehaviour
     public float radius = 14.0f;//6.0f;
 
 	// Use this for initialization
-	void Start ()
+    public override void Start ()
     {
+        base.Start();
+
         spawnOrigin = transform.FindChild("SpawnPoint").position;
         /*spawnDestiny = new Vector3(
             this.transform.position.x + 5.5f,
@@ -38,7 +35,7 @@ public class BaseController : Photon.MonoBehaviour
             0.0f,
             this.transform.position.z - 5.5f
         );*/
-        spawnDestiny = new Vector3(spawnOrigin.x - 2.0f, 0.0f, spawnOrigin.z);
+        spawnDestiny = new Vector3(spawnOrigin.x, 0.0f, spawnOrigin.z - 5.0f);
 
         // colocamos una caja en el spawnDestiny
         cubeSpawnDest = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -46,11 +43,48 @@ public class BaseController : Photon.MonoBehaviour
         // eliminamos el colisionador del cubo:
         Destroy(cubeSpawnDest.GetComponent<BoxCollider>());
         cubeSpawnDest.transform.position = spawnDestiny;
+
+        // inicialización de las posiciones de los ingenieros (para reparación)        
+        float twoPi = Mathf.PI * 2;
+        Vector3 center = transform.position;
+
+        float colliderSize;
+        if (transform.GetComponent<BoxCollider>())
+            colliderSize = transform.GetComponent<BoxCollider>().size.x;
+        else if (transform.GetComponent<CapsuleCollider>())
+            colliderSize = transform.GetComponent<CapsuleCollider>().radius;
+        else
+            colliderSize = transform.GetComponent<SphereCollider>().radius;
+
+        for (int i = 0; i < numEngineerPositions; i++)
+        {
+            Vector3 pos = new Vector3
+            (
+                center.x +
+                    (colliderSize + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
+                0,
+                center.z +
+                    (colliderSize + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
+            );
+            engineerPositions[i] = pos;
+            engineerPosTaken[i] = false;
+
+            cubes[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cubes[i].transform.position = pos;
+            Destroy(cubes[i].GetComponent<BoxCollider>());
+            cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
+            cubes[i].transform.parent = this.transform;
+        }
+
+        currentLife = totalLife;
+
 	}
 	
 	// Update is called once per frame
-	void Update ()
+    public override void Update ()
     {
+        base.Update();
+
 		// hacemos click derecho
 		if (this.GetComponent<CSelectable>().IsSelected() && Input.GetMouseButtonDown(1))
 		{
@@ -68,6 +102,16 @@ public class BaseController : Photon.MonoBehaviour
 		}
 		
 	}
+
+    public virtual void OnGUI()
+    {
+        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
+        Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 50.0f, 120.0f, 4.0f);
+        Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 50.0f, 120.0f * (currentLife / totalLife), 4.0f); 
+
+        GUI.DrawTexture(rect1, progressBarEmpty);
+        GUI.DrawTexture(rect2, progressBarFull);
+    }
 
     void OnCollisionEnter (Collision collision)
     {
@@ -143,11 +187,6 @@ public class BaseController : Photon.MonoBehaviour
 		return  newUnit;
 	}
 
-    public void DownloadResources(int resources)
-    {
-        armyController.IncreaseResources(resources);
-    }
-
     public Vector3 GetSpawnOrigin ()
     {
         return spawnOrigin;
@@ -156,6 +195,11 @@ public class BaseController : Photon.MonoBehaviour
     public float GetRadious ()
     {
         return radius;
+    }
+
+    public ArmyController GetArmyController ()
+    {
+        return armyController;
     }
 
 } // class BaseController
