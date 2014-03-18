@@ -6,7 +6,6 @@ public class ArmyController : MonoBehaviour
 {
 	public int teamNumber;
 
-	public GameObject armyBase;
     public List<GameObject> unitList = new List<GameObject>();
     public List<GameObject> unitSelectedList = new List<GameObject>();
 
@@ -29,6 +28,27 @@ public class ArmyController : MonoBehaviour
     private List<Vector3> patrolPosList = new List<Vector3>();
     private bool keyPPressed = false;
 
+    // Army Base & Warehouses
+    public GameObject armyBase;
+    public List<CResourceBuilding> resourceBuildingList = new List<CResourceBuilding>();
+
+    // Mines known by the army
+    public List<CResources> resourceMineList = new List<CResources>();
+    public class ResourcesLinkStruct
+    {
+        public int buildingIndex;
+        public int mineIndex;
+        public float distance;
+
+        public ResourcesLinkStruct (int buildingIndex, int mineIndex, float distance)
+        {
+            this.buildingIndex = buildingIndex;
+            this.mineIndex = mineIndex;
+            this.distance = distance;
+        }
+    }
+    public List<ResourcesLinkStruct> buildingMineLink = new List<ResourcesLinkStruct>();
+
     // Use this for initialization
     void Start ()
     {
@@ -42,8 +62,11 @@ public class ArmyController : MonoBehaviour
         resources = 0;
         lastCrowdAngle = 0;
 
+        // añadimos la base del ejército a la lista de edificios del ejército
+        resourceBuildingList.Add(armyBase.GetComponent<CResourceBuilding>());
+
         // agregamos las unidades que tengamos del ejército por el escenario
-        // OJO! FindObjectsOfType es MUY lento, cuidado co ello
+        // OJO! FindObjectsOfType es MUY lento, cuidado con ello
         GameObject[] objects = FindObjectsOfType(typeof(GameObject)) as GameObject[];
         foreach (GameObject go in objects)
         {
@@ -235,13 +258,24 @@ public class ArmyController : MonoBehaviour
             }
         }
 
-        // If "C" is pulsed and there are only one engineer selected, it can construct
-        if ((Input.GetKeyDown(KeyCode.C)) && (unitSelectedList.Count == 1))
+        // If "T" or "W" is pulsed and there are only one engineer selected, it can construct
+        if (unitSelectedList.Count == 1)
         {
-            UnitEngineer unit = unitSelectedList[0].GetComponent<UnitEngineer>();
-            if (unit != null && !unit.IsNewConstructing())
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                unit.SetCanConstruct();
+                UnitEngineer unit = unitSelectedList[0].GetComponent<UnitEngineer>();
+                if (unit != null && !unit.IsNewConstructing())
+                {
+                    unit.SetCanConstruct(0);
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.W))
+            {
+                UnitEngineer unit = unitSelectedList[0].GetComponent<UnitEngineer>();
+                if (unit != null && !unit.IsNewConstructing())
+                {
+                    unit.SetCanConstruct(1);
+                }
             }
         }
 
@@ -741,6 +775,122 @@ public class ArmyController : MonoBehaviour
 
         // destroy the unit from the game
         Destroy(unit, 0.5f);
+    }
+
+    public void AddWarehouse (CResourceBuilding w)
+    {
+        if (!resourceBuildingList.Contains(w))
+        {
+            resourceBuildingList.Add(w);
+            Debug.Log("Warehouse agregada");
+            // Link the nearest mine to this warehouse
+            float dist;
+            Vector3 posWare = new Vector3(w.transform.position.x, 0, w.transform.position.z);
+            Vector3 posMine = new Vector3(0, 0, 0);
+            float currentDist = -1;
+            int i = 0;
+            foreach (CResources c in resourceMineList) // Foreach mines
+            {
+                // The distance to the current mine/CResourceBuilding
+                bool found = false;
+                int maxCount = buildingMineLink.Count;
+                int j = 0;
+                while ((j < maxCount) && !found)
+                {
+                    if (buildingMineLink[j].mineIndex == i)// If the mine is found
+                    {
+                        currentDist = buildingMineLink[j].distance;
+                        found = true;
+                    }
+                    j++;
+                }
+                posMine.x = c.transform.Find("center").position.x;
+                posMine.z = c.transform.Find("center").position.z;
+                dist = Vector3.Distance(c.transform.position, posWare);
+
+                if ((currentDist != -1) && (dist < currentDist)) // Update the new warehouse to the mine
+                {
+                    buildingMineLink[j - 1].distance = dist;
+                    buildingMineLink[j - 1].buildingIndex = resourceBuildingList.Count - 1;
+                }
+                i++;
+            }
+
+        }
+        else Debug.Log("Warehouse NO agregada");
+    }
+
+    public void UpdateMines (Transform mineTransform)
+    {
+        CResources mine = mineTransform.GetComponent<CResources>();
+        if (!resourceMineList.Contains(mine))
+        {
+            resourceMineList.Add(mine);
+            // Update Links
+            Vector3 posMine = new Vector3(0, 0, 0);
+            float dist = -1;
+            float min = -1;
+            int index = -1;
+            int i = 0;
+            posMine.x = mineTransform.Find("center").position.x;
+            posMine.z = mineTransform.Find("center").position.z;
+            foreach (CResourceBuilding c in resourceBuildingList) // Foreach mines
+            {
+                // We have to create the link
+                Vector3 posBR = new Vector3(0, 0, 0);
+                posBR.x = c.transform.position.x;
+                posBR.z = c.transform.position.z;
+
+                dist = Vector3.Distance(posMine, posBR);
+                if (min < 0)
+                {
+                    min = dist;
+                    index = i;
+                }
+                else if (dist < min)
+                {
+                    min = dist;
+                    index = i;
+                }
+                i++;
+            }
+            if (min == -1)
+                Debug.Log("Link NO realizado");
+            else
+            {
+                buildingMineLink.Add(new ResourcesLinkStruct(index, resourceMineList.Count - 1, min));
+                Debug.Log("Link realizado");
+            }
+        }
+    }
+
+    // returns the closest warehose to the Mine given
+    private CResourceBuilding FindResourceBuilding (CResources mine)
+    {
+        // We have to find the mine in the resourceMineList
+        int posMine = resourceMineList.IndexOf(mine);
+        // We have to see the linked index in the 
+        int posRBuilding = -1;
+        int count = buildingMineLink.Count;
+        bool found = false;
+        int i = 0;
+        while ((i < count) && !found)
+        {
+            if (buildingMineLink[i].mineIndex == posMine)
+            {
+                posRBuilding = buildingMineLink[i].buildingIndex;
+                found = true;
+            }
+            i++;
+        }
+        //we have to find the resourceBuilding in the resourceBuildingList
+        return resourceBuildingList[posRBuilding];
+    }
+
+    // returns the position of the closest warehose to the Mine given
+    public Vector3 GetResourceBuilding (CResources mine)
+    {
+        return FindResourceBuilding(mine).transform.position;
     }
 
 } // class ArmyController
