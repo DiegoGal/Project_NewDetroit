@@ -69,6 +69,30 @@ public class UnitController : ControllableCharacter
         }
     }
 
+    // Cool Down for detecting less time the collision with particles
+    private float CDParticleCollision;
+    //This is for the particles that collides with the orc
+    void OnParticleCollision(GameObject other)
+    {
+
+        // get the particle system
+        ParticleSystem particleSystem;
+        particleSystem = other.GetComponent<ParticleSystem>();
+        //If the particle is a Moco    
+        if (particleSystem.tag == "Moco")
+        {
+            if (CDParticleCollision > 0)
+                CDParticleCollision -= Time.deltaTime;
+            else
+            {
+                Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
+                CDParticleCollision = 0.1f; // 5 deltatime aprox
+            }
+        }
+
+
+    }
+
     // Update is called once per frame
     public virtual void Update ()
     {
