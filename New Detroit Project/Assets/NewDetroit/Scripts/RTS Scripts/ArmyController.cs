@@ -159,7 +159,7 @@ public class ArmyController : MonoBehaviour
 					if (objSel != null)
 					{
 						// la marcamos como seleccionada
-						objSel.SetSelected();
+						//objSel.SetSelected();
 
 						//Miramos si el objeto es una unidad
 						UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
@@ -183,9 +183,9 @@ public class ArmyController : MonoBehaviour
 							DeselectAll();
 							
 							BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
-							if (baseCont != null)
+							if (baseCont != null && baseCont.teamNumber == teamNumber)
 							{
-								// seleccionamos la nueva unidad
+								// seleccionamos la base
 								armyBase.GetComponent<CSelectable>().SetSelected();
 							}
 						}
@@ -774,7 +774,7 @@ public class ArmyController : MonoBehaviour
             unitSelectedList.Remove(unit);
 
         // destroy the unit from the game
-        Destroy(unit, 0.5f);
+        Destroy(unit, 2.5f);
     }
 
     public void AddWarehouse (CResourceBuilding w)

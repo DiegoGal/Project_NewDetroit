@@ -157,7 +157,9 @@ public class UnitController : ControllableCharacter
         
         if (currentLife <= 0)
         {
-            // the unit DIES, comunicate it to the army manager
+            // the unit DIES, play the dead animation
+            animation.CrossFade("Die");
+            // and comunicate it to the army manager
             baseController.armyController.UnitDied(this.gameObject);
 
             return true;

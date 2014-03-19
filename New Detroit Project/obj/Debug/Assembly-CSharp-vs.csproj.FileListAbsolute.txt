@@ -54,3 +54,16 @@ C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\De
 C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
 C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp.dll
 C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp.pdb
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp.pdb
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEditor.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEngine.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Mono.Cecil.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\nunit.framework.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Unity.DataContract.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.xml
+D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
+D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp.pdb

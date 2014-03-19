@@ -89,7 +89,7 @@ ModelImporter:
     7400010: Ataque
     7400012: Curar
     7400014: Picar
-    7400016: Muerte
+    7400016: Die
     9500000: //RootNode
     11100000: //RootNode
     13700000: Goblin_01
@@ -1069,7 +1069,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Muerte
+      name: Die
       takeName: Take 001
       firstFrame: 240
       lastFrame: 268

@@ -6,9 +6,9 @@ public class CSelectable : MonoBehaviour
 	
 	private Color origColor;
 	private Color selectColor = Color.yellow;
-
-    public Material origMaterial;
-    public Material selectMaterial;
+    
+    private float outlineWidth;
+    private Color outlineColor;
 
     private Transform model;
 
@@ -17,14 +17,19 @@ public class CSelectable : MonoBehaviour
     private UnitController unitReference = null;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
         if (this.renderer != null)
 		    origColor = this.renderer.material.color;
 
         model = transform.FindChild("Model");
         if (model != null)
-            model.renderer.material = origMaterial;
+        {
+            outlineWidth = model.renderer.material.GetFloat("_OutlineWidth");
+            outlineColor = model.renderer.material.GetColor("_OutlineColor");
+            
+            model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
+        }
 
 		selected = false;
 
@@ -35,7 +40,7 @@ public class CSelectable : MonoBehaviour
 	{
 		selected = true;
         if (model != null)
-            model.renderer.material = selectMaterial;
+            model.renderer.material.SetFloat("_OutlineWidth", outlineWidth);
         else if (this.renderer != null)
 		    this.renderer.material.color = selectColor;
 
@@ -47,7 +52,7 @@ public class CSelectable : MonoBehaviour
 	{
 		selected = false;
         if (model != null)
-            model.renderer.material = origMaterial;
+            model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
         else if (this.renderer != null)
 		    this.renderer.material.color = origColor;
 
@@ -72,4 +77,11 @@ public class CSelectable : MonoBehaviour
 	{
 		this.renderer.material.color = origColor;
 	}
+
+    public void SetOutlineColor (Color color)
+    {
+        outlineColor = color;
+        model.renderer.material.SetColor("_OutlineColor", outlineColor);
+    }
+
 }

@@ -5,6 +5,9 @@ public class BaseController : CResourceBuilding
 {
     public bool isOnline = false;
 
+    // indicates the color of the units, 0=green, 1=purple
+    public int teamColor = 0;
+
 	//Donde van a aparecer las unidades
 	private Vector3 spawnDestiny;
 	//Donde van a aparecer las unidades
@@ -176,6 +179,11 @@ public class BaseController : CResourceBuilding
                     newUnit = Instantiate(scoutUnit, spawnOrigin, new Quaternion())
                         as GameObject;
                     break;
+            }
+            // set the texture of the unit
+            if (newUnit && teamColor != 0)
+            {
+                newUnit.GetComponent<CSelectable>().SetOutlineColor(new Color(0.0f, 0.7843f, 1.0f));
             }
         }
 
