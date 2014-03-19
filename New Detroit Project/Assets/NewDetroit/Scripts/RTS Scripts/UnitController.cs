@@ -16,7 +16,8 @@ public class UnitController : ControllableCharacter
     {
         Idle,	// reposo
         GoingTo,
-        Attacking
+        Attacking,
+        Dying
     }
 	protected State currentState = State.Idle;
     private State lastState = State.Idle;
@@ -35,6 +36,9 @@ public class UnitController : ControllableCharacter
 
     // indicates if the CSelectable component of the unit is marked selected
     public bool isSelected = false;
+
+    // a special material for when the unit has died
+    public Material dyingMaterial;
 
     public virtual void Awake ()
     {
@@ -157,7 +161,11 @@ public class UnitController : ControllableCharacter
         
         if (currentLife <= 0)
         {
-            // the unit DIES, play the dead animation
+            currentState = State.Dying;
+            // the unit DIES, set the special material
+            if (dyingMaterial)
+                model.renderer.material = dyingMaterial;
+            // play the dead animation
             animation.CrossFade("Die");
             // and comunicate it to the army manager
             baseController.armyController.UnitDied(this.gameObject);

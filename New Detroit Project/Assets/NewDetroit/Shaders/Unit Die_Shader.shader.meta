@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 3b657d7555842f84b9c777b3a2591858
+ShaderImporter:
+  defaultTextures:
+  - _Diffuse: {instanceID: 0}
+  - _Normal: {instanceID: 0}
+  - _AlphaNoiseTexture: {fileID: 2800000, guid: 804c55857ef2c534dbf6b0e10a82ed94,
+      type: 3}
+  userData: 

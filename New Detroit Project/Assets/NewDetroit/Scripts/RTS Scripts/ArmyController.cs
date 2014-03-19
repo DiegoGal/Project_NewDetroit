@@ -774,7 +774,7 @@ public class ArmyController : MonoBehaviour
             unitSelectedList.Remove(unit);
 
         // destroy the unit from the game
-        Destroy(unit, 2.5f);
+        Destroy(unit, 4.0f);
     }
 
     public void AddWarehouse (CResourceBuilding w)
