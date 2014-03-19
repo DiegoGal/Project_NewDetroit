@@ -17,7 +17,8 @@ public class UnitController : ControllableCharacter
         Idle,	// reposo
         GoingTo,
         Attacking,
-        Dying
+        Dying, // the unit is falling death
+        AscendingToHeaven
     }
 	protected State currentState = State.Idle;
     private State lastState = State.Idle;
@@ -39,6 +40,9 @@ public class UnitController : ControllableCharacter
 
     // a special material for when the unit has died
     public Material dyingMaterial;
+
+    private float timeFallingWhenDying = 1.6f;
+    private float ascendingAceleration = 1.045f;
 
     public virtual void Awake ()
     {
@@ -94,6 +98,32 @@ public class UnitController : ControllableCharacter
                     currentState = State.Idle;
                     animation.CrossFade("Idle01");
                 }
+                break;
+            case State.Dying:
+                timeFallingWhenDying -= Time.deltaTime;
+                if (timeFallingWhenDying <= 0.0f)
+                {
+                    // remove the assets of the model
+                    RemoveAssetsFromModel();
+
+                    currentState = State.AscendingToHeaven;
+                }
+                break;
+            case State.AscendingToHeaven:
+                    // elevate the model
+                    transform.position = new Vector3
+                    (
+                        transform.position.x,
+                        transform.position.y * ascendingAceleration,// + 0.01f,
+                        transform.position.z
+                    );
+                    // update the Alpha Multiply Value of the material
+                    float alphaValue = model.renderer.material.GetFloat("_AlphaMultiplyValue");
+                    alphaValue *= 0.97f;
+                    alphaValue -= 0.006f;
+                    model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
+                    if (alphaValue <= 0.0f)
+                        Destroy(this.gameObject);
                 break;
         }
     }
@@ -152,7 +182,7 @@ public class UnitController : ControllableCharacter
 
     public override bool Damage (float damage, char type)
     {
-        base.Damage(damage,type);
+        base.Damage(damage, type);
 
         // blood!
         GameObject blood = (GameObject)Instantiate(bloodParticles,
@@ -161,6 +191,8 @@ public class UnitController : ControllableCharacter
         
         if (currentLife <= 0)
         {
+            Debug.Log("MUEROOOOOOOOOO");
+
             currentState = State.Dying;
             // the unit DIES, set the special material
             if (dyingMaterial)
@@ -170,10 +202,17 @@ public class UnitController : ControllableCharacter
             // and comunicate it to the army manager
             baseController.armyController.UnitDied(this.gameObject);
 
+            // delete the Nave Mesh Agent for elevate the model
+            Destroy(GetComponent<NavMeshAgent>());
+
             return true;
         }
         else
             return false;
+    }
+
+    protected virtual void RemoveAssetsFromModel ()
+    {
     }
 
 }

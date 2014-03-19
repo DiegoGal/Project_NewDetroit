@@ -31,6 +31,11 @@ public class UnitHarvester : UnitController
     public Transform dummyHead;
     public Transform dummyBackPack;
 
+    // references to the assets the unit can have
+    private GameObject helmet;
+    private GameObject backpack;
+    private GameObject glasses;
+
     private enum HarvestState
     {
         None,
@@ -78,7 +83,6 @@ public class UnitHarvester : UnitController
         basicAttackPower = secondaryAttackPower = attackPower;
 
         // instanciamos un casco o un cono encima de la cabeza
-        GameObject helmet;
         if (Random.value <= 0.5f)
             helmet = (GameObject)Instantiate
             (
@@ -95,9 +99,10 @@ public class UnitHarvester : UnitController
             );
         helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
         helmet.transform.parent = dummyHead;
+        // instanciamos aleatóriamente una mochila detrás
         if (Random.value <= 0.5f)
         {
-            GameObject backpack = (GameObject)Instantiate
+            backpack = (GameObject)Instantiate
             (
                 Resources.Load("GoblinHarvesterBackpack"),
                 dummyBackPack.transform.position,
@@ -105,9 +110,17 @@ public class UnitHarvester : UnitController
             );
             backpack.transform.parent = dummyBackPack;
         }
+        // instanciamos unas gafas
+        glasses = (GameObject)Instantiate
+        (
+            Resources.Load("GoblinHarvesterGlasses"),
+            dummyGlasses.transform.position,
+            new Quaternion()
+            //dummyGlasses.transform.rotation
+        );
+        glasses.transform.parent = dummyGlasses;
+        glasses.transform.Rotate(new Vector3(180.0f, 0.0f, 0.0f));
 
-        // instanciamos aleatóriamente una mochila detrás
-        
         /*GameObject newPack = Instantiate
         (
             mineralPack,
@@ -349,6 +362,16 @@ public class UnitHarvester : UnitController
 				nextHarvestState = HarvestState.Choping;
             }
         }
+    }
+
+    protected override void RemoveAssetsFromModel ()
+    {
+        if (helmet)
+            Destroy(helmet);
+        if (backpack)
+            Destroy(backpack);
+        if (glasses)
+            Destroy(glasses);
     }
 
 } // class UnitHarvester
