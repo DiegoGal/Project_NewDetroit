@@ -44,6 +44,7 @@ public class TowerGoblin : Tower
     public void Awake ()
 	{
 		model = transform.FindChild("GoblinTower");
+        GetComponent<CSelectable>().enabled = false;
 	}
 
 	// Use this for initialization
@@ -60,11 +61,12 @@ public class TowerGoblin : Tower
     {
         if (canConstruct)
         {
+            GetComponent<CSelectable>().enabled = true;
             this.GetComponent<NavMeshObstacle>().enabled = true;
             Vector3 posN = transform.position;
             posN.y = 0;
             transform.position = posN;
-            active = true;
+            isActive = true;
 
             float twoPi = Mathf.PI * 2;
             Vector3 center = transform.position;
@@ -103,9 +105,17 @@ public class TowerGoblin : Tower
     {
         base.Update();
 
+        if (GetComponent<CSelectable>().IsSelected() && Input.GetKey(KeyCode.Delete))
+        {
+            //TODO Mirar a ver si se ha empezado a construir, si no, se retornan los recursos que cuesta la torre al armycontroller y que ingenieros cambien de estado
+            Destroy(gameObject);
+           
+
+        }
+
         if (!isActive)
         {
-            Light light = transform.FindChild("LightTower").light;
+            Light light = transform.FindChild("Light").light;
             if (canConstruct)
             {
                 light.color = Color.green;
@@ -272,7 +282,8 @@ public class TowerGoblin : Tower
     public void DestroyUnnecessaryGameobjects ()
     {
         // Remove unnecessary GameObjects
-        Destroy(transform.FindChild("BoxConstruct").gameObject);
+        Destroy(transform.FindChild("TowerBoxConstruct").gameObject);
+        Destroy(transform.FindChild("Light").light);
     }
 
 	// Construct is called by the engineers

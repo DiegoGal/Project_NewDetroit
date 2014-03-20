@@ -183,11 +183,20 @@ public class ArmyController : MonoBehaviour
 							DeselectAll();
 							
 							BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
-							if (baseCont != null && baseCont.teamNumber == teamNumber)
-							{
-								// seleccionamos la base
-								armyBase.GetComponent<CSelectable>().SetSelected();
-							}
+                            if (baseCont != null && baseCont.teamNumber == teamNumber)
+                            {
+                                // seleccionamos la base
+                                armyBase.GetComponent<CSelectable>().SetSelected();
+                            }
+                            else
+                            {
+                                TowerGoblin tower = (TowerGoblin)myHit.transform.GetComponent("TowerGoblin");
+                                if (tower != null && tower.teamNumber == teamNumber)
+                                {
+                                    // seleccionamos la base
+                                    tower.GetComponent<CSelectable>().SetSelected();
+                                }
+                            }
 						}
 					}
 					else

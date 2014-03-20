@@ -111,7 +111,9 @@ public class Warehouse : CResourceBuilding
     public void DestroyUnnecessaryGameobjects()
     {
         // Remove unnecessary GameObjects
-        Destroy(transform.FindChild("BoxConstruct").gameObject);
+        Destroy(transform.FindChild("WarehouseBoxConstruct").gameObject);
+        Destroy(transform.FindChild("Light").light);
+
     }
 
     // Construct is called by the engineers

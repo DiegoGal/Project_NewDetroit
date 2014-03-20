@@ -22,3 +22,15 @@ C:\Users\Public\Documents\Unity Projects\Project New Detroit\Project_NewDetroit\
 C:\Users\Public\Documents\Unity Projects\Project New Detroit\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.csprojResolveAssemblyReference.cache
 C:\Users\Public\Documents\Unity Projects\Project New Detroit\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.dll
 C:\Users\Public\Documents\Unity Projects\Project New Detroit\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.pdb
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.CSharp.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.CSharp.pdb
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEditor.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEngine.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Mono.Cecil.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\nunit.framework.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.csprojResolveAssemblyReference.cache
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.dll
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.pdb

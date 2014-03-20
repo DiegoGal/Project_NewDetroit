@@ -15,7 +15,7 @@ public class BuildingController : Photon.MonoBehaviour
     protected const float totalLife = 100.0f;
 
     //The currentLife of the Building
-    protected float currentLife = 0.0f;
+    protected float currentLife = 100.0f;
 
     // the damage particles for when the building has been hit
     public GameObject damageParticles;
