@@ -75,7 +75,8 @@ public abstract class HeroeController : ControllableCharacter
 	//---------------------------------------------------------------------------------------------
 	public Texture2D 	textureLifePositive, textureLifeNegative,
 						textureAdrenPositive, textureAdrenNegative,
-						textureManaPositive, textureManaNegative;
+						textureManaPositive, textureManaNegative,
+						textureBackground;
 	public int 		attackP, 
 					attackM, 
 					defP, 
@@ -101,7 +102,7 @@ public abstract class HeroeController : ControllableCharacter
 	protected Animator animator; //Animator
 	protected Vector3 initialPosition; // The spawn position
 	
-	private double timeCount; // Time counter
+	private double 	timeCount; // Time counter
 	public int counterAbility;
     //This is for the particles that collides with the hero
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
@@ -112,7 +113,8 @@ public abstract class HeroeController : ControllableCharacter
 					rectanglePositiveAdren,
 					rectangleNegativeAdren,
 					rectanglePositiveMana,
-					rectangleNegativeMana;
+					rectangleNegativeMana,
+					rectangleLevel;
 	
 	// ------------------------------------------------------------------------------------------------------
 	// PRIVATE
@@ -228,6 +230,17 @@ public abstract class HeroeController : ControllableCharacter
 		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveMana * lengthLifeAdrenMana;
 		width = widthAll * (1 - positiveMana) * lengthLifeAdrenMana;
 		rectangleNegativeMana = new Rect (x, y, width, height);
+		// Level
+		posScene = new Vector3 (transform.position.x, transform.position.y + 2f, transform.position.z);
+		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.56f, transform.position.z);
+		pos = Camera.main.WorldToScreenPoint (posScene);
+		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
+
+		x = pos.x - (widthHalf + 22) * lengthLifeAdrenMana;
+		y = rectanglePositiveLife.y;
+		width = 20 * lengthLifeAdrenMana;
+		height = (rectanglePositiveMana.y - rectanglePositiveLife.y) + rectanglePositiveMana.height;
+		rectangleLevel = new Rect (x, y, width, height);
 	}
 
 
@@ -367,6 +380,15 @@ public abstract class HeroeController : ControllableCharacter
 		GUI.DrawTexture (rectangleNegativeAdren, textureAdrenNegative);
 		GUI.DrawTexture (rectanglePositiveMana, textureManaPositive);
 		GUI.DrawTexture (rectangleNegativeMana, textureManaNegative);
+		GUI.DrawTexture (rectangleLevel, textureBackground);
+
+		FontStyle fs = GUI.skin.label.fontStyle;
+		TextAnchor ta = GUI.skin.label.alignment;
+		GUI.skin.label.fontStyle = FontStyle.Bold;
+		GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+		GUI.Label (rectangleLevel, ""+level);
+		GUI.skin.label.fontStyle = fs;
+		GUI.skin.label.alignment = ta;
 	}
 
 

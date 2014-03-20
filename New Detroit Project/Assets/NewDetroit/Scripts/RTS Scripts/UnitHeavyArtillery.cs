@@ -83,7 +83,7 @@ public class UnitHeavyArtillery : UnitArtillery
 
 	} // Update
 
-    public override void OnGUI()
+    public override void OnGUI ()
     {
         base.OnGUI();
 

@@ -1,12 +1,12 @@
 // Shader created with Shader Forge Beta 0.25 
 // Shader Forge (c) Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
-/*SF_DATA;ver:0.25;sub:START;pass:START;ps:flbk:,lico:1,lgpr:1,nrmq:1,limd:1,uamb:True,mssp:True,lmpd:False,lprd:False,enco:False,frtr:True,vitr:True,dbil:True,rmgx:True,hqsc:True,hqlp:False,blpr:1,bsrc:3,bdst:7,culm:0,dpts:2,wrdp:True,ufog:False,aust:True,igpj:False,qofs:0,qpre:2,rntp:3,fgom:False,fgoc:False,fgod:False,fgor:False,fgmd:0,fgcr:0.1280277,fgcg:0.1953466,fgcb:0.2352941,fgca:1,fgde:0.01,fgrn:0,fgrf:300,ofsf:0,ofsu:0;n:type:ShaderForge.SFN_Final,id:1,x:32715,y:32734|diff-2-RGB,spec-2-A,normal-3-RGB,clip-593-OUT;n:type:ShaderForge.SFN_Tex2d,id:2,x:33313,y:32446,ptlb:Diffuse,tex:f4e68e511d6c5f44f8b0e01da2bd75ef,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Tex2d,id:3,x:33248,y:32777,ptlb:Normal,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Tex2d,id:164,x:33214,y:32968,ptlb:Alpha Noise Texture,tex:28c7aad1372ff114b90d330f8a2dd938,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Multiply,id:593,x:32974,y:33044|A-164-R,B-711-OUT;n:type:ShaderForge.SFN_Time,id:638,x:33744,y:33277;n:type:ShaderForge.SFN_Fmod,id:655,x:33370,y:33266|A-797-OUT,B-788-OUT;n:type:ShaderForge.SFN_Divide,id:711,x:33214,y:33145|A-712-OUT,B-655-OUT;n:type:ShaderForge.SFN_Vector1,id:712,x:33370,y:33145,v1:1;n:type:ShaderForge.SFN_ValueProperty,id:721,x:33744,y:33464,ptlb:Alpha Velocity,v1:1;n:type:ShaderForge.SFN_Vector1,id:788,x:33548,y:33454,v1:5;n:type:ShaderForge.SFN_Multiply,id:797,x:33573,y:33292|A-638-T,B-721-OUT;proporder:2-3-164-721;pass:END;sub:END;*/
+/*SF_DATA;ver:0.25;sub:START;pass:START;ps:flbk:,lico:1,lgpr:1,nrmq:1,limd:1,uamb:True,mssp:True,lmpd:False,lprd:False,enco:False,frtr:True,vitr:True,dbil:True,rmgx:True,hqsc:True,hqlp:False,blpr:1,bsrc:3,bdst:7,culm:0,dpts:2,wrdp:True,ufog:False,aust:True,igpj:False,qofs:0,qpre:2,rntp:3,fgom:False,fgoc:False,fgod:False,fgor:False,fgmd:0,fgcr:0.1280277,fgcg:0.1953466,fgcb:0.2352941,fgca:1,fgde:0.01,fgrn:0,fgrf:300,ofsf:0,ofsu:0;n:type:ShaderForge.SFN_Final,id:1,x:32715,y:32734|diff-2-RGB,spec-2-A,normal-3-RGB,clip-593-OUT;n:type:ShaderForge.SFN_Tex2d,id:2,x:33248,y:32573,ptlb:Diffuse,tex:8728117877f542f4db32ea6ba2f35f2b,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Tex2d,id:3,x:33248,y:32777,ptlb:Normal,tex:2966d4b9495678d409120ea361832ed8,ntxv:3,isnm:True;n:type:ShaderForge.SFN_Tex2d,id:164,x:33214,y:32968,ptlb:Alpha Noise Texture,tex:28c7aad1372ff114b90d330f8a2dd938,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Multiply,id:593,x:32974,y:33044|A-164-R,B-711-OUT;n:type:ShaderForge.SFN_Time,id:638,x:33744,y:33266;n:type:ShaderForge.SFN_Fmod,id:655,x:33370,y:33266|A-797-OUT,B-788-OUT;n:type:ShaderForge.SFN_Divide,id:711,x:33214,y:33145|A-712-OUT,B-655-OUT;n:type:ShaderForge.SFN_Vector1,id:712,x:33370,y:33145,v1:1;n:type:ShaderForge.SFN_ValueProperty,id:721,x:33744,y:33425,ptlb:Alpha Velocity,v1:1;n:type:ShaderForge.SFN_Vector1,id:788,x:33548,y:33425,v1:5;n:type:ShaderForge.SFN_Multiply,id:797,x:33548,y:33266|A-638-T,B-721-OUT;proporder:2-3-164-721;pass:END;sub:END;*/
 
-Shader "Custom/Unit Die" {
+Shader "Custom/UnitDie Timer" {
     Properties {
         _Diffuse ("Diffuse", 2D) = "white" {}
-        _Normal ("Normal", 2D) = "white" {}
+        _Normal ("Normal", 2D) = "bump" {}
         _AlphaNoiseTexture ("Alpha Noise Texture", 2D) = "white" {}
         _AlphaVelocity ("Alpha Velocity", Float ) = 1
         [HideInInspector]_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
@@ -67,14 +67,14 @@ Shader "Custom/Unit Die" {
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
-                float2 node_810 = i.uv0;
+                float2 node_811 = i.uv0;
                 float4 node_638 = _Time + _TimeEditor;
-                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_810.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
+                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_811.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
                 i.normalDir = normalize(i.normalDir);
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.binormalDir, i.normalDir);
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 /////// Normals:
-                float3 normalLocal = tex2D(_Normal,TRANSFORM_TEX(node_810.rg, _Normal)).rgb;
+                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_811.rg, _Normal))).rgb;
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
                 float3 halfDirection = normalize(viewDirection+lightDirection);
@@ -88,7 +88,7 @@ Shader "Custom/Unit Die" {
                 float gloss = exp2(0.5*10.0+1.0);
 ////// Specular:
                 NdotL = max(0.0, NdotL);
-                float4 node_2 = tex2D(_Diffuse,TRANSFORM_TEX(node_810.rg, _Diffuse));
+                float4 node_2 = tex2D(_Diffuse,TRANSFORM_TEX(node_811.rg, _Diffuse));
                 float3 specularColor = float3(node_2.a,node_2.a,node_2.a);
                 float3 specular = (floor(attenuation) * _LightColor0.xyz) * pow(max(0,dot(halfDirection,normalDirection)),gloss) * specularColor;
                 float3 finalColor = 0;
@@ -151,14 +151,14 @@ Shader "Custom/Unit Die" {
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
-                float2 node_811 = i.uv0;
+                float2 node_812 = i.uv0;
                 float4 node_638 = _Time + _TimeEditor;
-                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_811.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
+                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_812.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
                 i.normalDir = normalize(i.normalDir);
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.binormalDir, i.normalDir);
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 /////// Normals:
-                float3 normalLocal = tex2D(_Normal,TRANSFORM_TEX(node_811.rg, _Normal)).rgb;
+                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_812.rg, _Normal))).rgb;
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
                 float3 halfDirection = normalize(viewDirection+lightDirection);
@@ -172,7 +172,7 @@ Shader "Custom/Unit Die" {
                 float gloss = exp2(0.5*10.0+1.0);
 ////// Specular:
                 NdotL = max(0.0, NdotL);
-                float4 node_2 = tex2D(_Diffuse,TRANSFORM_TEX(node_811.rg, _Diffuse));
+                float4 node_2 = tex2D(_Diffuse,TRANSFORM_TEX(node_812.rg, _Diffuse));
                 float3 specularColor = float3(node_2.a,node_2.a,node_2.a);
                 float3 specular = attenColor * pow(max(0,dot(halfDirection,normalDirection)),gloss) * specularColor;
                 float3 finalColor = 0;
@@ -221,9 +221,9 @@ Shader "Custom/Unit Die" {
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
-                float2 node_812 = i.uv0;
+                float2 node_813 = i.uv0;
                 float4 node_638 = _Time + _TimeEditor;
-                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_812.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
+                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_813.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
                 SHADOW_COLLECTOR_FRAGMENT(i)
             }
             ENDCG
@@ -266,9 +266,9 @@ Shader "Custom/Unit Die" {
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
-                float2 node_813 = i.uv0;
+                float2 node_814 = i.uv0;
                 float4 node_638 = _Time + _TimeEditor;
-                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_813.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
+                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_814.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
                 SHADOW_CASTER_FRAGMENT(i)
             }
             ENDCG

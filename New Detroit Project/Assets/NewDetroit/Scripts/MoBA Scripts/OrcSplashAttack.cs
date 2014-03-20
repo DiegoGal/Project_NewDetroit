@@ -29,11 +29,19 @@ public class OrcSplashAttack : ParticleDamage
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject.name + " - " + this.gameObject.name);
-        if (other.gameObject.name != owner.name && other.tag == "Player")
+        
+        if (other.gameObject.name != owner.name)
         {
-            HeroeController script = other.GetComponent<HeroeController>();
-            script.Damage(getDamage(),'M');
+            if (other.tag == "Player")
+            {
+                HeroeController script = other.GetComponent<HeroeController>();
+                script.Damage(getDamage(),'M');
+            }
+            else if (other.tag == "Minion")
+            {
+                UnitController script = other.GetComponent<UnitController>();
+                script.Damage(getDamage(),'M');
+            }
         }
     }
 }
