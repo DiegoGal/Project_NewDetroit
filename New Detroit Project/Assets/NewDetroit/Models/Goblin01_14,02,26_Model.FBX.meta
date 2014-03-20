@@ -87,7 +87,7 @@ ModelImporter:
     7400006: Walk
     7400008: Walk Carga
     7400010: Ataque
-    7400012: Curar
+    7400012: Heal
     7400014: Picar
     7400016: Die
     9500000: //RootNode
@@ -829,7 +829,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Curar
+      name: Heal
       takeName: Take 001
       firstFrame: 269
       lastFrame: 442

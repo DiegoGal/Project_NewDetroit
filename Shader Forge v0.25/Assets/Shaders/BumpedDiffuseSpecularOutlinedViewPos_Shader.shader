@@ -1,7 +1,7 @@
 // Shader created with Shader Forge Beta 0.25 
 // Shader Forge (c) Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
-/*SF_DATA;ver:0.25;sub:START;pass:START;ps:flbk:,lico:1,lgpr:1,nrmq:1,limd:1,uamb:True,mssp:True,lmpd:False,lprd:False,enco:False,frtr:True,vitr:True,dbil:True,rmgx:True,hqsc:True,hqlp:False,blpr:0,bsrc:0,bdst:1,culm:0,dpts:2,wrdp:True,ufog:True,aust:True,igpj:False,qofs:0,qpre:1,rntp:1,fgom:False,fgoc:False,fgod:False,fgor:False,fgmd:0,fgcr:0.5,fgcg:0.5,fgcb:0.5,fgca:1,fgde:0.01,fgrn:0,fgrf:300,ofsf:0,ofsu:0;n:type:ShaderForge.SFN_Final,id:0,x:32373,y:32853|diff-138-RGB,spec-347-OUT,gloss-144-OUT,normal-123-RGB,olwid-363-OUT,olcol-252-RGB;n:type:ShaderForge.SFN_Tex2d,id:123,x:32878,y:33116,ptlb:Normal,tex:bbab0a6f7bae9cf42bf057d8ee2755f6,ntxv:3,isnm:True;n:type:ShaderForge.SFN_Tex2d,id:138,x:33088,y:32555,ptlb:Diffuse,tex:b66bceaf0cc0ace4e9bdc92f14bba709,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Slider,id:144,x:33088,y:33060,ptlb:Gloss,min:0,cur:0.5,max:1;n:type:ShaderForge.SFN_Color,id:252,x:32718,y:33401,ptlb:Outline Color,c1:0,c2:1,c3:1,c4:1;n:type:ShaderForge.SFN_ValueProperty,id:327,x:32918,y:33334,ptlb:Outline Width,v1:0.1;n:type:ShaderForge.SFN_Multiply,id:333,x:32910,y:32725|A-138-A,B-354-OUT;n:type:ShaderForge.SFN_Color,id:345,x:33128,y:32883,ptlb:Specular Color,c1:1,c2:1,c3:1,c4:1;n:type:ShaderForge.SFN_Multiply,id:347,x:32722,y:32848|A-333-OUT,B-345-RGB;n:type:ShaderForge.SFN_ValueProperty,id:354,x:33156,y:32759,ptlb:Specular Intensity,v1:1;n:type:ShaderForge.SFN_ViewPosition,id:361,x:32953,y:33401;n:type:ShaderForge.SFN_Multiply,id:363,x:32704,y:33243|A-327-OUT,B-361-Y;proporder:138-123-354-144-345-327-252;pass:END;sub:END;*/
+/*SF_DATA;ver:0.25;sub:START;pass:START;ps:flbk:,lico:1,lgpr:1,nrmq:1,limd:1,uamb:True,mssp:True,lmpd:False,lprd:False,enco:False,frtr:True,vitr:True,dbil:True,rmgx:True,hqsc:True,hqlp:False,blpr:0,bsrc:0,bdst:1,culm:0,dpts:2,wrdp:True,ufog:True,aust:True,igpj:False,qofs:0,qpre:1,rntp:1,fgom:False,fgoc:False,fgod:False,fgor:False,fgmd:0,fgcr:0.5,fgcg:0.5,fgcb:0.5,fgca:1,fgde:0.01,fgrn:0,fgrf:300,ofsf:0,ofsu:0;n:type:ShaderForge.SFN_Final,id:0,x:32373,y:32853|diff-138-RGB,spec-347-OUT,gloss-144-OUT,normal-123-RGB,olwid-363-OUT,olcol-252-RGB;n:type:ShaderForge.SFN_Tex2d,id:123,x:32878,y:33116,ptlb:Normal,tex:2966d4b9495678d409120ea361832ed8,ntxv:3,isnm:True;n:type:ShaderForge.SFN_Tex2d,id:138,x:33088,y:32555,ptlb:Diffuse,tex:8728117877f542f4db32ea6ba2f35f2b,ntxv:0,isnm:False;n:type:ShaderForge.SFN_Slider,id:144,x:33088,y:33060,ptlb:Gloss,min:0,cur:0.5,max:1;n:type:ShaderForge.SFN_Color,id:252,x:32718,y:33401,ptlb:Outline Color,c1:0,c2:1,c3:1,c4:1;n:type:ShaderForge.SFN_ValueProperty,id:327,x:32863,y:33339,ptlb:Outline Width,v1:0.1;n:type:ShaderForge.SFN_Multiply,id:333,x:32910,y:32725|A-138-A,B-354-OUT;n:type:ShaderForge.SFN_Color,id:345,x:33128,y:32883,ptlb:Specular Color,c1:1,c2:1,c3:1,c4:1;n:type:ShaderForge.SFN_Multiply,id:347,x:32722,y:32848|A-333-OUT,B-345-RGB;n:type:ShaderForge.SFN_ValueProperty,id:354,x:33156,y:32759,ptlb:Specular Intensity,v1:1;n:type:ShaderForge.SFN_ViewPosition,id:361,x:33368,y:33362;n:type:ShaderForge.SFN_Multiply,id:363,x:32704,y:33243|A-372-OUT,B-327-OUT;n:type:ShaderForge.SFN_Multiply,id:372,x:32999,y:33280|A-403-OUT,B-373-OUT;n:type:ShaderForge.SFN_Vector1,id:373,x:33166,y:33466,v1:0.5;n:type:ShaderForge.SFN_ObjectPosition,id:382,x:33387,y:33197;n:type:ShaderForge.SFN_Distance,id:403,x:33166,y:33239|A-382-XYZ,B-361-XYZ;proporder:138-123-354-144-345-327-252;pass:END;sub:END;*/
 
 Shader "Custom/Bumped Diffuse Specular Outlined View Position" {
     Properties {
@@ -42,10 +42,12 @@ Shader "Custom/Bumped Diffuse Specular Outlined View Position" {
             };
             VertexOutput vert (VertexInput v) {
                 VertexOutput o;
-                o.pos = mul(UNITY_MATRIX_MVP, float4(v.vertex.xyz + v.normal*(_OutlineWidth*_WorldSpaceCameraPos.g),1));
+                float4 objPos = mul ( _Object2World, float4(0,0,0,1) );
+                o.pos = mul(UNITY_MATRIX_MVP, float4(v.vertex.xyz + v.normal*((distance(objPos.rgb,_WorldSpaceCameraPos.rgb)*0.5)*_OutlineWidth),1));
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
+                float4 objPos = mul ( _Object2World, float4(0,0,0,1) );
                 return fixed4(_OutlineColor.rgb,0);
             }
             ENDCG
@@ -103,8 +105,8 @@ Shader "Custom/Bumped Diffuse Specular Outlined View Position" {
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.binormalDir, i.normalDir);
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 /////// Normals:
-                float2 node_369 = i.uv0;
-                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_369.rg, _Normal))).rgb;
+                float2 node_418 = i.uv0;
+                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_418.rg, _Normal))).rgb;
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
                 float3 halfDirection = normalize(viewDirection+lightDirection);
@@ -118,7 +120,7 @@ Shader "Custom/Bumped Diffuse Specular Outlined View Position" {
                 float gloss = exp2(_Gloss*10.0+1.0);
 ////// Specular:
                 NdotL = max(0.0, NdotL);
-                float4 node_138 = tex2D(_Diffuse,TRANSFORM_TEX(node_369.rg, _Diffuse));
+                float4 node_138 = tex2D(_Diffuse,TRANSFORM_TEX(node_418.rg, _Diffuse));
                 float3 specularColor = ((node_138.a*_SpecularIntensity)*_SpecularColor.rgb);
                 float3 specular = (floor(attenuation) * _LightColor0.xyz) * pow(max(0,dot(halfDirection,normalDirection)),gloss) * specularColor;
                 float3 finalColor = 0;
@@ -185,8 +187,8 @@ Shader "Custom/Bumped Diffuse Specular Outlined View Position" {
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.binormalDir, i.normalDir);
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 /////// Normals:
-                float2 node_370 = i.uv0;
-                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_370.rg, _Normal))).rgb;
+                float2 node_419 = i.uv0;
+                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_419.rg, _Normal))).rgb;
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
                 float3 halfDirection = normalize(viewDirection+lightDirection);
@@ -200,7 +202,7 @@ Shader "Custom/Bumped Diffuse Specular Outlined View Position" {
                 float gloss = exp2(_Gloss*10.0+1.0);
 ////// Specular:
                 NdotL = max(0.0, NdotL);
-                float4 node_138 = tex2D(_Diffuse,TRANSFORM_TEX(node_370.rg, _Diffuse));
+                float4 node_138 = tex2D(_Diffuse,TRANSFORM_TEX(node_419.rg, _Diffuse));
                 float3 specularColor = ((node_138.a*_SpecularIntensity)*_SpecularColor.rgb);
                 float3 specular = attenColor * pow(max(0,dot(halfDirection,normalDirection)),gloss) * specularColor;
                 float3 finalColor = 0;

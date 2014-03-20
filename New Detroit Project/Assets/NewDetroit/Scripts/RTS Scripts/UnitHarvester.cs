@@ -12,8 +12,8 @@ public class UnitHarvester : UnitController
     private int resourcesLoaded = 0;
 
     // tiempo en segundos que la unidad tarda en realizar una recolección
-    public int harvestTime = 1;
-    private float actualHarvestTime = 0;
+    public float harvestTime = 1.0f;
+    private float actualHarvestTime = 0.0f;
 
     // cantidad de recurso por unidad de recolección
     public int amountOfResourcesPerHarvest = 1;
@@ -43,7 +43,9 @@ public class UnitHarvester : UnitController
         Waiting, // espera hasta que halla hueco en la mina
         GoingToChopPosition,
         Choping, // picando
-        ReturningToBase
+        ReturningToBase,
+        GoingToHealUnit,
+        Healing  // curando a una unidad
     }
     private HarvestState currentHarvestState = HarvestState.None;
     private HarvestState nextHarvestState = HarvestState.None;
@@ -57,6 +59,22 @@ public class UnitHarvester : UnitController
     // última posición a donde se va a dejar los recursos
     // es el punto más cercano de la base a la mina de recursos actual
     private Vector3 lastBasePos = new Vector3();
+
+    // referencia a la unidad que se está curando
+    private ControllableCharacter currentCharacterHealed;
+
+    // distancia mínima a la que la unidad es capaz de curar
+    public float minDistanceToHeal = 5.0f;
+
+    // tiempo en segundos que la unidad tarda en realizar una curación
+    public float healTime = 1.0f;
+    private float actualHealTime = 0.0f;
+
+    // cantidad de curación por unidad de curación (healTime)
+    public int amountOfLifePerHeal = 5;
+
+    // capacidad total de vida curada por la unidad
+    private int totalHealed = 0;
 
     public override void Awake ()
     {
@@ -222,6 +240,49 @@ public class UnitHarvester : UnitController
                     ArrivedToBase();
                 else
                     base.Update();
+                break;
+            case HarvestState.GoingToHealUnit:
+                float distItem = Vector3.Distance(transform.position, currentCharacterHealed.transform.position);
+                //base.GoTo(currentItem.position);
+                if (distItem <= minDistanceToHeal)
+                {
+                    currentHarvestState = HarvestState.Healing;
+
+                    animation.CrossFade("Heal");
+                }
+                // si el currentState es Idle significa que la unidad ya ha llegado al herido
+                if (currentState == State.Idle)
+                {
+
+                }
+                else
+                    base.Update();
+                break;
+            case HarvestState.Healing:
+                /*actualHealTime += Time.deltaTime;
+                distItem = Vector3.Distance(transform.position, currentItem.position);
+                bool healed = false;
+                if (distItem < 4.0f)
+                {
+                    base.GoTo(transform.position);
+                }
+                else if (distItem > 8.0f)
+                {
+                    currentHarvestState = HarvestState.None;
+                    nextHarvestState = HarvestState.None;
+                }
+                if (actualHealTime >= healTime)
+                {
+                    healed = currentItem.GetComponent<ControllableCharacter>().Heal(amountOfLifePerHeal);
+                    // The item has been repaired
+                    if (healed)
+                    {
+                        Debug.Log("Unidad curada");
+                        currentHarvestState = HarvestState.None;
+                        nextHarvestState = HarvestState.None;
+                    }
+                    actualHealTime = 0;
+                }*/
                 break;
         }
     } // Update

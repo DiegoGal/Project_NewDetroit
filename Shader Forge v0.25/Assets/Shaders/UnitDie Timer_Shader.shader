@@ -67,14 +67,14 @@ Shader "Custom/UnitDie Timer" {
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
-                float2 node_811 = i.uv0;
+                float2 node_804 = i.uv0;
                 float4 node_638 = _Time + _TimeEditor;
-                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_811.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
+                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_804.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
                 i.normalDir = normalize(i.normalDir);
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.binormalDir, i.normalDir);
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 /////// Normals:
-                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_811.rg, _Normal))).rgb;
+                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_804.rg, _Normal))).rgb;
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
                 float3 halfDirection = normalize(viewDirection+lightDirection);
@@ -88,7 +88,7 @@ Shader "Custom/UnitDie Timer" {
                 float gloss = exp2(0.5*10.0+1.0);
 ////// Specular:
                 NdotL = max(0.0, NdotL);
-                float4 node_2 = tex2D(_Diffuse,TRANSFORM_TEX(node_811.rg, _Diffuse));
+                float4 node_2 = tex2D(_Diffuse,TRANSFORM_TEX(node_804.rg, _Diffuse));
                 float3 specularColor = float3(node_2.a,node_2.a,node_2.a);
                 float3 specular = (floor(attenuation) * _LightColor0.xyz) * pow(max(0,dot(halfDirection,normalDirection)),gloss) * specularColor;
                 float3 finalColor = 0;
@@ -151,14 +151,14 @@ Shader "Custom/UnitDie Timer" {
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
-                float2 node_812 = i.uv0;
+                float2 node_805 = i.uv0;
                 float4 node_638 = _Time + _TimeEditor;
-                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_812.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
+                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_805.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
                 i.normalDir = normalize(i.normalDir);
                 float3x3 tangentTransform = float3x3( i.tangentDir, i.binormalDir, i.normalDir);
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
 /////// Normals:
-                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_812.rg, _Normal))).rgb;
+                float3 normalLocal = UnpackNormal(tex2D(_Normal,TRANSFORM_TEX(node_805.rg, _Normal))).rgb;
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
                 float3 halfDirection = normalize(viewDirection+lightDirection);
@@ -172,7 +172,7 @@ Shader "Custom/UnitDie Timer" {
                 float gloss = exp2(0.5*10.0+1.0);
 ////// Specular:
                 NdotL = max(0.0, NdotL);
-                float4 node_2 = tex2D(_Diffuse,TRANSFORM_TEX(node_812.rg, _Diffuse));
+                float4 node_2 = tex2D(_Diffuse,TRANSFORM_TEX(node_805.rg, _Diffuse));
                 float3 specularColor = float3(node_2.a,node_2.a,node_2.a);
                 float3 specular = attenColor * pow(max(0,dot(halfDirection,normalDirection)),gloss) * specularColor;
                 float3 finalColor = 0;
@@ -221,9 +221,9 @@ Shader "Custom/UnitDie Timer" {
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
-                float2 node_813 = i.uv0;
+                float2 node_806 = i.uv0;
                 float4 node_638 = _Time + _TimeEditor;
-                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_813.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
+                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_806.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
                 SHADOW_COLLECTOR_FRAGMENT(i)
             }
             ENDCG
@@ -266,9 +266,9 @@ Shader "Custom/UnitDie Timer" {
                 return o;
             }
             fixed4 frag(VertexOutput i) : COLOR {
-                float2 node_814 = i.uv0;
+                float2 node_807 = i.uv0;
                 float4 node_638 = _Time + _TimeEditor;
-                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_814.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
+                clip((tex2D(_AlphaNoiseTexture,TRANSFORM_TEX(node_807.rg, _AlphaNoiseTexture)).r*(1.0/fmod((node_638.g*_AlphaVelocity),5.0))) - 0.5);
                 SHADOW_CASTER_FRAGMENT(i)
             }
             ENDCG
