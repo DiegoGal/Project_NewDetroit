@@ -12,8 +12,7 @@ public class TowerGoblin : Tower
     private Vector3 destiny;
     
     public Material activeMaterial;
-    public Material canConstructMaterial;
-    public Material cantConstructMaterial;
+    public Material constructMaterial;
 
 	private Transform model;
 
@@ -41,6 +40,10 @@ public class TowerGoblin : Tower
 	private bool constructed = false;
     private bool canConstruct = true;
 
+    private int costResources = 10;
+    // Reference to the base
+    public BaseController baseController;
+
     public void Awake ()
 	{
 		model = transform.FindChild("GoblinTower");
@@ -57,10 +60,12 @@ public class TowerGoblin : Tower
         layerMask = 1 << 9;
 	}
 
-    public bool StartConstruct(Vector3 destiny)
+    public bool StartConstruct(Vector3 destiny, BaseController baseController)
     {
-        if (canConstruct)
+        if (canConstruct && baseController.GetResources() >= costResources)
         {
+            this.baseController = baseController;
+            baseController.DecreaseResources(costResources);
             GetComponent<CSelectable>().enabled = true;
             this.GetComponent<NavMeshObstacle>().enabled = true;
             Vector3 posN = transform.position;
@@ -107,24 +112,22 @@ public class TowerGoblin : Tower
 
         if (GetComponent<CSelectable>().IsSelected() && Input.GetKey(KeyCode.Delete))
         {
-            //TODO Mirar a ver si se ha empezado a construir, si no, se retornan los recursos que cuesta la torre al armycontroller y que ingenieros cambien de estado
+            //TODO que ingenieros cambien de estado
             Destroy(gameObject);
-           
-
+            baseController.IncreaseResources(costResources);
         }
-
-        if (!isActive)
+        else if (!isActive)
         {
             Light light = transform.FindChild("Light").light;
             if (canConstruct)
             {
                 light.color = Color.green;
-                model.renderer.material = canConstructMaterial;
+                model.renderer.material.SetColor("_AlphaColor", Color.green);
             }
             else
             {
                 light.color = Color.red;
-                model.renderer.material = cantConstructMaterial;
+                model.renderer.material.SetColor("_AlphaColor", Color.red);
             }
             myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))

@@ -18,7 +18,7 @@ public class ArmyController : MonoBehaviour
     private Vector3[] squareSelectionPointsScreen;      // positions of the corners in the screen
     private Vector3[] squareSelectionPointsProyected;   // positions of the corners in the world
 
-    private int resources;
+    public int resources = 0;
     private float lastCrowdAngle; // último ángulo de desplazamiento de la bandada
 
 	private int layerMask; // para obviar la capa de la niebla
@@ -59,7 +59,6 @@ public class ArmyController : MonoBehaviour
         squareSelectionPointsScreen = new Vector3[4];
         squareSelectionPointsProyected = new Vector3[4];
 
-        resources = 0;
         lastCrowdAngle = 0;
 
         // añadimos la base del ejército a la lista de edificios del ejército
@@ -196,6 +195,16 @@ public class ArmyController : MonoBehaviour
                                     // seleccionamos la base
                                     tower.GetComponent<CSelectable>().SetSelected();
                                 }
+                                else
+                                {
+                                    Warehouse warehouse = (Warehouse)myHit.transform.GetComponent("Warehouse");
+                                    if (warehouse != null && warehouse.teamNumber == teamNumber)
+                                    {
+                                        // seleccionamos la base
+                                        warehouse.GetComponent<CSelectable>().SetSelected();
+                                    }
+                                }
+
                             }
 						}
 					}
@@ -341,7 +350,8 @@ public class ArmyController : MonoBehaviour
     {
 		GUI.skin.label.fontSize = 12;
 
-        GUI.Label(new Rect(0, 0, 150, 50), "Total resources: " + resources);
+        if (teamNumber == 1)
+            GUI.Label(new Rect(0, 0, 150, 50), "Total resources: " + resources);
 		GUI.Label(new Rect(0, 14, 150, 50), "Total Units: " + unitList.Count);
 
         // selecting rectangle
@@ -774,6 +784,11 @@ public class ArmyController : MonoBehaviour
         this.resources += resources;
     }
 
+    public void DecreaseResources(int resources)
+    {
+        this.resources -= resources;
+    }
+
     public void UnitDied (GameObject unit)
     {
         // delete the unit from the unit list
@@ -813,8 +828,8 @@ public class ArmyController : MonoBehaviour
                     }
                     j++;
                 }
-                posMine.x = c.transform.Find("center").position.x;
-                posMine.z = c.transform.Find("center").position.z;
+                posMine.x = c.transform.position.x;
+                posMine.z = c.transform.position.z;
                 dist = Vector3.Distance(c.transform.position, posWare);
 
                 if ((currentDist != -1) && (dist < currentDist)) // Update the new warehouse to the mine
@@ -841,8 +856,8 @@ public class ArmyController : MonoBehaviour
             float min = -1;
             int index = -1;
             int i = 0;
-            posMine.x = mineTransform.Find("center").position.x;
-            posMine.z = mineTransform.Find("center").position.z;
+            posMine.x = mineTransform.position.x;
+            posMine.z = mineTransform.position.z;
             foreach (CResourceBuilding c in resourceBuildingList) // Foreach mines
             {
                 // We have to create the link

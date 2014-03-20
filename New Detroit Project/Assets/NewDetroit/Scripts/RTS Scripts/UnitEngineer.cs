@@ -119,27 +119,35 @@ public class UnitEngineer : UnitController
                 break;
             case EngineerState.GoingToConstructItem:
                 // if the distance to the item is less than distanceToWait we ask if there is gap
-                distItem = Vector3.Distance(transform.position, currentItem.position);
-                distToWait = currentItem.GetComponent<BuildingController>().distanceToWait;
-                if (distItem < 10.0f)
+                if (currentItem != null)
                 {
-                    if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
-                            ref lastEngineerPos,
-                            ref lastEngineerIndex,
-                            this))
+                    distItem = Vector3.Distance(transform.position, currentItem.position);
+                    distToWait = currentItem.GetComponent<BuildingController>().distanceToWait;
+                    if (distItem < 10.0f)
                     {
-                        // there is a gap and we have the position
-                        currentEngineerState = EngineerState.GoingToConstructPosition;
-                        base.GoTo(lastEngineerPos);
+                        if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
+                                ref lastEngineerPos,
+                                ref lastEngineerIndex,
+                                this))
+                        {
+                            // there is a gap and we have the position
+                            currentEngineerState = EngineerState.GoingToConstructPosition;
+                            base.GoTo(lastEngineerPos);
+                        }
+                        else
+                        {
+                            currentEngineerState = EngineerState.Waiting;
+                            GetComponent<NavMeshAgent>().destination = transform.position;
+                        }
                     }
                     else
-                    {
-                        currentEngineerState = EngineerState.Waiting;
-                        GetComponent<NavMeshAgent>().destination = transform.position;
-                    }
+                        base.Update();
                 }
                 else
-                    base.Update();
+                {
+                    currentEngineerState = EngineerState.None;
+                    newTGConstruct = newWConstruct = false;
+                }
                 break;
             case EngineerState.Waiting:
 
@@ -165,15 +173,23 @@ public class UnitEngineer : UnitController
                     base.Update();
                 break;
             case EngineerState.GoingToConstructPosition:
-                if (currentState == State.Idle)
+                if (currentItem != null)
                 {
-                    // when it have arrived to the conquest position
-                    Debug.Log("comenzando construccion!!!!!!!!");
-                    currentEngineerState = EngineerState.Constructing;
-                    newTGConstruct = newWConstruct = false;
+                    if (currentState == State.Idle)
+                    {
+                        // when it have arrived to the conquest position
+                        Debug.Log("comenzando construccion!!!!!!!!");
+                        currentEngineerState = EngineerState.Constructing;
+                        newTGConstruct = newWConstruct = false;
+                    }
+                    else
+                        base.Update();
                 }
                 else
-                    base.Update();
+                {
+                    currentEngineerState = EngineerState.None;
+                    newTGConstruct = newWConstruct = false;
+                }
                 break;
             case EngineerState.Repairing:
                 actualEngineerTime += Time.deltaTime;
@@ -304,7 +320,7 @@ public class UnitEngineer : UnitController
                 comp1 = destTransform.GetComponent<BoxConstruct>().gameObject;
                 comp2 = towerGoblin.transform.GetComponent<TowerGoblin>().transform.FindChild("TowerBoxConstruct").gameObject;
             }
-            else
+            else if (newTGConstruct)
             {
                 comp1 = destTransform.GetComponent<TowerGoblin>().gameObject;
                 comp2 = towerGoblin.transform.GetComponent<TowerGoblin>().gameObject;
@@ -335,7 +351,7 @@ public class UnitEngineer : UnitController
             else if (newTGConstruct)// If he is constructing a TG
             {
                 // Construct the new TowerGoblin
-                if (towerGoblin.transform.GetComponent<TowerGoblin>().StartConstruct(constructDestiny))
+                if (towerGoblin.transform.GetComponent<TowerGoblin>().StartConstruct(constructDestiny,baseController))
                 {
                     Debug.Log("vamos a construir una Torreta copon!");
                     currentItem = destTransform;
@@ -357,7 +373,7 @@ public class UnitEngineer : UnitController
                 comp1 = destTransform.GetComponent<BoxConstruct>().gameObject;
                 comp2 = warehouse.transform.GetComponent<Warehouse>().transform.FindChild("WarehouseBoxConstruct").gameObject;
             }
-            else
+            else if (newWConstruct)
             {
                 comp1 = destTransform.GetComponent<Warehouse>().gameObject;
                 comp2 = warehouse.transform.GetComponent<Warehouse>().gameObject;
@@ -389,7 +405,7 @@ public class UnitEngineer : UnitController
             else if (newWConstruct)// If he is constructing a warehouse
             {
                 // Construct the new warehouse
-                if (warehouse.transform.GetComponent<Warehouse>().StartConstruct(constructDestiny))
+                if (warehouse.transform.GetComponent<Warehouse>().StartConstruct(constructDestiny, baseController))
                 {
                     Debug.Log("vamos a construir una warehouse copon!");
                     currentItem = destTransform;

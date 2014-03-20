@@ -205,7 +205,12 @@ public class UnitHarvester : UnitController
                         newPack.transform.name = "MineralPack";
                         newPack.transform.parent = dummyMineralPack;
                         newPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));
-
+                        float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
+                            (currentMine.transform.position.z - basePosition.z));
+                        float radius = 6.0f;
+                        Vector3 resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
+                        lastBasePos.x = resourceBuilding.x - (Mathf.Sin(alpha) * radius);
+                        lastBasePos.z = resourceBuilding.z - (Mathf.Cos(alpha) * radius);
                         GoTo(lastBasePos);
                         animation.CrossFade("Walk Carga");
                     }
@@ -251,15 +256,20 @@ public class UnitHarvester : UnitController
         }
         else if ((destTransform.name == "Resources Mine") || (destTransform.name == "Metro") )
         {
+            baseController.GetArmyController().UpdateMines(destTransform);
             // actualizar la referencia de la última mina seleccionada
             currentMine = destTransform;
             // actualizar la posición de la base donde se dejarán los recursos
             float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
                 (currentMine.transform.position.z - basePosition.z));
+            float radius = 6.0f;
+            Vector3 resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
+            lastBasePos.x = resourceBuilding.x - (Mathf.Sin(alpha) * radius);
+            lastBasePos.z = resourceBuilding.z - (Mathf.Cos(alpha) * radius);
             //lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
             //lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
-            lastBasePos.x = baseController.transform.position.x + (Mathf.Cos(alpha) * baseController.GetRadious());
-            lastBasePos.z = baseController.transform.position.z + (Mathf.Sin(alpha) * baseController.GetRadious());
+            //lastBasePos.x = baseController.transform.position.x + (Mathf.Cos(alpha) * baseController.GetRadious());
+            //lastBasePos.z = baseController.transform.position.z + (Mathf.Sin(alpha) * baseController.GetRadious());
 
             /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.position = lastBasePos;
@@ -344,7 +354,7 @@ public class UnitHarvester : UnitController
         if (currentHarvestState == HarvestState.ReturningToBase)
         {
             Debug.Log("dejando la cosecha en la base...");
-            baseController.DownloadResources(resourcesLoaded);
+            baseController.IncreaseResources(resourcesLoaded);
             totalHarvest += resourcesLoaded;
             resourcesLoaded = 0;
 

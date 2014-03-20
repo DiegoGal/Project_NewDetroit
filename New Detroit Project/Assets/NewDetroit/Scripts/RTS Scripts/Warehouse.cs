@@ -10,8 +10,7 @@ public class Warehouse : CResourceBuilding
     private Vector3 destiny;
 
     public Material activeMaterial;
-    public Material canConstructMaterial;
-    public Material cantConstructMaterial;
+    public Material constructMaterial;
 
     // Conts for Tower conquest
     private float contConstr;
@@ -24,6 +23,10 @@ public class Warehouse : CResourceBuilding
     private bool constructed = false;
     private bool canConstruct = true;
 
+    private int costResources = 8;
+    // Reference to the base
+    public BaseController baseController;
+
     // Use this for initialization
     public override void Start()
     {
@@ -34,10 +37,12 @@ public class Warehouse : CResourceBuilding
         layerMask = 1 << 9;
     }
 
-    public bool StartConstruct (Vector3 destiny)
+    public bool StartConstruct(Vector3 destiny, BaseController baseController)
     {
-        if (canConstruct)
+        if (canConstruct && baseController.GetResources() >= costResources)
         {
+            this.baseController = baseController;
+            baseController.DecreaseResources(costResources);
             this.GetComponent<NavMeshObstacle>().enabled = true;
             Vector3 posN = transform.position;
             posN.y = 0;
@@ -80,19 +85,25 @@ public class Warehouse : CResourceBuilding
     public override void Update ()
     {
         base.Update();
-        if (!isActive)
+
+        if (GetComponent<CSelectable>().IsSelected() && Input.GetKey(KeyCode.Delete))
+        {
+            //TODO que ingenieros cambien de estado
+            Destroy(gameObject);
+            baseController.IncreaseResources(costResources);
+        }
+        else if (!isActive)
         {
             Light light = transform.FindChild("Light").light;
             if (canConstruct)
             {
-
                 light.color = Color.green;
-                renderer.material = canConstructMaterial;
+                renderer.material.SetColor("_AlphaColor", Color.green);
             }
             else
             {
                 light.color = Color.red;
-                renderer.material = cantConstructMaterial;
+                renderer.material.SetColor("_AlphaColor", Color.red);
             }
             myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))

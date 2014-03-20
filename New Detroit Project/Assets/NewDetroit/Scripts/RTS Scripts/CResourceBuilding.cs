@@ -18,9 +18,18 @@ public class CResourceBuilding : BuildingController
         base.Update();
 	}
 
-    public void DownloadResources(int resources)
+    public void IncreaseResources(int resources)
     {
         armyController.IncreaseResources(resources);
     }
 
+    public void DecreaseResources(int resources)
+    {
+        armyController.DecreaseResources(resources);
+    }
+
+    public int GetResources()
+    {
+        return armyController.resources;
+    }
 }
