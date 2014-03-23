@@ -79,7 +79,7 @@ public class GameManager : Photon.MonoBehaviour
 					redBase.GetComponent<CSelectable>().enabled=false;
 					redBase.GetComponent<BaseController>().enabled=false;
 					redBase.GetComponent<FogOfWarUnit>().enabled=true;
-					heroe.GetComponent<ThirdPersonController>().enabled = false;
+					heroe.GetComponent<HeroeController>().enabled = true;
 				}
 				if (selInt==1) // Instantiate SKELTERBOT
 				{
@@ -91,6 +91,7 @@ public class GameManager : Photon.MonoBehaviour
 					redBase.GetComponent<CSelectable>().enabled=false;
 					redBase.GetComponent<BaseController>().enabled=false;
 					redBase.GetComponent<FogOfWarUnit>().enabled=true;
+                    heroe.GetComponent<HeroeController>().enabled = true;
 				}
 				if (selInt==2) // Rob Army
 				{
