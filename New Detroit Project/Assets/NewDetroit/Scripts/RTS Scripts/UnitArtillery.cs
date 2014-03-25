@@ -211,7 +211,7 @@ public class UnitArtillery : UnitController
                     // Attack!
                     Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
                     // play the attack animation:
-                    animation.CrossFade("Ataque1");
+                    animation.CrossFade("Attack1");
                     animation.CrossFadeQueued("Idle01");
                     // emite some particles:
                     GameObject particles1 = (GameObject)Instantiate(shotParticles,

@@ -75,7 +75,7 @@ ModelImporter:
     7400000: Idle01
     7400002: Idle Wait
     7400004: Walk
-    7400006: Ataque1
+    7400006: Attack1
     7400008: Deployment-prepare
     7400010: Deployment-iddle
     7400012: Deployment-Shot
@@ -449,7 +449,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Ataque1
+      name: Attack1
       takeName: Take 001
       firstFrame: 155
       lastFrame: 185

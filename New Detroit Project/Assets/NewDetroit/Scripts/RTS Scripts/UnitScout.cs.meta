@@ -2,7 +2,12 @@ fileFormatVersion: 2
 guid: c126fb233e560104eb63258c94ba108f
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - baseController: {instanceID: 0}
+  - bloodParticles: {instanceID: 0}
+  - progressBarEmpty: {fileID: 2800000, guid: 8ff75535e1a07364ea0532d96f39336c, type: 3}
+  - progressBarFull: {fileID: 2800000, guid: 1b1d14c3f4fb8864e930e1cd88e3a906, type: 3}
+  - dyingMaterial: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

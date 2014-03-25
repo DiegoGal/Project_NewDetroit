@@ -18,10 +18,20 @@ public class UnitScout : UnitController
 	}
 	private ScoutState currentScoutState = ScoutState.None;
 
+    // modelo del asset de la máquina cortacesped
+    public GameObject mower;
+
+    public override void Awake ()
+    {
+        base.Awake();
+
+        mower = transform.FindChild("Mower").gameObject;
+    }
 	// Use this for initialization
 	public override void Start ()
 	{
 		base.Start();
+
 		basicAttackPower = secondaryAttackPower = attackPower;
 	}
 	
@@ -36,7 +46,7 @@ public class UnitScout : UnitController
         }
 	}
 
-	public override void OnGUI()
+	public override void OnGUI ()
 	{
 		base.OnGUI();
 		
@@ -77,5 +87,24 @@ public class UnitScout : UnitController
 			base.RightClickOnSelected(destiny, destTransform);
 		}
 	}
+
+    public override bool Damage (float damage, char type)
+    {
+        if (base.Damage(damage, type))
+        {
+            if (mower)
+                Destroy(mower);
+            // TODO: instanciar una explosión
+            return true;
+        }
+        else
+            return false;
+    }
+
+    protected override void RemoveAssetsFromModel ()
+    {
+        if (mower)
+            Destroy(mower);
+    }
 
 }

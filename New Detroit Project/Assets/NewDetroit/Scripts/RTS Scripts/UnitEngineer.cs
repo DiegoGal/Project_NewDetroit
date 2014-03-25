@@ -42,6 +42,9 @@ public class UnitEngineer : UnitController
     private GameObject towerGoblin;
     private GameObject warehouse;
 
+    public GameObject laptopPrefab;
+    public GameObject hamerPrefab;
+
     private bool newTGConstruct = false;
     private bool newWConstruct = false;
     private Vector3 constructDestiny = new Vector3();

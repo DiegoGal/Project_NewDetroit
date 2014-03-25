@@ -86,7 +86,7 @@ ModelImporter:
     7400004: Idle Carga
     7400006: Walk
     7400008: Walk Carga
-    7400010: Ataque
+    7400010: Attack1
     7400012: Heal
     7400014: Picar
     7400016: Die
@@ -709,7 +709,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Ataque
+      name: Attack1
       takeName: Take 001
       firstFrame: 209
       lastFrame: 239
