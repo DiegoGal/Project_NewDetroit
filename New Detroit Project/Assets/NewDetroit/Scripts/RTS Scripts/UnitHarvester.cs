@@ -104,14 +104,14 @@ public class UnitHarvester : UnitController
         if (Random.value <= 0.5f)
             helmet = (GameObject)Instantiate
             (
-                Resources.Load("GoblinHarvesterHelmet"),
+                Resources.Load("Goblin Army/GoblinHarvesterHelmet"),
                 dummyHead.transform.position,
                 dummyHead.transform.rotation
             );
         else
             helmet = (GameObject)Instantiate
             (
-                Resources.Load("GoblinHarvesterCone"),
+                Resources.Load("Goblin Army/GoblinHarvesterCone"),
                 dummyHead.transform.position,
                 dummyHead.transform.rotation
             );
@@ -122,7 +122,7 @@ public class UnitHarvester : UnitController
         {
             backpack = (GameObject)Instantiate
             (
-                Resources.Load("GoblinHarvesterBackpack"),
+                Resources.Load("Goblin Army/GoblinHarvesterBackpack"),
                 dummyBackPack.transform.position,
                 new Quaternion()
             );
@@ -131,13 +131,13 @@ public class UnitHarvester : UnitController
         // instanciamos unas gafas
         glasses = (GameObject)Instantiate
         (
-            Resources.Load("GoblinHarvesterGlasses"),
+            Resources.Load("Goblin Army/GoblinHarvesterGlasses"),
             dummyGlasses.transform.position,
             new Quaternion()
             //dummyGlasses.transform.rotation
         );
         glasses.transform.parent = dummyGlasses;
-        glasses.transform.Rotate(new Vector3(180.0f, 0.0f, 0.0f));
+        //glasses.transform.Rotate(new Vector3(180.0f, 0.0f, 0.0f));
 
         /*GameObject newPack = Instantiate
         (
@@ -320,17 +320,13 @@ public class UnitHarvester : UnitController
             baseController.GetArmyController().UpdateMines(destTransform);
             // actualizar la referencia de la última mina seleccionada
             currentMine = destTransform;
-            // actualizar la posición de la base donde se dejarán los recursos
-            float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
-                (currentMine.transform.position.z - basePosition.z));
-            float radius = 6.0f;
+            // actualizar la posición de la base o del almacén donde se dejarán los recursos
+            float radius = 7.0f;
             Vector3 resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
-            lastBasePos.x = resourceBuilding.x - (Mathf.Sin(alpha) * radius);
-            lastBasePos.z = resourceBuilding.z - (Mathf.Cos(alpha) * radius);
-            //lastBasePos.x = basePosition.x - (Mathf.Sin(alpha) * radius);
-            //lastBasePos.z = basePosition.z - (Mathf.Cos(alpha) * radius);
-            //lastBasePos.x = baseController.transform.position.x + (Mathf.Cos(alpha) * baseController.GetRadious());
-            //lastBasePos.z = baseController.transform.position.z + (Mathf.Sin(alpha) * baseController.GetRadious());
+            float alpha = Mathf.Atan((currentMine.transform.position.x - resourceBuilding.x) /
+                (currentMine.transform.position.z - resourceBuilding.z));            
+            lastBasePos.x = resourceBuilding.x - (Mathf.Cos(alpha) * radius);
+            lastBasePos.z = resourceBuilding.z - (Mathf.Sin(alpha) * radius);
 
             /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.position = lastBasePos;
