@@ -7,6 +7,7 @@ public class CameraRTSController : MonoBehaviour
     private Vector3 initRotation;
 
     public float scrollSpeed = 15.0f;
+    private float scrollSpeedMult;
     public float scrollEdge = 0.01f;
 
     public float panSpeed = 10.0f;
@@ -27,12 +28,18 @@ public class CameraRTSController : MonoBehaviour
         initPosition = transform.position;
         initRotation = transform.eulerAngles;
 
+        scrollSpeedMult = scrollSpeed;
+
         newPos = initPosition;
 	}
 
     // This function is called every fixed framerate frame
     void LateUpdate ()
     {
+        if (Input.GetKey(KeyCode.LeftShift))
+            scrollSpeedMult = scrollSpeed * 2.0f;
+        else
+            scrollSpeedMult = scrollSpeed;
         // move te camera at the same altitude
         // pan with the wheel button of the mouse preshed:
         if (Input.GetMouseButton(2))
@@ -56,26 +63,26 @@ public class CameraRTSController : MonoBehaviour
                  Input.GetKey(KeyCode.W) /*||
                 (Input.mousePosition.y >= Screen.height * (1 - scrollEdge))*/ )
             {
-                transform.Translate(Vector3.forward * scrollSpeed * Time.deltaTime, Space.World);
+                transform.Translate(Vector3.forward * scrollSpeedMult * Time.deltaTime, Space.World);
             }
             else if (Input.GetKey(KeyCode.DownArrow) ||
                  Input.GetKey(KeyCode.S) /*||
                 (Input.mousePosition.y <= Screen.height * scrollEdge)*/ )
             {
-                transform.Translate(Vector3.forward * -scrollSpeed * Time.deltaTime, Space.World);
+                transform.Translate(Vector3.forward * -scrollSpeedMult * Time.deltaTime, Space.World);
             }
 
             if (Input.GetKey(KeyCode.RightArrow) ||
                  Input.GetKey(KeyCode.D) /*||
                 (Input.mousePosition.x >= Screen.width * (1 - scrollEdge))*/ )
             {
-                transform.Translate(Vector3.right * scrollSpeed * Time.deltaTime, Space.World);
+                transform.Translate(Vector3.right * scrollSpeedMult * Time.deltaTime, Space.World);
             }
             else if (Input.GetKey(KeyCode.LeftArrow) ||
                  Input.GetKey(KeyCode.A) /*||
                 (Input.mousePosition.x <= Screen.width * scrollEdge)*/ )
             {
-                transform.Translate(Vector3.right * -scrollSpeed * Time.deltaTime, Space.World);
+                transform.Translate(Vector3.right * -scrollSpeedMult * Time.deltaTime, Space.World);
             }
         }
 

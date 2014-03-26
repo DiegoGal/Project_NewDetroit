@@ -223,12 +223,14 @@ public class UnitHarvester : UnitController
                         newPack.transform.name = "MineralPack";
                         newPack.transform.parent = dummyMineralPack;
                         newPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));
-                        float alpha = Mathf.Atan((currentMine.transform.position.x - basePosition.x) /
-                            (currentMine.transform.position.z - basePosition.z));
-                        float radius = 6.0f;
-                        Vector3 resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
-                        lastBasePos.x = resourceBuilding.x - (Mathf.Sin(alpha) * radius);
-                        lastBasePos.z = resourceBuilding.z - (Mathf.Cos(alpha) * radius);
+
+                        CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
+                        float radious = resourceBuilding.GetRadious();
+                        float alpha = Mathf.Atan2((currentMine.transform.position.z - resourceBuilding.transform.position.z),
+                           (currentMine.transform.position.x - resourceBuilding.transform.position.x));
+                        lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radious);
+                        lastBasePos.z = resourceBuilding.transform.position.z + (Mathf.Sin(alpha) * radious);
+
                         GoTo(lastBasePos);
                         animation.CrossFade("Walk Carga");
                     }
@@ -321,17 +323,17 @@ public class UnitHarvester : UnitController
             // actualizar la referencia de la última mina seleccionada
             currentMine = destTransform;
             // actualizar la posición de la base o del almacén donde se dejarán los recursos
-            float radius = 7.0f;
-            Vector3 resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
-            float alpha = Mathf.Atan((currentMine.transform.position.x - resourceBuilding.x) /
-                (currentMine.transform.position.z - resourceBuilding.z));            
-            lastBasePos.x = resourceBuilding.x - (Mathf.Cos(alpha) * radius);
-            lastBasePos.z = resourceBuilding.z - (Mathf.Sin(alpha) * radius);
+            CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
+            float radius = resourceBuilding.GetRadious();
+            float alpha = Mathf.Atan2((currentMine.transform.position.z - resourceBuilding.transform.position.z),
+                (currentMine.transform.position.x - resourceBuilding.transform.position.x));
+            lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radius);
+            lastBasePos.z = resourceBuilding.transform.position.z + (Mathf.Sin(alpha) * radius);
 
-            /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.position = lastBasePos;
             cube.renderer.material.color = Color.red;
-            cube.transform.parent = baseController.transform;*/
+            cube.transform.parent = baseController.transform;
 
             Debug.Log("vamos pa la mina!");
             if (currentHarvestState == HarvestState.None)

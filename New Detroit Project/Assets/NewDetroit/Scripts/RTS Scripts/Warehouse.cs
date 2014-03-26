@@ -27,10 +27,14 @@ public class Warehouse : CResourceBuilding
     // Reference to the base
     public BaseController baseController;
 
+    public float warehouseRadius = 12.0f;
+
     // Use this for initialization
     public override void Start()
     {
         base.Start();
+
+        radious = warehouseRadius;
         myHit = new RaycastHit();
         // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
         // Bit shift the index of the layer (9) to get a bit mask

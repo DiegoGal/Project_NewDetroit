@@ -912,9 +912,14 @@ public class ArmyController : MonoBehaviour
     }
 
     // returns the position of the closest warehose to the Mine given
-    public Vector3 GetResourceBuilding (CResources mine)
+    public Vector3 GetResourceBuildingPosition (CResources mine)
     {
         return FindResourceBuilding(mine).transform.position;
+    }
+
+    public CResourceBuilding GetResourceBuilding (CResources mine)
+    {
+        return FindResourceBuilding(mine);
     }
 
 } // class ArmyController
