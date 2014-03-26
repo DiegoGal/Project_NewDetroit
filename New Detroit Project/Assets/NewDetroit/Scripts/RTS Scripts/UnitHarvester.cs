@@ -23,8 +23,9 @@ public class UnitHarvester : UnitController
 
 	// referencia al pack de minerales
 	public GameObject mineralPack;
+    private GameObject actualMineralPack;
 
-    // dummy donde se instanciará el pack de minerales
+    // dummys donde se instanciará el pack de minerales y otros objetos
     public Transform dummyMineralPack;
     public Transform dummyHand;
     public Transform dummyGlasses;
@@ -166,7 +167,8 @@ public class UnitHarvester : UnitController
                     if ( currentMine.GetComponent<CResources>().GetHarvestPosition(
                             ref lastHarvestPos,
                             ref lastHarvestIndex,
-                            this) )
+                            this)
+                        )
                     {
                         // hay hueco y tenemos la posicion
                         currentHarvestState = HarvestState.GoingToChopPosition;
@@ -176,9 +178,8 @@ public class UnitHarvester : UnitController
                     {
                         currentHarvestState = HarvestState.Waiting;
                         GetComponent<NavMeshAgent>().destination = transform.position;
-                        animation.CrossFade("Idle Wait");
+                        //animation.CrossFade("Idle Wait");
                         animation.CrossFadeQueued("Idle01");
-                        //animation.PlayQueued("Iddle01");
                     }
                 }
                 else
@@ -213,16 +214,16 @@ public class UnitHarvester : UnitController
 					    nextHarvestState = HarvestState.GoingToMine;
 
 						// intanciamos un pack de minerales encima de la unidad
-                        Debug.Log("Dummy position: " + dummyMineralPack.transform.position);
-                        GameObject newPack = Instantiate
+                        //Debug.Log("Dummy position: " + dummyMineralPack.transform.position);
+                        actualMineralPack = Instantiate
                         (
                             mineralPack,
                             dummyMineralPack.transform.position,
                             new Quaternion()
                         ) as GameObject;
-                        newPack.transform.name = "MineralPack";
-                        newPack.transform.parent = dummyMineralPack;
-                        newPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));
+                        actualMineralPack.transform.name = "MineralPack";
+                        actualMineralPack.transform.parent = dummyMineralPack;
+                        actualMineralPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));
 
                         CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
                         float radious = resourceBuilding.GetRadious();
@@ -232,7 +233,6 @@ public class UnitHarvester : UnitController
                         lastBasePos.z = resourceBuilding.transform.position.z + (Mathf.Sin(alpha) * radious);
 
                         GoTo(lastBasePos);
-                        animation.CrossFade("Walk Carga");
                     }
                     actualHarvestTime = 0;
                 }
@@ -330,10 +330,10 @@ public class UnitHarvester : UnitController
             lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radius);
             lastBasePos.z = resourceBuilding.transform.position.z + (Mathf.Sin(alpha) * radius);
 
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.position = lastBasePos;
             cube.renderer.material.color = Color.red;
-            cube.transform.parent = baseController.transform;
+            cube.transform.parent = baseController.transform;*/
 
             Debug.Log("vamos pa la mina!");
             if (currentHarvestState == HarvestState.None)
@@ -418,19 +418,41 @@ public class UnitHarvester : UnitController
             resourcesLoaded = 0;
 
 			// eliminamos el pack de minerales
-            Transform pack = dummyMineralPack.transform.FindChild("MineralPack");
-            if (pack != null)
-                GameObject.Destroy(pack.gameObject);
+            if (actualMineralPack)
+            {
+                Destroy(actualMineralPack);
+                actualMineralPack = null;
+            }
 
-			if (nextHarvestState == HarvestState.GoingToMine)
+            if (nextHarvestState == HarvestState.GoingToMine)
             {
                 // si estaba cosechando, volvemos a la mina
-                Debug.Log("volvemos a la mina");;
+                Debug.Log("volvemos a la mina");
                 currentHarvestState = HarvestState.GoingToMine;
                 GoTo(currentMine.position);
-				nextHarvestState = HarvestState.Choping;
+                nextHarvestState = HarvestState.Choping;
             }
+            else
+                PlayAnimationCrossFade("Idle01");
         }
+    }
+
+    protected override void PlayAnimationCrossFade (string animationName)
+    {
+        // si la unidad esta cargada de minerales cambian algunas animaciones
+        if (actualMineralPack)
+        {
+            if (animationName == "Walk")
+                animation.CrossFade("Walk Loaded");
+            else if (animationName == "Idle01")
+                animation.CrossFade("Idle Loaded");
+            else if (animationName == "Idle Wait")
+                animation.CrossFade("Idle01");
+            else
+                base.PlayAnimationCrossFade(animationName);
+        }
+        else
+            base.PlayAnimationCrossFade(animationName);
     }
 
     protected override void RemoveAssetsFromModel ()
@@ -441,6 +463,8 @@ public class UnitHarvester : UnitController
             Destroy(backpack);
         if (glasses)
             Destroy(glasses);
+        if (actualMineralPack)
+            Destroy(actualMineralPack);
     }
 
 } // class UnitHarvester

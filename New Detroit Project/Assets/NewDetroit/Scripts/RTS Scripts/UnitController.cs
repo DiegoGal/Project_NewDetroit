@@ -38,11 +38,17 @@ public class UnitController : ControllableCharacter
     // indicates if the CSelectable component of the unit is marked selected
     public bool isSelected = false;
 
+    // indicates the time remaining until the next waiting animation
+    private float timeToNextWaitAnimation;
+
     // a special material for when the unit has died
     public Material dyingMaterial;
 
     private float timeFallingWhenDying = 1.6f;
     private float ascendingAceleration = 1.045f;
+
+    // Cool Down for detecting less time the collision with particles
+    private float CDParticleCollision;
 
     public virtual void Awake ()
     {
@@ -54,43 +60,21 @@ public class UnitController : ControllableCharacter
     {
         base.Start();
 
+        timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
+
         currentLife = maximunLife;
         GetComponent<NavMeshAgent>().speed = velocity;
 
         if (destiny == Vector3.zero)
         {
             destiny = transform.position;
-            animation.Play("Idle01");
+            PlayAnimation("Idle01");
         }
         else
         {
             currentState = State.GoingTo;
-            animation.Play("Walk");
+            PlayAnimation("Walk");
         }
-    }
-
-    // Cool Down for detecting less time the collision with particles
-    private float CDParticleCollision;
-    //This is for the particles that collides with the orc
-    void OnParticleCollision(GameObject other)
-    {
-
-        // get the particle system
-        ParticleSystem particleSystem;
-        particleSystem = other.GetComponent<ParticleSystem>();
-        //If the particle is a Moco    
-        if (particleSystem.tag == "Moco")
-        {
-            if (CDParticleCollision > 0)
-                CDParticleCollision -= Time.deltaTime;
-            else
-            {
-                Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
-                CDParticleCollision = 0.1f; // 5 deltatime aprox
-            }
-        }
-
-
     }
 
     // Update is called once per frame
@@ -120,7 +104,7 @@ public class UnitController : ControllableCharacter
                 else
                 {
                     currentState = State.Idle;
-                    animation.CrossFade("Idle01");
+                    PlayAnimationCrossFade("Idle01");
                 }
                 break;
             case State.Dying:
@@ -181,7 +165,7 @@ public class UnitController : ControllableCharacter
         GetComponent<NavMeshAgent>().destination = destiny;
         currentState = State.GoingTo;
 
-        animation.CrossFade("Walk");
+        PlayAnimationCrossFade("Walk");
     }
 
     protected void StopMoving ()
@@ -190,7 +174,7 @@ public class UnitController : ControllableCharacter
         GetComponent<NavMeshAgent>().destination = destiny;
         currentState = State.Idle;
 
-        animation.CrossFade("Idle01");
+        PlayAnimationCrossFade("Idle01");
     }
 
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
@@ -222,7 +206,7 @@ public class UnitController : ControllableCharacter
             if (dyingMaterial)
                 model.renderer.material = dyingMaterial;
             // play the dead animation
-            animation.CrossFade("Die");
+            PlayAnimationCrossFade("Die");
             // and comunicate it to the army manager
             baseController.armyController.UnitDied(this.gameObject);
 
@@ -237,6 +221,45 @@ public class UnitController : ControllableCharacter
 
     protected virtual void RemoveAssetsFromModel ()
     {
+    }
+
+    protected virtual void PlayAnimation (string animationName)
+    {
+        animation.Play(animationName);
+    }
+
+    protected virtual void PlayAnimationQueued (string animationName)
+    {
+        animation.PlayQueued(animationName);
+    }
+
+    protected virtual void PlayAnimationCrossFade (string animationName)
+    {
+        animation.CrossFade(animationName);
+    }
+
+    protected virtual void PlayAnimationCrossFadeQueued (string animationName)
+    {
+        animation.CrossFadeQueued(animationName);
+    }
+
+    //This is for the particles that collides with the orc
+    void OnParticleCollision(GameObject other)
+    {
+        // get the particle system
+        ParticleSystem particleSystem;
+        particleSystem = other.GetComponent<ParticleSystem>();
+        //If the particle is a Moco    
+        if (particleSystem.tag == "Moco")
+        {
+            if (CDParticleCollision > 0)
+                CDParticleCollision -= Time.deltaTime;
+            else
+            {
+                Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
+                CDParticleCollision = 0.1f; // 5 deltatime aprox
+            }
+        }
     }
 
 }

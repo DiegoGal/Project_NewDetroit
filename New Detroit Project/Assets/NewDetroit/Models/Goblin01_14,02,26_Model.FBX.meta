@@ -83,9 +83,9 @@ ModelImporter:
     4300000: Goblin_01
     7400000: Idle01
     7400002: Idle Wait
-    7400004: Idle Carga
+    7400004: Idle Loaded
     7400006: Walk
-    7400008: Walk Carga
+    7400008: Walk Loaded
     7400010: Attack1
     7400012: Heal
     7400014: Picar
@@ -349,7 +349,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Idle Carga
+      name: Idle Loaded
       takeName: Take 001
       firstFrame: 104
       lastFrame: 155
@@ -589,7 +589,7 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: Walk Carga
+      name: Walk Loaded
       takeName: Take 001
       firstFrame: 182
       lastFrame: 208
