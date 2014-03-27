@@ -49,6 +49,26 @@ public class UnitEngineer : UnitController
     private bool newWConstruct = false;
     private Vector3 constructDestiny = new Vector3();
 
+    // dummy where is going to be instanciated a laptop
+    public Transform dummyLaptop;
+    public Transform dummyHand;
+
+    // reference to the laptop
+    public GameObject laptop;
+    public GameObject hammer;
+
+    public override void Awake()
+    {
+        base.Awake();
+
+        // Por si no se han establecido las referencias a los dummys del modelo
+        // en el editor de Unity las buscamos ahora:
+        if (dummyLaptop == null)
+            dummyLaptop = transform.FindChild("Bip001/Bip001 Footsteps");
+        if (dummyHand == null)
+            dummyHand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Mano Der");
+    }
+
     public override void Start ()
     {
         base.Start();
@@ -149,10 +169,12 @@ public class UnitEngineer : UnitController
                 else
                 {
                     currentEngineerState = EngineerState.None;
+                    animation.Play("Idle01");
                     newTGConstruct = newWConstruct = false;
                 }
                 break;
             case EngineerState.Waiting:
+                animation.Play("Idle Wait");
 
                 break;
             case EngineerState.GoingToRepairPosition:
@@ -171,6 +193,19 @@ public class UnitEngineer : UnitController
                     // when it have arrived to the conquest position
                     Debug.Log("comenzando conquista!!!!!!!!");
                     currentEngineerState = EngineerState.Conquering;
+
+                    // intanciamos un laptop
+                    Debug.Log("Dummy position: " + dummyLaptop.transform.position);
+                    Debug.Log("Engineer position: " + transform.position);
+                    GameObject newLaptop = Instantiate
+                    (
+                        laptop,
+                        dummyLaptop.transform.position,
+                        new Quaternion()
+                    ) as GameObject;
+                    newLaptop.transform.name = "Laptop";
+                    newLaptop.transform.parent = dummyLaptop;
+                    newLaptop.transform.rotation = transform.rotation;
                 }
                 else
                     base.Update();
@@ -191,10 +226,12 @@ public class UnitEngineer : UnitController
                 else
                 {
                     currentEngineerState = EngineerState.None;
+                    animation.Play("Idle01");
                     newTGConstruct = newWConstruct = false;
                 }
                 break;
             case EngineerState.Repairing:
+                animation.Play("Build");
                 actualEngineerTime += Time.deltaTime;
                 bool repaired = false;
                 if (actualEngineerTime >= engineerTime)
@@ -205,11 +242,13 @@ public class UnitEngineer : UnitController
                     {
                         Debug.Log("Torre Reparada");
                         currentEngineerState = EngineerState.None;
+                        animation.Play("Idle01");
                     }
                     actualEngineerTime = 0;
                 }
                 break;
             case EngineerState.Conquering:
+                animation.Play("Capture");
                 actualEngineerTime += Time.deltaTime;
                 bool conquest = false;
                 if (actualEngineerTime >= engineerTime)
@@ -220,11 +259,18 @@ public class UnitEngineer : UnitController
                     {
                         Debug.Log("Torre Conquistada!");
                         currentEngineerState = EngineerState.None;
+                        animation.Play("Idle01");
+
+                        // We destroy the Laptop
+                        Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
+                        if (laptop1 != null)
+                            GameObject.Destroy(laptop1.gameObject);
                     }
                     actualEngineerTime = 0;
                 }
                 break;
             case EngineerState.Constructing:
+                animation.Play("Build");
                 actualEngineerTime += Time.deltaTime;
                 bool construct = false;
                 if (currentItem.GetComponent<TowerGoblin>() != null)
@@ -238,6 +284,7 @@ public class UnitEngineer : UnitController
                             Debug.Log("Torre construida!");
                             currentEngineerState = EngineerState.None;
                             currentItem.GetComponent<TowerGoblin>().SetActiveMaterial();
+                            animation.Play("Idle01");
                         }
                         actualEngineerTime = 0;
                     }
@@ -253,6 +300,7 @@ public class UnitEngineer : UnitController
                             Debug.Log("Almacen construido!");
                             currentEngineerState = EngineerState.None;
                             currentItem.GetComponent<Warehouse>().SetActiveMaterial();
+                            animation.Play("Idle01");
 
                             baseController.GetArmyController().AddWarehouse(currentItem.GetComponent<CResourceBuilding>());
                         }
@@ -288,6 +336,11 @@ public class UnitEngineer : UnitController
         {
             newTGConstruct = newWConstruct = false;
             currentEngineerState = EngineerState.None;
+            // We destroy the Laptop
+            Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
+            if (laptop1 != null)
+                GameObject.Destroy(laptop1.gameObject);
+
             base.RightClickOnSelected(destiny, destTransform);
         }
         else if (destTransform.name == "TowerNeutral")// If he has to go to a TowerNeutral
@@ -449,7 +502,6 @@ public class UnitEngineer : UnitController
 
     public void StartRepairing ()
     {
-        // cuando llegue a la mina pasar el estado a Choping
         if (currentEngineerState == EngineerState.GoingToRepairItem)
         {
             Debug.Log("comenzando la reparacion...");
@@ -459,7 +511,6 @@ public class UnitEngineer : UnitController
 
 	public void StartConquering ()
 	{
-        // cuando llegue a la mina pasar el estado a Choping
         if (currentEngineerState == EngineerState.GoingToConquerableItem)
         {
             Debug.Log("comenzando la conquista...");
