@@ -16,6 +16,7 @@ public class UnitController : ControllableCharacter
     {
         Idle,	// reposo
         GoingTo,
+        GoingToAnEnemy,
         Attacking,
         Dying, // the unit is falling death
         AscendingToHeaven
@@ -40,6 +41,10 @@ public class UnitController : ControllableCharacter
 
     // indicates the time remaining until the next waiting animation
     private float timeToNextWaitAnimation;
+
+    // frecuencia (en segundos) de ataque
+    public float attackCadence = 1.0f;
+    protected float attackCadenceAux = 0.0f;
 
     // a special material for when the unit has died
     public Material dyingMaterial;
@@ -84,17 +89,26 @@ public class UnitController : ControllableCharacter
         {
             case State.Idle:              UpdateIdle();              break;
             case State.GoingTo:           UpdateGoingTo();           break;
+            case State.GoingToAnEnemy:    UpdateGoingToAnEnemy();    break;
+            case State.Attacking:         UpdateAttacking();         break;
             case State.Dying:             UpdateDying();             break;
             case State.AscendingToHeaven: UpdateAscendingToHeaven(); break;
         }
     }
 
-    public virtual void UpdateIdle ()
+    protected virtual void UpdateIdle ()
     {
-
+        // plays the waiting idle animation
+        timeToNextWaitAnimation -= Time.deltaTime;
+        if (timeToNextWaitAnimation <= 0)
+        {
+            PlayAnimationCrossFade("Idle Wait");
+            PlayAnimationCrossFadeQueued("Idle01");
+            timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
+        }
     }
 
-    public virtual void UpdateGoingTo ()
+    protected virtual void UpdateGoingTo ()
     {
         //Vector3 direction = destiny - transform.position;
         Vector3 direction = destiny - transform.position;
@@ -118,7 +132,17 @@ public class UnitController : ControllableCharacter
         }
     }
 
-    public void UpdateDying ()
+    protected virtual void UpdateGoingToAnEnemy ()
+    {
+
+    }
+
+    protected virtual void UpdateAttacking ()
+    {
+
+    }
+
+    private void UpdateDying ()
     {
         timeFallingWhenDying -= Time.deltaTime;
         if (timeFallingWhenDying <= 0.0f)
@@ -130,7 +154,7 @@ public class UnitController : ControllableCharacter
         }
     }
 
-    public void UpdateAscendingToHeaven ()
+    private void UpdateAscendingToHeaven ()
     {
         // elevate the model
         transform.position = new Vector3

@@ -4,18 +4,6 @@ using System.Collections;
 public class CTriggerVisionSphere : MonoBehaviour
 {
 
-    // Use this for initialization
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     void OnTriggerEnter (Collider other)
     {
 		ControllableCharacter unit = other.transform.GetComponent<ControllableCharacter>();
@@ -41,4 +29,5 @@ public class CTriggerVisionSphere : MonoBehaviour
             }
         }
     }
+
 }

@@ -30,7 +30,7 @@ public class Tower : BuildingController
     protected List<ControllableCharacter> enemiesInside = new List<ControllableCharacter>();
 
 	// Use this for initialization
-    public override void Start() 
+    public override void Start () 
     {
         base.Start();
         visionSphereRadious = transform.FindChild("TowerVisionSphere").GetComponent<SphereCollider>().radius;
@@ -50,16 +50,16 @@ public class Tower : BuildingController
         if (enemiesInside.Count == 0)
         {
             enemiesInside.Add(enemy);
-            Debug.Log("First Enemy entered in TOWER");
+            //Debug.Log("First Enemy entered in TOWER");
         }
         else
             if (!enemiesInside.Contains(enemy))
             {
                 enemiesInside.Add(enemy);
-                Debug.Log("New Enemy entered in TOWER");
+                //Debug.Log("New Enemy entered in TOWER");
             }
-            else
-                Debug.Log("Enemy already entered in TOWER");
+            //else
+                //Debug.Log("Enemy already entered in TOWER");
     }
 
     // EnemyEntersInVisionSphere is called by the visions spheres

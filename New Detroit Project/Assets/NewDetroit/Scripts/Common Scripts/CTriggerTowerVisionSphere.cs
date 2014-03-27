@@ -18,7 +18,7 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 		ControllableCharacter unit = other.transform.GetComponent<ControllableCharacter>();
 		if (unit != null)
 		{
-            Debug.Log("Entra uno!");
+            //Debug.Log("Entra uno!");
 			Tower selfUnit = transform.parent.GetComponent<Tower>();
 			if ( (selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber) )
 			{

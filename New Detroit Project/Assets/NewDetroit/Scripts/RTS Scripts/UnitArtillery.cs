@@ -55,7 +55,6 @@ public class UnitArtillery : UnitController
     public float primaryAttackCadence = 1.0f;
     // frecuencia (en segundos) de ataque secundario
     public float secondaryAttackCadence = 1.0f;
-    private float attackCadenceAux = 0.0f;
 
     public override void Awake ()
     {
@@ -71,7 +70,7 @@ public class UnitArtillery : UnitController
     }
 
 	// Update is called once per frame
-    public override void Update ()
+    /*public override void Update ()
     {
         base.Update();
 
@@ -137,23 +136,175 @@ public class UnitArtillery : UnitController
 
         } // switch (moveMode)
 
-	} // Update
+	} // Update*/
 
-    public override void OnGUI ()
+    protected override void UpdateIdle ()
     {
-        base.OnGUI();
+        switch (currentArtilleryState)
+        {
+            case ArtilleryState.None:
+                base.UpdateIdle();
+                break;
 
-        GUI.skin.label.fontSize = 10;
+            case ArtilleryState.Alert:
 
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
-            currentState.ToString());
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
-            moveMode.ToString());
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
-            currentArtilleryState.ToString());
-    } // OnGUI
+                if (alertHitTimerAux <= 0)
+                {
+                    // launch a ray for each enemy inside the vision sphere
+                    int count = enemiesInside.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
 
-    private void UpdateModeIdle ()
+                        Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
+                        fwd.Normalize();
+                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
+                        Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
+                        RaycastHit myHit;
+                        if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, 100))
+                        {
+                            //Debug.Log(myHit.transform.name);
+                            // the ray has hit something
+                            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
+                            if ((enemy != null) && (enemy = enemiesInside[i]))
+                            {
+                                // this "something" is the enemy we are looking for...
+                                //Debug.Log("LE HE DADO!!!");
+                                // rotate the unit in the enemy direction
+                                transform.LookAt(enemy.transform.position);
+                                lastEnemyAttacked = enemy;
+                                alertHitTimerAux = alertHitTimer;
+                                currentArtilleryState = ArtilleryState.Attacking1;
+                                // the enemy stops moving
+                                StopMoving();
+                            }
+                        }
+                    }
+                    // reset the timer
+                    alertHitTimerAux = alertHitTimer;
+                }
+                else
+                    alertHitTimerAux -= Time.deltaTime;
+
+                break;
+
+            case ArtilleryState.Attacking1:
+
+                if (lastEnemyAttacked == null)
+                    currentArtilleryState = ArtilleryState.None;
+                else if (attackCadenceAux <= 0.0f)
+                {
+                    // Attack!
+                    Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
+                    // play the attack animation:
+                    animation.CrossFade("Attack1");
+                    animation.CrossFadeQueued("Idle01");
+                    // emite some particles:
+                    GameObject particles1 = (GameObject)Instantiate(shotParticles,
+                        dummyLeftWeaponGunBarrel.transform.position,
+                        transform.rotation);
+                    Destroy(particles1, 0.4f);
+                    if (dummyRightWeaponGunBarrel != null)
+                    {
+                        GameObject particles2 = (GameObject)Instantiate(shotParticles,
+                            dummyRightWeaponGunBarrel.transform.position,
+                            transform.rotation);
+                        Destroy(particles2, 0.4f);
+                    }
+                    // first we check if the enemy is now alive
+                    if (lastEnemyAttacked.Damage(basicAttackPower, 'P'))
+                    {
+                        // the enemy died, time to reset the lastEnemyAttacked reference
+                        enemiesInside.Remove(lastEnemyAttacked);
+                        if (enemiesInside.Count == 0)
+                        {
+                            lastEnemyAttacked = null;
+                            // no more enemies, change the state
+                            currentArtilleryState = ArtilleryState.None;
+                        }
+                        else
+                        {
+                            currentArtilleryState = ArtilleryState.Alert;
+                        }
+                    }
+                    // reset the timer
+                    attackCadenceAux = primaryAttackCadence;
+                }
+                else
+                    attackCadenceAux -= Time.deltaTime;
+
+                break;
+
+            case ArtilleryState.Attacking2:
+
+                if (attackCadenceAux <= 0.0f)
+                {
+
+                }
+                else
+                    attackCadenceAux = secondaryAttackCadence;
+
+                break;
+
+            case ArtilleryState.Chasing:
+
+                break;
+
+        } // switch (currentArtilleryState)
+    }
+
+    protected override void UpdateGoingTo ()
+    {
+        base.UpdateGoingTo();
+
+        switch (moveMode)
+        {
+            case MoveMode.MovingToAnEnemy:
+                // si el estado ha pasado a Alert y el enemigo seleccionado
+                // ha entrada en la burbuja
+                if (
+                     (currentArtilleryState == ArtilleryState.Alert) &&
+                     (enemiesInside.Contains(enemySelected))
+                   )
+                {
+                    if (alertHitTimerAux <= 0)
+                    {
+                        // launch a ray for the enemy searched
+                        Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.3f);
+                        Vector3 fwd = enemySelected.transform.position - this.transform.position;
+                        fwd.Normalize();
+                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
+                        Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
+                        RaycastHit myHit;
+                        if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, 100))
+                        {
+                            //Debug.Log(myHit.transform.name);
+                            // the ray has hit something
+                            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
+                            if (enemy = enemySelected)
+                            {
+                                // this "something" is the enemy we are looking for...
+                                //Debug.Log("LE HE DADO!!!");
+                                transform.LookAt(enemy.transform.position);
+                                lastEnemyAttacked = enemy;
+                                alertHitTimerAux = alertHitTimer;
+                                currentArtilleryState = ArtilleryState.Attacking1;
+                                // the enemy stops moving
+                                StopMoving(); // this also sets the currentState to Idle
+                                moveMode = MoveMode.Idle;
+                            }
+                        }
+                        // reset the timer
+                        alertHitTimerAux = alertHitTimer;
+                    }
+                    else
+                        alertHitTimerAux -= Time.deltaTime;
+                }
+                break;
+        }
+    }
+
+    /*private void UpdateModeIdle ()
     {
         switch (currentArtilleryState)
         {
@@ -267,7 +418,21 @@ public class UnitArtillery : UnitController
 
         } // switch (currentArtilleryState)
 
-    } // UpdateModeIdle
+    } // UpdateModeIdle*/
+
+    public override void OnGUI()
+    {
+        base.OnGUI();
+
+        GUI.skin.label.fontSize = 10;
+
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
+            currentState.ToString());
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
+            moveMode.ToString());
+        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
+            currentArtilleryState.ToString());
+    } // OnGUI
 
 	public void EnemyEntersInVisionSphere (ControllableCharacter enemy)
     {

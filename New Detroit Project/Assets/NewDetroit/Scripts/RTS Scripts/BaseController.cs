@@ -183,10 +183,10 @@ public class BaseController : CResourceBuilding
                     break;
             }
             // set the texture of the unit
-            if (newUnit && teamColor != 0)
+            /*if (newUnit && teamColor != 0)
             {
                 newUnit.GetComponent<CSelectable>().SetOutlineColor(new Color(0.0f, 0.7843f, 1.0f));
-            }
+            }*/
         }
 
 		newUnit.GetComponent<UnitController>().SetArmyBase(this);

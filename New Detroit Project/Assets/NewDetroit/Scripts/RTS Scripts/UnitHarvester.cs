@@ -455,6 +455,24 @@ public class UnitHarvester : UnitController
             base.PlayAnimationCrossFade(animationName);
     }
 
+    protected override void PlayAnimationCrossFadeQueued (string animationName)
+    {
+        // si la unidad esta cargada de minerales cambian algunas animaciones
+        if (actualMineralPack)
+        {
+            if (animationName == "Walk")
+                animation.CrossFadeQueued("Walk Loaded");
+            else if (animationName == "Idle01")
+                animation.CrossFadeQueued("Idle Loaded");
+            else if (animationName == "Idle Wait")
+                animation.CrossFadeQueued("Idle01");
+            else
+                base.PlayAnimationCrossFadeQueued(animationName);
+        }
+        else
+            base.PlayAnimationCrossFadeQueued(animationName);
+    }
+
     protected override void RemoveAssetsFromModel ()
     {
         if (helmet)
