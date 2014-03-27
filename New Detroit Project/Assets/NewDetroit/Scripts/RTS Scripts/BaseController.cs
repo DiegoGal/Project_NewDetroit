@@ -24,12 +24,14 @@ public class BaseController : CResourceBuilding
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
-    public float radius = 14.0f;//6.0f;
+    public float baseRadius = 14.0f;
 
 	// Use this for initialization
     public override void Start ()
     {
         base.Start();
+
+        radious = baseRadius;
 
         spawnOrigin = transform.FindChild("SpawnPoint").position;
         /*spawnDestiny = new Vector3(
@@ -202,7 +204,7 @@ public class BaseController : CResourceBuilding
 
     public float GetRadious ()
     {
-        return radius;
+        return radious;
     }
 
     public ArmyController GetArmyController ()

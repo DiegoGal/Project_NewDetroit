@@ -6,6 +6,8 @@ public class CResourceBuilding : BuildingController
     // referencia al controlador del ejército
     public ArmyController armyController;
 
+    protected float radious;
+
 	// Use this for initialization
     public override void Start() 
     {
@@ -13,23 +15,29 @@ public class CResourceBuilding : BuildingController
     }
 	
 	// Update is called once per frame
-    public override void Update() 
+    public override void Update () 
     {
         base.Update();
 	}
 
-    public void IncreaseResources(int resources)
+    public void IncreaseResources (int resources)
     {
         armyController.IncreaseResources(resources);
     }
 
-    public void DecreaseResources(int resources)
+    public void DecreaseResources (int resources)
     {
         armyController.DecreaseResources(resources);
     }
 
-    public int GetResources()
+    public int GetResources ()
     {
         return armyController.resources;
     }
+
+    public float GetRadious ()
+    {
+        return radious;
+    }
+
 }
