@@ -162,7 +162,7 @@ public class ArmyController : MonoBehaviour
 
 						//Miramos si el objeto es una unidad
 						UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
-						if (unitCont != null)
+						if (unitCont != null && unitCont.teamNumber == teamNumber)
 						{
 							// si NO tenemos control pulsada, se deselecciona lo que hubiera
 							// y se selecciona la nueva unidad

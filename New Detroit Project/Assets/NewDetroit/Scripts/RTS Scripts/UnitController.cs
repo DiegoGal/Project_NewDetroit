@@ -226,33 +226,37 @@ public class UnitController : ControllableCharacter
 
     public override bool Damage (float damage, char type)
     {
-        base.Damage(damage, type);
-
-        // blood!
-        GameObject blood = (GameObject)Instantiate(bloodParticles,
-            transform.position + transform.forward, transform.rotation);
-        Destroy(blood, 0.4f);
-        
-        if (currentLife <= 0)
+        if (currentState != State.Dying && currentState != State.AscendingToHeaven)
         {
-            Debug.Log("MUEROOOOOOOOOO");
+            base.Damage(damage, type);
 
-            currentState = State.Dying;
-            // the unit DIES, set the special material
-            if (dyingMaterial)
-                model.renderer.material = dyingMaterial;
-            // play the dead animation
-            PlayAnimationCrossFade("Die");
-            // and comunicate it to the army manager
-            baseController.armyController.UnitDied(this.gameObject);
+            // blood!
+            GameObject blood = (GameObject)Instantiate(bloodParticles,
+                transform.position + transform.forward, transform.rotation);
+            Destroy(blood, 0.4f);
 
-            // delete the Nave Mesh Agent for elevate the model
-            Destroy(GetComponent<NavMeshAgent>());
+            if (currentLife <= 0)
+            {
+                //Debug.Log("MUEROOOOOOOOOO");
+                currentState = State.Dying;
+                // the unit DIES, set the special material
+                if (dyingMaterial)
+                    model.renderer.material = dyingMaterial;
+                // play the dead animation
+                PlayAnimationCrossFade("Die");
+                // and comunicate it to the army manager
+                baseController.armyController.UnitDied(this.gameObject);
 
-            return true;
+                // delete the Nave Mesh Agent for elevate the model
+                Destroy(GetComponent<NavMeshAgent>());
+
+                return true;
+            }
+            else
+                return false;
         }
         else
-            return false;
+            return true;
     }
 
     protected virtual void RemoveAssetsFromModel ()

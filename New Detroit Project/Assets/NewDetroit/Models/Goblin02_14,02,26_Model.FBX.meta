@@ -498,7 +498,7 @@ ModelImporter:
       name: Die
       takeName: Take 001
       firstFrame: 180
-      lastFrame: 208
+      lastFrame: 206
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
