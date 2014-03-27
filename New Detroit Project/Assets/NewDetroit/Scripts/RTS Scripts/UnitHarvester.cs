@@ -138,7 +138,7 @@ public class UnitHarvester : UnitController
             //dummyGlasses.transform.rotation
         );
         glasses.transform.parent = dummyGlasses;
-        //glasses.transform.Rotate(new Vector3(180.0f, 0.0f, 0.0f));
+        glasses.transform.Rotate(new Vector3(0.0f, transform.rotation.y, 0.0f));
 
         /*GameObject newPack = Instantiate
         (
