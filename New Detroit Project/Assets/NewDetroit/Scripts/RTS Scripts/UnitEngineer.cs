@@ -183,6 +183,19 @@ public class UnitEngineer : UnitController
                     // when it have arrived to the repair position
                     Debug.Log("comenzando reparacion!!!!!!!");
                     currentEngineerState = EngineerState.Repairing;
+
+                    // intanciamos un Hammer
+                    Debug.Log("Dummy position: " + dummyHand.transform.position);
+                    Debug.Log("Engineer position: " + transform.position);
+                    GameObject newHammer = Instantiate
+                    (
+                        hammer,
+                        dummyHand.transform.position,
+                        new Quaternion()
+                    ) as GameObject;
+                    newHammer.transform.name = "Hammer";
+                    newHammer.transform.parent = dummyHand;
+                    newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f)); ;
                 }
                 else
                     base.Update();
@@ -219,6 +232,19 @@ public class UnitEngineer : UnitController
                         Debug.Log("comenzando construccion!!!!!!!!");
                         currentEngineerState = EngineerState.Constructing;
                         newTGConstruct = newWConstruct = false;
+
+                        // intanciamos un Hammer
+                        Debug.Log("Dummy position: " + dummyHand.transform.position);
+                        Debug.Log("Engineer position: " + transform.position);
+                        GameObject newHammer = Instantiate
+                        (
+                            hammer,
+                            dummyHand.transform.position,
+                            new Quaternion()
+                        ) as GameObject;
+                        newHammer.transform.name = "Hammer";
+                        newHammer.transform.parent = dummyHand;
+                        newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));;
                     }
                     else
                         base.Update();
@@ -243,6 +269,11 @@ public class UnitEngineer : UnitController
                         Debug.Log("Torre Reparada");
                         currentEngineerState = EngineerState.None;
                         animation.Play("Idle01");
+
+                        // We destroy the Hammer
+                        Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+                        if (hammer1 != null)
+                            GameObject.Destroy(hammer1.gameObject);
                     }
                     actualEngineerTime = 0;
                 }
@@ -285,6 +316,11 @@ public class UnitEngineer : UnitController
                             currentEngineerState = EngineerState.None;
                             currentItem.GetComponent<TowerGoblin>().SetActiveMaterial();
                             animation.Play("Idle01");
+
+                            // We destroy the Hammer
+                            Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+                            if (hammer1 != null)
+                                GameObject.Destroy(hammer1.gameObject);
                         }
                         actualEngineerTime = 0;
                     }
@@ -301,6 +337,11 @@ public class UnitEngineer : UnitController
                             currentEngineerState = EngineerState.None;
                             currentItem.GetComponent<Warehouse>().SetActiveMaterial();
                             animation.Play("Idle01");
+
+                            // We destroy the Hammer
+                            Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+                            if (hammer1 != null)
+                                GameObject.Destroy(hammer1.gameObject);
 
                             baseController.GetArmyController().AddWarehouse(currentItem.GetComponent<CResourceBuilding>());
                         }
@@ -336,10 +377,14 @@ public class UnitEngineer : UnitController
         {
             newTGConstruct = newWConstruct = false;
             currentEngineerState = EngineerState.None;
-            // We destroy the Laptop
+            // We destroy the Laptop if it exist
             Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
             if (laptop1 != null)
                 GameObject.Destroy(laptop1.gameObject);
+            // We destroy the Hammer if it exist
+            Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+            if (hammer1 != null)
+                GameObject.Destroy(hammer1.gameObject);
 
             base.RightClickOnSelected(destiny, destTransform);
         }
