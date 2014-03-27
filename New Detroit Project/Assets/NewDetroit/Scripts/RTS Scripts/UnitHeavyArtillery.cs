@@ -31,7 +31,7 @@ public class UnitHeavyArtillery : UnitArtillery
         if (dummyLeftWeapon == null)
             dummyLeftWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/Bip002 Spine1/Bip002 Neck/Bip002 R Clavicle/Bip002 R UpperArm/Bip002 R Forearm/Bip002 R Hand/arma mano derecha");
         if (dummyLeftWeaponGunBarrel == null)
-            dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01/GunBarrelLeft");
+            dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A/GunBarrelLeft");
     }
 
 	// Use this for initialization

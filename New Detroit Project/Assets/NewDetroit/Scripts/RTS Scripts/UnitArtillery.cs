@@ -57,7 +57,7 @@ public class UnitArtillery : UnitController
     public float secondaryAttackCadence = 1.0f;
     private float attackCadenceAux = 0.0f;
 
-    public override void Awake()
+    public override void Awake ()
     {
         base.Awake();
     }

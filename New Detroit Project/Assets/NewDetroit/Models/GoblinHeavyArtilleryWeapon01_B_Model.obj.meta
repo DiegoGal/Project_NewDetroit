@@ -1,15 +1,15 @@
 fileFormatVersion: 2
-guid: 4f237eaf438b1e64087bf70b603c52c6
+guid: 1b9eaae565951b34f9b82529d372ff18
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
-    100000: Cylinder005
-    100002: //RootNode
-    400000: Cylinder005
-    400002: //RootNode
-    2300000: Cylinder005
-    3300000: Cylinder005
-    4300000: Cylinder005
+    100000: //RootNode
+    100002: Mortero001
+    400000: //RootNode
+    400002: Mortero001
+    2300000: Mortero001
+    3300000: Mortero001
+    4300000: Mortero001
     9500000: //RootNode
   materials:
     importMaterials: 0

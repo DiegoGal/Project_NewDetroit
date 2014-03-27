@@ -82,58 +82,70 @@ public class UnitController : ControllableCharacter
     {
         switch (currentState)
         {
-            case State.Idle:
-
-                break;
-            case State.GoingTo:
-                //Vector3 direction = destiny - transform.position;
-                Vector3 direction = destiny - transform.position;
-                if (direction.magnitude >= destinyThreshold)
-                {
-                    /*Quaternion qu = new Quaternion();
-                    qu.SetLookRotation(direction, Vector3.up);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, qu, Time.deltaTime * rotationVelocity);
-                    transform.position += direction.normalized *
-                        velocity * Time.deltaTime;*/
-
-                    //transform.position = new Vector3(transform.position.x, 1, transform.position.z);
-                    //transform.Translate(direction.normalized * velocity * Time.deltaTime);
-
-                    //GetComponent<NavMeshAgent>().destination = destiny;
-                }
-                else
-                {
-                    currentState = State.Idle;
-                    PlayAnimationCrossFade("Idle01");
-                }
-                break;
-            case State.Dying:
-                timeFallingWhenDying -= Time.deltaTime;
-                if (timeFallingWhenDying <= 0.0f)
-                {
-                    // remove the assets of the model
-                    RemoveAssetsFromModel();
-
-                    currentState = State.AscendingToHeaven;
-                }
-                break;
-            case State.AscendingToHeaven:
-                    // elevate the model
-                    transform.position = new Vector3
-                    (
-                        transform.position.x,
-                        transform.position.y * ascendingAceleration,// + 0.01f,
-                        transform.position.z
-                    );
-                    // update the Alpha Multiply Value of the material
-                    float alphaValue = model.renderer.material.GetFloat("_AlphaMultiplyValue");
-                    alphaValue *= 0.97f;
-                    alphaValue -= 0.006f;
-                    model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
-                    if (alphaValue <= 0.0f)
-                        Destroy(this.gameObject);
-                break;
+            case State.Idle:              UpdateIdle();              break;
+            case State.GoingTo:           UpdateGoingTo();           break;
+            case State.Dying:             UpdateDying();             break;
+            case State.AscendingToHeaven: UpdateAscendingToHeaven(); break;
         }
+    }
+
+    public virtual void UpdateIdle ()
+    {
+
+    }
+
+    public virtual void UpdateGoingTo ()
+    {
+        //Vector3 direction = destiny - transform.position;
+        Vector3 direction = destiny - transform.position;
+        if (direction.magnitude >= destinyThreshold)
+        {
+            /*Quaternion qu = new Quaternion();
+            qu.SetLookRotation(direction, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, qu, Time.deltaTime * rotationVelocity);
+            transform.position += direction.normalized *
+                velocity * Time.deltaTime;*/
+
+            //transform.position = new Vector3(transform.position.x, 1, transform.position.z);
+            //transform.Translate(direction.normalized * velocity * Time.deltaTime);
+
+            //GetComponent<NavMeshAgent>().destination = destiny;
+        }
+        else
+        {
+            currentState = State.Idle;
+            PlayAnimationCrossFade("Idle01");
+        }
+    }
+
+    public void UpdateDying ()
+    {
+        timeFallingWhenDying -= Time.deltaTime;
+        if (timeFallingWhenDying <= 0.0f)
+        {
+            // remove the assets of the model
+            RemoveAssetsFromModel();
+
+            currentState = State.AscendingToHeaven;
+        }
+    }
+
+    public void UpdateAscendingToHeaven ()
+    {
+        // elevate the model
+        transform.position = new Vector3
+        (
+            transform.position.x,
+            transform.position.y * ascendingAceleration,// + 0.01f,
+            transform.position.z
+        );
+        // update the Alpha Multiply Value of the material
+        float alphaValue = model.renderer.material.GetFloat("_AlphaMultiplyValue");
+        alphaValue *= 0.97f;
+        alphaValue -= 0.006f;
+        model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
+        if (alphaValue <= 0.0f)
+            Destroy(this.gameObject);
     }
 
     public override void OnGUI ()
