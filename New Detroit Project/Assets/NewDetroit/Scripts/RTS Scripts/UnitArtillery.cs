@@ -71,9 +71,10 @@ public class UnitArtillery : UnitController
     }
 
 	// Update is called once per frame
-    public override void Update()
+    public override void Update ()
     {
-        
+        base.Update();
+
         switch (moveMode)
         {
             case MoveMode.Idle:
@@ -81,13 +82,13 @@ public class UnitArtillery : UnitController
                 break;
 
             case MoveMode.Moving:
-                base.Update();
+                //base.Update();
                 if (currentState == State.Idle)
                     moveMode = MoveMode.Idle;
                 break;
 
             case MoveMode.MovingToAnEnemy:
-                base.Update();
+                //base.Update();
                 // si el estado ha pasado a Alert y el enemigo seleccionado
                 // ha entrada en la burbuja
                 if (
@@ -131,7 +132,7 @@ public class UnitArtillery : UnitController
                 break;
 
             case MoveMode.MovingAttacking:
-                base.Update();
+                //base.Update();
                 break;
 
         } // switch (moveMode)
