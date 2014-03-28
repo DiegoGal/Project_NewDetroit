@@ -32,6 +32,10 @@ public class ArmyController : MonoBehaviour
     public GameObject armyBase;
     public List<CResourceBuilding> resourceBuildingList = new List<CResourceBuilding>();
 
+    //Double click
+    float doubleClickStart = -1.0f;
+    UnitController unitDoubleClick;
+
     // Mines known by the army
     public List<CResources> resourceMineList = new List<CResources>();
     public class ResourcesLinkStruct
@@ -227,7 +231,8 @@ public class ArmyController : MonoBehaviour
                 Vector3 destiny = myHit.point;
 				if (unitSelectedList.Count > 1)
 				{
-					//Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
+                    doubleClickStart = -1.0f;
+                    //Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
 					List<Vector3> destinyList;
 					destinyList = SwarmAlgorithm(destiny);
 					int i = 0;
@@ -240,13 +245,65 @@ public class ArmyController : MonoBehaviour
 				}
 				else if (unitSelectedList.Count == 1)
 				{
-					GameObject u = unitSelectedList[0];
-					Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
-					//u.GetComponent<UnitController>().GoTo(destiny);
-					u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
+                     GameObject u;
+                    // If it's the first click of the possible doubleClick
+                    if (doubleClickStart == -1.0f)
+                    {
+                        u = unitSelectedList[0];
+                        Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
+                        //u.GetComponent<UnitController>().GoTo(destiny);
+                        u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
+                        unitDoubleClick = u.GetComponent<UnitController>();
+                        doubleClickStart = Time.time;
+                    }
+                    else
+                    {
+                        // If it's a double click (time)
+                        if ((Time.time - doubleClickStart) < 0.3f)
+                        {
+                            u = unitSelectedList[0];
+                            // If the second click it's to the same unit as the first click
+                            if (unitDoubleClick == u)
+                            {
+                                u = unitSelectedList[0];
+                                int tipo = u.GetComponent<UnitController>().GetType();
+                                foreach (GameObject unit in unitList)
+                                {
+                                    if (unit != u)
+                                    {
+                                        int tipoUnit = unit.GetComponent<UnitController>().GetType();
+                                        if (tipo == tipoUnit)
+                                            unitSelectedList.Add(unit);
+                                    }
+                                }
+                            }                        
+                            else
+                            {
+                                u = unitSelectedList[0];
+                                Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
+                                //u.GetComponent<UnitController>().GoTo(destiny);
+                                u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
+                                unitDoubleClick = u.GetComponent<UnitController>();
+                                doubleClickStart = Time.time;
+                            }
+                        }
+                        // If it's not a double click (time)
+                        else
+                        {
+                            u = unitSelectedList[0];
+                            Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
+                            //u.GetComponent<UnitController>().GoTo(destiny);
+                            u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
+                            unitDoubleClick = u.GetComponent<UnitController>();
+                            doubleClickStart = Time.time;
+                        }
+                        doubleClickStart = -1.0f;
+                    }
 				}
 
             }
+            else
+                doubleClickStart = -1.0f;
         }
 
         // Scout Patrol Control
