@@ -108,15 +108,16 @@ public class TowerNeutral : Tower
                     int count = enemiesInside.Count;
                     for (int i = 0; i < count; i++)
                     {
-                        Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.2f);
-
-                        Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
+                        Vector3 pos = new Vector3(transform.position.x, 10, transform.position.z);
+                        Debug.DrawLine(pos, enemiesInside[i].transform.position, Color.yellow, 0.3f);
+                        Vector3 fwd = enemiesInside[i].transform.position - pos;
                         //Debug.Log("origen: " + transform.position + ". destino: " + enemiesInside[i].transform.position + ". direccion: " + fwd);
                         fwd.Normalize();
-                        Vector3 aux = new Vector3(fwd.x * transform.position.x, fwd.y * transform.position.y, fwd.z * transform.position.z);
-                        Debug.DrawLine(transform.position, aux /** visionSphereRadious*/, Color.blue, 0.3f);
+                        Vector3 aux = pos + (fwd * (visionSphereRadious + 10));
+                        //Vector3 aux = new Vector3(fwd.x * transform.position.x, fwd.y * transform.position.y, fwd.z * transform.position.z);
+                        Debug.DrawLine(pos, aux /** visionSphereRadious*/, Color.blue, 0.3f);
                         RaycastHit myHit;
-                        if (Physics.Raycast(transform.position, fwd, out myHit))
+                        if (Physics.Raycast(pos, fwd, out myHit, aux.magnitude + 2))
                         {
                             // the ray has hit something
                             ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
