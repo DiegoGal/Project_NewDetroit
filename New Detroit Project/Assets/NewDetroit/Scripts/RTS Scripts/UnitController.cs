@@ -52,6 +52,10 @@ public class UnitController : ControllableCharacter
     private float timeFallingWhenDying = 1.6f;
     private float ascendingAceleration = 1.045f;
 
+    // atributes for the attack
+    protected ControllableCharacter lastEnemyAttacked;
+    protected ControllableCharacter enemySelected;
+
     // Cool Down for detecting less time the collision with particles
     private float CDParticleCollision;
 
@@ -216,6 +220,8 @@ public class UnitController : ControllableCharacter
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
         GoTo(destiny);
+
+        //if (
     }
 
     // this method is called when a unit collides with the army base
@@ -281,6 +287,11 @@ public class UnitController : ControllableCharacter
     protected virtual void PlayAnimationCrossFadeQueued (string animationName)
     {
         animation.CrossFadeQueued(animationName);
+    }
+
+    public virtual int GetUnitType ()
+    {
+        return -1;
     }
 
     //This is for the particles that collides with the orc

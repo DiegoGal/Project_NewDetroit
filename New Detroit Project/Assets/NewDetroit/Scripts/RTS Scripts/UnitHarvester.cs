@@ -473,6 +473,11 @@ public class UnitHarvester : UnitController
             base.PlayAnimationCrossFadeQueued(animationName);
     }
 
+    public override int GetUnitType()
+    {
+        return 0;
+    }
+
     protected override void RemoveAssetsFromModel ()
     {
         if (helmet)

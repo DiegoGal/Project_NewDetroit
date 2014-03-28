@@ -101,6 +101,25 @@ public class UnitScout : UnitController
             return false;
     }
 
+    protected override void PlayAnimationCrossFade(string animationName)
+    {
+        // esta unidad no tiene animación de Idle Wait
+        if (animationName != "Idle Wait")
+            base.PlayAnimationCrossFade(animationName);
+    }
+
+    protected override void PlayAnimationCrossFadeQueued(string animationName)
+    {
+        // esta unidad no tiene animación de Idle Wait
+        if (animationName != "Idle Wait")
+            base.PlayAnimationCrossFadeQueued(animationName);
+    }
+
+    public override int GetUnitType ()
+    {
+        return 4;
+    }
+
     protected override void RemoveAssetsFromModel ()
     {
         if (mower)
