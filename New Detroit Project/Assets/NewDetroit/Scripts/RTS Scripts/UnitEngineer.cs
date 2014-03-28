@@ -355,6 +355,14 @@ public class UnitEngineer : UnitController
 
     public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
     {
+        // We destroy the Laptop if it exist
+        Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
+        if (laptop1 != null)
+            GameObject.Destroy(laptop1.gameObject);
+        // We destroy the Hammer if it exist
+        Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+        if (hammer1 != null)
+            GameObject.Destroy(hammer1.gameObject);
         destiny.y = 0;
         // He has to leave the engineerPosition if he has to
         if (currentEngineerState == EngineerState.GoingToConquestPosition || currentEngineerState == EngineerState.Conquering)
@@ -377,14 +385,6 @@ public class UnitEngineer : UnitController
         {
             newTGConstruct = newWConstruct = false;
             currentEngineerState = EngineerState.None;
-            // We destroy the Laptop if it exist
-            Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
-            if (laptop1 != null)
-                GameObject.Destroy(laptop1.gameObject);
-            // We destroy the Hammer if it exist
-            Transform hammer1 = dummyHand.transform.FindChild("Hammer");
-            if (hammer1 != null)
-                GameObject.Destroy(hammer1.gameObject);
 
             base.RightClickOnSelected(destiny, destTransform);
         }
