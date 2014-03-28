@@ -50,13 +50,13 @@ public class Tower : BuildingController
         if (enemiesInside.Count == 0)
         {
             enemiesInside.Add(enemy);
-            //Debug.Log("First Enemy entered in TOWER");
+            Debug.Log("First Enemy entered in TOWER");
         }
         else
             if (!enemiesInside.Contains(enemy))
             {
                 enemiesInside.Add(enemy);
-                //Debug.Log("New Enemy entered in TOWER");
+                Debug.Log("New Enemy entered in TOWER");
             }
             //else
                 //Debug.Log("Enemy already entered in TOWER");
