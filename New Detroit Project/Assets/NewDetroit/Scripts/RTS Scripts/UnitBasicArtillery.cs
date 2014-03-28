@@ -9,7 +9,7 @@ public class UnitBasicArtillery : UnitArtillery
 
     private GameObject leftWeapon, rightWeapon;
 
-    public override void Awake()
+    public override void Awake ()
     {
         base.Awake();
 
@@ -45,6 +45,11 @@ public class UnitBasicArtillery : UnitArtillery
 	{
 		base.Update();
 	}
+
+    public override int GetUnitType()
+    {
+        return 1;
+    }
 
     protected override void RemoveAssetsFromModel ()
     {

@@ -21,7 +21,7 @@ public class UnitHeavyArtillery : UnitArtillery
     }
     protected DeployState currentDeployState = DeployState.Undeployed;
 
-    public override void Awake()
+    public override void Awake ()
     {
         base.Awake();
 
@@ -130,6 +130,11 @@ public class UnitHeavyArtillery : UnitArtillery
                     visionSphereRadious;
                 break;
         }
+    }
+
+    public override int GetUnitType ()
+    {
+        return 2;
     }
 
 } // class UnitHeavyArtillery

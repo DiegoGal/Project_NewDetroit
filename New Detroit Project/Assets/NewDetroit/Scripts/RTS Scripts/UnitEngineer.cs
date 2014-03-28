@@ -57,7 +57,7 @@ public class UnitEngineer : UnitController
     public GameObject laptop;
     public GameObject hammer;
 
-    public override void Awake()
+    public override void Awake ()
     {
         base.Awake();
 
@@ -588,5 +588,10 @@ public class UnitEngineer : UnitController
                 break;
         }
 	}
+
+    public override int GetUnitType()
+    {
+        return 3;
+    }
 
 }

@@ -38,9 +38,7 @@ public class UnitArtillery : UnitController
 
     public GameObject shotParticles;
 
-	protected List<ControllableCharacter> enemiesInside;
-	protected ControllableCharacter lastEnemyAttacked;
-    protected ControllableCharacter enemySelected;
+    protected List<ControllableCharacter> enemiesInside;
 
     private float alertHitTimer = 1.0f;
     private float alertHitTimerAux = 0.0f;
