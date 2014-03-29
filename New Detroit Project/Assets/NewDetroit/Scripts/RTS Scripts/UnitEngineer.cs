@@ -353,7 +353,7 @@ public class UnitEngineer : UnitController
 
 	} // Update
 
-    public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
+    public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
         // We destroy the Laptop if it exist
         Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
@@ -430,7 +430,7 @@ public class UnitEngineer : UnitController
             {
                 newTGConstruct = newWConstruct = false;
                 // if it's in the same team he has to reapir it
-                if (currentItem.GetComponent<BuildingController>().GetTeamNumber() == teamNumber) 
+                if (currentItem.GetComponent<BuildingController>().GetTeamNumber() == teamNumber)
                 {
                     if (currentItem.GetComponent<TowerGoblin>().IsConstructed())
                     {
@@ -446,13 +446,13 @@ public class UnitEngineer : UnitController
                         currentEngineerState = EngineerState.GoingToConstructItem;
                         GoTo(destiny);
                     }
-                   
+
                 }
             }
             else if (newTGConstruct)// If he is constructing a TG
             {
                 // Construct the new TowerGoblin
-                if (towerGoblin.transform.GetComponent<TowerGoblin>().StartConstruct(constructDestiny,baseController))
+                if (towerGoblin.transform.GetComponent<TowerGoblin>().StartConstruct(constructDestiny, baseController))
                 {
                     Debug.Log("vamos a construir una Torreta copon!");
                     currentItem = destTransform;
@@ -516,8 +516,10 @@ public class UnitEngineer : UnitController
                     currentItem = warehouse.transform;
                     //newConstruct = false;
                 }
-            }        
+            }
         }
+        else
+            base.RightClickOnSelected(destiny, destTransform);
     }// RightClickOSelected
 	
 

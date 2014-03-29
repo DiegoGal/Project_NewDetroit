@@ -44,13 +44,17 @@ public class UnitController : ControllableCharacter
 
     // frecuencia (en segundos) de ataque
     public float attackCadence = 1.0f;
-    protected float attackCadenceAux = 0.0f;
+    protected float attackCadenceAux = 0.5f;
 
     // a special material for when the unit has died
     public Material dyingMaterial;
 
     private float timeFallingWhenDying = 1.6f;
     private float ascendingAceleration = 1.045f;
+
+    // the vision radious of the unit
+    protected float visionSphereRadious = 8.0f;
+    protected float maxAttackDistance = 2.0f;
 
     // atributes for the attack
     protected ControllableCharacter lastEnemyAttacked;
@@ -138,12 +142,74 @@ public class UnitController : ControllableCharacter
 
     protected virtual void UpdateGoingToAnEnemy ()
     {
+        // 1- comprobamos si el enemigo está "a mano" y se le puede atacar
+        float distToEnemy = Vector3.Distance(transform.position, enemySelected.transform.position);
+        if (distToEnemy <= maxAttackDistance)
+        {
+            // change to Attack state
+            currentState = State.Attacking;
+            PlayAnimationCrossFade("Attack1");
+            GetComponent<NavMeshAgent>().destination = transform.position;
 
+            transform.LookAt(enemySelected.transform);
+        }
+        // 2- comprobamos si el enemigo esta "a vista"
+        else if (distToEnemy <= visionSphereRadious)
+        {
+            this.destiny = enemySelected.transform.position;
+            GetComponent<NavMeshAgent>().destination = destiny;
+        }
+        // 3- se ha llegado al destino y se ha perdido de vista al enemigo
+        else if (Vector3.Distance(transform.position, destiny) <= destinyThreshold)
+        {
+            StopMoving();
+        }
     }
 
     protected virtual void UpdateAttacking ()
     {
+        attackCadenceAux -= Time.deltaTime;
 
+        float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
+        if (enemySelected)
+        {
+            if (enemyDist <= maxAttackDistance)
+            {
+                if (attackCadenceAux <= 0)
+                {
+                    transform.LookAt(enemySelected.transform);
+
+                    attackCadenceAux = attackCadence;
+
+                    if (enemySelected.Damage(basicAttackPower))
+                    {
+                        enemySelected = null;
+                        currentState = State.Idle;
+
+                        PlayAnimationCrossFade("Idle01");
+                        attackCadenceAux = 0.5f;
+                    }
+                }
+            }
+            else if (enemyDist <= visionSphereRadious)
+            {
+                currentState = State.GoingToAnEnemy;
+
+                this.destiny = enemySelected.transform.position;
+                GetComponent<NavMeshAgent>().destination = destiny;
+
+                PlayAnimationCrossFade("Walk");
+                attackCadenceAux = 0.5f;
+            }
+        }
+        else // the enemy is no longer alive
+        {
+            enemySelected = null;
+            currentState = State.Idle;
+
+            PlayAnimationCrossFade("Idle01");
+            attackCadenceAux = 0.5f;
+        }
     }
 
     private void UpdateDying ()
@@ -221,7 +287,14 @@ public class UnitController : ControllableCharacter
     {
         GoTo(destiny);
 
-        //if (
+        ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
+        if ( (unit != null) && (teamNumber != unit.teamNumber) )
+        {
+            enemySelected = unit;
+            currentState = State.GoingToAnEnemy;
+        }
+        else
+            enemySelected = null;
     }
 
     // this method is called when a unit collides with the army base
@@ -295,7 +368,7 @@ public class UnitController : ControllableCharacter
     }
 
     //This is for the particles that collides with the orc
-    void OnParticleCollision(GameObject other)
+    void OnParticleCollision (GameObject other)
     {
         // get the particle system
         ParticleSystem particleSystem;

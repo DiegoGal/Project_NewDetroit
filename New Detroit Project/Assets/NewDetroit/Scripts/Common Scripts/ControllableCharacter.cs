@@ -50,7 +50,7 @@ public class ControllableCharacter : MonoBehaviour
     }
 
     // if type == 'P' is phisical damage if type == 'M' is magical damage
-    public virtual bool Damage (float damage, char type)
+    public virtual bool Damage (float damage, char type = 'P')
     {
         //Debug.Log("damage");
         if (!invincible)

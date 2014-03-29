@@ -389,6 +389,8 @@ public class UnitHarvester : UnitController
             }
             nextHarvestState = HarvestState.None;
         }
+        else
+            base.RightClickOnSelected(destiny, destTransform);
     } // RightClickOnSelected
 
     public void FinishWaiting (Vector3 chopPosition, int chopIndex)

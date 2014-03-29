@@ -43,9 +43,6 @@ public class UnitArtillery : UnitController
     private float alertHitTimer = 1.0f;
     private float alertHitTimerAux = 0.0f;
 
-    // the vision radious of the unit
-    protected float visionSphereRadious;
-
     // position where the rays to search for enemies are launched
     protected Vector3 eyesPosition = new Vector3(0.0f, 1.5f, 0.0f);
 

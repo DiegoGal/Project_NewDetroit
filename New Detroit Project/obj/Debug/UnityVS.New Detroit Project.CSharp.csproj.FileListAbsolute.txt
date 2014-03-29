@@ -35,3 +35,4 @@ C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detr
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.dll
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.pdb
 C:\Users\Public\Documents\Unity Projects\Project New Detroit\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.CSharp.Plugins.pdb
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.CSharp.Plugins.pdb

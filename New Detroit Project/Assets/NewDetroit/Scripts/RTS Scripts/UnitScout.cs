@@ -27,6 +27,7 @@ public class UnitScout : UnitController
 
         mower = transform.FindChild("Mower").gameObject;
     }
+
 	// Use this for initialization
 	public override void Start ()
 	{
@@ -82,10 +83,9 @@ public class UnitScout : UnitController
 	public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
 	{
 		if (destTransform.name == "WorldFloor")
-		{
 			currentScoutState = ScoutState.None;
-			base.RightClickOnSelected(destiny, destTransform);
-		}
+
+        base.RightClickOnSelected(destiny, destTransform);
 	}
 
     public override bool Damage (float damage, char type)
@@ -101,14 +101,14 @@ public class UnitScout : UnitController
             return false;
     }
 
-    protected override void PlayAnimationCrossFade(string animationName)
+    protected override void PlayAnimationCrossFade (string animationName)
     {
         // esta unidad no tiene animación de Idle Wait
         if (animationName != "Idle Wait")
             base.PlayAnimationCrossFade(animationName);
     }
 
-    protected override void PlayAnimationCrossFadeQueued(string animationName)
+    protected override void PlayAnimationCrossFadeQueued (string animationName)
     {
         // esta unidad no tiene animación de Idle Wait
         if (animationName != "Idle Wait")
