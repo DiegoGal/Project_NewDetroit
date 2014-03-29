@@ -29,13 +29,13 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			cameraScript.enabled = true;
 
 			this.heroeControlScript.isMine = true;
+            heroeControlScript.enabled = true;
 		}
 		else
 		{           
-			cameraScript.enabled = false;
-			
-
+			cameraScript.enabled = false;			
 			this.heroeControlScript.isMine = false;
+            heroeControlScript.enabled = true;
 		}
 
 		gameObject.name = gameObject.name + photonView.viewID;
@@ -56,6 +56,8 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			stream.SendNext(transform.position);
 			stream.SendNext(transform.rotation);
             stream.SendNext(heroeControlScript.state);
+            stream.SendNext(heroeControlScript.stateAttackSecond);
+            stream.SendNext(heroeControlScript.previousState);
 
 			// Life's orc
 			if (heroeControlScript.type == HeroeController.TypeHeroe.Orc)
@@ -105,6 +107,8 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			correctPlayerPos = (Vector3)stream.ReceiveNext();
 			correctPlayerRot = (Quaternion)stream.ReceiveNext();
             newState = (HeroeController.StateHeroe)stream.ReceiveNext();
+            newStateAttackSecond = (HeroeController.AttackSecond)stream.ReceiveNext();
+            newPreviousState = (HeroeController.StateHeroe)stream.ReceiveNext();
 
 			// Life's orc
 			nameOrcLA = (string) stream.ReceiveNext(); //Receive the name of the object that has been collided by an orc with his left arm
@@ -117,12 +121,14 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		}
 	}
 
-	private bool isRunning;
-	private float Speed;
-	private bool isAttacking, isSecondAttack1, isSecondAttack2, isSecondAttack3;
+	//private bool isRunning;
+	//private float Speed;
+	//private bool isAttacking, isSecondAttack1, isSecondAttack2, isSecondAttack3;
 	private Vector3 correctPlayerPos = Vector3.zero; //We lerp towards this
 	private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
     private HeroeController.StateHeroe newState; // New state of the heroe
+    private HeroeController.AttackSecond newStateAttackSecond; // New state Attack
+    private HeroeController.StateHeroe newPreviousState;
 	private string nameOrcLA; // The name of the collide object that an orc has collided with his left arm
 	private string nameOrcRA; // The name of the collide object that an orc has collided with his rigth arm
 	private int lifeOrcLA; // The life of the collided object that has been hit with the left arm of an orc
@@ -137,6 +143,8 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
             heroeControlScript.state = newState;
+            heroeControlScript.stateAttackSecond = newStateAttackSecond;
+            heroeControlScript.previousState = newPreviousState;
 			/*animator.SetBool("isRunning",isRunning);
 			animator.SetFloat("Speed",Speed);
 			animator.SetBool("isAttacking", isAttacking);

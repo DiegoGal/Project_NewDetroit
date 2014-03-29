@@ -285,7 +285,7 @@ public abstract class HeroeController : ControllableCharacter
 		animator = GetComponent<Animator> ();
 		if (!animator) Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
 		// Initialize the booleans of abilities
-		ability1 = ability2 = ability3 = false;
+		ability1 = ability2 = ability3 = true;
 		counterAbility = 0;
 		// Initialize the animation
 		animation.Play ("Iddle01");
@@ -295,34 +295,6 @@ public abstract class HeroeController : ControllableCharacter
 	
 	// Update is called once per frame
 	virtual public void Update () {
-		// Heroe dead
-		if (this.currentLife <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover) 
-		{
-			this.currentLife = 0;
-            previousState = state;
-			this.state = StateHeroe.Dead;
-			this.transform.position = this.initialPosition;
-			//this.GetComponent<ThirdPersonController>().enabled = false;
-		}
-		// Recover heroe
-		else if (this.state == StateHeroe.Dead) this.state = StateHeroe.Recover;
-		else if (this.state == StateHeroe.Recover)
-		{
-			if (this.timeCount < 1)	this.timeCount += Time.deltaTime;
-			else
-			{
-				this.timeCount = 0;
-				this.currentLife += 20;
-				if (this.currentLife >= this.maximunLife)
-				{
-					this.currentLife = this.maximunLife;
-                    previousState = state;
-					this.state = StateHeroe.Idle;
-					//this.GetComponent<ThirdPersonController>().enabled = true;
-				}
-			}
-		}
-		
 		// Unlock abilities
 		if (counterAbility > 0)
 		{
@@ -378,21 +350,21 @@ public abstract class HeroeController : ControllableCharacter
 
     void OnGUI ()
 	{
-		GUI.DrawTexture (rectanglePositiveLife, textureLifePositive);
-		GUI.DrawTexture (rectangleNegativeLife, textureLifeNegative);
-		GUI.DrawTexture (rectanglePositiveAdren, textureAdrenPositive);
-		GUI.DrawTexture (rectangleNegativeAdren, textureAdrenNegative);
-		GUI.DrawTexture (rectanglePositiveMana, textureManaPositive);
-		GUI.DrawTexture (rectangleNegativeMana, textureManaNegative);
-		GUI.DrawTexture (rectangleLevel, textureBackground);
+        GUI.DrawTexture(rectanglePositiveLife, textureLifePositive);
+        GUI.DrawTexture(rectangleNegativeLife, textureLifeNegative);
+        GUI.DrawTexture(rectanglePositiveAdren, textureAdrenPositive);
+        GUI.DrawTexture(rectangleNegativeAdren, textureAdrenNegative);
+        GUI.DrawTexture(rectanglePositiveMana, textureManaPositive);
+        GUI.DrawTexture(rectangleNegativeMana, textureManaNegative);
+        GUI.DrawTexture(rectangleLevel, textureBackground);
 
-		FontStyle fs = GUI.skin.label.fontStyle;
-		TextAnchor ta = GUI.skin.label.alignment;
-		GUI.skin.label.fontStyle = FontStyle.Bold;
-		GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-		GUI.Label (rectangleLevel, ""+level);
-		GUI.skin.label.fontStyle = fs;
-		GUI.skin.label.alignment = ta;
+        FontStyle fs = GUI.skin.label.fontStyle;
+        TextAnchor ta = GUI.skin.label.alignment;
+        GUI.skin.label.fontStyle = FontStyle.Bold;
+        GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+        GUI.Label(rectangleLevel, "" + level);
+        GUI.skin.label.fontStyle = fs;
+        GUI.skin.label.alignment = ta;
 	}
 
 
@@ -400,7 +372,7 @@ public abstract class HeroeController : ControllableCharacter
 	// CONTROL HERO
 	protected void UpdateControl()
 	{
-		if (isControllable)
+		if (isMine)
 		{			
 			// Update the movement direction
 			UpdateSmoothedMovementDirection();	
@@ -579,6 +551,18 @@ public abstract class HeroeController : ControllableCharacter
                     }
                     stateAttackSecond = AttackSecond.None;
                 }
+                else // Heroe dead
+                    if (this.currentLife <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover)
+                {                        
+                    previousState = state;
+                    this.state = StateHeroe.Dead;
+                }
+                // Recover heroe
+                else if (this.state == StateHeroe.Dead)
+                {
+                    previousState = state;
+                    this.state = StateHeroe.Recover;
+                }                
                 // Idle
                 else
                 {
@@ -652,6 +636,29 @@ public abstract class HeroeController : ControllableCharacter
             else if (state == StateHeroe.Walk)
             {
                 animation.CrossFade("Walk");
+            }
+            else if (state == StateHeroe.Dead)
+            {
+                this.currentLife = 0;
+                this.transform.position = this.initialPosition;
+                isMine = false;
+                //this.GetComponent<ThirdPersonController>().enabled = false;
+            }
+            else if (this.state == StateHeroe.Recover)
+            {
+                if (this.timeCount < 1) this.timeCount += Time.deltaTime;
+                else
+                {
+                    this.timeCount = 0;
+                    this.currentLife += 20;
+                    if (this.currentLife >= this.maximunLife)
+                    {
+                        this.currentLife = this.maximunLife;
+                        previousState = state;
+                        this.state = StateHeroe.Idle;
+                        isMine = true;
+                    }
+                }
             }
             // Idle
             else
