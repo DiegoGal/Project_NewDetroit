@@ -32,6 +32,10 @@ public class ArmyController : MonoBehaviour
     public GameObject armyBase;
     public List<CResourceBuilding> resourceBuildingList = new List<CResourceBuilding>();
 
+    //Double click
+    private float doubleClickStart = -1.0f;
+    private GameObject unitDoubleClick;
+
     // Mines known by the army
     public List<CResources> resourceMineList = new List<CResources>();
     public class ResourcesLinkStruct
@@ -105,7 +109,8 @@ public class ArmyController : MonoBehaviour
             if (!selecting)
             {
                 // deselect all the units
-                DeselectAll();
+                if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+                    DeselectAll();
                 //Debug.Log("iniciando seleccion: " + Input.mousePosition);
                 squareSelectionPointsScreen[0] = lastClick;// Input.mousePosition;
                 selecting = true;
@@ -114,6 +119,8 @@ public class ArmyController : MonoBehaviour
             {
                 // select units on the fly
                 CreatingSquare2();
+                doubleClickStart = -1.0f;
+
             }
         }
 
@@ -154,34 +161,122 @@ public class ArmyController : MonoBehaviour
                 if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
                 {
                     //Debug.Log("he tocado: " + myHit.transform.name);
-					CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
-					if (objSel != null)
-					{
-						// la marcamos como seleccionada
-						//objSel.SetSelected();
+                    CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
+                    if (objSel != null)
+                    {
+                        // la marcamos como seleccionada
+                        //objSel.SetSelected();
 
-						//Miramos si el objeto es una unidad
-						UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
-						if (unitCont != null && unitCont.teamNumber == teamNumber)
-						{
-							// si NO tenemos control pulsada, se deselecciona lo que hubiera
-							// y se selecciona la nueva unidad
-							if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
-							{
-								DeselectAll();
-							}
-							// seleccionamos la nueva unidad
-							GameObject unit = (GameObject)myHit.transform.gameObject;
-							// la añadimos a la lista de seleccionados
-							unitSelectedList.Add(unit);
-							// y la marcamos como seleccionada
-							unit.GetComponent<CSelectable>().SetSelected();
-						}
-						else
-						{
-							DeselectAll();
-							
-							BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
+                        //Miramos si el objeto es una unidad
+                        UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
+                        if (unitCont != null && unitCont.teamNumber == teamNumber)
+                        {
+                            // si NO tenemos control pulsada, se deselecciona lo que hubiera
+                            // y se selecciona la nueva unidad
+                            if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || doubleClickStart == -1.0f) &&
+                                !Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+                            //if (doubleClickStart == -1.0f)
+                            {
+                                DeselectAll();
+                            }
+                            
+                            // If control is pulsed 
+                            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                            {
+                                GameObject u = (GameObject)myHit.transform.gameObject;
+                                // la añadimos a la lista de seleccionados
+                                unitSelectedList.Add(u);
+                                // y la marcamos como seleccionada
+                                u.GetComponent<CSelectable>().SetSelected();
+                                int tipo = u.GetComponent<UnitController>().GetUnitType();
+                                foreach (GameObject unit in unitList)
+                                {
+                                    if (unit != u)
+                                    {
+                                        int tipoUnit = unit.GetComponent<UnitController>().GetUnitType();
+                                        if (tipo == tipoUnit && UnitIntoScreen(unit))
+                                        {
+                                            // la añadimos a la lista de seleccionados
+                                            unitSelectedList.Add(unit);
+                                            // y la marcamos como seleccionada
+                                            unit.GetComponent<CSelectable>().SetSelected();
+                                        }
+                                    }
+                                }
+                                doubleClickStart = -1.0f;
+                            }
+                            else
+                            {
+                                GameObject u = (GameObject)myHit.transform.gameObject;
+                                // If it's the first click of the possible doubleClick
+                                if (doubleClickStart == -1.0f)
+                                {
+                                    unitDoubleClick = u;
+                                    doubleClickStart = Time.time;
+                                    // la añadimos a la lista de seleccionados
+                                    unitSelectedList.Add(u);
+                                    // y la marcamos como seleccionada
+                                    u.GetComponent<CSelectable>().SetSelected();
+                                }
+                                else
+                                {
+                                    // If it's a double click (time)
+                                    if ((Time.time - doubleClickStart) < 0.5f)
+                                    {
+                                        u = unitSelectedList[0];
+                                        // If the second click it's to the same unit as the first click
+                                        if (unitDoubleClick == u)
+                                        {
+                                            u = unitSelectedList[0];
+                                            int tipo = u.GetComponent<UnitController>().GetUnitType();
+                                            foreach (GameObject unit in unitList)
+                                            {
+                                                if (unit != u)
+                                                {
+                                                    int tipoUnit = unit.GetComponent<UnitController>().GetUnitType();
+                                                    if (tipo == tipoUnit && UnitIntoScreen(unit))
+                                                    {
+                                                        // la añadimos a la lista de seleccionados
+                                                        unitSelectedList.Add(unit);
+                                                        // y la marcamos como seleccionada
+                                                        unit.GetComponent<CSelectable>().SetSelected();
+                                                    }
+                                                }
+                                            }
+                                            doubleClickStart = -1.0f;
+                                        }
+                                        else
+                                        {
+                                            if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+                                                DeselectAll();
+                                            unitDoubleClick = u;
+                                            doubleClickStart = Time.time;
+                                            // la añadimos a la lista de seleccionados
+                                            unitSelectedList.Add(u);
+                                            // y la marcamos como seleccionada
+                                            u.GetComponent<CSelectable>().SetSelected();
+                                        }
+                                    }
+                                    // If it's not a double click (time)
+                                    else
+                                    {
+                                        if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+                                            DeselectAll();
+                                        unitDoubleClick = u;
+                                        doubleClickStart = Time.time;
+                                        // la añadimos a la lista de seleccionados
+                                        unitSelectedList.Add(u);
+                                        // y la marcamos como seleccionada
+                                        u.GetComponent<CSelectable>().SetSelected();
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            DeselectAll();
+
+                            BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
                             if (baseCont != null && baseCont.teamNumber == teamNumber)
                             {
                                 // seleccionamos la base
@@ -206,14 +301,17 @@ public class ArmyController : MonoBehaviour
                                 }
 
                             }
-						}
-					}
-					else
-					{
-						//Deseleccionar las unidades
-						DeselectAll();
-					}
+                        }
+                    }
+                    else
+                    {
+                        //Deseleccionar las unidades
+                        DeselectAll();
+                        doubleClickStart = -1.0f;
+                    }
                 }
+                else
+                    doubleClickStart = -1.0f;
             }
         }
 
@@ -227,7 +325,8 @@ public class ArmyController : MonoBehaviour
                 Vector3 destiny = myHit.point;
 				if (unitSelectedList.Count > 1)
 				{
-					//Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
+                    doubleClickStart = -1.0f;
+                    //Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
 					List<Vector3> destinyList;
 					destinyList = SwarmAlgorithm(destiny);
 					int i = 0;
@@ -238,14 +337,13 @@ public class ArmyController : MonoBehaviour
 						i++;
 					}
 				}
-				else if (unitSelectedList.Count == 1)
+                else if (unitSelectedList.Count == 1)
 				{
 					GameObject u = unitSelectedList[0];
 					Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
 					//u.GetComponent<UnitController>().GoTo(destiny);
 					u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
 				}
-
             }
         }
 
@@ -345,6 +443,16 @@ public class ArmyController : MonoBehaviour
         }
 
     } // Update ()
+
+    private bool UnitIntoScreen(GameObject unit)
+    {
+        Vector3 pos = unit.transform.position;
+        // capture the screen position of the unit
+        Vector3 unitScreenPos = Camera.main.WorldToScreenPoint(unit.transform.position);
+        if (unitScreenPos.x >= 0.0f && unitScreenPos.x <= Screen.width && unitScreenPos.y >= 0.0f && unitScreenPos.y <= Screen.height)
+            return true;
+        else return false;
+    }
 
     void OnGUI ()
     {
@@ -667,7 +775,8 @@ public class ArmyController : MonoBehaviour
     // doc: http://docs.unity3d.com/Documentation/ScriptReference/Camera.WorldToScreenPoint.html
     private void CreatingSquare2 ()
     {
-        unitSelectedList.Clear();
+        if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+            DeselectAll();
 
         // se actualizan las posiciones de los vértices del cuadrado en pantalla:
         UpdateSelectionPointScreen();
@@ -692,9 +801,12 @@ public class ArmyController : MonoBehaviour
             else
             {
                 // delete the unit from the selection list
-                unitSelectedList.Remove(unitList[i]);
-                // and mark it as deselected
-                unitList[i].GetComponent<CSelectable>().SetDeselect();
+                if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+                {
+                    unitSelectedList.Remove(unitList[i]);
+                    // and mark it as deselected
+                    unitList[i].GetComponent<CSelectable>().SetDeselect();
+                }
             }
         }
     } // CreatingSquare2 ()
