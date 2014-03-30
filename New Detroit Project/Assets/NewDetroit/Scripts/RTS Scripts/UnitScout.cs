@@ -25,7 +25,8 @@ public class UnitScout : UnitController
     {
         base.Awake();
 
-        mower = transform.FindChild("Mower").gameObject;
+        if (!mower)
+            mower = transform.FindChild("Box002").gameObject;
     }
 
 	// Use this for initialization

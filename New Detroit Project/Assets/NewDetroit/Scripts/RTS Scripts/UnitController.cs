@@ -7,8 +7,6 @@ public class UnitController : ControllableCharacter
     protected float basicAttackPower;
     protected float secondaryAttackPower;
 
-    protected int attackSelected = 1;
-
     // the blood particles for when the unit has been hit
     public GameObject bloodParticles;
 
@@ -53,8 +51,8 @@ public class UnitController : ControllableCharacter
     private float ascendingAceleration = 1.045f;
 
     // the vision radious of the unit
-    protected float visionSphereRadious = 8.0f;
-    protected float maxAttackDistance = 2.0f;
+    public float visionSphereRadious = 8.0f;
+    public float maxAttackDistance = 2.0f;
 
     // atributes for the attack
     protected ControllableCharacter lastEnemyAttacked;
@@ -183,6 +181,7 @@ public class UnitController : ControllableCharacter
 
                     if (enemySelected.Damage(basicAttackPower))
                     {
+                        // the enemy has die
                         enemySelected = null;
                         currentState = State.Idle;
 
@@ -200,6 +199,13 @@ public class UnitController : ControllableCharacter
 
                 PlayAnimationCrossFade("Walk");
                 attackCadenceAux = 0.5f;
+            }
+            else
+            {
+                enemySelected = null;
+                currentState = State.Idle;
+
+                PlayAnimationCrossFade("Idle01");
             }
         }
         else // the enemy is no longer alive

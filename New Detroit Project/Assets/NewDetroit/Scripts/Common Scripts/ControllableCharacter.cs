@@ -55,7 +55,13 @@ public class ControllableCharacter : MonoBehaviour
         //Debug.Log("damage");
         if (!invincible)
             currentLife -= damage;
-        return (currentLife <= 0);
+        if (currentLife <= 0)
+        {
+            currentLife = 0;
+            return true;
+        }
+        else
+            return false;
     }
 
     public virtual bool Heal (float life)

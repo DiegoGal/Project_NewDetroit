@@ -50,13 +50,13 @@ public class Tower : BuildingController
         if (enemiesInside.Count == 0)
         {
             enemiesInside.Add(enemy);
-            Debug.Log("First Enemy entered in TOWER");
+            //Debug.Log("First Enemy entered in TOWER");
         }
         else
             if (!enemiesInside.Contains(enemy))
             {
                 enemiesInside.Add(enemy);
-                Debug.Log("New Enemy entered in TOWER");
+                //Debug.Log("New Enemy entered in TOWER");
             }
             //else
                 //Debug.Log("Enemy already entered in TOWER");
@@ -67,7 +67,7 @@ public class Tower : BuildingController
     {
         // Removal of the enemy in the array enemiesInside
         enemiesInside.Remove(enemy);
-        Debug.Log("Enemy exits the TOWER");
+        //Debug.Log("Enemy exits the TOWER");
     }
 
     // It is called when a team has conquered it. The units of this team have to leave the array enemiesInside

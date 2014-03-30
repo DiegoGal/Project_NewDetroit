@@ -51,6 +51,10 @@ public class UnitArtillery : UnitController
     // frecuencia (en segundos) de ataque secundario
     public float secondaryAttackCadence = 1.0f;
 
+    protected bool attackSelected = false; // false = attack1; true = attack2
+
+    public float maxAttackDistance1, maxAttackDistance2 = 2.0f;
+
     public override void Awake ()
     {
         base.Awake();
@@ -62,6 +66,10 @@ public class UnitArtillery : UnitController
         
 		enemiesInside = new List<ControllableCharacter>();
         visionSphereRadious = transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius;
+        if (attackSelected)
+            maxAttackDistance = maxAttackDistance2;
+        else
+            maxAttackDistance = visionSphereRadious;
     }
 
 	// Update is called once per frame
@@ -191,6 +199,7 @@ public class UnitArtillery : UnitController
                 {
                     // Attack!
                     Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
+                    transform.LookAt(lastEnemyAttacked.transform);
                     // play the attack animation:
                     animation.CrossFade("Attack1");
                     animation.CrossFadeQueued("Idle01");
@@ -248,7 +257,7 @@ public class UnitArtillery : UnitController
         } // switch (currentArtilleryState)
     }
 
-    protected override void UpdateGoingTo ()
+    /*protected override void UpdateGoingTo ()
     {
         base.UpdateGoingTo();
 
@@ -297,7 +306,7 @@ public class UnitArtillery : UnitController
                 }
                 break;
         }
-    }
+    }*/
 
     /*private void UpdateModeIdle ()
     {
@@ -415,7 +424,7 @@ public class UnitArtillery : UnitController
 
     } // UpdateModeIdle*/
 
-    public override void OnGUI()
+    public override void OnGUI ()
     {
         base.OnGUI();
 
