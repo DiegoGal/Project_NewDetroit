@@ -20,26 +20,22 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 	void Awake()
 	{
 		cameraScript = GetComponent<ThirdPersonCamera>();
-		controllerScript = GetComponent<ThirdPersonController>();
-		animator = GetComponent<Animator>();
+		//animator = GetComponent<Animator>();
 		heroeControlScript = GetComponent<HeroeController> ();
 		
 		if (photonView.isMine)
 		{
 			//MINE: local player, simply enable the local scripts
 			cameraScript.enabled = true;
-			controllerScript.enabled = true;
 
 			this.heroeControlScript.isMine = true;
+            heroeControlScript.enabled = true;
 		}
 		else
 		{           
-			cameraScript.enabled = false;
-			
-			controllerScript.enabled = true;
-			controllerScript.isControllable = false;
-
+			cameraScript.enabled = false;			
 			this.heroeControlScript.isMine = false;
+            heroeControlScript.enabled = true;
 		}
 
 		gameObject.name = gameObject.name + photonView.viewID;
@@ -51,15 +47,16 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		{
 			//We own this player: send the others our data
 			//stream.SendNext((int)controllerScript._characterState);
-			stream.SendNext(animator.GetBool("isRunning"));
+			/*stream.SendNext(animator.GetBool("isRunning"));
 			stream.SendNext(animator.GetFloat("Speed"));
 			stream.SendNext(animator.GetBool("isAttacking"));
 			stream.SendNext(animator.GetBool("isSecondAttack1"));
 			stream.SendNext(animator.GetBool("isSecondAttack2"));
-			stream.SendNext(animator.GetBool("isSecondAttack3"));
+			stream.SendNext(animator.GetBool("isSecondAttack3"));*/
 			stream.SendNext(transform.position);
 			stream.SendNext(transform.rotation);
-
+			stream.SendNext(heroeControlScript.state);
+			stream.SendNext(heroeControlScript.stateAttackSecond);
 			// Life's orc
 			if (heroeControlScript.type == HeroeController.TypeHeroe.Orc)
 			{
@@ -99,14 +96,16 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		{
 			//Network player, receive data
 			//controllerScript._characterState = (CharacterState)(int)stream.ReceiveNext();
-			isRunning = (bool)stream.ReceiveNext();
+			/*isRunning = (bool)stream.ReceiveNext();
 			Speed = (float)stream.ReceiveNext();
 			isAttacking = (bool)stream.ReceiveNext();
 			isSecondAttack1 = (bool)stream.ReceiveNext();
 			isSecondAttack2 = (bool)stream.ReceiveNext();
-			isSecondAttack3 = (bool)stream.ReceiveNext();
+			isSecondAttack3 = (bool)stream.ReceiveNext();*/
 			correctPlayerPos = (Vector3)stream.ReceiveNext();
 			correctPlayerRot = (Quaternion)stream.ReceiveNext();
+            newState = (HeroeController.StateHeroe)stream.ReceiveNext();
+            newStateAttackSecond = (HeroeController.AttackSecond)stream.ReceiveNext();
 
 			// Life's orc
 			nameOrcLA = (string) stream.ReceiveNext(); //Receive the name of the object that has been collided by an orc with his left arm
@@ -119,11 +118,13 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		}
 	}
 
-	private bool isRunning;
-	private float Speed;
-	private bool isAttacking, isSecondAttack1, isSecondAttack2, isSecondAttack3;
+	//private bool isRunning;
+	//private float Speed;
+	//private bool isAttacking, isSecondAttack1, isSecondAttack2, isSecondAttack3;
 	private Vector3 correctPlayerPos = Vector3.zero; //We lerp towards this
 	private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
+    private HeroeController.StateHeroe newState; // New state of the heroe
+    private HeroeController.AttackSecond newStateAttackSecond; // New state Attack
 	private string nameOrcLA; // The name of the collide object that an orc has collided with his left arm
 	private string nameOrcRA; // The name of the collide object that an orc has collided with his rigth arm
 	private int lifeOrcLA; // The life of the collided object that has been hit with the left arm of an orc
@@ -137,12 +138,14 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			//Update remote player (smooth this, this looks good, at the cost of some accuracy)
 			transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
-			animator.SetBool("isRunning",isRunning);
+            heroeControlScript.state = newState;
+            heroeControlScript.stateAttackSecond = newStateAttackSecond;
+			/*animator.SetBool("isRunning",isRunning);
 			animator.SetFloat("Speed",Speed);
 			animator.SetBool("isAttacking", isAttacking);
 			animator.SetBool("isSecondAttack1", isSecondAttack1);
 			animator.SetBool("isSecondAttack2", isSecondAttack2);
-			animator.SetBool("isSecondAttack3", isSecondAttack3);
+			animator.SetBool("isSecondAttack3", isSecondAttack3);*/
 
 			this.updateCollidedOrc();
 
