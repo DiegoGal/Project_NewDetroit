@@ -57,6 +57,7 @@ public abstract class HeroeController : ControllableCharacter
 	private float inAirControlAcceleration = 3.0f;
 	public float gravity = 20.0f; // The gravity for the character
 	private bool jumping = false; // Are we jumping? (Initiated with jump button and not grounded yet)
+	private float cooldown1 = 10, cooldown2 = 10, cooldown3 = 10;
 	//---------------------------------------------------------------------------------------------
 	// PARTICLES
 	// Snot particle
@@ -92,7 +93,6 @@ public abstract class HeroeController : ControllableCharacter
 	public bool attackInstantiate;	// Activate the spheres of arms
 	public bool isMine; // Tell us if that instance if ours or not
 	public TypeHeroe type;	// Type of heroe
-    public StateHeroe previousState; // The state of the heroe
 	public StateHeroe state; // The state of the heroe
 	public AttackSecond stateAttackSecond;	// The state of secondary attack
 	public bool ability1, 
@@ -289,7 +289,7 @@ public abstract class HeroeController : ControllableCharacter
 		counterAbility = 0;
 		// Initialize the animation
 		animation.Play ("Iddle01");
-        previousState = state = StateHeroe.Idle;				// Set the initial state of the hero
+		state = StateHeroe.Idle;				// Set the initial state of the hero
 		stateAttackSecond = AttackSecond.None;		// Set the initial state of secondary attack of hero
 	}//Start
 	
@@ -319,7 +319,7 @@ public abstract class HeroeController : ControllableCharacter
 		UpdateState (false, false, false); // Update state
         UpdateAnimation();
 		UpdateParticles (); // Update particles
-
+		Counter();
 		// GUI
 		GUIRects();
 	}//Update
@@ -511,28 +511,24 @@ public abstract class HeroeController : ControllableCharacter
             if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
             {
                 // Secondary attack
-                if ((Input.GetKey(KeyCode.Alpha1) || useSkill1) && ability1)
+                if ((Input.GetKey(KeyCode.Alpha1) || useSkill1) && ability1 && cooldown1 == 10)
                 {
-                    previousState = state;
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack1;
                 }
-                else if ((Input.GetKey(KeyCode.Alpha2) || useSkill2) && ability2)
+                else if ((Input.GetKey(KeyCode.Alpha2) || useSkill2) && ability2 && cooldown2 == 10)
                 {
-                    previousState = state;
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack2;
                 }
-                else if ((Input.GetKey(KeyCode.Alpha3) || useSkill3) && ability3)
+                else if ((Input.GetKey(KeyCode.Alpha3) || useSkill3) && ability3 && cooldown3 == 10)
                 {
-                    previousState = state;
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack3;
                 }
                 // Basic attack
                 else if (Input.GetMouseButton(0))
                 {
-                    previousState = state;
                     state = StateHeroe.AttackBasic;
                     stateAttackSecond = AttackSecond.None;
                 }
@@ -541,32 +537,27 @@ public abstract class HeroeController : ControllableCharacter
                 {
                     if (Input.GetKey(KeyCode.LeftShift))
                     {
-                        previousState = state;
                         state = StateHeroe.Run;
                     }
                     else
                     {
-                        previousState = state;
                         state = StateHeroe.Walk;
                     }
                     stateAttackSecond = AttackSecond.None;
                 }
-                else // Heroe dead
-                    if (this.currentLife <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover)
-                {                        
-                    previousState = state;
+				// Heroe dead
+                else if (this.currentLife <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover)
+                {
                     this.state = StateHeroe.Dead;
                 }
                 // Recover heroe
                 else if (this.state == StateHeroe.Dead)
                 {
-                    previousState = state;
                     this.state = StateHeroe.Recover;
                 }                
                 // Idle
                 else
                 {
-                    previousState = state;
                     state = StateHeroe.Idle;
                     stateAttackSecond = AttackSecond.None;
                 }
@@ -580,44 +571,41 @@ public abstract class HeroeController : ControllableCharacter
     {
         if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
         {
-            if (previousState != state)
-            {
-                // Secondary attack
-                if (state == StateHeroe.AttackSecond)
-                {
-                    if (stateAttackSecond == AttackSecond.Attack1)
-                    {
-                        animation.CrossFade("Burp");
-                        //--------------------------
-                        transform.Translate(Vector3.forward * 2 + Vector3.up);
-                        GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
-                        snt.GetComponent<ParticleDamage>().setDamage(attackM);
-                        transform.Translate(Vector3.back * 2 + Vector3.down);
-                        Destroy(snt, 5f);
-                        snotActivated = true;
-                    }
-                    else if (stateAttackSecond == AttackSecond.Attack2)
-                    {
-                        animation.CrossFade("FloorHit");
-                        //------------------------------
-                        GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
-                        spl.GetComponent<OrcSplashAttack>().setDamage(attackM + 40);
-                        spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
-                        Destroy(spl, 1.5f);
-                        splashActivated = true;
-                    }
-                    else if (stateAttackSecond == AttackSecond.Attack3)
-                    {
-                        animation.CrossFade("BullStrike");
-                        //--------------------------------
-                        transform.Translate(Vector3.down * 2);
-                        smokeInst = (GameObject)Instantiate(smoke, transform.localPosition, transform.rotation);
-                        transform.Translate(Vector3.up * 2);
-                        Destroy(smokeInst, 5f);
-                        smokeActivated = true;
-                    }
-                }
-            }
+	        // Secondary attack
+	        if (state == StateHeroe.AttackSecond)
+	        {
+	            if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == 10)
+	            {
+	                animation.CrossFade("Burp");
+	                //--------------------------
+	                transform.Translate(Vector3.forward * 2 + Vector3.up);
+	                GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
+	                snt.GetComponent<ParticleDamage>().setDamage(attackM);
+	                transform.Translate(Vector3.back * 2 + Vector3.down);
+	                Destroy(snt, 5f);
+	                snotActivated = true;
+	            }
+	            else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == 10)
+	            {
+	                animation.CrossFade("FloorHit");
+	                //------------------------------
+	                GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
+	                spl.GetComponent<OrcSplashAttack>().setDamage(attackM + 40);
+	                spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
+	                Destroy(spl, 1.5f);
+	                splashActivated = true;
+	            }
+	            else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == 10)
+	            {
+	                animation.CrossFade("BullStrike");
+	                //--------------------------------
+	                transform.Translate(Vector3.down * 2);
+	                smokeInst = (GameObject)Instantiate(smoke, transform.localPosition, transform.rotation);
+	                transform.Translate(Vector3.up * 2);
+	                Destroy(smokeInst, 5f);
+	                smokeActivated = true;
+	            }
+	        }
             // Basic attack
             else if (state == StateHeroe.AttackBasic)
             {
@@ -654,7 +642,6 @@ public abstract class HeroeController : ControllableCharacter
                     if (this.currentLife >= this.maximunLife)
                     {
                         this.currentLife = this.maximunLife;
-                        previousState = state;
                         this.state = StateHeroe.Idle;
                         isMine = true;
                     }
@@ -711,6 +698,15 @@ public abstract class HeroeController : ControllableCharacter
 		}
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------------
-
-
+	//Cooldown
+	protected void Counter()
+	{
+		// Secondary attack
+		if (cooldown1 < 10 || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack1) cooldown1 -= Time.deltaTime;
+		if (cooldown1 <= 0) cooldown1 = 10;
+		if (cooldown2 < 10 || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
+		if (cooldown2 <= 0) cooldown2 = 10;
+		if (cooldown3 < 10 || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
+		if (cooldown3 <= 0) cooldown3 = 10;
+	}
 }

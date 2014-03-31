@@ -55,10 +55,8 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			stream.SendNext(animator.GetBool("isSecondAttack3"));*/
 			stream.SendNext(transform.position);
 			stream.SendNext(transform.rotation);
-            stream.SendNext(heroeControlScript.state);
-            stream.SendNext(heroeControlScript.stateAttackSecond);
-            stream.SendNext(heroeControlScript.previousState);
-
+			stream.SendNext(heroeControlScript.state);
+			stream.SendNext(heroeControlScript.stateAttackSecond);
 			// Life's orc
 			if (heroeControlScript.type == HeroeController.TypeHeroe.Orc)
 			{
@@ -108,7 +106,6 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			correctPlayerRot = (Quaternion)stream.ReceiveNext();
             newState = (HeroeController.StateHeroe)stream.ReceiveNext();
             newStateAttackSecond = (HeroeController.AttackSecond)stream.ReceiveNext();
-            newPreviousState = (HeroeController.StateHeroe)stream.ReceiveNext();
 
 			// Life's orc
 			nameOrcLA = (string) stream.ReceiveNext(); //Receive the name of the object that has been collided by an orc with his left arm
@@ -128,7 +125,6 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 	private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
     private HeroeController.StateHeroe newState; // New state of the heroe
     private HeroeController.AttackSecond newStateAttackSecond; // New state Attack
-    private HeroeController.StateHeroe newPreviousState;
 	private string nameOrcLA; // The name of the collide object that an orc has collided with his left arm
 	private string nameOrcRA; // The name of the collide object that an orc has collided with his rigth arm
 	private int lifeOrcLA; // The life of the collided object that has been hit with the left arm of an orc
@@ -144,7 +140,6 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
             heroeControlScript.state = newState;
             heroeControlScript.stateAttackSecond = newStateAttackSecond;
-            heroeControlScript.previousState = newPreviousState;
 			/*animator.SetBool("isRunning",isRunning);
 			animator.SetFloat("Speed",Speed);
 			animator.SetBool("isAttacking", isAttacking);
