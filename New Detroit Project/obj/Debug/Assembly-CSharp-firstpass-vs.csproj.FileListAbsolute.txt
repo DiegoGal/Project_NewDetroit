@@ -1,0 +1,13 @@
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp-firstpass.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEditor.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEngine.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Mono.Cecil.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\nunit.framework.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Unity.DataContract.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.xml
+D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass-vs.csprojResolveAssemblyReference.cache
+D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass.dll
+D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass.pdb

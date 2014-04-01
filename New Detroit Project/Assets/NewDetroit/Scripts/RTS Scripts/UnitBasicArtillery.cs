@@ -7,7 +7,8 @@ public class UnitBasicArtillery : UnitArtillery
     public float attackPower1 = 10.0f;
     public float attackPower2 = 20.0f;
 
-    private GameObject leftWeapon, rightWeapon;
+    private GameObject leftWeapon, rightWeapon, baseballBat;
+    public Transform dummyBat;
 
     public override void Awake ()
     {
@@ -24,11 +25,15 @@ public class UnitBasicArtillery : UnitArtillery
             dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GunBarrelLeft");
         if (dummyRightWeaponGunBarrel == null)
             dummyRightWeaponGunBarrel = dummyRightWeapon.FindChild("GunBarrelRight");
+        if (dummyBat == null)
+            dummyBat = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Arma Blanca/Cylinder002");
 
         if (dummyLeftWeapon)
             leftWeapon = dummyLeftWeapon.gameObject;
         if (dummyRightWeapon)
             rightWeapon = dummyRightWeapon.gameObject;
+        if (dummyBat)
+            baseballBat = dummyBat.gameObject;
     }
 
 	// Use this for initialization
@@ -57,6 +62,8 @@ public class UnitBasicArtillery : UnitArtillery
             Destroy(leftWeapon);
         if (rightWeapon)
             Destroy(rightWeapon);
+        if (baseballBat)
+            Destroy(baseballBat);
     }
 
 } // class UnitBasicArtillery

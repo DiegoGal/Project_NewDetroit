@@ -100,12 +100,12 @@ public class ControllableCharacter : MonoBehaviour
 		return this.experienceGived;
 	}
 
-    public virtual void EnemyEntersInVisionSphere(ControllableCharacter enemy)
+    public virtual void EnemyEntersInVisionSphere (ControllableCharacter enemy)
     {
         
     }
 
-    public virtual void EnemyLeavesVisionSphere(ControllableCharacter enemy)
+    public virtual void EnemyLeavesVisionSphere (ControllableCharacter enemy)
     {
         
     }

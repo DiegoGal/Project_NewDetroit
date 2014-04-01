@@ -67,3 +67,4 @@ D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3
 D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
 D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp.dll
 D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp.pdb
+D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb

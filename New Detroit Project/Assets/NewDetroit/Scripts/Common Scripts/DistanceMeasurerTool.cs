@@ -13,7 +13,7 @@ public class DistanceMeasurerTool : MonoBehaviour
     // example distancesMatrix[2][3] is the distances between the units Army0[2] and Army1[3]
     public static List< List< float > > distancesMatrix = new List< List< float > >();
 
-    private static int maxCalculationsPerUpdate = 4; // ojo esto se eleva al cuadrado
+    private static int maxCalculationsPerUpdate = 2; // ojo esto se eleva al cuadrado
     private static int calculationsPerUpdate = 1;
 
     private static bool pair = true;
@@ -33,15 +33,15 @@ public class DistanceMeasurerTool : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		/*for (int i=0; i<MAX_UNITS; i++)
-			for (int j=0; j<MAX_UNITS; j++)
-				distancesMatrix[i][j] = -1.0f;*/
-	}
+        /*for (int i=0; i<MAX_UNITS; i++)
+            for (int j=0; j<MAX_UNITS; j++)
+                distancesMatrix[i][j] = float.MaxValue;*/
+    }
 	
 	// Update is called once per frame 
     void Update ()
     {
-        
+        Debug.Log("Búsqueda (" + searchMode.ToString() + "): " + prevIndexi + ", " + prevIndexj + ".");
         switch(searchMode)
         {
             case SearchMode.no_search:
@@ -51,7 +51,9 @@ public class DistanceMeasurerTool : MonoBehaviour
             case SearchMode.pair_pair:
 
                 SearchStep();
-                prevIndexj++;
+
+                prevIndexj = (prevIndexj + 1) % Army1.Count;
+
                 searchMode = SearchMode.pair_odd;
 			
                 break;
@@ -59,8 +61,8 @@ public class DistanceMeasurerTool : MonoBehaviour
             case SearchMode.pair_odd:
 
                 SearchStep();
-                prevIndexi++;
-                prevIndexj--;
+                prevIndexi = (prevIndexi + 1) % Army0.Count;
+                prevIndexj = (prevIndexj + calculationsPerUpdate + 2) % Army1.Count;
                 searchMode = SearchMode.odd_pair;
 
                 break;
@@ -68,7 +70,7 @@ public class DistanceMeasurerTool : MonoBehaviour
             case SearchMode.odd_pair:
 
                 SearchStep();
-                prevIndexj++;
+                prevIndexj = (prevIndexj + 1) % Army1.Count;
                 searchMode = SearchMode.odd_odd;
 
                 break;
@@ -76,11 +78,13 @@ public class DistanceMeasurerTool : MonoBehaviour
             case SearchMode.odd_odd:
 
                 SearchStep();
-                if (prevIndexj + calculationsPerUpdate >= calculationsPerUpdate)
-                    prevIndexi = (calculationsPerUpdate + prevIndexi) % calculationsPerUpdate;
+
+                if (prevIndexj + calculationsPerUpdate >= Army1.Count)
+                    prevIndexi = (prevIndexi - 1 + calculationsPerUpdate) % Army0.Count;
                 else
-                    prevIndexi = 0;
-                prevIndexj = (calculationsPerUpdate + prevIndexj) % calculationsPerUpdate;
+                    prevIndexi--;
+                prevIndexj = (prevIndexj + calculationsPerUpdate + 1) % Army1.Count;
+
                 searchMode = SearchMode.pair_pair;
 
                 break;
@@ -100,7 +104,11 @@ public class DistanceMeasurerTool : MonoBehaviour
             jcount = distancesMatrix[i].Count;
             for (int j = 0; j < jcount; j++)
             {
-                GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), distancesMatrix[i][j].ToString());
+                float aux = distancesMatrix[i][j];
+                if (aux != float.MaxValue)
+                    GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), aux.ToString());
+                else
+                    GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), "---");
             }
         }
     }
@@ -110,21 +118,23 @@ public class DistanceMeasurerTool : MonoBehaviour
         int list0Count = Army0.Count,
             list1Count = Army1.Count;
 
-        for (int i = prevIndexi; i < calculationsPerUpdate + prevIndexi; i += 2)
+        for (int i = prevIndexi; i <= calculationsPerUpdate + prevIndexi; i += 2)
         {
-            for (int j = prevIndexj; j < calculationsPerUpdate + prevIndexj; j += 2)
+            for (int j = prevIndexj; j <= calculationsPerUpdate + prevIndexj; j += 2)
             {
+                Debug.Log("Búsqueda: i:" + i + ", j:" + j + ".");
                 ControllableCharacter unit0 = Army0[i % list0Count], unit1 = Army1[j % list1Count];
                 if (unit0 && unit1)
                 {
                     // descartamos los casos por las distancias de x y z
-                    float nextDist = Mathf.Abs(unit0.transform.position.x - unit1.transform.position.x);
+                    float auxDist = Mathf.Abs(unit0.transform.position.x - unit1.transform.position.x);
                     float prevDist = distancesMatrix[i % list0Count][j % list1Count];
-                    if (nextDist < unit0.visionSphereRadious || nextDist < unit1.visionSphereRadious)
+                    if (auxDist < unit0.visionSphereRadious || auxDist < unit1.visionSphereRadious)
                     {
-                        nextDist = Mathf.Abs(unit0.transform.position.z - unit1.transform.position.z);
-                        if (nextDist < unit0.visionSphereRadious || nextDist < unit1.visionSphereRadious)
+                        auxDist = Mathf.Abs(unit0.transform.position.z - unit1.transform.position.z);
+                        if (auxDist < unit0.visionSphereRadious || auxDist < unit1.visionSphereRadious)
                         {
+                            // se calcula la nueva distancia
                             float newDist = Vector3.Distance
                             (
                                 unit0.transform.position,
@@ -132,22 +142,30 @@ public class DistanceMeasurerTool : MonoBehaviour
                             );
                             distancesMatrix[i % list0Count][j % list1Count] = newDist;
 
-                            if (prevDist > unit0.visionSphereRadious && newDist <= unit0.visionSphereRadious)
+                            // si la nueva distancia está dentro del área de visión de alguna de
+                            // las dos unidades y la distancia prévia fuera mayor al área de visión
+                            // significa que una nueva unidad ha entrado en el área de visión
+                            // si, en cambio, la distancia previa era menor al área de visión y la nueva
+                            // es mayor, significa que antes estaba dentro y acaba de salir
+                            if (prevDist >= unit0.visionSphereRadious && newDist <= unit0.visionSphereRadious)
                                 unit0.EnemyEntersInVisionSphere(unit1);
-                            if (prevDist > unit1.visionSphereRadious && newDist <= unit1.visionSphereRadious)
+                            else if (prevDist < unit0.visionSphereRadious && newDist > unit0.visionSphereRadious)
+                                unit0.EnemyLeavesVisionSphere(unit1);
+
+                            if (prevDist >= unit1.visionSphereRadious && newDist <= unit1.visionSphereRadious)
                                 unit1.EnemyEntersInVisionSphere(unit0);
+                            else if (prevDist < unit1.visionSphereRadious && newDist > unit1.visionSphereRadious)
+                                unit1.EnemyLeavesVisionSphere(unit0);
                         }
                     }
                     else
                     {
-                        if (prevDist != -1.0f)
-                        {
-                            if (prevDist < unit0.visionSphereRadious)
-                                unit0.EnemyLeavesVisionSphere(unit1);
-                            if (prevDist < unit1.visionSphereRadious)
-                                unit1.EnemyLeavesVisionSphere(unit0);
-                        }
-                        distancesMatrix[i % list0Count][j % list1Count] = -1.0f;
+                        if (prevDist <= unit0.visionSphereRadious)
+                            unit0.EnemyLeavesVisionSphere(unit1);
+                        if (prevDist <= unit1.visionSphereRadious)
+                            unit1.EnemyLeavesVisionSphere(unit0);
+
+                        distancesMatrix[i % list0Count][j % list1Count] = float.MaxValue;
                     }
                 }
             } // for j
@@ -164,7 +182,7 @@ public class DistanceMeasurerTool : MonoBehaviour
             List<float> listAux = new List<float>();
             int auxCont = Army1.Count;
             for (int i = 0; i < auxCont; i++)
-                listAux.Add(-1.0f);
+                listAux.Add(float.MaxValue);
 
             distancesMatrix.Add(listAux);
         }
@@ -174,7 +192,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 
             int auxCont = Army0.Count;
             for (int i = 0; i < auxCont; i++)
-                distancesMatrix[i].Add(-1.0f);
+                distancesMatrix[i].Add(float.MaxValue);
         }
         /*else
             throw Exception e;*/
@@ -193,6 +211,9 @@ public class DistanceMeasurerTool : MonoBehaviour
             int unitIndex = Army0.IndexOf(unit);
             Army0.RemoveAt(unitIndex);
             distancesMatrix.RemoveAt(unitIndex);
+
+            if (prevIndexi > 0)
+                prevIndexi--;
         }
         else if (unit.teamNumber == 1)
         {
@@ -201,9 +222,18 @@ public class DistanceMeasurerTool : MonoBehaviour
             int auxCont = Army0.Count;
             for (int i = 0; i < auxCont; i++)
                 distancesMatrix[i].RemoveAt(unitIndex);
+
+            if (prevIndexj > 0)
+                prevIndexj--;
         }
         /*else
             throw Exception e;*/
+
+        if (Army0.Count == 0 || Army1.Count == 0)
+        {
+            prevIndexi = prevIndexj = 0;
+            searchMode = SearchMode.no_search;
+        }
 
         if (calculationsPerUpdate > Army0.Count + Army1.Count)
             calculationsPerUpdate--;

@@ -38,7 +38,7 @@ public class UnitArtillery : UnitController
 
     public GameObject shotParticles;
 
-    protected List<ControllableCharacter> enemiesInside;
+    public List<ControllableCharacter> enemiesInside;
 
     private float alertHitTimer = 1.0f;
     private float alertHitTimerAux = 0.0f;
@@ -157,30 +157,42 @@ public class UnitArtillery : UnitController
                     int count = enemiesInside.Count;
                     for (int i = 0; i < count; i++)
                     {
-                        Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
-
-                        Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
-                        fwd.Normalize();
-                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
-                        Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
-                        RaycastHit myHit;
-                        if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, 100))
+                        // check if the enemy is still in the game
+                        if (enemiesInside[i])
                         {
-                            //Debug.Log(myHit.transform.name);
-                            // the ray has hit something
-                            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                            if ((enemy != null) && (enemy = enemiesInside[i]))
+                            Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
+
+                            Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
+                            fwd.Normalize();
+                            Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
+                            Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
+                            RaycastHit myHit;
+                            if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, visionSphereRadious))
                             {
-                                // this "something" is the enemy we are looking for...
-                                //Debug.Log("LE HE DADO!!!");
-                                // rotate the unit in the enemy direction
-                                transform.LookAt(enemy.transform.position);
-                                lastEnemyAttacked = enemy;
-                                alertHitTimerAux = alertHitTimer;
-                                currentArtilleryState = ArtilleryState.Attacking1;
-                                // the enemy stops moving
-                                StopMoving();
+                                //Debug.Log(myHit.transform.name);
+                                // the ray has hit something
+                                ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
+                                if ((enemy != null) && (enemy == enemiesInside[i]))
+                                {
+                                    // this "something" is the enemy we are looking for...
+                                    //Debug.Log("LE HE DADO!!!");
+                                    // rotate the unit in the enemy direction
+                                    transform.LookAt(enemy.transform.position);
+                                    lastEnemyAttacked = enemy;
+                                    alertHitTimerAux = alertHitTimer;
+                                    currentArtilleryState = ArtilleryState.Attacking1;
+                                    // the enemy stops moving
+                                    StopMoving();
+
+                                    animation.CrossFade("Attack1");
+                                }
                             }
+                        }
+                        else // remove the enemy
+                        {
+                            enemiesInside.RemoveAt(i);
+                            count--;
+                            i--;
                         }
                     }
                     // reset the timer
@@ -194,15 +206,26 @@ public class UnitArtillery : UnitController
             case ArtilleryState.Attacking1:
 
                 if (lastEnemyAttacked == null)
-                    currentArtilleryState = ArtilleryState.None;
+                {
+                    if (enemiesInside.Count == 0)
+                    {
+                        lastEnemyAttacked = null;
+                        // no more enemies, change the state
+                        currentArtilleryState = ArtilleryState.None; 
+                    }
+                    else
+                        currentArtilleryState = ArtilleryState.Alert;
+
+                    PlayAnimationCrossFade("Idle01");
+                }
                 else if (attackCadenceAux <= 0.0f)
                 {
                     // Attack!
                     Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
                     transform.LookAt(lastEnemyAttacked.transform);
                     // play the attack animation:
-                    animation.CrossFade("Attack1");
-                    animation.CrossFadeQueued("Idle01");
+                    //animation.CrossFade("Attack1");
+                    //animation.CrossFadeQueued("Idle01");
                     // emite some particles:
                     GameObject particles1 = (GameObject)Instantiate(shotParticles,
                         dummyLeftWeaponGunBarrel.transform.position,
@@ -225,6 +248,8 @@ public class UnitArtillery : UnitController
                             lastEnemyAttacked = null;
                             // no more enemies, change the state
                             currentArtilleryState = ArtilleryState.None;
+
+                            PlayAnimationCrossFade("Idle01");
                         }
                         else
                         {
@@ -440,18 +465,29 @@ public class UnitArtillery : UnitController
 
 	public override void EnemyEntersInVisionSphere (ControllableCharacter enemy)
     {
-        Debug.Log("enemigo a la vista!");
-        enemiesInside.Add(enemy);
-        currentArtilleryState = ArtilleryState.Alert;
-        alertHitTimerAux = 0.0f;
+        //if (!enemiesInside.Contains(enemy))
+        //{
+            //Debug.Log("enemigo a la vista!");
+            enemiesInside.Add(enemy);
+            if (currentArtilleryState == ArtilleryState.None)
+            {
+                currentArtilleryState = ArtilleryState.Alert;
+                alertHitTimerAux = 0.0f;
+            }
+        //}
     }
 
-    public override void EnemyLeavesVisionSphere(ControllableCharacter enemy)
+    public override void EnemyLeavesVisionSphere (ControllableCharacter enemy)
     {
         enemiesInside.Remove(enemy);
+        /*if (enemiesInside.Remove(enemy))
+            Debug.Log("Enemy out");
+        else
+            Debug.Log("Enemy NOT removed");*/
+
         if (enemiesInside.Count == 0)
         {
-            Debug.Log("all enemies out");
+            //Debug.Log("all enemies out");
 
             if (currentArtilleryState == ArtilleryState.Attacking1)
                 PlayAnimationCrossFade("Idle01");
