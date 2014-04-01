@@ -450,6 +450,16 @@ public class ArmyController : MonoBehaviour
             }
         }
 
+        // kill units with DEL key
+        if ( unitSelectedList.Count > 0 && Input.GetKeyDown(KeyCode.Delete) )
+        {
+            for (int i = unitSelectedList.Count - 1; i >= 0; i--)
+            {
+                ControllableCharacter unit = unitSelectedList[i].GetComponent<ControllableCharacter>();
+                unit.Damage(unit.getLife());
+            }
+        }
+
     } // Update ()
 
     private bool UnitIntoScreen(GameObject unit)
@@ -916,6 +926,8 @@ public class ArmyController : MonoBehaviour
         // if the unit is selected, remove it from the selected list
         if (unitSelectedList.Contains(unit))
             unitSelectedList.Remove(unit);
+
+        DistanceMeasurerTool.DeleteUnit(unit.GetComponent<ControllableCharacter>());
 
         // destroy the unit from the game
         //Destroy(unit, 4.0f); now this is done in the UnitControler itself

@@ -61,11 +61,16 @@ public class ControllableCharacter : MonoBehaviour
             currentLife -= damage;
         if (currentLife <= 0)
         {
-            currentLife = 0;
+            Die();
             return true;
         }
         else
             return false;
+    }
+
+    public virtual void Die ()
+    {
+        currentLife = 0;
     }
 
     public virtual bool Heal (float life)
@@ -94,5 +99,15 @@ public class ControllableCharacter : MonoBehaviour
 	{
 		return this.experienceGived;
 	}
+
+    public virtual void EnemyEntersInVisionSphere(ControllableCharacter enemy)
+    {
+        
+    }
+
+    public virtual void EnemyLeavesVisionSphere(ControllableCharacter enemy)
+    {
+        
+    }
 
 } // class ControllableCharacter

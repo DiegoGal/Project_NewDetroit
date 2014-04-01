@@ -438,7 +438,7 @@ public class UnitArtillery : UnitController
             currentArtilleryState.ToString());
     } // OnGUI
 
-	public void EnemyEntersInVisionSphere (ControllableCharacter enemy)
+	public override void EnemyEntersInVisionSphere (ControllableCharacter enemy)
     {
         Debug.Log("enemigo a la vista!");
         enemiesInside.Add(enemy);
@@ -446,12 +446,16 @@ public class UnitArtillery : UnitController
         alertHitTimerAux = 0.0f;
     }
 
-	public void EnemyLeavesVisionSphere (ControllableCharacter enemy)
+    public override void EnemyLeavesVisionSphere(ControllableCharacter enemy)
     {
         enemiesInside.Remove(enemy);
         if (enemiesInside.Count == 0)
         {
             Debug.Log("all enemies out");
+
+            if (currentArtilleryState == ArtilleryState.Attacking1)
+                PlayAnimationCrossFade("Idle01");
+
             currentArtilleryState = ArtilleryState.None;
             alertHitTimerAux = 0.0f;
         }

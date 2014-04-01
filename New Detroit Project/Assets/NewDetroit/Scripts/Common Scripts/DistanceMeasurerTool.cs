@@ -89,7 +89,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 		
     } // Update
 
-    /*public void OnGUI ()
+    public void OnGUI ()
     {
         GUI.skin.label.fontSize = 10;
 
@@ -103,7 +103,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                 GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), distancesMatrix[i][j].ToString());
             }
         }
-    }*/
+    }
 
     private void SearchStep ()
     {
@@ -118,21 +118,35 @@ public class DistanceMeasurerTool : MonoBehaviour
                 if (unit0 && unit1)
                 {
                     // descartamos los casos por las distancias de x y z
-                    float distAux = Mathf.Abs(unit0.transform.position.x - unit1.transform.position.x);
-                    if (distAux < unit0.visionSphereRadious && distAux < unit1.visionSphereRadious)
+                    float nextDist = Mathf.Abs(unit0.transform.position.x - unit1.transform.position.x);
+                    float prevDist = distancesMatrix[i % list0Count][j % list1Count];
+                    if (nextDist < unit0.visionSphereRadious || nextDist < unit1.visionSphereRadious)
                     {
-                        distAux = Mathf.Abs(unit0.transform.position.z - unit1.transform.position.z);
-                        if (distAux < unit0.visionSphereRadious && distAux < unit1.visionSphereRadious)
+                        nextDist = Mathf.Abs(unit0.transform.position.z - unit1.transform.position.z);
+                        if (nextDist < unit0.visionSphereRadious || nextDist < unit1.visionSphereRadious)
                         {
-                            distancesMatrix[i % list0Count][j % list1Count] = Vector3.Distance
+                            float newDist = Vector3.Distance
                             (
                                 unit0.transform.position,
                                 unit1.transform.position
                             );
+                            distancesMatrix[i % list0Count][j % list1Count] = newDist;
+
+                            if (prevDist > unit0.visionSphereRadious && newDist <= unit0.visionSphereRadious)
+                                unit0.EnemyEntersInVisionSphere(unit1);
+                            if (prevDist > unit1.visionSphereRadious && newDist <= unit1.visionSphereRadious)
+                                unit1.EnemyEntersInVisionSphere(unit0);
                         }
                     }
                     else
                     {
+                        if (prevDist != -1.0f)
+                        {
+                            if (prevDist < unit0.visionSphereRadious)
+                                unit0.EnemyLeavesVisionSphere(unit1);
+                            if (prevDist < unit1.visionSphereRadious)
+                                unit1.EnemyLeavesVisionSphere(unit0);
+                        }
                         distancesMatrix[i % list0Count][j % list1Count] = -1.0f;
                     }
                 }
