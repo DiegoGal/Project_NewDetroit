@@ -1,30 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public static class DistanceMeasurerTool : MonoBehaviour
+public class DistanceMeasurerTool : MonoBehaviour
 {
 
     // List of references at all the units of the Team 0
-    private static List<ControllableCharacter> Army0 = new List<ControllableCharacter>();
+    public static List< ControllableCharacter > Army0 = new List< ControllableCharacter >();
     // List of references al all the units of the Team 1
-    private static List<ControllableCharacter> Army1 = new List<ControllableCharacter>();
+    public static List< ControllableCharacter > Army1 = new List< ControllableCharacter >();
 
     // rows = Team 0, cols = Team 1
     // example distancesMatrix[2][3] is the distances between the units Army0[2] and Army1[3]
-    private static List< List< float > > distancesMatrix;
+    public static List< List< float > > distancesMatrix = new List< List< float > >();
 
-    private static int maxCalculationsPerUpdate = 20;
+    private static int maxCalculationsPerUpdate = 4; // ojo esto se eleva al cuadrado
     private static int calculationsPerUpdate = 1;
 
     private static bool pair = true;
     private enum SearchMode
     {
+        no_search,
         pair_pair,
         pair_odd,
         odd_pair,
         odd_odd
     };
-    private static SearchMode searchMode = SearchMode.pair_pair;
+    private static SearchMode searchMode = SearchMode.no_search;
 	
 	private static int prevIndexi = 0,
                        prevIndexj =  0;
@@ -43,6 +44,10 @@ public static class DistanceMeasurerTool : MonoBehaviour
         
         switch(searchMode)
         {
+            case SearchMode.no_search:
+
+                break;
+
             case SearchMode.pair_pair:
 
                 SearchStep();
@@ -84,16 +89,32 @@ public static class DistanceMeasurerTool : MonoBehaviour
 		
     } // Update
 
+    /*public void OnGUI ()
+    {
+        GUI.skin.label.fontSize = 10;
+
+        int icount = distancesMatrix.Count;
+        int jcount;
+        for (int i = 0; i < icount; i++)
+        {
+            jcount = distancesMatrix[i].Count;
+            for (int j = 0; j < jcount; j++)
+            {
+                GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), distancesMatrix[i][j].ToString());
+            }
+        }
+    }*/
+
     private void SearchStep ()
     {
         int list0Count = Army0.Count,
             list1Count = Army1.Count;
 
-        for (int i = prevIndexi; i < calculationsPerUpdate + prevIndexi; i = (i + 2) % list0Count)
+        for (int i = prevIndexi; i < calculationsPerUpdate + prevIndexi; i += 2)
         {
-            for (int j = prevIndexj; j < calculationsPerUpdate + prevIndexj; j = (j + 2) % list1Count)
+            for (int j = prevIndexj; j < calculationsPerUpdate + prevIndexj; j += 2)
             {
-                ControllableCharacter unit0 = Army0[i], unit1 = Army1[j];
+                ControllableCharacter unit0 = Army0[i % list0Count], unit1 = Army1[j % list1Count];
                 if (unit0 && unit1)
                 {
                     // descartamos los casos por las distancias de x y z
@@ -103,7 +124,7 @@ public static class DistanceMeasurerTool : MonoBehaviour
                         distAux = Mathf.Abs(unit0.transform.position.z - unit1.transform.position.z);
                         if (distAux < unit0.visionSphereRadious && distAux < unit1.visionSphereRadious)
                         {
-                            distancesMatrix[i][j] = Vector3.Distance
+                            distancesMatrix[i % list0Count][j % list1Count] = Vector3.Distance
                             (
                                 unit0.transform.position,
                                 unit1.transform.position
@@ -112,7 +133,7 @@ public static class DistanceMeasurerTool : MonoBehaviour
                     }
                     else
                     {
-                        distancesMatrix[i][j] = -1.0f;
+                        distancesMatrix[i % list0Count][j % list1Count] = -1.0f;
                     }
                 }
             } // for j
@@ -146,6 +167,9 @@ public static class DistanceMeasurerTool : MonoBehaviour
 
         if (calculationsPerUpdate < maxCalculationsPerUpdate)
             calculationsPerUpdate++;
+
+        if (searchMode == SearchMode.no_search && Army0.Count > 0 && Army1.Count > 0)
+            searchMode = SearchMode.pair_pair;
     }
 
     public static void DeleteUnit (ControllableCharacter unit)

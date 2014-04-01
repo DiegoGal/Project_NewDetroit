@@ -406,7 +406,7 @@ public class ArmyController : MonoBehaviour
 				// spawn a new harvester
 				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(0);
 				unitList.Add(newUnit);
-                //DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<CharacterController>());
+                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
 			}
 		}
         if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -416,6 +416,7 @@ public class ArmyController : MonoBehaviour
 				// spawn a new basic artillery
 				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(1);
 				unitList.Add(newUnit);
+                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -425,6 +426,7 @@ public class ArmyController : MonoBehaviour
 				// spawn a new heavy artillery
 				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(2);
 				unitList.Add(newUnit);
+                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
 			}
 		}
         if (Input.GetKeyDown(KeyCode.Alpha4))
@@ -434,6 +436,7 @@ public class ArmyController : MonoBehaviour
                 // spawn a new engineer
                 GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(3);
                 unitList.Add(newUnit);
+                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
@@ -443,6 +446,7 @@ public class ArmyController : MonoBehaviour
                 // spawn a new scout
                 GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(4);
                 unitList.Add(newUnit);
+                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
             }
         }
 

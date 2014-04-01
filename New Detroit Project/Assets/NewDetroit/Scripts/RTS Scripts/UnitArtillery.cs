@@ -65,7 +65,7 @@ public class UnitArtillery : UnitController
         base.Start();
         
 		enemiesInside = new List<ControllableCharacter>();
-        visionSphereRadious = transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius;
+        //visionSphereRadious = transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius;
         if (attackSelected)
             maxAttackDistance = maxAttackDistance2;
         else
