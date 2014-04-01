@@ -50,10 +50,6 @@ public class UnitController : ControllableCharacter
     private float timeFallingWhenDying = 1.6f;
     private float ascendingAceleration = 1.045f;
 
-    // the vision radious of the unit
-    public float visionSphereRadious = 8.0f;
-    public float maxAttackDistance = 2.0f;
-
     // atributes for the attack
     protected ControllableCharacter lastEnemyAttacked;
     protected ControllableCharacter enemySelected;

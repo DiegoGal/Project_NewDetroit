@@ -75,7 +75,10 @@ public class ArmyController : MonoBehaviour
         {
             UnitController unit = go.GetComponent<UnitController>();
             if ((unit != null) && (unit.teamNumber == teamNumber))
+            {
                 unitList.Add(go);
+                DistanceMeasurerTool.InsertUnit(unit);
+            }
         }
 
 		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
@@ -403,6 +406,7 @@ public class ArmyController : MonoBehaviour
 				// spawn a new harvester
 				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(0);
 				unitList.Add(newUnit);
+                //DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<CharacterController>());
 			}
 		}
         if (Input.GetKeyDown(KeyCode.Alpha2))

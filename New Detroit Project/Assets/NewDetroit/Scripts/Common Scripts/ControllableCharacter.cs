@@ -27,6 +27,10 @@ public class ControllableCharacter : MonoBehaviour
     // the screen position of the character
     protected Vector3 screenPosition;
 
+    // the vision radious of the unit
+    public float visionSphereRadious = 8.0f;
+    public float maxAttackDistance = 2.0f;
+
 	// --------------------------------------------------------------
 
     public virtual void Start ()
