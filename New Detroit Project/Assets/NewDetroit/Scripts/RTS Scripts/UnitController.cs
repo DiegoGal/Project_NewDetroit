@@ -25,7 +25,7 @@ public class UnitController : ControllableCharacter
     public float velocity = 3.5f;
     public float rotationVelocity = 10.0f;
     public Vector3 dirMovement = new Vector3();
-    private Vector3 destiny = new Vector3();
+    protected Vector3 destiny = new Vector3();
     protected float destinyThreshold = 0.5f;
 
     // health bar
