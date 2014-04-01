@@ -53,9 +53,12 @@ public class UnitEngineer : UnitController
     public Transform dummyLaptop;
     public Transform dummyHand;
 
-    // reference to the laptop
+    // reference to the laptop and hammer
     public GameObject laptop;
     public GameObject hammer;
+    //For attacking1
+    public GameObject fireball;
+    private GameObject newFireball;
 
     public override void Awake ()
     {
@@ -73,6 +76,8 @@ public class UnitEngineer : UnitController
     {
         base.Start();
         basicAttackPower = secondaryAttackPower = attackPower;
+        attackCadenceAux = 2.5f;
+        attackCadence = 3.2f;
     }
 	
 	// Update is called once per frame
@@ -195,7 +200,7 @@ public class UnitEngineer : UnitController
                     ) as GameObject;
                     newHammer.transform.name = "Hammer";
                     newHammer.transform.parent = dummyHand;
-                    newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f)); ;
+                    newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
                 }
                 else
                     base.Update();
@@ -244,7 +249,7 @@ public class UnitEngineer : UnitController
                         ) as GameObject;
                         newHammer.transform.name = "Hammer";
                         newHammer.transform.parent = dummyHand;
-                        newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));;
+                        newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
                     }
                     else
                         base.Update();
@@ -596,4 +601,133 @@ public class UnitEngineer : UnitController
         return 3;
     }
 
+    protected override void UpdateGoingToAnEnemy()
+    {
+        // 1- comprobamos si el enemigo está "a mano" y se le puede atacar
+        float distToEnemy = Vector3.Distance(transform.position, enemySelected.transform.position);
+        if (distToEnemy <= maxAttackDistance)
+        {
+            // change to Attack state
+            currentState = State.Attacking;
+            PlayAnimationCrossFade("Attack1");
+            GetComponent<NavMeshAgent>().destination = transform.position;
+
+            transform.LookAt(enemySelected.transform);
+
+            
+            if (newFireball)
+                Destroy(newFireball.gameObject);
+            /*Debug.Log("Dummy position: " + dummyHand.transform.position);
+            Debug.Log("Engineer position: " + transform.position);
+            newFireball = Instantiate
+            (
+                fireball,
+                dummyHand.transform.position,
+                //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
+                new Quaternion()
+            ) as GameObject;
+            newFireball.rigidbody.isKinematic = false;
+            newFireball.transform.name = "Fireball";
+            newFireball.transform.parent = dummyHand;
+            newFireball.transform.rotation = transform.rotation;
+            newFireball.GetComponent<FireballAttack>().owner = this.gameObject;
+            newFireball.GetComponent<FireballAttack>().power = (int)attackPower;
+            */
+        }
+        // 2- comprobamos si el enemigo esta "a vista"
+        else if (distToEnemy <= visionSphereRadious)
+        {
+            this.destiny = enemySelected.transform.position;
+            GetComponent<NavMeshAgent>().destination = destiny;
+        }
+        // 3- se ha llegado al destino y se ha perdido de vista al enemigo
+        else if (Vector3.Distance(transform.position, destiny) <= destinyThreshold)
+        {
+            StopMoving();
+        }
+    }
+
+    protected override void UpdateAttacking()
+    {
+        attackCadenceAux -= Time.deltaTime;
+
+        float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
+        if (enemySelected)
+        {
+            if (enemyDist <= maxAttackDistance)
+            {
+                if (attackCadenceAux <= 0)
+                {
+                    transform.LookAt(enemySelected.transform);
+
+                    if (!newFireball)
+                    {
+                        // Instanciate a new Fireball
+                        Debug.Log("Dummy position: " + dummyHand.transform.position);
+                        Debug.Log("Engineer position: " + transform.position);
+                        newFireball = Instantiate
+                        (
+                            fireball,
+                            dummyHand.transform.position,
+                            //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
+                            new Quaternion()
+                        ) as GameObject;
+                        newFireball.rigidbody.isKinematic = false;
+                        newFireball.transform.name = "Fireball";
+                        newFireball.transform.parent = dummyHand;
+                        newFireball.transform.rotation = transform.rotation;
+                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
+                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
+                    }
+
+                    attackCadenceAux = attackCadence;
+                    Vector3 dir = enemySelected.transform.position - newFireball.transform.position;
+                    dir = dir.normalized;
+                    Vector3 dir1 = transform.forward.normalized;
+                    newFireball.transform.parent = null;
+                    newFireball.rigidbody.AddForce(new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
+                                                                        7,
+                                                                dir.z * 8.0f * (enemyDist / maxAttackDistance)), ForceMode.Impulse);
+                    newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetThrown(true);
+                    //newFireball.GetComponent<SphereCollider>().isTrigger = true;
+                    
+                    //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);
+                    /*if (enemySelected.Damage(basicAttackPower))
+                    {
+                        // the enemy has die
+                        enemySelected = null;
+                        currentState = State.Idle;
+
+                        PlayAnimationCrossFade("Idle01");
+                        attackCadenceAux = 0.5f;
+                    }*/
+                }
+            }
+            else if (enemyDist <= visionSphereRadious)
+            {
+                currentState = State.GoingToAnEnemy;
+
+                this.destiny = enemySelected.transform.position;
+                GetComponent<NavMeshAgent>().destination = destiny;
+
+                PlayAnimationCrossFade("Walk");
+                attackCadenceAux = 2.5f;
+            }
+            else
+            {
+                enemySelected = null;
+                currentState = State.Idle;
+                attackCadenceAux = 2.5f;
+                PlayAnimationCrossFade("Idle01");
+            }
+        }
+        else // the enemy is no longer alive
+        {
+            enemySelected = null;
+            currentState = State.Idle;
+
+            PlayAnimationCrossFade("Idle01");
+            attackCadenceAux = 2.5f;
+        }
+    }
 }
