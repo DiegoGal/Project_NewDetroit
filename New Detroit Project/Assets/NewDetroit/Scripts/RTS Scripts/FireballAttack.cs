@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 
 public class FireballAttack : ParticleDamage
 {
@@ -9,6 +9,7 @@ public class FireballAttack : ParticleDamage
 
     public bool thrown = false;
     public int damage;
+    public List<Collider> unitList = new List<Collider>();
 
     // Use this for initialization
     void Awake()
@@ -47,24 +48,29 @@ public class FireballAttack : ParticleDamage
             }
             else if (other.tag == "Minion")
             {
-                UnitController script = other.GetComponent<UnitController>();
-                script.Damage(damage, 'P');
-                
-                // For add a force to the minions so they can fly
-                other.gameObject.AddComponent<Rigidbody>();
-                other.rigidbody.isKinematic = false;
-                other.rigidbody.useGravity = true;
+                if (!unitList.Contains(other))
+                {
+                    // For damage
+                    UnitController otherUC = other.GetComponent<UnitController>();
+                    otherUC.Damage(damage, 'P');
 
-                other.GetComponent<NavMeshAgent>().Stop(true);
-                //Vector3 dir = new Vector3(1.0f, 1.0f, 1.0f);
-                Vector3 dir = other.transform.position - transform.position;
-                dir = dir.normalized;
+                    // For add a force to the minions so they can fly
+                    other.gameObject.AddComponent<Rigidbody>();
+                    other.rigidbody.isKinematic = false;
+                    other.rigidbody.useGravity = true;
 
-                other.rigidbody.AddForce(new Vector3(dir.x * 2.0f,
-                                                      5.0f,
-                                                      dir.z * 2.0f), 
-                                                      ForceMode.Impulse);
-                //other.GetComponent<NavMeshAgent>().Resume(); 
+                    other.GetComponent<NavMeshAgent>().Stop(true);
+                    //Vector3 dir = new Vector3(1.0f, 1.0f, 1.0f);
+                    Vector3 dir = other.transform.position - transform.position;
+                    dir = dir.normalized;
+
+                    other.rigidbody.AddForce(new Vector3(dir.x * 2.0f,
+                                                          5.0f,
+                                                          dir.z * 2.0f),
+                                                          ForceMode.Impulse);
+                    otherUC.Fly();
+                    unitList.Add(other);
+                }
             }
         }
     }
