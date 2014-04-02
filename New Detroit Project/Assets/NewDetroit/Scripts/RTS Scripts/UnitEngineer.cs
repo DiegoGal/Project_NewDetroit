@@ -678,6 +678,7 @@ public class UnitEngineer : UnitController
                         newFireball.transform.rotation = transform.rotation;
                         newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
                         newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
+                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDestroyTime(attackCadence);
                     }
 
                     attackCadenceAux = attackCadence;
@@ -688,7 +689,7 @@ public class UnitEngineer : UnitController
                     newFireball.rigidbody.AddForce(new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
                                                                         7,
                                                                 dir.z * 8.0f * (enemyDist / maxAttackDistance)), ForceMode.Impulse);
-                    newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetThrown(true);
+
                     //newFireball.GetComponent<SphereCollider>().isTrigger = true;
                     
                     //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);

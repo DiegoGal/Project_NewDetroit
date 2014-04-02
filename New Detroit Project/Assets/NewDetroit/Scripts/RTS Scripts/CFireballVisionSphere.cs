@@ -5,25 +5,37 @@ public class CFireballVisionSphere : MonoBehaviour {
 
     private GameObject owner;
     private int damage;
-    private bool thrown;
     public GameObject splash;
+    private float destroyTime;
+    private float timer = 0.0f;
 
 	// Use this for initialization
 	void Start () 
     {
-	
+        timer = Time.time;
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-	
-	}
+        if ((Time.time - timer) <= destroyTime)
+        {
+            GameObject newSplash = Instantiate
+                (
+                    splash,
+                    transform.position,
+                    new Quaternion()
+                ) as GameObject;
+            newSplash.transform.name = "FireballSplash";
+            newSplash.GetComponent<FireballAttack>().SetDamage(damage);
+            newSplash.GetComponent<FireballAttack>().SetOwner(owner);
 
-    public void SetThrown(bool thrown)
-    {
-        this.thrown = thrown;
-    }
+            Destroy(transform.parent.gameObject, 0.2f);
+            transform.parent.rigidbody.isKinematic = true;
+            Destroy(newSplash, 1.2f);
+            transform.parent.gameObject.SetActive(false);
+        }
+	}
 
     public void SetOwner(GameObject owner)
     {
@@ -35,30 +47,8 @@ public class CFireballVisionSphere : MonoBehaviour {
         this.damage = damage;
     }
 
-    void OnTriggerEnter(Collider other)
+    public void SetDestroyTime(float destroyTime)
     {
-        if (thrown)
-        {
-            if (other.gameObject.name != owner.name && other.gameObject.name != "TowerVisionSphere"
-            && other.gameObject.name != "VisionSphere" && other.gameObject.name != "FireballSplash")
-            {
-                GameObject newSplash = Instantiate
-                (
-                    splash,
-                    transform.position,
-                    new Quaternion()
-                ) as GameObject;
-                newSplash.transform.name = "FireballSplash";
-                newSplash.transform.rotation = other.transform.rotation;
-                newSplash.GetComponent<FireballAttack>().SetDamage(damage);
-                newSplash.GetComponent<FireballAttack>().SetOwner(owner);
-
-                thrown = false;
-                Destroy(transform.parent.gameObject, 1.2f);
-                transform.parent.rigidbody.isKinematic = true;
-                Destroy(newSplash, 1.2f);
-                transform.parent.gameObject.SetActive(false);
-            }
-        }
+        this.destroyTime = destroyTime;
     }
 }
