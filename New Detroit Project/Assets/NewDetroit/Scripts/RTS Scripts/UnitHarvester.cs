@@ -291,16 +291,19 @@ public class UnitHarvester : UnitController
 
     public override void OnGUI ()
     {
-        base.OnGUI();
+        if (currentState != State.AscendingToHeaven)
+        {
+            base.OnGUI();
 
-		GUI.skin.label.fontSize = 10;
+            GUI.skin.label.fontSize = 10;
 
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
-		    currentState.ToString());
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
-            currentHarvestState.ToString());
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
-            "resources: " + resourcesLoaded);
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
+                currentState.ToString());
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
+                currentHarvestState.ToString());
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
+                "resources: " + resourcesLoaded);
+        }
     }
 
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)

@@ -41,7 +41,8 @@ public class DistanceMeasurerTool : MonoBehaviour
 	// Update is called once per frame 
     void Update ()
     {
-        Debug.Log("Búsqueda (" + searchMode.ToString() + "): " + prevIndexi + ", " + prevIndexj + ".");
+        if (searchMode != SearchMode.no_search)
+            Debug.Log("Búsqueda (" + searchMode.ToString() + "): " + prevIndexi + ", " + prevIndexj + ".");
         switch(searchMode)
         {
             case SearchMode.no_search:
