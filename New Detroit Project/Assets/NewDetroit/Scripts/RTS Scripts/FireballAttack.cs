@@ -38,7 +38,6 @@ public class FireballAttack : ParticleDamage
 
     void OnTriggerEnter(Collider other)
     {
-
         if (other.gameObject.name != owner.name)
         {
             if (other.tag == "Player")
@@ -50,7 +49,6 @@ public class FireballAttack : ParticleDamage
             {
                 UnitController script = other.GetComponent<UnitController>();
                 script.Damage(damage, 'P');
-                
             }
         }
     }
