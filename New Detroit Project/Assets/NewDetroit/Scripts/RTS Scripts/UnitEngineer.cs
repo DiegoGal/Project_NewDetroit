@@ -619,24 +619,8 @@ public class UnitEngineer : UnitController
             transform.LookAt(enemySelected.transform);
 
             
-            if (newFireball)
-                Destroy(newFireball.gameObject);
-            /*Debug.Log("Dummy position: " + dummyHand.transform.position);
-            Debug.Log("Engineer position: " + transform.position);
-            newFireball = Instantiate
-            (
-                fireball,
-                dummyHand.transform.position,
-                //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
-                new Quaternion()
-            ) as GameObject;
-            newFireball.rigidbody.isKinematic = false;
-            newFireball.transform.name = "Fireball";
-            newFireball.transform.parent = dummyHand;
-            newFireball.transform.rotation = transform.rotation;
-            newFireball.GetComponent<FireballAttack>().owner = this.gameObject;
-            newFireball.GetComponent<FireballAttack>().power = (int)attackPower;
-            */
+           /* if (newFireball)
+                Destroy(newFireball.gameObject);*/
         }
         // 2- comprobamos si el enemigo esta "a vista"
         else if (distToEnemy <= visionSphereRadious)

@@ -16,6 +16,7 @@ public class UnitController : ControllableCharacter
         GoingTo,
         GoingToAnEnemy,
         Attacking,
+        Flying,
         Dying, // the unit is falling death
         AscendingToHeaven
     }
@@ -57,6 +58,11 @@ public class UnitController : ControllableCharacter
     // Cool Down for detecting less time the collision with particles
     private float CDParticleCollision;
 
+    private float posY = -1.0f;
+    private float lastPosY = -1.0f;
+    private bool goingDown = false;
+    private Quaternion desiredRotation;
+
     public virtual void Awake ()
     {
         model = transform.FindChild("Model");
@@ -93,6 +99,7 @@ public class UnitController : ControllableCharacter
             case State.GoingTo:           UpdateGoingTo();           break;
             case State.GoingToAnEnemy:    UpdateGoingToAnEnemy();    break;
             case State.Attacking:         UpdateAttacking();         break;
+            case State.Flying:            UpdateFlying();            break;
             case State.Dying:             UpdateDying();             break;
             case State.AscendingToHeaven: UpdateAscendingToHeaven(); break;
         }
@@ -212,6 +219,29 @@ public class UnitController : ControllableCharacter
             PlayAnimationCrossFade("Idle01");
             attackCadenceAux = 0.5f;
         }
+    }
+
+    protected virtual void UpdateFlying()
+    {
+        float delta = 0.4f;
+        if (!goingDown)
+        {
+            if (transform.position.y > lastPosY)
+            {
+                lastPosY = transform.position.y;
+            }
+            else
+                goingDown = true;
+        }
+        else if (transform.position.y <= posY + delta)
+        {
+            GetComponent<NavMeshAgent>().Resume();
+            Destroy(rigidbody);
+            currentState = State.Idle;
+            lastPosY = -1.0f;
+            goingDown = false;
+        }
+    
     }
 
     private void UpdateDying ()
@@ -385,6 +415,16 @@ public class UnitController : ControllableCharacter
                 Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
                 CDParticleCollision = 0.1f; // 5 deltatime aprox
             }
+        }
+    }
+
+    public void Fly()
+    {
+        currentState = State.Flying;
+        if (posY == -1.0f)
+        {
+            posY = transform.position.y;
+            desiredRotation = transform.rotation;
         }
     }
 
