@@ -141,7 +141,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                                 unit1.transform.position
                             );
                             distancesMatrix[i % list0Count][j % list1Count] = newDist;
-
+                            
                             // si la nueva distancia está dentro del área de visión de alguna de
                             // las dos unidades y la distancia prévia fuera mayor al área de visión
                             // significa que una nueva unidad ha entrado en el área de visión
