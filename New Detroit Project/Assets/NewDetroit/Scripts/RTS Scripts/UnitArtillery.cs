@@ -55,6 +55,8 @@ public class UnitArtillery : UnitController
 
     public float maxAttackDistance1, maxAttackDistance2 = 2.0f;
 
+    protected bool thereIsVisionSphere = false;
+
     public override void Awake ()
     {
         base.Awake();
@@ -65,7 +67,24 @@ public class UnitArtillery : UnitController
         base.Start();
         
 		enemiesInside = new List<ControllableCharacter>();
-        //visionSphereRadious = transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius;
+
+        // if there is a VisionSphere attached to the unit we catch its radious here
+        // if not, then we get it just from the prefab's attribute value.
+        Transform sphereTransform = transform.FindChild("VisionSphere");
+        if (sphereTransform)
+        {
+            SphereCollider sphere = sphereTransform.GetComponent<SphereCollider>();
+            if (sphere)
+            {
+                visionSphereRadious = sphere.radius;
+                thereIsVisionSphere = true;
+            }
+            else
+                thereIsVisionSphere = false;
+        }
+        else
+            thereIsVisionSphere = false;
+
         if (attackSelected)
             maxAttackDistance = maxAttackDistance2;
         else
@@ -451,16 +470,19 @@ public class UnitArtillery : UnitController
 
     public override void OnGUI ()
     {
-        base.OnGUI();
+        if (currentState != State.AscendingToHeaven)
+        {
+            base.OnGUI();
 
-        GUI.skin.label.fontSize = 10;
+            GUI.skin.label.fontSize = 10;
 
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
-            currentState.ToString());
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
-            moveMode.ToString());
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
-            currentArtilleryState.ToString());
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
+                currentState.ToString());
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
+                moveMode.ToString());
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
+                currentArtilleryState.ToString());
+        }
     } // OnGUI
 
 	public override void EnemyEntersInVisionSphere (ControllableCharacter enemy)

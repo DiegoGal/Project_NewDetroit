@@ -50,16 +50,19 @@ public class UnitScout : UnitController
 
 	public override void OnGUI ()
 	{
-		base.OnGUI();
-		
-		GUI.skin.label.fontSize = 10;
+        if (currentState != State.AscendingToHeaven)
+        {
+            base.OnGUI();
 
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
-            currentState.ToString());
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
-            currentScoutState.ToString());
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
-            "NextPatrolPoint: " + nextPositionIndex);
+            GUI.skin.label.fontSize = 10;
+
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
+                currentState.ToString());
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
+                currentScoutState.ToString());
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
+                "NextPatrolPoint: " + nextPositionIndex);
+        }
 	}
 
 	public void StartPatrol (List<Vector3> positionList)

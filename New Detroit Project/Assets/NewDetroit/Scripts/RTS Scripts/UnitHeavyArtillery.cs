@@ -8,9 +8,16 @@ public class UnitHeavyArtillery : UnitArtillery
     public float attackPower2 = 40.0f;
 
     // the vision radious of the unit
-    //base: protected float visionSphereRadious;
+    // base: protected float visionSphereRadious;
     // extended vision radious (when its Deployed)
-    public float visionSphereRadiousExtended = 10.0f;
+    // this is added to the original radious
+    public float visionSphereRadiousExtended = 8.0f;
+
+    // we need to save the original size of the vision sphere
+    // in order to restore it after the deployed mode
+    private float visionSphereRaiousOriginal;
+
+    public GameObject frontWeapon, backWeapon;
 
     protected enum DeployState
     {
@@ -32,6 +39,13 @@ public class UnitHeavyArtillery : UnitArtillery
             dummyLeftWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/Bip002 Spine1/Bip002 Neck/Bip002 R Clavicle/Bip002 R UpperArm/Bip002 R Forearm/Bip002 R Hand/arma mano derecha");
         if (dummyLeftWeaponGunBarrel == null)
             dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A/GunBarrelLeft");
+        if (dummyRightWeapon == null)
+            dummyRightWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/mortero espalda");
+        
+        if (dummyLeftWeapon)
+            frontWeapon = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A").gameObject;
+        if (dummyRightWeapon)
+            backWeapon = dummyRightWeapon.FindChild("GoblinHeavyArtilleryWeapon01_B").gameObject;
     }
 
 	// Use this for initialization
@@ -41,6 +55,8 @@ public class UnitHeavyArtillery : UnitArtillery
 
         basicAttackPower = attackPower1;
         secondaryAttackPower = attackPower2;
+
+        visionSphereRaiousOriginal = visionSphereRadious;
 	}
 	
 	// Update is called once per frame
@@ -83,15 +99,18 @@ public class UnitHeavyArtillery : UnitArtillery
 
 	} // Update
 
-    public override void OnGUI ()
+    /*public override void OnGUI ()
     {
-        base.OnGUI();
+        if (currentState != State.AscendingToHeaven)
+        {
+            base.OnGUI();
 
-        GUI.skin.label.fontSize = 10;
+            GUI.skin.label.fontSize = 10;
 
-        GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 75, 100, 50),
-            currentDeployState.ToString());
-    } // OnGUI
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 75, 100, 50),
+                currentDeployState.ToString());
+        }
+    } // OnGUI*/
 
     public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
     {
@@ -111,23 +130,44 @@ public class UnitHeavyArtillery : UnitArtillery
         {
             case DeployState.Undeployed:
                 currentDeployState = DeployState.Deployed;
-                transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
-                    visionSphereRadious + visionSphereRadiousExtended;
+                if (thereIsVisionSphere)
+                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
+                        visionSphereRadious + visionSphereRadiousExtended;
+                else
+                    visionSphereRadious = visionSphereRaiousOriginal + visionSphereRadiousExtended;
                 break;
+
             case DeployState.Deploying:
+
                 currentDeployState = DeployState.Deployed;
-                transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
-                    visionSphereRadious + visionSphereRadiousExtended;
+                if (thereIsVisionSphere)
+                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
+                        visionSphereRadious + visionSphereRadiousExtended;
+                else
+                    visionSphereRadious = visionSphereRaiousOriginal + visionSphereRadiousExtended;
+
                 break;
+
             case DeployState.Deployed:
+
                 currentDeployState = DeployState.Undeployed;
-                transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
-                    visionSphereRadious;
+                if (thereIsVisionSphere)
+                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
+                        visionSphereRadious;
+                else
+                    visionSphereRadious = visionSphereRaiousOriginal;
+
                 break;
+
             case DeployState.Undeploying:
+
                 currentDeployState = DeployState.Undeployed;
-                transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
-                    visionSphereRadious;
+                if (thereIsVisionSphere)
+                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
+                        visionSphereRadious;
+                else
+                    visionSphereRadious = visionSphereRaiousOriginal;
+
                 break;
         }
     }
@@ -135,6 +175,14 @@ public class UnitHeavyArtillery : UnitArtillery
     public override int GetUnitType ()
     {
         return 2;
+    }
+
+    protected override void RemoveAssetsFromModel()
+    {
+        if (frontWeapon)
+            Destroy(frontWeapon);
+        if (backWeapon)
+            Destroy(backWeapon);
     }
 
 } // class UnitHeavyArtillery
