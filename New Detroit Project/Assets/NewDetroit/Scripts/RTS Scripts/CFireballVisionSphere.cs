@@ -29,7 +29,9 @@ public class CFireballVisionSphere : MonoBehaviour {
             newSplash.transform.name = "FireballSplash";
             newSplash.GetComponent<FireballAttack>().SetDamage(damage);
             newSplash.GetComponent<FireballAttack>().SetOwner(owner);
-
+            newSplash.AddComponent<Rigidbody>();
+            newSplash.GetComponent<Rigidbody>().useGravity = false;
+            
             Destroy(transform.parent.gameObject, 0.5f);
             transform.parent.rigidbody.isKinematic = true;
             Destroy(newSplash, 1.2f);

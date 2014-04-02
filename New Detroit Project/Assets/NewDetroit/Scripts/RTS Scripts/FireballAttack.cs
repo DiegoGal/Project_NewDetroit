@@ -49,6 +49,21 @@ public class FireballAttack : ParticleDamage
             {
                 UnitController script = other.GetComponent<UnitController>();
                 script.Damage(damage, 'P');
+                
+                // For add a force to the minions so they can fly
+                other.gameObject.AddComponent<Rigidbody>();
+                other.rigidbody.isKinematic = false;
+                other.rigidbody.useGravity = true;
+
+                other.GetComponent<NavMeshAgent>().Stop(true);
+                Vector3 dir = new Vector3(1.0f, 1.0f, 1.0f);
+                dir = dir.normalized;
+
+                other.rigidbody.AddForce(new Vector3(dir.x * 0.0f,
+                                                      dir.y * 7.0f,
+                                                      dir.z * 0.0f), 
+                                                      ForceMode.Impulse);
+                //other.GetComponent<NavMeshAgent>().Resume(); 
             }
         }
     }

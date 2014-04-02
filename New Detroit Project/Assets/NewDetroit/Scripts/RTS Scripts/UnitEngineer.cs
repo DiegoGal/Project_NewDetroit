@@ -697,15 +697,15 @@ public class UnitEngineer : UnitController
                     //newFireball.GetComponent<SphereCollider>().isTrigger = true;
                     
                     //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);
-                    /*if (enemySelected.Damage(basicAttackPower))
+                    if (enemySelected.currentLife <= 0.0f)
                     {
                         // the enemy has die
                         enemySelected = null;
                         currentState = State.Idle;
 
                         PlayAnimationCrossFade("Idle01");
-                        attackCadenceAux = 0.5f;
-                    }*/
+                        attackCadenceAux = 2.5f;
+                    }
                 }
             }
             else if (enemyDist <= visionSphereRadious)
