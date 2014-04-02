@@ -8,7 +8,7 @@ public class CFireballVisionSphere : MonoBehaviour {
     public GameObject splash;
     private float destroyTime;
     private float timer = 0.0f;
-
+    private bool thrown = false;
 	// Use this for initialization
 	void Start () 
     {
@@ -18,7 +18,7 @@ public class CFireballVisionSphere : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        if ((Time.time - timer) <= destroyTime)
+        if (!thrown && (Time.time - timer) >= destroyTime)
         {
             GameObject newSplash = Instantiate
                 (
@@ -30,10 +30,11 @@ public class CFireballVisionSphere : MonoBehaviour {
             newSplash.GetComponent<FireballAttack>().SetDamage(damage);
             newSplash.GetComponent<FireballAttack>().SetOwner(owner);
 
-            Destroy(transform.parent.gameObject, 0.2f);
+            Destroy(transform.parent.gameObject, 0.5f);
             transform.parent.rigidbody.isKinematic = true;
             Destroy(newSplash, 1.2f);
-            transform.parent.gameObject.SetActive(false);
+            //transform.parent.gameObject.SetActive(false);
+            thrown = true;
         }
 	}
 

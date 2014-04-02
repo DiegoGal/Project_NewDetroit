@@ -392,9 +392,11 @@ public class UnitEngineer : UnitController
             currentEngineerState = EngineerState.None;
 
             base.RightClickOnSelected(destiny, destTransform);
+            attackCadenceAux = 2.5f;
         }
         else if (destTransform.name == "TowerNeutral")// If he has to go to a TowerNeutral
         {
+            attackCadenceAux = 2.5f;
             newTGConstruct = newWConstruct = false;
             currentItem = destTransform;
             if (currentItem.GetComponent<BuildingController>().GetTeamNumber() != teamNumber) // if it's not in the same team
@@ -418,6 +420,7 @@ public class UnitEngineer : UnitController
         }
         else if (destTransform.name == "TowerBoxConstruct" || destTransform.name == "TowerGoblin")// If he has to go to a TowerGoblin
         {
+            attackCadenceAux = 2.5f;
             GameObject comp1 = null;
             GameObject comp2 = null;
             currentItem = destTransform;
@@ -471,6 +474,7 @@ public class UnitEngineer : UnitController
         }
         else if (destTransform.name == "WarehouseBoxConstruct" || destTransform.name == "Goblin Warehouse")// If he has to go to a TowerGoblin
         {
+            attackCadenceAux = 2.5f;
             currentItem = destTransform;
             GameObject comp1 = null;
             GameObject comp2 = null;
@@ -678,7 +682,7 @@ public class UnitEngineer : UnitController
                         newFireball.transform.rotation = transform.rotation;
                         newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
                         newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
-                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDestroyTime(attackCadence);
+                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
                     }
 
                     attackCadenceAux = attackCadence;

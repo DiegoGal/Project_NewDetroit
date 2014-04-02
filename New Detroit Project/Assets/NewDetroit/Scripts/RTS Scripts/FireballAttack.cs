@@ -49,7 +49,6 @@ public class FireballAttack : ParticleDamage
             {
                 UnitController script = other.GetComponent<UnitController>();
                 script.Damage(damage, 'P');
-                
             }
         }
     }
