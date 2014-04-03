@@ -439,7 +439,7 @@ public class UnitController : ControllableCharacter
         }
     }
 
-    public void Fly()
+    public void Fly ()
     {
         currentState = State.Flying;
         if (posY == -1.0f)
@@ -447,6 +447,11 @@ public class UnitController : ControllableCharacter
             posY = transform.position.y;
             desiredRotation = transform.rotation;
         }
+    }
+
+    public virtual void AttackMovement (Vector3 destiny)
+    {
+        GoTo(destiny);
     }
 
 }

@@ -41,8 +41,8 @@ public class DistanceMeasurerTool : MonoBehaviour
 	// Update is called once per frame 
     void Update ()
     {
-        if (searchMode != SearchMode.no_search)
-            Debug.Log("Búsqueda (" + searchMode.ToString() + "): " + prevIndexi + ", " + prevIndexj + ".");
+        /*if (searchMode != SearchMode.no_search)
+            Debug.Log("Búsqueda (" + searchMode.ToString() + "): " + prevIndexi + ", " + prevIndexj + ".");*/
         switch(searchMode)
         {
             case SearchMode.no_search:
@@ -123,7 +123,7 @@ public class DistanceMeasurerTool : MonoBehaviour
         {
             for (int j = prevIndexj; j <= calculationsPerUpdate + prevIndexj; j += 2)
             {
-                Debug.Log("Búsqueda: i:" + i + ", j:" + j + ".");
+                //Debug.Log("Búsqueda: i:" + i + ", j:" + j + ".");
                 ControllableCharacter unit0 = Army0[i % list0Count], unit1 = Army1[j % list1Count];
                 if (unit0 && unit1)
                 {

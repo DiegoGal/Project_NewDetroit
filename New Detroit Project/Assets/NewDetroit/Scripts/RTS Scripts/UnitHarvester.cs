@@ -33,6 +33,7 @@ public class UnitHarvester : UnitController
     public Transform dummyBackPack;
 
     // references to the assets the unit can have
+    public GameObject peak;
     private GameObject helmet;
     private GameObject backpack;
     private GameObject glasses;
@@ -139,6 +140,10 @@ public class UnitHarvester : UnitController
         );
         glasses.transform.parent = dummyGlasses;
         glasses.transform.Rotate(new Vector3(0.0f, transform.rotation.y, 0.0f));
+
+        // capturamos la instancia del pico en la mano
+        if (dummyHand)
+            peak = dummyHand.FindChild("GoblinHarvesterBeak").gameObject;
 
         /*GameObject newPack = Instantiate
         (
@@ -478,7 +483,7 @@ public class UnitHarvester : UnitController
             base.PlayAnimationCrossFadeQueued(animationName);
     }
 
-    public override int GetUnitType()
+    public override int GetUnitType ()
     {
         return 0;
     }
@@ -493,6 +498,8 @@ public class UnitHarvester : UnitController
             Destroy(glasses);
         if (actualMineralPack)
             Destroy(actualMineralPack);
+        if (peak)
+            Destroy(peak);
     }
 
 } // class UnitHarvester

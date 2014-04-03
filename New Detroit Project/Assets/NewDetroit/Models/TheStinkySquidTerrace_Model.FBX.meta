@@ -1,0 +1,85 @@
+fileFormatVersion: 2
+guid: 5624884c0ed502b4eaf94a0c3525077a
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: TheStinkySquidTerrace
+    100002: TheStinkySquidTerrace_Chair
+    100004: TheStinkySquidTerrace_Fence
+    100006: //RootNode
+    100008: TheStinkySquidTerrace_Poker
+    100010: TheStinkySquidTerrace_Table
+    400000: TheStinkySquidTerrace
+    400002: TheStinkySquidTerrace_Chair
+    400004: TheStinkySquidTerrace_Fence
+    400006: //RootNode
+    400008: TheStinkySquidTerrace_Poker
+    400010: TheStinkySquidTerrace_Table
+    2300000: TheStinkySquidTerrace
+    2300002: TheStinkySquidTerrace_Chair
+    2300004: TheStinkySquidTerrace_Fence
+    2300006: TheStinkySquidTerrace_Poker
+    2300008: TheStinkySquidTerrace_Table
+    3300000: TheStinkySquidTerrace
+    3300002: TheStinkySquidTerrace_Chair
+    3300004: TheStinkySquidTerrace_Fence
+    3300006: TheStinkySquidTerrace_Poker
+    3300008: TheStinkySquidTerrace_Table
+    4300000: TheStinkySquidTerrace
+    4300002: TheStinkySquidTerrace_Fence
+    4300004: TheStinkySquidTerrace_Table
+    4300006: TheStinkySquidTerrace_Chair
+    4300008: TheStinkySquidTerrace_Poker
+    9500000: //RootNode
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .0199999996
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 
