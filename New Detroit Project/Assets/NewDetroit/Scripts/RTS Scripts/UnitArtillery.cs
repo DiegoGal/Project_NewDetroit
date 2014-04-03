@@ -10,19 +10,12 @@ public class UnitArtillery : UnitController
     }
     protected WaitMode waitMode = WaitMode.Pasive;
 
-    protected enum MoveMode
-    {
-        Idle,
-        Moving,
-        MovingToAnEnemy,
-        MovingAttacking
-    }
-    protected MoveMode moveMode = MoveMode.Idle;
+    protected bool movingAttacking = false;
 
     protected enum ArtilleryState
     {
         None,
-        Alert,
+        Alert,      // indicates if an enemy is inside de vision sphere
         Attacking1, // primary attack
         Attacking2, // secondary attack
         Chasing
@@ -56,6 +49,9 @@ public class UnitArtillery : UnitController
     public float maxAttackDistance1, maxAttackDistance2 = 2.0f;
 
     protected bool thereIsVisionSphere = false;
+
+    // this is use to save the final destiny when the unit is in MovingAttacking mode
+    private Vector3 destinyCopy;
 
     public override void Awake ()
     {
@@ -166,60 +162,17 @@ public class UnitArtillery : UnitController
         {
             case ArtilleryState.None:
                 base.UpdateIdle();
+                if (movingAttacking)
+                {
+                    if (destiny != destinyCopy)
+                        GoTo(destinyCopy);
+                    else
+                        movingAttacking = false;
+                }
                 break;
 
             case ArtilleryState.Alert:
-
-                if (alertHitTimerAux <= 0)
-                {
-                    // launch a ray for each enemy inside the vision sphere
-                    int count = enemiesInside.Count;
-                    for (int i = 0; i < count; i++)
-                    {
-                        // check if the enemy is still in the game
-                        if (enemiesInside[i])
-                        {
-                            Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
-
-                            Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
-                            fwd.Normalize();
-                            Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
-                            Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
-                            RaycastHit myHit;
-                            if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, visionSphereRadious))
-                            {
-                                //Debug.Log(myHit.transform.name);
-                                // the ray has hit something
-                                ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                                if ((enemy != null) && (enemy == enemiesInside[i]))
-                                {
-                                    // this "something" is the enemy we are looking for...
-                                    //Debug.Log("LE HE DADO!!!");
-                                    // rotate the unit in the enemy direction
-                                    transform.LookAt(enemy.transform.position);
-                                    lastEnemyAttacked = enemy;
-                                    alertHitTimerAux = alertHitTimer;
-                                    currentArtilleryState = ArtilleryState.Attacking1;
-                                    // the enemy stops moving
-                                    StopMoving();
-
-                                    animation.CrossFade("Attack1");
-                                }
-                            }
-                        }
-                        else // remove the enemy
-                        {
-                            enemiesInside.RemoveAt(i);
-                            count--;
-                            i--;
-                        }
-                    }
-                    // reset the timer
-                    alertHitTimerAux = alertHitTimer;
-                }
-                else
-                    alertHitTimerAux -= Time.deltaTime;
-
+                SearchForAnEnemy();
                 break;
 
             case ArtilleryState.Attacking1:
@@ -301,56 +254,13 @@ public class UnitArtillery : UnitController
         } // switch (currentArtilleryState)
     }
 
-    /*protected override void UpdateGoingTo ()
+    protected override void UpdateGoingTo ()
     {
         base.UpdateGoingTo();
 
-        switch (moveMode)
-        {
-            case MoveMode.MovingToAnEnemy:
-                // si el estado ha pasado a Alert y el enemigo seleccionado
-                // ha entrada en la burbuja
-                if (
-                     (currentArtilleryState == ArtilleryState.Alert) &&
-                     (enemiesInside.Contains(enemySelected))
-                   )
-                {
-                    if (alertHitTimerAux <= 0)
-                    {
-                        // launch a ray for the enemy searched
-                        Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.3f);
-                        Vector3 fwd = enemySelected.transform.position - this.transform.position;
-                        fwd.Normalize();
-                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
-                        Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
-                        RaycastHit myHit;
-                        if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, 100))
-                        {
-                            //Debug.Log(myHit.transform.name);
-                            // the ray has hit something
-                            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                            if (enemy = enemySelected)
-                            {
-                                // this "something" is the enemy we are looking for...
-                                //Debug.Log("LE HE DADO!!!");
-                                transform.LookAt(enemy.transform.position);
-                                lastEnemyAttacked = enemy;
-                                alertHitTimerAux = alertHitTimer;
-                                currentArtilleryState = ArtilleryState.Attacking1;
-                                // the enemy stops moving
-                                StopMoving(); // this also sets the currentState to Idle
-                                moveMode = MoveMode.Idle;
-                            }
-                        }
-                        // reset the timer
-                        alertHitTimerAux = alertHitTimer;
-                    }
-                    else
-                        alertHitTimerAux -= Time.deltaTime;
-                }
-                break;
-        }
-    }*/
+        if (movingAttacking)
+            SearchForAnEnemy();
+    }
 
     /*private void UpdateModeIdle ()
     {
@@ -479,7 +389,7 @@ public class UnitArtillery : UnitController
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
                 currentState.ToString());
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
-                moveMode.ToString());
+                "MoveModeAttacking: " + movingAttacking);
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
                 currentArtilleryState.ToString());
         }
@@ -523,7 +433,7 @@ public class UnitArtillery : UnitController
     {
         base.RightClickOnSelected(destiny, destTransform);
 
-        ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
+        /*ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
         if ((unit != null) && (teamNumber != unit.teamNumber))
         {
             enemySelected = unit;
@@ -539,8 +449,76 @@ public class UnitArtillery : UnitController
                 currentArtilleryState = ArtilleryState.Alert;
             else
                 currentArtilleryState = ArtilleryState.None;
-        }
+        }*/
 
     } // RightClickOnSelected
+
+    public override void AttackMovement (Vector3 destiny)
+    {
+        destinyCopy = destiny;
+        base.AttackMovement(destiny);
+        movingAttacking = true;
+    }
+
+
+    // the unit is in Alert state and is lookig for an enemy inside its vision sphere
+    protected void SearchForAnEnemy ()
+    {
+        int count = enemiesInside.Count;
+        if (count > 0)
+        {
+            if (alertHitTimerAux <= 0)
+            {
+                // launch a ray for each enemy inside the vision sphere
+
+                for (int i = 0; i < count; i++)
+                {
+                    // check if the enemy is still in the game
+                    if (enemiesInside[i])
+                    {
+                        Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
+
+                        Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
+                        fwd.Normalize();
+                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
+                        Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
+                        RaycastHit myHit;
+                        if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, visionSphereRadious))
+                        {
+                            //Debug.Log(myHit.transform.name);
+                            // the ray has hit something
+                            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
+                            if ((enemy != null) && (enemy == enemiesInside[i]))
+                            {
+                                // this "something" is the enemy we are looking for...
+                                //Debug.Log("LE HE DADO!!!");
+                                // rotate the unit in the enemy direction
+                                transform.LookAt(enemy.transform.position);
+                                lastEnemyAttacked = enemy;
+                                alertHitTimerAux = alertHitTimer;
+                                currentArtilleryState = ArtilleryState.Attacking1;
+                                // the enemy stops moving
+                                StopMoving();
+
+                                animation.CrossFade("Attack1");
+                            }
+                        }
+                    }
+                    else // remove the enemy
+                    {
+                        enemiesInside.RemoveAt(i);
+                        count--;
+                        i--;
+                    }
+                }
+                // reset the timer
+                alertHitTimerAux = alertHitTimer;
+            }
+            else
+                alertHitTimerAux -= Time.deltaTime;
+        }
+        else
+            currentArtilleryState = ArtilleryState.None;
+    }
 
 } // class UnitArtillery

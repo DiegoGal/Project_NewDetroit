@@ -123,7 +123,6 @@ public class ArmyController : MonoBehaviour
                 // select units on the fly
                 CreatingSquare2();
                 doubleClickStart = -1.0f;
-
             }
         }
 
@@ -136,6 +135,7 @@ public class ArmyController : MonoBehaviour
         else if (Input.GetMouseButtonUp(0))
         {
             // hacemos click izquierdo
+
             if (keyPPressed)
             {
                 // selección de puntos para la patrulla de unidades exploradoras
@@ -154,6 +154,30 @@ public class ArmyController : MonoBehaviour
                     }
                 }
             }
+
+            else if (Input.GetKey(KeyCode.A))
+            {
+                // attack movement mode
+                //Debug.Log("modo de ataquerl!");
+                // lanzamos rayo y recogemos donde choca
+                myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+                {
+                    Vector3 destiny = myHit.point;
+                    int count = unitSelectedList.Count;
+                    if (count > 1)
+                    {
+                        //Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
+                        List<Vector3> destinyList = SwarmAlgorithm(destiny);
+                        
+                        for (int i=0; i<count; i++)
+                            unitSelectedList[i].GetComponent<UnitController>().AttackMovement(destinyList[i]);
+                    }
+                    else if (count == 1)
+                        unitSelectedList[0].GetComponent<UnitController>().AttackMovement(destiny);
+                }
+            }
+
             // seleccion simple: si se levanta el botón y la posición del ratón
             // es la misma que cuando se pulso por última vez
             else if (Input.mousePosition == lastClick)
@@ -182,7 +206,7 @@ public class ArmyController : MonoBehaviour
                             {
                                 DeselectAll();
                             }
-                            
+
                             // If control is pulsed 
                             if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                             {
@@ -353,7 +377,7 @@ public class ArmyController : MonoBehaviour
         // Scout Patrol Control
         if (Input.GetKeyDown(KeyCode.P))
             keyPPressed = true;
-        if (Input.GetKeyUp(KeyCode.P))
+        if (keyPPressed && Input.GetKeyUp(KeyCode.P))
         {
             Debug.Log("finalizar puntos de ruta");
             keyPPressed = false;
