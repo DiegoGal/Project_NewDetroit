@@ -118,14 +118,17 @@ public class CameraMOBAController : MonoBehaviour
 			if  (heroe.ability1 && rectangleButtonSkill1.Contains(mousePosition))
 			{
 				heroe.UpdateState(true, false, false);
+				if (heroe.type == HeroeController.TypeHeroe.Orc) ((OrcController)heroe).UpdateAnimation();
 			}
 			else if (heroe.ability2 && rectangleButtonSkill2.Contains(mousePosition))
 			{
 				heroe.UpdateState(false, true, false);
+				if (heroe.type == HeroeController.TypeHeroe.Orc) ((OrcController)heroe).UpdateAnimation();
 			}
 			else if (heroe.ability3 && rectangleButtonSkill3.Contains(mousePosition))
 			{
 				heroe.UpdateState(false, false, true);
+				if (heroe.type == HeroeController.TypeHeroe.Orc) ((OrcController)heroe).UpdateAnimation();
 			}
 		}
 	}

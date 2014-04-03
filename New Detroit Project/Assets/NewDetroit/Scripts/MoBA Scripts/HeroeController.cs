@@ -57,7 +57,7 @@ public abstract class HeroeController : ControllableCharacter
 	private float inAirControlAcceleration = 3.0f;
 	public float gravity = 20.0f; // The gravity for the character
 	private bool jumping = false; // Are we jumping? (Initiated with jump button and not grounded yet)
-	private float cooldown1 = 10, cooldown2 = 10, cooldown3 = 10;
+	protected float cooldown1, cooldown2, cooldown3, cooldown1total, cooldown2total, cooldown3total;
 	//---------------------------------------------------------------------------------------------
 	// PARTICLES
 	// Snot particle
@@ -103,7 +103,7 @@ public abstract class HeroeController : ControllableCharacter
 	protected Animator animator; //Animator
 	protected Vector3 initialPosition; // The spawn position
 	
-	private double 	timeCount; // Time counter
+	protected double timeCount; // Time counter
 	public int counterAbility;
     //This is for the particles that collides with the hero
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
@@ -317,36 +317,9 @@ public abstract class HeroeController : ControllableCharacter
 
 		UpdateControl (); // Update control
 		UpdateState (false, false, false); // Update state
-        UpdateAnimation();
-		UpdateParticles (); // Update particles
-		Counter();
 		// GUI
 		GUIRects();
 	}//Update
-
-    // Cool Down for detecting less time the collision with particles
-    private float CDParticleCollision; 
-    //This is for the particles that collides with the orc
-    void OnParticleCollision(GameObject other)
-    {
-        
-        // get the particle system
-        ParticleSystem particleSystem;
-        particleSystem = other.GetComponent<ParticleSystem>();
-        //If the particle is a Moco    
-        if (particleSystem.tag == "Moco")
-        {
-            if (CDParticleCollision > 0)
-                CDParticleCollision -= Time.deltaTime;
-            else
-            {
-            Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
-            CDParticleCollision = 0.1f; // 5 deltatime aprox
-            }
-        }
-           
-         
-    }
 
     void OnGUI ()
 	{
@@ -511,17 +484,17 @@ public abstract class HeroeController : ControllableCharacter
             if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
             {
                 // Secondary attack
-                if ((Input.GetKey(KeyCode.Alpha1) || useSkill1) && ability1 && cooldown1 == 10)
+                if ((Input.GetKey(KeyCode.Alpha1) || useSkill1) && ability1 && cooldown1 == cooldown1total)
                 {
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack1;
                 }
-                else if ((Input.GetKey(KeyCode.Alpha2) || useSkill2) && ability2 && cooldown2 == 10)
+                else if ((Input.GetKey(KeyCode.Alpha2) || useSkill2) && ability2 && cooldown2 == cooldown2total)
                 {
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack2;
                 }
-                else if ((Input.GetKey(KeyCode.Alpha3) || useSkill3) && ability3 && cooldown3 == 10)
+                else if ((Input.GetKey(KeyCode.Alpha3) || useSkill3) && ability3 && cooldown3 == cooldown3total)
                 {
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack3;
@@ -564,149 +537,16 @@ public abstract class HeroeController : ControllableCharacter
             }
         }
 	}
-    //----------------------------------------------------------------------------------------------------------------------------------------
-    //Animation
-	// Only can do an action if hero don't do a secondary attack
-    public void UpdateAnimation()
-    {
-        if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
-        {
-	        // Secondary attack
-	        if (state == StateHeroe.AttackSecond)
-	        {
-	            if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == 10)
-	            {
-	                animation.CrossFade("Burp");
-	                //--------------------------
-	                transform.Translate(Vector3.forward * 2 + Vector3.up);
-	                GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
-	                snt.GetComponent<ParticleDamage>().setDamage(attackM);
-	                transform.Translate(Vector3.back * 2 + Vector3.down);
-	                Destroy(snt, 5f);
-	                snotActivated = true;
-	            }
-	            else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == 10)
-	            {
-	                animation.CrossFade("FloorHit");
-	                //------------------------------
-	                GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
-	                spl.GetComponent<OrcSplashAttack>().setDamage(attackM + 40);
-	                spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
-	                Destroy(spl, 1.5f);
-	                splashActivated = true;
-	            }
-	            else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == 10)
-	            {
-	                animation.CrossFade("BullStrike");
-	                //--------------------------------
-	                transform.Translate(Vector3.down * 2);
-	                smokeInst = (GameObject)Instantiate(smoke, transform.localPosition, transform.rotation);
-	                transform.Translate(Vector3.up * 2);
-	                Destroy(smokeInst, 5f);
-	                smokeActivated = true;
-	            }
-	        }
-            // Basic attack
-            else if (state == StateHeroe.AttackBasic)
-            {
-                if (!animation.IsPlaying("Attack01") && !animation.IsPlaying("Attack02") && !animation.IsPlaying("Attack03"))
-                {
-                    animation.CrossFade("Attack01");
-                    animation.CrossFadeQueued("Attack02");
-                    animation.CrossFadeQueued("Attack03");
-                }
-            }
-            // Movement
-            else if (state == StateHeroe.Run)
-            {
-                animation.CrossFade("Run");
-            }
-            else if (state == StateHeroe.Walk)
-            {
-                animation.CrossFade("Walk");
-            }
-            else if (state == StateHeroe.Dead)
-            {
-                this.currentLife = 0;
-                this.transform.position = this.initialPosition;
-                isMine = false;
-                //this.GetComponent<ThirdPersonController>().enabled = false;
-            }
-            else if (this.state == StateHeroe.Recover)
-            {
-                if (this.timeCount < 1) this.timeCount += Time.deltaTime;
-                else
-                {
-                    this.timeCount = 0;
-                    this.currentLife += 20;
-                    if (this.currentLife >= this.maximunLife)
-                    {
-                        this.currentLife = this.maximunLife;
-                        this.state = StateHeroe.Idle;
-                        isMine = true;
-                    }
-                }
-            }
-            // Idle
-            else
-            {
-                if (!animation.IsPlaying("Iddle01") && !animation.IsPlaying("Iddle02"))
-                {
-                    animation.CrossFade("Iddle01");
-                    animation.CrossFadeQueued("Iddle02");
-                }
-            }
-        }
-    }
-    //----------------------------------------------------------------------------------------------------------------------------------------
-    //Particles
-	protected void UpdateParticles()
-	{
-		if (snotActivated)
-		{
-			if (snotCD <= 0)
-			{
-				snotCD = 1.7f;
-				snotActivated = false;
-			}
-			else snotCD -= Time.deltaTime;
-		}
-		
-		if (splashActivated)
-		{
-			if (splashCD <= 0)
-			{
-				splashCD = 1.7f;
-				splashActivated = false;
-			}
-			else splashCD -= Time.deltaTime;
-		}	
-		
-		if (smokeActivated)
-		{
-			if (smokeInst!=null)
-			{
-				smokeInst.transform.position= transform.position;
-				smokeInst.transform.Translate(Vector3.down*2);
-			}
-			if (smokeCD <= 0)
-			{
-				smokeCD = 1.7f;
-				smokeActivated = false;
-			}
-			else smokeCD -= Time.deltaTime;
-		}
-	}
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	//Cooldown
 	protected void Counter()
 	{
 		// Secondary attack
-		if (cooldown1 < 10 || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack1) cooldown1 -= Time.deltaTime;
-		if (cooldown1 <= 0) cooldown1 = 10;
-		if (cooldown2 < 10 || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
-		if (cooldown2 <= 0) cooldown2 = 10;
-		if (cooldown3 < 10 || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
-		if (cooldown3 <= 0) cooldown3 = 10;
+		if (cooldown1 < cooldown1total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack1) cooldown1 -= Time.deltaTime;
+		if (cooldown1 <= 0) cooldown1 = cooldown1total;
+		if (cooldown2 < cooldown2total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
+		if (cooldown2 <= 0) cooldown2 = cooldown2total;
+		if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
+		if (cooldown3 <= 0) cooldown3 = cooldown3total;
 	}
 }

@@ -12,10 +12,30 @@ public class OrcController : HeroeController
 							MANA_1 = 		175, 	MANA_2 = 		250, 	MANA_3 = 		350, 	MANA_4 = 		500,
 							ADREN_1 = 		150, 	ADREN_2 = 		250, 	ADREN_3 = 		350, 	ADREN_4 = 		450,
 							MOV_SPEED_1 = 	50, 	MOV_SPEED_2 = 	55, 	MOV_SPEED_3 = 	60, 	MOV_SPEED_4 = 	35;
+							
+							
+	//-----------------------------------------------------------------------------------------------------------------
+	protected const float 	COOLDOWN_SKILL_1 = 	5,	COOLDOWN_SKILL_2 = 	10,	COOLDOWN_SKILL_3 = 	20;
 	
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	public GameObject leftArm, rightArm;
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	// PARTICLES
+	// Snot particle
+	public GameObject snot; 
+	private bool snotActivated = false;
+	private float snotCD = 1.7f;
+	// Splash particle
+	public GameObject splash; 
+	private bool splashActivated = false;
+	private float splashCD = 1.7f;
+	// Smoke particle
+	public GameObject smoke; 
+	private bool smokeActivated = false;
+	private float smokeCD = 1.7f;
+	private GameObject smokeInst; // Smoke instantiation
 	
 	
 	//-----------------------------------------------------------------------------------------------------------------
@@ -26,8 +46,8 @@ public class OrcController : HeroeController
 		if (this.hasNewLevel) 
 		{
 			int maxLife = (int) maximunLife,
-			maxAdren = adren,
-			maxMana = mana;
+				maxAdren = adren,
+				maxMana = mana;
 			switch (level)
 			{
 			case 2:
@@ -106,17 +126,189 @@ public class OrcController : HeroeController
 		//Set the owner in the basic attack
 		this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
+		
+		//Initializes the cooldowns of skills
+		cooldown1total = COOLDOWN_SKILL_1; cooldown2total = COOLDOWN_SKILL_2; cooldown3total = COOLDOWN_SKILL_3;
+		cooldown1 = COOLDOWN_SKILL_1; cooldown2 = COOLDOWN_SKILL_2; cooldown3 = COOLDOWN_SKILL_3;
 	}
 	
 	// Update is called once per frame
 	public override void Update ()
 	{
 		base.Update ();
-
+		updateManaAdren();
+		UpdateAnimation();
+		UpdateParticles (); // Update particles
+		Counter();
 		this.newLevel ();
 	}
-
-    
-   
+	
+	// Cool Down for detecting less time the collision with particles
+	private float CDParticleCollision; 
+	//This is for the particles that collides with the orc
+	void OnParticleCollision(GameObject other)
+	{
+		// get the particle system
+		ParticleSystem particleSystem;
+		particleSystem = other.GetComponent<ParticleSystem>();
+		//If the particle is a Moco    
+		if (particleSystem.tag == "Moco")
+		{
+			if (CDParticleCollision > 0)
+				CDParticleCollision -= Time.deltaTime;
+			else
+			{
+				Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
+				CDParticleCollision = 0.1f; // 5 deltatime aprox
+			}
+		}
+	}
+	
+	
+	//--------------------------------------------------------------------------------------------
+	//Animation
+	// Only can do an action if hero don't do a secondary attack
+	public void UpdateAnimation()
+	{
+		if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
+		{
+			// Secondary attack
+			if (state == StateHeroe.AttackSecond)
+			{
+				if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
+				{
+					animation.CrossFade("Burp");
+					//--------------------------
+					transform.Translate(Vector3.forward * 2 + Vector3.up);
+					GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
+					snt.GetComponent<ParticleDamage>().setDamage(attackM);
+					transform.Translate(Vector3.back * 2 + Vector3.down);
+					Destroy(snt, 5f);
+					snotActivated = true;
+				}
+				else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
+				{
+					animation.CrossFade("FloorHit");
+					//------------------------------
+					GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
+					spl.GetComponent<OrcSplashAttack>().setDamage(attackM + 40);
+					spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
+					Destroy(spl, 1.5f);
+					splashActivated = true;
+				}
+				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
+				{
+					animation.CrossFade("BullStrike");
+					//--------------------------------
+					transform.Translate(Vector3.down * 2);
+					smokeInst = (GameObject)Instantiate(smoke, transform.localPosition, transform.rotation);
+					transform.Translate(Vector3.up * 2);
+					Destroy(smokeInst, 5f);
+					smokeActivated = true;
+				}
+			}
+			// Basic attack
+			else if (state == StateHeroe.AttackBasic)
+			{
+				if (!animation.IsPlaying("Attack01") && !animation.IsPlaying("Attack02") && !animation.IsPlaying("Attack03"))
+				{
+					animation.CrossFade("Attack01");
+					animation.CrossFadeQueued("Attack02");
+					animation.CrossFadeQueued("Attack03");
+				}
+			}
+			// Movement
+			else if (state == StateHeroe.Run)
+			{
+				animation.CrossFade("Run");
+			}
+			else if (state == StateHeroe.Walk)
+			{
+				animation.CrossFade("Walk");
+			}
+			else if (state == StateHeroe.Dead)
+			{
+				this.currentLife = 0;
+				this.transform.position = this.initialPosition;
+				isMine = false;
+				//this.GetComponent<ThirdPersonController>().enabled = false;
+			}
+			else if (this.state == StateHeroe.Recover)
+			{
+				if (this.timeCount < 1) this.timeCount += Time.deltaTime;
+				else
+				{
+					this.timeCount = 0;
+					this.currentLife += 20;
+					if (this.currentLife >= this.maximunLife)
+					{
+						this.currentLife = this.maximunLife;
+						this.state = StateHeroe.Idle;
+						isMine = true;
+					}
+				}
+			}
+			// Idle
+			else
+			{
+				if (!animation.IsPlaying("Iddle01") && !animation.IsPlaying("Iddle02"))
+				{
+					animation.CrossFade("Iddle01");
+					animation.CrossFadeQueued("Iddle02");
+				}
+			}
+		}
+	}
+	
+	//--------------------------------------------------------------------------------------------
+	//Particles
+	private void UpdateParticles()
+	{
+		if (snotActivated)
+		{
+			if (snotCD <= 0)
+			{
+				snotCD = 1.7f;
+				snotActivated = false;
+			}
+			else snotCD -= Time.deltaTime;
+		}
+		
+		if (splashActivated)
+		{
+			if (splashCD <= 0)
+			{
+				splashCD = 1.7f;
+				splashActivated = false;
+			}
+			else splashCD -= Time.deltaTime;
+		}	
+		
+		if (smokeActivated)
+		{
+			if (smokeInst!=null)
+			{
+				smokeInst.transform.position= transform.position;
+				smokeInst.transform.Translate(Vector3.down*2);
+			}
+			if (smokeCD <= 0)
+			{
+				smokeCD = 1.7f;
+				smokeActivated = false;
+			}
+			else smokeCD -= Time.deltaTime;
+		}
+	}  
+	
+	//--------------------------------------------------------------------------------------------
+	private void updateManaAdren()
+	{
+		if (state == StateHeroe.AttackSecond && !animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
+		{
+			if (stateAttackSecond == AttackSecond.Attack1) currentMana -= 50;
+			else if (stateAttackSecond == AttackSecond.Attack2) currentAdren -= 75;
+			else currentAdren -= 150;
+		}
+	}
 }
 
