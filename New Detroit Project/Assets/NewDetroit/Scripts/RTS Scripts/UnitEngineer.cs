@@ -85,13 +85,19 @@ public class UnitEngineer : UnitController
 	{
         // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
         if (Input.anyKeyDown && (newTGConstruct || newWConstruct) && Input.GetMouseButtonDown(0) && 
-            (currentEngineerState != EngineerState.GoingToConstructItem) && (currentEngineerState != EngineerState.GoingToConstructPosition))
+            (currentEngineerState != EngineerState.GoingToConstructItem) && (currentEngineerState != EngineerState.GoingToConstructPosition) &&
+            (currentState != State.Dying) && (currentState != State.AscendingToHeaven))
         {
             newTGConstruct = newWConstruct = false;
             Destroy(towerGoblin);
             Destroy(warehouse);
         }
+        if (currentLife <= 0.0f)
+        {
+            LeaveQueues();
+            currentEngineerState = EngineerState.None;
 
+        }
         switch (currentEngineerState)
         {
             case EngineerState.None:
@@ -369,21 +375,9 @@ public class UnitEngineer : UnitController
         if (hammer1 != null)
             GameObject.Destroy(hammer1.gameObject);
         destiny.y = 0;
-        // He has to leave the engineerPosition if he has to
-        if (currentEngineerState == EngineerState.GoingToConquestPosition || currentEngineerState == EngineerState.Conquering)
-            currentItem.GetComponent<TowerNeutral>().LeaveEngineerPositionConquest(lastEngineerIndex);
-        else if (currentEngineerState == EngineerState.GoingToRepairPosition || currentEngineerState == EngineerState.Repairing)
-            currentItem.GetComponent<BuildingController>().LeaveEngineerPositionRepair(lastEngineerIndex);
-        else if (currentEngineerState == EngineerState.GoingToConstructPosition ||
-                    currentEngineerState == EngineerState.Constructing)
-        {
-            if (currentItem.GetComponent<TowerGoblin>() != null)
-                currentItem.GetComponent<TowerGoblin>().LeaveEngineerPositionConstruct(lastEngineerIndex);
-            else if (currentItem.GetComponent<Warehouse>() != null)
-                currentItem.GetComponent<Warehouse>().LeaveEngineerPositionConstruct(lastEngineerIndex);
-        }
-        else if (currentEngineerState == EngineerState.Waiting)
-            currentItem.GetComponent<BuildingController>().LeaveQueue(this);
+
+        LeaveQueues();
+
         // He has to go to another position if he has to
         // destTransform.name == "TowerGoblin" || destTransform.name == "Goblin Warehouse" 
         if (destTransform.name == "WorldFloor")// If he has to go to another position of the worldfloor he goes
@@ -530,7 +524,25 @@ public class UnitEngineer : UnitController
         else
             base.RightClickOnSelected(destiny, destTransform);
     }// RightClickOSelected
-	
+
+    private void LeaveQueues()
+    {
+        // He has to leave the engineerPosition if he has to
+        if (currentEngineerState == EngineerState.GoingToConquestPosition || currentEngineerState == EngineerState.Conquering)
+            currentItem.GetComponent<TowerNeutral>().LeaveEngineerPositionConquest(lastEngineerIndex);
+        else if (currentEngineerState == EngineerState.GoingToRepairPosition || currentEngineerState == EngineerState.Repairing)
+            currentItem.GetComponent<BuildingController>().LeaveEngineerPositionRepair(lastEngineerIndex);
+        else if (currentEngineerState == EngineerState.GoingToConstructPosition ||
+                    currentEngineerState == EngineerState.Constructing)
+        {
+            if (currentItem.GetComponent<TowerGoblin>() != null)
+                currentItem.GetComponent<TowerGoblin>().LeaveEngineerPositionConstruct(lastEngineerIndex);
+            else if (currentItem.GetComponent<Warehouse>() != null)
+                currentItem.GetComponent<Warehouse>().LeaveEngineerPositionConstruct(lastEngineerIndex);
+        }
+        else if (currentEngineerState == EngineerState.Waiting)
+            currentItem.GetComponent<BuildingController>().LeaveQueue(this);
+    }
 
     public void FinishWaitingToRepair (Vector3 repairPosition, int chopIndex)
     {

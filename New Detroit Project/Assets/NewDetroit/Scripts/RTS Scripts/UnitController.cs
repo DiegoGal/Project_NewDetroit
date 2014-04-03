@@ -62,6 +62,7 @@ public class UnitController : ControllableCharacter
     private float lastPosY = -1.0f;
     private bool goingDown = false;
     private Quaternion desiredRotation;
+    private int contTrapped = 0;
 
     public virtual void Awake ()
     {
@@ -223,6 +224,7 @@ public class UnitController : ControllableCharacter
 
     protected virtual void UpdateFlying()
     {
+        int maxTrapped = 5;
         float delta = 0.4f;
         if (!goingDown)
         {
@@ -240,7 +242,26 @@ public class UnitController : ControllableCharacter
             currentState = State.Idle;
             lastPosY = -1.0f;
             goingDown = false;
+            contTrapped = 0;
         }
+        else if (transform.position.y == lastPosY && goingDown)
+        {
+            if (contTrapped == maxTrapped)
+            {
+                GetComponent<NavMeshAgent>().Resume();
+                Destroy(rigidbody);
+                currentState = State.Idle;
+                lastPosY = -1.0f;
+                goingDown = false;
+                contTrapped = 0;
+            }
+            else
+                contTrapped++;
+        }
+        else
+            lastPosY = transform.position.y;
+
+
     
     }
 
