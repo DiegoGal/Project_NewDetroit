@@ -59,21 +59,6 @@ public abstract class HeroeController : ControllableCharacter
 	private bool jumping = false; // Are we jumping? (Initiated with jump button and not grounded yet)
 	protected float cooldown1, cooldown2, cooldown3, cooldown1total, cooldown2total, cooldown3total;
 	//---------------------------------------------------------------------------------------------
-	// PARTICLES
-	// Snot particle
-	public GameObject snot; 
-	private bool snotActivated = false;
-	private float snotCD = 1.7f;
-	// Splash particle
-	public GameObject splash; 
-	private bool splashActivated = false;
-	private float splashCD = 1.7f;
-	// Smoke particle
-	public GameObject smoke; 
-	private bool smokeActivated = false;
-	private float smokeCD = 1.7f;
-	private GameObject smokeInst; // Smoke instantiation
-	//---------------------------------------------------------------------------------------------
 	public Texture2D 	textureLifePositive, textureLifeNegative,
 						textureAdrenPositive, textureAdrenNegative,
 						textureManaPositive, textureManaNegative,

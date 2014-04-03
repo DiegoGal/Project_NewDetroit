@@ -301,7 +301,7 @@ public class OrcController : HeroeController
 	}  
 	
 	//--------------------------------------------------------------------------------------------
-	private void updateManaAdren()
+	public void updateManaAdren()
 	{
 		if (state == StateHeroe.AttackSecond && !animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
 		{
