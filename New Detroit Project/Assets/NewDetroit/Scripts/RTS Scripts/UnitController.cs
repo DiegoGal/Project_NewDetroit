@@ -433,7 +433,7 @@ public class UnitController : ControllableCharacter
                 CDParticleCollision -= Time.deltaTime;
             else
             {
-                Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
+                Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
                 CDParticleCollision = 0.1f; // 5 deltatime aprox
             }
         }

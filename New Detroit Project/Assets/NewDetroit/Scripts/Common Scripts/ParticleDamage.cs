@@ -8,12 +8,12 @@ public class ParticleDamage : MonoBehaviour {
     // Private
     private int totalDamage = 0;
 
-    public int getDamage()
+    public int GetDamage()
     {
         return totalDamage;
     }
 
-    public void setDamage(int newDamage)
+    public void SetDamage(int newDamage)
     {
         totalDamage = newDamage;
     }
