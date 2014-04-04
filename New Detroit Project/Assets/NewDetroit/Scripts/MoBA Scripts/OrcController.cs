@@ -130,6 +130,10 @@ public class OrcController : HeroeController
 		//Initializes the cooldowns of skills
 		cooldown1total = COOLDOWN_SKILL_1; cooldown2total = COOLDOWN_SKILL_2; cooldown3total = COOLDOWN_SKILL_3;
 		cooldown1 = COOLDOWN_SKILL_1; cooldown2 = COOLDOWN_SKILL_2; cooldown3 = COOLDOWN_SKILL_3;
+
+		//Mana and adrenaline for skills
+		manaSkill1 = 50; manaSkill2 = -1; manaSkill3 = -1;
+		adrenSkill1 = -1; adrenSkill2 = 75; adrenSkill3 = 150;
 	}
 	
 	// Update is called once per frame
@@ -170,7 +174,7 @@ public class OrcController : HeroeController
 	// Only can do an action if hero don't do a secondary attack
 	public void UpdateAnimation()
 	{
-		if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
+		if (!doingSecondaryAnim)
 		{
 			// Secondary attack
 			if (state == StateHeroe.AttackSecond)
@@ -206,6 +210,7 @@ public class OrcController : HeroeController
 					Destroy(smokeInst, 5f);
 					smokeActivated = true;
 				}
+				doingSecondaryAnim= true;
 			}
 			// Basic attack
 			else if (state == StateHeroe.AttackBasic)
@@ -258,6 +263,10 @@ public class OrcController : HeroeController
 				}
 			}
 		}
+		else
+		{
+			if (!animation.isPlaying) doingSecondaryAnim = false;
+		}
 	}
 	
 	//--------------------------------------------------------------------------------------------
@@ -297,17 +306,6 @@ public class OrcController : HeroeController
 				smokeActivated = false;
 			}
 			else smokeCD -= Time.deltaTime;
-		}
-	}  
-	
-	//--------------------------------------------------------------------------------------------
-	public void updateManaAdren()
-	{
-		if (state == StateHeroe.AttackSecond && !animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
-		{
-			if (stateAttackSecond == AttackSecond.Attack1) currentMana -= 50;
-			else if (stateAttackSecond == AttackSecond.Attack2) currentAdren -= 75;
-			else currentAdren -= 150;
 		}
 	}
 }

@@ -58,6 +58,7 @@ public abstract class HeroeController : ControllableCharacter
 	public float gravity = 20.0f; // The gravity for the character
 	private bool jumping = false; // Are we jumping? (Initiated with jump button and not grounded yet)
 	protected float cooldown1, cooldown2, cooldown3, cooldown1total, cooldown2total, cooldown3total;
+	protected bool doingSecondaryAnim = false; // A flag to tell us if the orc is doing a secondary attack anim or not
 	//---------------------------------------------------------------------------------------------
 	public Texture2D 	textureLifePositive, textureLifeNegative,
 						textureAdrenPositive, textureAdrenNegative,
@@ -83,7 +84,7 @@ public abstract class HeroeController : ControllableCharacter
 	public bool ability1, 
 				ability2, 
 				ability3;
-	
+	protected int manaSkill1, manaSkill2, manaSkill3, adrenSkill1, adrenSkill2, adrenSkill3; // mana and adrenalines for skills
 	protected bool hasNewLevel; // Tell us if the heroe has evolved  or not
 	protected Animator animator; //Animator
 	protected Vector3 initialPosition; // The spawn position
@@ -466,20 +467,29 @@ public abstract class HeroeController : ControllableCharacter
         if (isMine)
         {
             // Only can do an action if hero don't do a secondary attack
-            if (!animation.IsPlaying("Burp") && !animation.IsPlaying("FloorHit") && !animation.IsPlaying("BullStrike"))
+			if (!doingSecondaryAnim)
             {
                 // Secondary attack
-                if ((Input.GetKey(KeyCode.Alpha1) || useSkill1) && ability1 && cooldown1 == cooldown1total)
+                if (
+					(Input.GetKey(KeyCode.Alpha1) || useSkill1) && ability1 && cooldown1 == cooldown1total &&
+				    ((manaSkill1 != -1 && currentMana >= manaSkill1) || (adrenSkill1 != -1 && currentAdren >= adrenSkill1))
+				    )
                 {
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack1;
                 }
-                else if ((Input.GetKey(KeyCode.Alpha2) || useSkill2) && ability2 && cooldown2 == cooldown2total)
+                else if (
+					(Input.GetKey(KeyCode.Alpha2) || useSkill2) && ability2 && cooldown2 == cooldown2total &&
+					((manaSkill2 != -1 && currentMana >= manaSkill2) || (adrenSkill2 != -1 && currentAdren >= adrenSkill2))
+					)
                 {
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack2;
                 }
-                else if ((Input.GetKey(KeyCode.Alpha3) || useSkill3) && ability3 && cooldown3 == cooldown3total)
+                else if (
+					(Input.GetKey(KeyCode.Alpha3) || useSkill3) && ability3 && cooldown3 == cooldown3total &&
+					((manaSkill3 != -1 && currentMana >= manaSkill3) || (adrenSkill3 != -1 && currentAdren >= adrenSkill3))
+					)
                 {
                     state = StateHeroe.AttackSecond;
                     stateAttackSecond = AttackSecond.Attack3;
@@ -533,5 +543,27 @@ public abstract class HeroeController : ControllableCharacter
 		if (cooldown2 <= 0) cooldown2 = cooldown2total;
 		if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
 		if (cooldown3 <= 0) cooldown3 = cooldown3total;
+	}
+	//----------------------------------------------------------------------------------------------------------------------------------------
+	public void updateManaAdren()
+	{
+		if (state == StateHeroe.AttackSecond && !doingSecondaryAnim)
+		{
+			if (stateAttackSecond == AttackSecond.Attack1) 
+			{
+				if (manaSkill1 != -1) currentMana -= manaSkill1;
+				else currentAdren -= adrenSkill1;
+			}
+			else if (stateAttackSecond == AttackSecond.Attack2) 
+			{
+				if (manaSkill2 != -1) currentMana -= manaSkill2;
+				else currentAdren -= adrenSkill2;
+			}
+			else 
+			{
+				if (manaSkill3 != -1) currentMana -= manaSkill3;
+				else currentAdren -= adrenSkill3;
+			}
+		}
 	}
 }
