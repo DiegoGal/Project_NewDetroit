@@ -64,9 +64,9 @@ public class FireballAttack : ParticleDamage
                     Vector3 dir = other.transform.position - transform.position;
                     dir = dir.normalized;
 
-                    other.rigidbody.AddForce(new Vector3(dir.x * 2.0f,
-                                                          5.0f,
-                                                          dir.z * 2.0f),
+                    other.rigidbody.AddForce(new Vector3(dir.x * 0.7f,
+                                                          3.5f,
+                                                          dir.z * 0.7f),
                                                           ForceMode.Impulse);
                     otherUC.Fly();
                     unitList.Add(other);

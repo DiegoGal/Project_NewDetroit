@@ -836,7 +836,8 @@ public class ArmyController : MonoBehaviour
                 unitScreenPos.y >= squareSelectionPointsScreen[2].y)    // select the unit
             {
                 // we add it to the selection list
-                unitSelectedList.Add(unitList[i]);
+                if (!unitSelectedList.Contains(unitList[i])) 
+                    unitSelectedList.Add(unitList[i]);
                 // and mark it as selected
                 unitList[i].GetComponent<CSelectable>().SetSelected();
             }
@@ -845,7 +846,8 @@ public class ArmyController : MonoBehaviour
                 // delete the unit from the selection list
                 if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
                 {
-                    unitSelectedList.Remove(unitList[i]);
+                    if (!unitSelectedList.Contains(unitList[i])) 
+                        unitSelectedList.Remove(unitList[i]);
                     // and mark it as deselected
                     unitList[i].GetComponent<CSelectable>().SetDeselect();
                 }
