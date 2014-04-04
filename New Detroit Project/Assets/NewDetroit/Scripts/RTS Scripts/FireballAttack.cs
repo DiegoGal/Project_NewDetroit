@@ -8,7 +8,6 @@ public class FireballAttack : ParticleDamage
     SphereCollider sphereCollider;
 
     public bool thrown = false;
-    public int damage;
     public List<Collider> unitList = new List<Collider>();
 
     // Use this for initialization
@@ -32,10 +31,6 @@ public class FireballAttack : ParticleDamage
         this.owner = owner;
     }
 
-    public void SetDamage(int damage)
-    {
-        this.damage = damage;
-    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -44,7 +39,7 @@ public class FireballAttack : ParticleDamage
             if (other.tag == "Player")
             {
                 HeroeController script = other.GetComponent<HeroeController>();
-                script.Damage(damage, 'P');
+                script.Damage(GetDamage(), 'P');
             }
             else if (other.tag == "Minion")
             {
@@ -52,7 +47,7 @@ public class FireballAttack : ParticleDamage
                 {
                     // For damage
                     UnitController otherUC = other.GetComponent<UnitController>();
-                    otherUC.Damage(damage, 'P');
+                    otherUC.Damage(GetDamage(), 'P');
 
                     // For add a force to the minions so they can fly
                     other.gameObject.AddComponent<Rigidbody>();

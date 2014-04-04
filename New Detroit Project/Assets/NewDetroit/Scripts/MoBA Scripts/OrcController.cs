@@ -158,7 +158,7 @@ public class OrcController : HeroeController
 				CDParticleCollision -= Time.deltaTime;
 			else
 			{
-				Damage(particleSystem.GetComponent<ParticleDamage>().getDamage(), 'M');
+				Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
 				CDParticleCollision = 0.1f; // 5 deltatime aprox
 			}
 		}
@@ -181,7 +181,7 @@ public class OrcController : HeroeController
 					//--------------------------
 					transform.Translate(Vector3.forward * 2 + Vector3.up);
 					GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
-					snt.GetComponent<ParticleDamage>().setDamage(attackM);
+					snt.GetComponent<ParticleDamage>().SetDamage(attackM);
 					transform.Translate(Vector3.back * 2 + Vector3.down);
 					Destroy(snt, 5f);
 					snotActivated = true;
@@ -191,7 +191,9 @@ public class OrcController : HeroeController
 					animation.CrossFade("FloorHit");
 					//------------------------------
 					GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
-					spl.GetComponent<OrcSplashAttack>().setDamage(attackM + 40);
+                    spl.AddComponent<Rigidbody>();
+                    spl.GetComponent<Rigidbody>().useGravity = false;
+					spl.GetComponent<ParticleDamage>().SetDamage(attackM + 40);
 					spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
 					Destroy(spl, 1.5f);
 					splashActivated = true;
