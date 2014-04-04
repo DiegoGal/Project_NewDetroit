@@ -21,6 +21,12 @@ public class OrcController : HeroeController
 	//-----------------------------------------------------------------------------------------------------------------
 	public GameObject leftArm, rightArm;
 	
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	//Time counts
+	private float timeCountLife = 0;
+	
+	
 	//-----------------------------------------------------------------------------------------------------------------
 	// PARTICLES
 	// Snot particle
@@ -134,6 +140,12 @@ public class OrcController : HeroeController
 		//Mana and adrenaline for skills
 		manaSkill1 = 50; manaSkill2 = -1; manaSkill3 = -1;
 		adrenSkill1 = -1; adrenSkill2 = 75; adrenSkill3 = 150;
+		
+		//-------------------------------------------------------------
+		//Debug
+		Debug.Log("Instance: " + GetInstanceID());
+		Debug.Log ("OrcController::Start() - name: " + name);
+		Debug.Log ("OrcController::Start() - currentLife: " + currentLife);
 	}
 	
 	// Update is called once per frame
@@ -242,10 +254,10 @@ public class OrcController : HeroeController
 			}
 			else if (this.state == StateHeroe.Recover)
 			{
-				if (this.timeCount < 1) this.timeCount += Time.deltaTime;
+				if (this.timeCountLife < 1) this.timeCountLife += Time.deltaTime;
 				else
 				{
-					this.timeCount = 0;
+					this.timeCountLife = 0;
 					this.currentLife += 20;
 					if (this.currentLife >= this.maximunLife)
 					{

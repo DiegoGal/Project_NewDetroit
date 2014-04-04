@@ -88,8 +88,8 @@ public abstract class HeroeController : ControllableCharacter
 	protected bool hasNewLevel; // Tell us if the heroe has evolved  or not
 	protected Animator animator; //Animator
 	protected Vector3 initialPosition; // The spawn position
-	
-	protected double timeCount; // Time counter
+	// Time counters
+	private float timeCountMana = 0, timeCountAdren = 0;
 	public int counterAbility;
     //This is for the particles that collides with the hero
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
@@ -265,7 +265,6 @@ public abstract class HeroeController : ControllableCharacter
 		this.hasNewLevel = false;
 		this.attackInstantiate = true;
 		this.initialPosition = transform.position;	// Set the initial position
-		this.timeCount = 0;							// Set the initial value of timeCount
 		this.experienceGived = EXPERIENCE_TO_GIVE;	// Experience that the heroe gives when he dies
 		// Get the animator
 		animator = GetComponent<Animator> ();
@@ -309,6 +308,10 @@ public abstract class HeroeController : ControllableCharacter
 
     void OnGUI ()
 	{
+		// Debug
+		//Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
+		//GUI.Label(new Rect(pos.x + 20, Screen.height - pos.y, 40, 20), "" + currentLife);
+		//---------------------------------------------------------------
         GUI.DrawTexture(rectanglePositiveLife, textureLifePositive);
         GUI.DrawTexture(rectangleNegativeLife, textureLifeNegative);
         GUI.DrawTexture(rectanglePositiveAdren, textureAdrenPositive);
@@ -547,22 +550,83 @@ public abstract class HeroeController : ControllableCharacter
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	public void updateManaAdren()
 	{
+		bool useAdren = false;
+		bool useMana = false;
+		// If we are gonna do a skill
 		if (state == StateHeroe.AttackSecond && !doingSecondaryAnim)
 		{
 			if (stateAttackSecond == AttackSecond.Attack1) 
 			{
-				if (manaSkill1 != -1) currentMana -= manaSkill1;
-				else currentAdren -= adrenSkill1;
+				if (manaSkill1 != -1) 
+				{
+					useMana = true;
+					currentMana -= manaSkill1;
+				}
+				else 
+				{
+					useAdren = true;
+					currentAdren -= adrenSkill1;
+				}
 			}
 			else if (stateAttackSecond == AttackSecond.Attack2) 
 			{
-				if (manaSkill2 != -1) currentMana -= manaSkill2;
-				else currentAdren -= adrenSkill2;
+				if (manaSkill2 != -1) 
+				{
+					useMana = true;
+					currentMana -= manaSkill2;
+				}
+				else 
+				{
+					useAdren = true;
+					currentAdren -= adrenSkill2;
+				}
 			}
 			else 
 			{
-				if (manaSkill3 != -1) currentMana -= manaSkill3;
-				else currentAdren -= adrenSkill3;
+				if (manaSkill3 != -1) 
+				{
+					useMana = true;
+					currentMana -= manaSkill3;
+				}
+				else 
+				{
+					useAdren = true;
+					currentAdren -= adrenSkill3;
+				}
+			}
+		}
+		// If we did not use an adren skill
+		if (!useMana && currentMana != mana)
+		{
+			if (currentMana < mana)
+			{
+				if (timeCountMana >= 1)
+				{
+					timeCountMana = 0;
+					currentMana += 5;
+				}
+				else timeCountMana += Time.deltaTime;
+			}
+			else
+			{
+				currentMana = mana;
+			}
+		}
+		// If we did not use a mana skill
+		if (!useAdren && currentAdren != adren)
+		{
+			if (currentAdren < adren)
+			{
+				if (timeCountAdren >= 1)
+				{
+					timeCountAdren = 0;
+					currentAdren += 5;
+				}
+				else timeCountAdren += Time.deltaTime;
+			}
+			else
+			{
+				currentAdren = adren;
 			}
 		}
 	}
