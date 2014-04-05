@@ -57,7 +57,7 @@ public abstract class HeroeController : ControllableCharacter
 	private float inAirControlAcceleration = 3.0f;
 	public float gravity = 20.0f; // The gravity for the character
 	private bool jumping = false; // Are we jumping? (Initiated with jump button and not grounded yet)
-	protected float cooldown1, cooldown2, cooldown3, cooldown1total, cooldown2total, cooldown3total;
+	public float cooldown1, cooldown2, cooldown3, cooldown1total, cooldown2total, cooldown3total;
 	protected bool doingSecondaryAnim = false; // A flag to tell us if the orc is doing a secondary attack anim or not
 	//---------------------------------------------------------------------------------------------
 	public Texture2D 	textureLifePositive, textureLifeNegative,
