@@ -79,14 +79,13 @@ public abstract class HeroeController : ControllableCharacter
 	public bool attackInstantiate;	// Activate the spheres of arms
 	public bool isMine; // Tell us if that instance if ours or not
 	public TypeHeroe type;	// Type of heroe
-	public StateHeroe state; // The state of the heroe
+	public StateHeroe state = StateHeroe.Idle; // The state of the heroe
 	public AttackSecond stateAttackSecond;	// The state of secondary attack
 	public bool ability1, 
 				ability2, 
 				ability3;
 	protected int manaSkill1, manaSkill2, manaSkill3, adrenSkill1, adrenSkill2, adrenSkill3; // mana and adrenalines for skills
 	protected bool hasNewLevel; // Tell us if the heroe has evolved  or not
-	protected Animator animator; //Animator
 	protected Vector3 initialPosition; // The spawn position
 	// Time counters
 	private float timeCountMana = 0, timeCountAdren = 0;
@@ -104,33 +103,7 @@ public abstract class HeroeController : ControllableCharacter
 					rectangleLevel;
 	
 	// ------------------------------------------------------------------------------------------------------
-	// PRIVATE
-	// Method that control the logic of the attack (now, it is not used)
-	protected void launchAttack()
-	{
-		//if (this.tag == "Player")
-		//{
-		//Si el ataque no ha sido lanzado
-		if (!attackInstantiate)
-		{
-			attackInstantiate = true;
-			//Se halla la direccion en la que se mueve el heroe
-			Vector3 direction = this.GetComponent<ThirdPersonController>().GetDirection ();
-			//Se halla la posicion donde se lanzara el ataque
-			Vector3 position = new Vector3(
-				transform.position.x + direction.x*2,
-				transform.position.y + direction.y,
-				transform.position.z + direction.z*2);
-			//Se instancia el ataque
-			//GameObject go = (GameObject) Instantiate(rightArm, position, new Quaternion());
-			//go.GetComponent<Attack>().setMovement(direction);
-			//go.GetComponent<OrcBasicAttack>().setOwner(this.gameObject);
-			
-			//this.GetComponent<OrcBasicAttack> ().enable(false);
-		}
-		//}
-	}
-	
+	// PRIVATE	
 	// Increment the level
 	protected void levelUp() 
 	{
@@ -266,14 +239,10 @@ public abstract class HeroeController : ControllableCharacter
 		this.attackInstantiate = true;
 		this.initialPosition = transform.position;	// Set the initial position
 		this.experienceGived = EXPERIENCE_TO_GIVE;	// Experience that the heroe gives when he dies
-		// Get the animator
-		animator = GetComponent<Animator> ();
-		if (!animator) Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
 		// Initialize the booleans of abilities
 		ability1 = ability2 = ability3 = true;
 		counterAbility = 0;
 		// Initialize the animation
-		animation.Play ("Iddle01");
 		state = StateHeroe.Idle;				// Set the initial state of the hero
 		stateAttackSecond = AttackSecond.None;		// Set the initial state of secondary attack of hero
 	}//Start

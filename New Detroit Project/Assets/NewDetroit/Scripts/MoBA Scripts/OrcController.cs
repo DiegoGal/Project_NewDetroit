@@ -141,11 +141,8 @@ public class OrcController : HeroeController
 		manaSkill1 = 50; manaSkill2 = -1; manaSkill3 = -1;
 		adrenSkill1 = -1; adrenSkill2 = 75; adrenSkill3 = 150;
 		
-		//-------------------------------------------------------------
-		//Debug
-		Debug.Log("Instance: " + GetInstanceID());
-		Debug.Log ("OrcController::Start() - name: " + name);
-		Debug.Log ("OrcController::Start() - currentLife: " + currentLife);
+		//Initialize the animation
+		animation.Play ("Iddle01");
 	}
 	
 	// Update is called once per frame
