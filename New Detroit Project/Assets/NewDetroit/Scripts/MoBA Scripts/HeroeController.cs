@@ -278,8 +278,8 @@ public abstract class HeroeController : ControllableCharacter
     void OnGUI ()
 	{
 		// Debug
-		//Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
-		//GUI.Label(new Rect(pos.x + 20, Screen.height - pos.y, 40, 20), "" + currentLife);
+		Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
+		GUI.Label(new Rect(pos.x + 20, Screen.height - pos.y, 80, 20), "State: " + state.ToString());
 		//---------------------------------------------------------------
         GUI.DrawTexture(rectanglePositiveLife, textureLifePositive);
         GUI.DrawTexture(rectangleNegativeLife, textureLifeNegative);
@@ -387,7 +387,8 @@ public abstract class HeroeController : ControllableCharacter
 			
 			// Pick speed modifier
 			if (animation.IsPlaying("BullStrike")) targetSpeed = extraRunSpeed;
-            else if (!animation.IsPlaying("FloorHit") && !animation.IsPlaying("Burp") && (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W)))
+            else if (!animation.IsPlaying("FloorHit") && !animation.IsPlaying("Burp") && state != StateHeroe.AttackBasic &&
+            			(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W)))
 			{
 				if (Input.GetKey(KeyCode.LeftShift)) targetSpeed = runSpeed;
 				else targetSpeed = walkSpeed;
@@ -439,7 +440,7 @@ public abstract class HeroeController : ControllableCharacter
         if (isMine)
         {
             // Only can do an action if hero don't do a secondary attack
-			if (!doingSecondaryAnim)
+			if (!doingSecondaryAnim)			
             {
                 // Secondary attack
                 if (
@@ -467,7 +468,8 @@ public abstract class HeroeController : ControllableCharacter
                     stateAttackSecond = AttackSecond.Attack3;
                 }
                 // Basic attack
-                else if (Input.GetMouseButton(0))
+                //else if (Input.GetMouseButton(0))
+				else if (Input.GetButton("Fire1"))
                 {
                     state = StateHeroe.AttackBasic;
                     stateAttackSecond = AttackSecond.None;

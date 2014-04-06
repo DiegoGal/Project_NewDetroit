@@ -43,7 +43,6 @@ public class OrcController : HeroeController
 	private float smokeCD = 1.7f;
 	private GameObject smokeInst; // Smoke instantiation
 	
-	
 	//-----------------------------------------------------------------------------------------------------------------
 	// PRIVATE
     
@@ -143,6 +142,7 @@ public class OrcController : HeroeController
 		
 		//Initialize the animation
 		animation.Play ("Iddle01");
+		
 	}
 	
 	// Update is called once per frame
@@ -229,8 +229,15 @@ public class OrcController : HeroeController
 				if (!animation.IsPlaying("Attack01") && !animation.IsPlaying("Attack02") && !animation.IsPlaying("Attack03"))
 				{
 					animation.CrossFade("Attack01");
-					animation.CrossFadeQueued("Attack02");
-					animation.CrossFadeQueued("Attack03");
+					animation["Attack01"].speed =1.2f;
+					animation.CrossFadeQueued("Attack02").speed = 1.2f;
+					animation.CrossFadeQueued("Attack03").speed = 1.2f;
+					for (int i = 0; i < 20; i ++)
+					{
+						animation.CrossFadeQueued("Attack01").speed = 1.2f;
+						animation.CrossFadeQueued("Attack02").speed = 1.2f;
+						animation.CrossFadeQueued("Attack03").speed = 1.2f;
+					}
 				}
 			}
 			// Movement
