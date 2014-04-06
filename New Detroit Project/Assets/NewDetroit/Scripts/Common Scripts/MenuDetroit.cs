@@ -1,9 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="WorkerMenu.cs" company="Exit Games GmbH">
-//   Part of: Photon Unity Networking
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -18,7 +12,7 @@ public class MenuDetroit : MonoBehaviour
 
     public static readonly string SceneNameMenu = "Menu";
 
-	public static readonly string SceneNameGame = "NewDetroit";
+    public static readonly string SceneNameGame = "NewDetroit";
 
     public void Awake()
     {
@@ -71,8 +65,8 @@ public class MenuDetroit : MonoBehaviour
 
             return;
         }
-
-	        GUI.skin.box.fontStyle = FontStyle.Bold;
+	        
+            GUI.skin.box.fontStyle = FontStyle.Bold;
 	        GUI.Box(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300), "Join or Create a Room");
 	        GUILayout.BeginArea(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300));
 
@@ -99,7 +93,7 @@ public class MenuDetroit : MonoBehaviour
 	        
 	        if (GUILayout.Button("Create Room", GUILayout.Width(100)))
 	        {
-				PhotonNetwork.CreateRoom(this.roomName, true, true, 100);
+				PhotonNetwork.CreateRoom(this.roomName, true, true, 4);
 	        }
 
 	        GUILayout.EndHorizontal();
