@@ -7,6 +7,9 @@ public class UnitBasicArtillery : UnitArtillery
     public float attackPower1 = 10.0f;
     public float attackPower2 = 20.0f;
 
+    public float attack1Cadence = 1.0f;
+    public float attack2Cadence = 0.67f;
+
     private GameObject leftWeapon, rightWeapon, baseballBat;
     public Transform dummyBat;
 
@@ -43,13 +46,63 @@ public class UnitBasicArtillery : UnitArtillery
 
         basicAttackPower = attackPower1;
         secondaryAttackPower = attackPower2;
+
+        primaryAttackCadence = attack1Cadence;
+        secondaryAttackCadence = attack2Cadence;
 	}
 	
 	// Update is called once per frame
     public override void Update ()
 	{
 		base.Update();
+
+        if (isSelected && Input.GetKeyDown(KeyCode.D))
+        {
+            //Debug.Break();
+            if (attack2Selected) // change to attack1
+            {
+                maxAttackDistance = visionSphereRadious;
+                attackCadence = attack1Cadence;
+                    
+                attack2Selected = false;
+            }
+            else // change to attack2
+            {
+                maxAttackDistance = maxAttackDistance2;
+                attackCadence = attack2Cadence;
+
+                attack2Selected = true;
+            }
+        }
 	}
+
+    protected override void UpdateGoingToAnEnemy ()
+    {
+        // si esta seleccionado el ataque con bate se llama a la clase base
+        if (attack2Selected)
+            base.UpdateGoingToAnEnemy();
+        // si esta seleccionado el ataque a distancia miramos si la unidad
+        // de verdad "ve" al enemigo seleccionado
+        else if (currentArtilleryState == ArtilleryState.Alert)
+        {
+            if (alertHitTimerAux <= 0)
+            {
+                SearchForAnEnemy();
+                // reset the timer
+                alertHitTimerAux = alertHitTimer;
+            }
+            else
+                alertHitTimerAux -= Time.deltaTime;
+        }
+    }
+
+    protected override void PlayAnimationCrossFade (string animationName)
+    {
+        if ( (animationName == "Attack1") && attack2Selected )
+            animation.CrossFade("Attack2");
+        else
+            base.PlayAnimationCrossFade(animationName);
+    }
 
     public override int GetUnitType()
     {

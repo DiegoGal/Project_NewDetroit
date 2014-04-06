@@ -99,19 +99,6 @@ public class UnitHeavyArtillery : UnitArtillery
 
 	} // Update
 
-    /*public override void OnGUI ()
-    {
-        if (currentState != State.AscendingToHeaven)
-        {
-            base.OnGUI();
-
-            GUI.skin.label.fontSize = 10;
-
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 75, 100, 50),
-                currentDeployState.ToString());
-        }
-    } // OnGUI*/
-
     public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
     {
         if (currentDeployState == DeployState.Undeployed)
@@ -130,6 +117,7 @@ public class UnitHeavyArtillery : UnitArtillery
         {
             case DeployState.Undeployed:
                 currentDeployState = DeployState.Deployed;
+                attack2Selected = true;
                 if (thereIsVisionSphere)
                     transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
                         visionSphereRadious + visionSphereRadiousExtended;
@@ -140,6 +128,7 @@ public class UnitHeavyArtillery : UnitArtillery
             case DeployState.Deploying:
 
                 currentDeployState = DeployState.Deployed;
+                attack2Selected = true;
                 if (thereIsVisionSphere)
                     transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
                         visionSphereRadious + visionSphereRadiousExtended;
@@ -151,6 +140,7 @@ public class UnitHeavyArtillery : UnitArtillery
             case DeployState.Deployed:
 
                 currentDeployState = DeployState.Undeployed;
+                attack2Selected = false;
                 if (thereIsVisionSphere)
                     transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
                         visionSphereRadious;
@@ -162,6 +152,7 @@ public class UnitHeavyArtillery : UnitArtillery
             case DeployState.Undeploying:
 
                 currentDeployState = DeployState.Undeployed;
+                attack2Selected = false;
                 if (thereIsVisionSphere)
                     transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
                         visionSphereRadious;

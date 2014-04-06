@@ -203,7 +203,24 @@ public class CameraMOBAController : MonoBehaviour
 			GUI.enabled = heroe.ability3;
 			GUI.Button(rectangleButtonSkill3, "Skill 3");
 			GUI.enabled = true;
-
+			// Cooldowns
+			GUIStyle style = new GUIStyle(GUI.skin.label);
+			style.fontSize = 20;
+			style.alignment = TextAnchor.MiddleCenter;
+			style.fontStyle = FontStyle.Bold;
+			if (heroe.cooldown1 < heroe.cooldown1total) {
+				GUI.DrawTexture (rectangleButtonSkill1, backgroundHUDTexture);
+				GUI.Label(rectangleButtonSkill1, "" + (int) (heroe.cooldown1 + 1), style);
+			}
+			if (heroe.cooldown2 < heroe.cooldown2total) {
+				GUI.DrawTexture (rectangleButtonSkill2, backgroundHUDTexture);
+				GUI.Label(rectangleButtonSkill2, "" + (int) (heroe.cooldown2 + 1), style);
+			}
+			if (heroe.cooldown3 < heroe.cooldown3total) {
+				GUI.DrawTexture (rectangleButtonSkill3, backgroundHUDTexture);
+				GUI.Label(rectangleButtonSkill3, "" + (int) (heroe.cooldown3 + 1), style);
+			}
+			// Unlock abilities
 			if (heroe.counterAbility > 0)
 			{
 				if (!heroe.ability1) GUI.Button(rectangleSelectSkill1, "Select Skill 1");

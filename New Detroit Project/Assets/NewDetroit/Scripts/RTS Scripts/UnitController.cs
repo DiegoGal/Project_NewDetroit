@@ -222,7 +222,7 @@ public class UnitController : ControllableCharacter
         }
     }
 
-    protected virtual void UpdateFlying()
+    protected virtual void UpdateFlying ()
     {
         int maxTrapped = 5;
         float delta = 0.4f;
@@ -260,9 +260,6 @@ public class UnitController : ControllableCharacter
         }
         else
             lastPosY = transform.position.y;
-
-
-    
     }
 
     private void UpdateDying ()
