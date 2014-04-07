@@ -28,24 +28,26 @@ public class GameManagerRTS : Photon.MonoBehaviour {
             Camera.main.GetComponent<CameraMOBAController>().enabled = false;
             if (!joinned)
             {
+                Debug.Log("First joinned");
+                Camera.main.transform.position = new Vector3(102, 26, -2);
                 redBase.GetComponent<CSelectable>().enabled = true;
                 redBase.GetComponent<BaseController>().enabled = true;
                 redBase.GetComponent<FogOfWarUnit>().enabled = true;
                 blueBase.GetComponent<CSelectable>().enabled = false;
                 blueBase.GetComponent<BaseController>().enabled = false;
                 blueBase.GetComponent<FogOfWarUnit>().enabled = false;
-                Camera.main.transform.Translate(new Vector3(104, 26, 3.6f));
                 DestroyObject(blueArmyManager);
             }
             else
             {
+                Debug.Log("Second joinned");
+                Camera.main.transform.position = new Vector3(-21, 26, 76);
                 redBase.GetComponent<CSelectable>().enabled = false;
                 redBase.GetComponent<BaseController>().enabled = false;
                 redBase.GetComponent<FogOfWarUnit>().enabled = false;
                 blueBase.GetComponent<CSelectable>().enabled = true;
                 blueBase.GetComponent<BaseController>().enabled = true;
                 blueBase.GetComponent<FogOfWarUnit>().enabled = true;
-                Camera.main.transform.Translate(new Vector3(-22.245f, 26, 74.6f));
                 DestroyObject(redArmyManager);
             }
         }

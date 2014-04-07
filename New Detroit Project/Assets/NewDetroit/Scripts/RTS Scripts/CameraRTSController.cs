@@ -3,8 +3,8 @@ using System.Collections;
 
 public class CameraRTSController : MonoBehaviour
 {
-    public Vector3 initPosition;
-    public Vector3 initRotation;
+    private Vector3 initPosition;
+    private Vector3 initRotation;
 
     public float scrollSpeed = 15.0f;
     private float scrollSpeedMult;
@@ -27,7 +27,6 @@ public class CameraRTSController : MonoBehaviour
     {
         initPosition = transform.position;
         initRotation = transform.eulerAngles;
-
         scrollSpeedMult = scrollSpeed;
 
         newPos = initPosition;
