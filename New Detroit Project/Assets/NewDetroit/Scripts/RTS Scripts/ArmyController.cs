@@ -18,8 +18,18 @@ public class ArmyController : MonoBehaviour
     private Vector3[] squareSelectionPointsScreen;      // positions of the corners in the screen
     private Vector3[] squareSelectionPointsProyected;   // positions of the corners in the world
 
+    // the actual resources of the Army
     public int resources = 0;
-    private float lastCrowdAngle; // último ángulo de desplazamiento de la bandada
+
+    // the actual economy of the Army
+    public int economy = 0;
+    // time (in seconds) it takes to increase the economy value
+    public float timeToIncreaseEconomy = 5.0f;
+    private float timeToIncreaseEconomyAux = 5.0f;
+    // increased economy by tick
+    public int increasedEconomy = 1;
+
+    private float lastCrowdAngle; // último ángulo de desplazamiento del enjambre
 
 	private int layerMask; // para obviar la capa de la niebla
 
@@ -424,55 +434,15 @@ public class ArmyController : MonoBehaviour
 
         // Spawn units
 		if (Input.GetKeyDown(KeyCode.Alpha1))
-		{
-			if (armyBase.GetComponent<CSelectable>().IsSelected())
-			{
-				// spawn a new harvester
-				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(0);
-				unitList.Add(newUnit);
-                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
-			}
-		}
+            SpawnUnit(0);
         if (Input.GetKeyDown(KeyCode.Alpha2))
-		{
-			if (armyBase.GetComponent<CSelectable>().IsSelected())
-			{
-				// spawn a new basic artillery
-				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(1);
-				unitList.Add(newUnit);
-                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
-			}
-		}
+            SpawnUnit(1);
 		if (Input.GetKeyDown(KeyCode.Alpha3))
-		{
-			if (armyBase.GetComponent<CSelectable>().IsSelected())
-			{
-				// spawn a new heavy artillery
-				GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(2);
-				unitList.Add(newUnit);
-                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
-			}
-		}
+            SpawnUnit(2);
         if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            if (armyBase.GetComponent<CSelectable>().IsSelected())
-            {
-                // spawn a new engineer
-                GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(3);
-                unitList.Add(newUnit);
-                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
-            }
-        }
+            SpawnUnit(3);
         if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            if (armyBase.GetComponent<CSelectable>().IsSelected())
-            {
-                // spawn a new scout
-                GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(4);
-                unitList.Add(newUnit);
-                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
-            }
-        }
+            SpawnUnit(4);
 
         // kill units with DEL key
         if ( unitSelectedList.Count > 0 && Input.GetKeyDown(KeyCode.Delete) )
@@ -482,6 +452,14 @@ public class ArmyController : MonoBehaviour
                 ControllableCharacter unit = unitSelectedList[i].GetComponent<ControllableCharacter>();
                 unit.Damage(unit.getLife());
             }
+        }
+
+        // economy values
+        timeToIncreaseEconomyAux -= Time.deltaTime;
+        if (timeToIncreaseEconomyAux <= 0.0f)
+        {
+            economy += increasedEconomy;
+            timeToIncreaseEconomyAux = timeToIncreaseEconomy;
         }
 
     } // Update ()
@@ -500,9 +478,14 @@ public class ArmyController : MonoBehaviour
     {
 		GUI.skin.label.fontSize = 12;
 
-        if (teamNumber == 1)
-            GUI.Label(new Rect(0, 0, 150, 50), "Total resources: " + resources);
-		GUI.Label(new Rect(0, 14, 150, 50), "Total Units: " + unitList.Count);
+        if (teamNumber == 0)
+            GUI.Label(new Rect(5, 5, 150, 100), "Team_A\n\tTotal resources: " + resources +
+                "\n\tEconomy: " + economy +
+                "\n\tTotal Units: " + unitList.Count);
+        else if (teamNumber == 1)
+            GUI.Label(new Rect(Screen.width - 140, 5, 150, 100), "Team_B\n\tTotal resources: " + resources +
+                "\n\tEconomy: " + economy +
+                "\n\tTotal Units: " + unitList.Count);
 
         // selecting rectangle
         if (selecting)
@@ -1078,6 +1061,23 @@ public class ArmyController : MonoBehaviour
     public CResourceBuilding GetResourceBuilding (CResources mine)
     {
         return FindResourceBuilding(mine);
+    }
+
+    // Call to the army base to spawn a new unit and create its reference
+    // in the DistanceMeasurerTool
+    private void SpawnUnit (int unitId)
+    {
+        if (armyBase.GetComponent<CSelectable>().IsSelected())
+        {
+            // spawn a new harvester
+            GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(unitId, ref resources, ref economy);
+            if (newUnit)
+            {
+                unitList.Add(newUnit);
+                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
+            }
+            // TODO: else mostrar aviso de que no hay recursos suficientes
+        }
     }
 
 } // class ArmyController

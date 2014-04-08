@@ -24,8 +24,6 @@ public class UnitController : ControllableCharacter
     private State lastState = State.Idle;
 	
     public float velocity = 3.5f;
-    public float rotationVelocity = 10.0f;
-    public Vector3 dirMovement = new Vector3();
     protected Vector3 destiny = new Vector3();
     protected float destinyThreshold = 0.5f;
 
@@ -347,7 +345,10 @@ public class UnitController : ControllableCharacter
         if (unit)
         {
             // check if the unit is not attacking the selected enemy yet
-            if (currentState != State.Attacking && lastEnemyAttacked != unit)
+            if (
+                 currentState != State.Attacking ||
+                 (currentState == State.Attacking && lastEnemyAttacked != unit)
+               )
             {
                 if (teamNumber != unit.teamNumber)
                 {

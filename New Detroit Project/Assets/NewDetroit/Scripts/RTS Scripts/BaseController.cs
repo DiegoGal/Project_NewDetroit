@@ -17,10 +17,20 @@ public class BaseController : CResourceBuilding
 	private Ray myRay;
 
     public GameObject harvesterUnit;
+    public int harvesterUnitResourcesCost = 100,
+               harvesterUnitEconomyCost = 0;
 	public GameObject basicArtilleryUnit;
+    public int basicArtilleryUnitResourcesCost = 200,
+               basicArtilleryUnitEconomyCost = 0;
 	public GameObject heavyArtilleryUnit;
+    public int heavyArtilleryUnitResourcesCost = 300,
+               heavyArtilleryUnitEconomyCost = 10;
 	public GameObject engineerUnit;
+    public int engineerUnitResourcesCost = 200,
+               engineerUnitEconomyCost = 5;
     public GameObject scoutUnit;
+    public int scoutUnitResourcesCost = 150,
+               scoutUnitEconomyCost = 10;
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
@@ -127,7 +137,7 @@ public class BaseController : CResourceBuilding
         }*/
     }
 
-	public GameObject SpawnUnit (int id)
+	public GameObject SpawnUnit (int id, ref int resources, ref int economy)
 	{
 		GameObject newUnit = null;
 
@@ -136,24 +146,49 @@ public class BaseController : CResourceBuilding
             switch (id)
             {
                 case 0: // Harvester
-                    newUnit = PhotonNetwork.Instantiate("UnitHarvester", spawnOrigin, new Quaternion(), 0)
-                            as GameObject;
+                    if (resources >= harvesterUnitResourcesCost && economy >= harvesterUnitEconomyCost)
+                    {
+                        newUnit = PhotonNetwork.Instantiate("UnitHarvester", spawnOrigin, new Quaternion(), 0)
+                                as GameObject;
+                        resources -= harvesterUnitResourcesCost;
+                        economy -= harvesterUnitEconomyCost;
+                    }
                     break;
                 case 1: // Basic Artillery
-                    newUnit = PhotonNetwork.Instantiate("UnitBasicArtillery", spawnOrigin, new Quaternion(), 0)
-                            as GameObject;
+                    if (resources >= basicArtilleryUnitResourcesCost && economy >= basicArtilleryUnitEconomyCost)
+                    {
+                        newUnit = PhotonNetwork.Instantiate("UnitBasicArtillery", spawnOrigin, new Quaternion(), 0)
+                                as GameObject;
+                        resources -= basicArtilleryUnitResourcesCost;
+                        economy -= basicArtilleryUnitEconomyCost;
+                    }
                     break;
                 case 2: // Heavy Artillery
-                    newUnit = PhotonNetwork.Instantiate("UnitHeavyArtillery", spawnOrigin, new Quaternion(), 0)
-                            as GameObject;
+                    if (resources >= heavyArtilleryUnitResourcesCost && economy >= heavyArtilleryUnitEconomyCost)
+                    {
+                        newUnit = PhotonNetwork.Instantiate("UnitHeavyArtillery", spawnOrigin, new Quaternion(), 0)
+                                as GameObject;
+                        resources -= heavyArtilleryUnitResourcesCost;
+                        economy -= heavyArtilleryUnitEconomyCost;
+                    }
                     break;
                 case 3: // Engineer
-                    newUnit = PhotonNetwork.Instantiate("UnitEngineer", spawnOrigin, new Quaternion(), 0)
-                        as GameObject;
+                    if (resources >= engineerUnitResourcesCost && economy >= engineerUnitEconomyCost)
+                    {
+                        newUnit = PhotonNetwork.Instantiate("UnitEngineer", spawnOrigin, new Quaternion(), 0)
+                            as GameObject;
+                        resources -= engineerUnitResourcesCost;
+                        economy -= engineerUnitEconomyCost;
+                    }
                     break;
                 case 4: // Scout
-                    newUnit = PhotonNetwork.Instantiate("UnitScout", spawnOrigin, new Quaternion(), 0)
-                        as GameObject;
+                    if (resources >= scoutUnitResourcesCost && economy >= scoutUnitEconomyCost)
+                    {
+                        newUnit = PhotonNetwork.Instantiate("UnitScout", spawnOrigin, new Quaternion(), 0)
+                            as GameObject;
+                        resources -= scoutUnitResourcesCost;
+                        economy -= scoutUnitEconomyCost;
+                    }
                     break;
             }
         }
@@ -162,24 +197,49 @@ public class BaseController : CResourceBuilding
             switch (id)
             {
                 case 0: // Harvester
-                    newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
+                    if (resources >= harvesterUnitResourcesCost && economy >= harvesterUnitEconomyCost)
+                    {
+                        newUnit = Instantiate(harvesterUnit, spawnOrigin, new Quaternion())
+                            as GameObject;
+                        resources -= harvesterUnitResourcesCost;
+                        economy -= harvesterUnitEconomyCost;
+                    }
                     break;
                 case 1: // Basic Artillery
-                    newUnit = Instantiate(basicArtilleryUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
+                    if (resources >= basicArtilleryUnitResourcesCost && economy >= basicArtilleryUnitEconomyCost)
+                    {
+                        newUnit = Instantiate(basicArtilleryUnit, spawnOrigin, new Quaternion())
+                            as GameObject;
+                        resources -= basicArtilleryUnitResourcesCost;
+                        economy -= basicArtilleryUnitEconomyCost;
+                    }
                     break;
                 case 2: // Heavy Artillery
-                    newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
+                    if (resources >= heavyArtilleryUnitResourcesCost && economy >= heavyArtilleryUnitEconomyCost)
+                    {
+                        newUnit = Instantiate(heavyArtilleryUnit, spawnOrigin, new Quaternion())
+                            as GameObject;
+                        resources -= heavyArtilleryUnitResourcesCost;
+                        economy -= heavyArtilleryUnitEconomyCost;
+                    }
                     break;
                 case 3: // Engineer
-                    newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
+                    if (resources >= engineerUnitResourcesCost && economy >= engineerUnitEconomyCost)
+                    {
+                        newUnit = Instantiate(engineerUnit, spawnOrigin, new Quaternion())
+                            as GameObject;
+                        resources -= engineerUnitResourcesCost;
+                        economy -= engineerUnitEconomyCost;
+                    }
                     break;
                 case 4: // Scout
-                    newUnit = Instantiate(scoutUnit, spawnOrigin, new Quaternion())
-                        as GameObject;
+                    if (resources >= scoutUnitResourcesCost && economy >= scoutUnitEconomyCost)
+                    {
+                        newUnit = Instantiate(scoutUnit, spawnOrigin, new Quaternion())
+                            as GameObject;
+                        resources -= scoutUnitResourcesCost;
+                        economy -= scoutUnitEconomyCost;
+                    }
                     break;
             }
             // set the texture of the unit
@@ -189,10 +249,13 @@ public class BaseController : CResourceBuilding
             }*/
         }
 
-		newUnit.GetComponent<UnitController>().SetArmyBase(this);
-		newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
-		newUnit.GetComponent<UnitController>().teamNumber = this.teamNumber;
-		newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
+        if (newUnit)
+        {
+            newUnit.GetComponent<UnitController>().SetArmyBase(this);
+            newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
+            newUnit.GetComponent<UnitController>().teamNumber = this.teamNumber;
+            newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
+        }
 
 		return  newUnit;
 	}
