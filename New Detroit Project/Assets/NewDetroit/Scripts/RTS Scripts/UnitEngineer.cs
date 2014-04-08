@@ -192,12 +192,12 @@ public class UnitEngineer : UnitController
                 if (currentState == State.Idle)
                 {
                     // when it have arrived to the repair position
-                    Debug.Log("comenzando reparacion!!!!!!!");
+                    //Debug.Log("comenzando reparacion!!!!!!!");
                     currentEngineerState = EngineerState.Repairing;
 
                     // intanciamos un Hammer
-                    Debug.Log("Dummy position: " + dummyHand.transform.position);
-                    Debug.Log("Engineer position: " + transform.position);
+                    //Debug.Log("Dummy position: " + dummyHand.transform.position);
+                    //Debug.Log("Engineer position: " + transform.position);
                     GameObject newHammer = Instantiate
                     (
                         hammer,
@@ -215,12 +215,12 @@ public class UnitEngineer : UnitController
                 if (currentState == State.Idle)
                 {
                     // when it have arrived to the conquest position
-                    Debug.Log("comenzando conquista!!!!!!!!");
+                    //Debug.Log("comenzando conquista!!!!!!!!");
                     currentEngineerState = EngineerState.Conquering;
 
                     // intanciamos un laptop
-                    Debug.Log("Dummy position: " + dummyLaptop.transform.position);
-                    Debug.Log("Engineer position: " + transform.position);
+                    //Debug.Log("Dummy position: " + dummyLaptop.transform.position);
+                    //Debug.Log("Engineer position: " + transform.position);
                     GameObject newLaptop = Instantiate
                     (
                         laptop,
@@ -240,13 +240,13 @@ public class UnitEngineer : UnitController
                     if (currentState == State.Idle)
                     {
                         // when it have arrived to the conquest position
-                        Debug.Log("comenzando construccion!!!!!!!!");
+                        //Debug.Log("comenzando construccion!!!!!!!!");
                         currentEngineerState = EngineerState.Constructing;
                         newTGConstruct = newWConstruct = false;
 
                         // intanciamos un Hammer
-                        Debug.Log("Dummy position: " + dummyHand.transform.position);
-                        Debug.Log("Engineer position: " + transform.position);
+                        //Debug.Log("Dummy position: " + dummyHand.transform.position);
+                        //Debug.Log("Engineer position: " + transform.position);
                         GameObject newHammer = Instantiate
                         (
                             hammer,

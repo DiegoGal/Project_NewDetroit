@@ -586,13 +586,15 @@ public class UnitArtillery : UnitController
                             if (attack2Selected)
                             {
                                 animation.CrossFade("Attack2");
-                                currentArtilleryState = ArtilleryState.Attacking2;
+                                //currentArtilleryState = ArtilleryState.Attacking2;
                             }
                             else
                             {
                                 animation.CrossFade("Attack1");
-                                currentArtilleryState = ArtilleryState.Attacking1;
+                                //currentArtilleryState = ArtilleryState.Attacking1;
                             }
+                            enemySelected = enemy;
+                            currentState = State.Attacking;
                         }
                     }
                 }

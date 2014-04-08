@@ -49,7 +49,7 @@ public class UnitController : ControllableCharacter
     public Material dyingMaterial;
 
     private float timeFallingWhenDying = 1.6f;
-    private float ascendingAceleration = 1.045f;
+    private float ascendingAceleration = 1.055f;
 
     // atributes for the attack
     protected ControllableCharacter lastEnemyAttacked;
@@ -270,6 +270,14 @@ public class UnitController : ControllableCharacter
             // remove the assets of the model
             RemoveAssetsFromModel();
 
+            // elevate a little the unit just in case the y is 0
+            transform.position = new Vector3
+            (
+                transform.position.x,
+                0.01f,
+                transform.position.z
+            );
+
             currentState = State.AscendingToHeaven;
         }
     }
@@ -280,7 +288,7 @@ public class UnitController : ControllableCharacter
         transform.position = new Vector3
         (
             transform.position.x,
-            transform.position.y * ascendingAceleration,// + 0.01f,
+            transform.position.y * ascendingAceleration + 0.01f,
             transform.position.z
         );
         // update the Alpha Multiply Value of the material
@@ -335,16 +343,25 @@ public class UnitController : ControllableCharacter
 
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
-        GoTo(destiny);
-
         ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
-        if ( (unit != null) && (teamNumber != unit.teamNumber) )
+        if (unit)
         {
-            enemySelected = unit;
-            currentState = State.GoingToAnEnemy;
+            // check if the unit is not attacking the selected enemy yet
+            if (currentState != State.Attacking && lastEnemyAttacked != unit)
+            {
+                if (teamNumber != unit.teamNumber)
+                {
+                    GoTo(destiny);
+                    enemySelected = unit;
+                    currentState = State.GoingToAnEnemy;
+                }
+            }
         }
         else
+        {
             enemySelected = null;
+            GoTo(destiny);
+        }
     }
 
     // this method is called when a unit collides with the army base

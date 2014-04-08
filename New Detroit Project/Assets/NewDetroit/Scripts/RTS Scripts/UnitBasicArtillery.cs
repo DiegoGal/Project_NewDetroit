@@ -96,6 +96,104 @@ public class UnitBasicArtillery : UnitArtillery
         }
     }
 
+    // The parent class only check for the distance between this and the unit that is attacked
+    // this artillery units attack with a bate and with distance weapons, in the first case
+    // we call the base method, in the "distance-attack" case we have to check first if the 
+    // enemy is on sight launching rays
+    protected override void UpdateAttacking ()
+    {
+        // si esta seleccionado el ataque con bate se llama a la clase base
+        if (attack2Selected)
+            base.UpdateAttacking();
+        else
+        {
+            if (lastEnemyAttacked == null)
+            {
+                if (enemiesInside.Count == 0)
+                {
+                    lastEnemyAttacked = null;
+                    // no more enemies, change the state
+                    currentArtilleryState = ArtilleryState.None;
+                }
+                else
+                    currentArtilleryState = ArtilleryState.Alert;
+
+                PlayAnimationCrossFade("Idle01");
+
+                currentState = State.Idle;
+            }
+            else if (attackCadenceAux <= 0.0f)
+            {
+                // check that the enemy is in sight
+                Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.3f);
+
+                Vector3 fwd = enemySelected.transform.position - this.transform.position;
+                fwd.Normalize();
+                Vector3 aux = transform.position + eyesPosition + (fwd * maxAttackDistance);
+                Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
+                RaycastHit myHit;
+                if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, maxAttackDistance))
+                {
+                    ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
+                    if ((enemy != null) && (enemy == enemySelected))
+                    {
+                        // Attack!
+                        Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
+                        transform.LookAt(lastEnemyAttacked.transform);
+                        // play the attack animation:
+                        //animation.CrossFade("Attack1");
+                        //animation.CrossFadeQueued("Idle01");
+                        // emite some particles:
+                        GameObject particles1 = (GameObject)Instantiate(shotParticles,
+                            dummyLeftWeaponGunBarrel.transform.position,
+                            transform.rotation);
+                        Destroy(particles1, 0.4f);
+                        GameObject particles2 = (GameObject)Instantiate(shotParticles,
+                            dummyRightWeaponGunBarrel.transform.position,
+                            transform.rotation);
+                        Destroy(particles2, 0.4f);
+
+                        // first we check if the enemy is now alive
+                        if (lastEnemyAttacked.Damage(basicAttackPower))
+                        {
+                            // the enemy died, time to reset the lastEnemyAttacked reference
+                            enemiesInside.Remove(lastEnemyAttacked);
+                            if (enemiesInside.Count == 0)
+                            {
+                                lastEnemyAttacked = null;
+                                // no more enemies, change the state
+                                currentArtilleryState = ArtilleryState.None;
+                            }
+                            else
+                                currentArtilleryState = ArtilleryState.Alert;
+
+                            PlayAnimationCrossFade("Idle01");
+                            currentState = State.Idle;
+                        }
+                    }
+                    else
+                    {
+                        // the enemy is NOT on sight
+                        currentArtilleryState = ArtilleryState.Alert;
+                        PlayAnimationCrossFade("Idle01");
+                        currentState = State.Idle;
+                    }
+                }
+                else
+                {
+                    // the enemy is NOT on sight
+                    currentArtilleryState = ArtilleryState.Alert;
+                    PlayAnimationCrossFade("Idle01");
+                    currentState = State.Idle;
+                }
+                // reset the timer
+                attackCadenceAux = primaryAttackCadence;
+            }
+            else
+                attackCadenceAux -= Time.deltaTime;
+        }
+    }
+
     protected override void PlayAnimationCrossFade (string animationName)
     {
         if ( (animationName == "Attack1") && attack2Selected )
