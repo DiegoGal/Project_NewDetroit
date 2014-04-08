@@ -83,7 +83,11 @@ public class DistanceMeasurerTool : MonoBehaviour
                 if (prevIndexj + calculationsPerUpdate >= Army1.Count)
                     prevIndexi = (prevIndexi - 1 + calculationsPerUpdate) % Army0.Count;
                 else
+                {
                     prevIndexi--;
+                    if (prevIndexi == -1)
+                        prevIndexi = Army0.Count - 1;
+                }
                 prevIndexj = (prevIndexj + calculationsPerUpdate + 1) % Army1.Count;
 
                 searchMode = SearchMode.pair_pair;
@@ -124,7 +128,8 @@ public class DistanceMeasurerTool : MonoBehaviour
             for (int j = prevIndexj; j <= calculationsPerUpdate + prevIndexj; j += 2)
             {
                 //Debug.Log("Búsqueda: i:" + i + ", j:" + j + ".");
-                ControllableCharacter unit0 = Army0[i % list0Count], unit1 = Army1[j % list1Count];
+                ControllableCharacter unit0 = Army0[i % list0Count],
+                                      unit1 = Army1[j % list1Count];
                 if (unit0 && unit1)
                 {
                     // descartamos los casos por las distancias de x y z
