@@ -25,7 +25,7 @@ public class UnitController : ControllableCharacter
 	
     public float velocity = 3.5f;
     protected Vector3 destiny = new Vector3();
-    protected float destinyThreshold = 0.5f;
+    protected float destinyThreshold = 0.25f;
 
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
@@ -87,6 +87,8 @@ public class UnitController : ControllableCharacter
             currentState = State.GoingTo;
             PlayAnimation("Walk");
         }
+
+        GetComponent<NavMeshAgent>().stoppingDistance = destinyThreshold;
     }
 
     // Update is called once per frame
@@ -142,28 +144,39 @@ public class UnitController : ControllableCharacter
 
     protected virtual void UpdateGoingToAnEnemy ()
     {
-        // 1- comprobamos si el enemigo está "a mano" y se le puede atacar
-        float distToEnemy = Vector3.Distance(transform.position, enemySelected.transform.position);
-        if (distToEnemy <= maxAttackDistance)
+        // primero comprobamos que el enemigo siga "vivo"
+        if (enemySelected)
         {
-            // change to Attack state
-            currentState = State.Attacking;
-            PlayAnimationCrossFade("Attack1");
-            GetComponent<NavMeshAgent>().destination = transform.position;
+            // 1- comprobamos si el enemigo está "a mano" y se le puede atacar
+            float distToEnemy = Vector3.Distance(transform.position, enemySelected.transform.position);
+            if (distToEnemy <= maxAttackDistance)
+            {
+                // change to Attack state
+                currentState = State.Attacking;
+                PlayAnimationCrossFade("Attack1");
+                GetComponent<NavMeshAgent>().Stop();
 
-            transform.LookAt(enemySelected.transform);
+                transform.LookAt(enemySelected.transform);
+            }
+            // 2- comprobamos si el enemigo esta "a vista"
+            else if (distToEnemy <= visionSphereRadious)
+            {
+                this.destiny = enemySelected.transform.position;
+                GetComponent<NavMeshAgent>().SetDestination(destiny);
+            }
+            // 3- se ha llegado al destino y se ha perdido de vista al enemigo
+            else if (Vector3.Distance(transform.position, destiny) <= destinyThreshold)
+            {
+                StopMoving();
+            }
         }
-        // 2- comprobamos si el enemigo esta "a vista"
-        else if (distToEnemy <= visionSphereRadious)
+        else
         {
-            this.destiny = enemySelected.transform.position;
-            GetComponent<NavMeshAgent>().destination = destiny;
+            // el enemigo ha sido eliminado
+            //GoTo(destiny);
+            currentState = State.GoingTo;
         }
-        // 3- se ha llegado al destino y se ha perdido de vista al enemigo
-        else if (Vector3.Distance(transform.position, destiny) <= destinyThreshold)
-        {
-            StopMoving();
-        }
+
     }
 
     protected virtual void UpdateAttacking ()
@@ -197,7 +210,7 @@ public class UnitController : ControllableCharacter
                 currentState = State.GoingToAnEnemy;
 
                 this.destiny = enemySelected.transform.position;
-                GetComponent<NavMeshAgent>().destination = destiny;
+                GetComponent<NavMeshAgent>().SetDestination(destiny);
 
                 PlayAnimationCrossFade("Walk");
                 attackCadenceAux = 0.5f;
@@ -324,7 +337,7 @@ public class UnitController : ControllableCharacter
     public void GoTo (Vector3 destiny)
     {
         this.destiny = destiny;
-        GetComponent<NavMeshAgent>().destination = destiny;
+        GetComponent<NavMeshAgent>().SetDestination(destiny);
         currentState = State.GoingTo;
 
         PlayAnimationCrossFade("Walk");
@@ -333,7 +346,8 @@ public class UnitController : ControllableCharacter
     protected void StopMoving ()
     {
         destiny = transform.position;
-        GetComponent<NavMeshAgent>().destination = destiny;
+        //GetComponent<NavMeshAgent>().destination = destiny;
+        GetComponent<NavMeshAgent>().Stop();
         currentState = State.Idle;
 
         PlayAnimationCrossFade("Idle01");

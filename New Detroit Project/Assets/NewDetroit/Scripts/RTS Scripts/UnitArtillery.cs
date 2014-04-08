@@ -33,7 +33,7 @@ public class UnitArtillery : UnitController
 
     public List<ControllableCharacter> enemiesInside;
 
-    protected float alertHitTimer = 1.0f;
+    protected float alertHitTimer = 1.5f;
     protected float alertHitTimerAux = 0.0f;
 
     // position where the rays to search for enemies are launched
