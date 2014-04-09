@@ -89,6 +89,7 @@ public class ArmyController : MonoBehaviour
             {
                 unitList.Add(go);
                 DistanceMeasurerTool.InsertUnit(unit);
+                Minimap.InsertUnit(unit);
             }
         }
 

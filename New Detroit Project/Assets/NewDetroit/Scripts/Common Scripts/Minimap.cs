@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Minimap : MonoBehaviour {
+public class Minimap : MonoBehaviour
+{
 
     // Textures
     public Texture textureMap;
@@ -55,9 +56,8 @@ public class Minimap : MonoBehaviour {
         sizeProportion = size / sizeWorldFloor;
         posHeight = Screen.height - (size + margin);
 	}
-	
-	// Update is called once per frame
-	void Update () 
+
+	void LateUpdate () 
     {
         int max0 = army0.Count;
         int max1 = army1.Count;
@@ -80,7 +80,7 @@ public class Minimap : MonoBehaviour {
         contUpdate1 = (contUpdate1 + 1) % 4;
 	}
 
-    public static void InsertUnit(UnitController unit)
+    public static void InsertUnit (UnitController unit)
     {
         if (unit.teamNumber == 0)
         {
@@ -95,7 +95,7 @@ public class Minimap : MonoBehaviour {
                
     }
 
-    public static void DeleteUnit(UnitController unit)
+    public static void DeleteUnit (UnitController unit)
     {
         if (unit.teamNumber == 0)
         {
@@ -112,7 +112,7 @@ public class Minimap : MonoBehaviour {
 
     }
 
-    public static void InsertTower(Tower tower)
+    public static void InsertTower (Tower tower)
     {
         float posx = margin + (tower.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - tower.transform.position.z) * sizeProportion;
@@ -124,7 +124,7 @@ public class Minimap : MonoBehaviour {
 
     }
 
-    public static void InsertWarehouse(Warehouse warehouse)
+    public static void InsertWarehouse (Warehouse warehouse)
     {
         float posx = margin + (warehouse.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - warehouse.transform.position.z) * sizeProportion;
