@@ -8,14 +8,6 @@ MonoImporter:
   - progressBarEmpty: {fileID: 2800000, guid: 8ff75535e1a07364ea0532d96f39336c, type: 3}
   - progressBarFull: {fileID: 2800000, guid: 1b1d14c3f4fb8864e930e1cd88e3a906, type: 3}
   - dyingMaterial: {instanceID: 0}
-  - particlesSmokeMower: {fileID: 100000, guid: 3e116300ca2d4364d829c94f48aafadf,
-      type: 2}
-  - particlesPiecesMower: {fileID: 100000, guid: a38d7d4358f6c1842bd05ff7c3257cf6,
-      type: 2}
-  - fireMower: {fileID: 100000, guid: 9bafce97d03eba845a4e760589af97dc, type: 2}
-  - piecesMower: {fileID: 100000, guid: a38d7d4358f6c1842bd05ff7c3257cf6, type: 2}
-  - explosion: {fileID: 100000, guid: 3e116300ca2d4364d829c94f48aafadf, type: 2}
-  - mower: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
