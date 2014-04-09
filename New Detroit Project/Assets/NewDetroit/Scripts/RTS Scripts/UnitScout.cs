@@ -11,6 +11,19 @@ public class UnitScout : UnitController
 
 	public List<Vector3> patrolPositionsList = new List<Vector3>();
 
+	// Explosion particle
+	public GameObject particlesSmokeMower;
+	public GameObject particlesPiecesMower;
+	public GameObject fireMower;
+	public GameObject piecesMower;
+	public GameObject explosion; 
+	private bool explosionActivated = false;
+	private bool otherParticlesActivated = false;
+	private float explosionCD = 1.5f;
+	private GameObject explosionInst;
+	private GameObject fireMowerInst;
+	private GameObject piecesMowerInst;
+
 	private enum ScoutState
 	{
 		None,
@@ -41,6 +54,7 @@ public class UnitScout : UnitController
 	public override void Update () 
 	{
 		base.Update();
+		//UpdateParticles();
         if ( (currentScoutState == ScoutState.Patrolling) && (currentState == State.Idle) )
 		{
             nextPositionIndex = (nextPositionIndex + 1) % patrolPositionsList.Count;
@@ -96,9 +110,41 @@ public class UnitScout : UnitController
     {
         if (base.Damage(damage, type))
         {
-            if (mower)
-                Destroy(mower);
-            // TODO: instanciar una explosión
+			if (mower)
+			{ 
+				Destroy(mower);
+				// TODO: instanciar una explosión
+				
+				/*fireMowerInst = Instantiate
+					(
+						fireMower,
+						transform.position,
+						transform.rotation
+						) as GameObject;
+
+				Destroy(fireMowerInst, 1f);
+				explosionActivated = true;*/
+
+				explosionInst = Instantiate
+					(
+						explosion,
+						transform.position,
+						transform.rotation
+						) as GameObject;
+				
+				Quaternion rotationAux = new Quaternion(0f,180f,180f, 0f);
+				
+				piecesMowerInst = Instantiate
+					(
+						piecesMower,
+						transform.position,
+						rotationAux
+						) as GameObject;
+				
+				Destroy(piecesMowerInst, 1.5f);
+				Destroy(explosionInst, 1.5f);
+				
+			}
             return true;
         }
         else
@@ -129,5 +175,45 @@ public class UnitScout : UnitController
         if (mower)
             Destroy(mower);
     }
+
+	//Particles
+	/*protected void UpdateParticles()
+	{		
+		if (explosionActivated)
+		{
+			if (explosionCD <= 0)
+			{
+				explosionCD = 1.5f;
+				explosionActivated = false;
+				otherParticlesActivated = true;
+			}
+			else explosionCD -= Time.deltaTime;
+		}
+
+		if (otherParticlesActivated)
+		{
+			//Destroy(mower);
+			explosionInst = Instantiate
+				(
+					explosion,
+					transform.position,
+					transform.rotation
+					) as GameObject;
+
+			Quaternion rotationAux = new Quaternion(0f,180f,180f, 0f);
+
+			piecesMowerInst = Instantiate
+				(
+					piecesMower,
+					transform.position,
+					rotationAux
+					) as GameObject;
+			
+			Destroy(piecesMowerInst, 1.7f);
+			Destroy(explosionInst, 1.7f);
+			
+			otherParticlesActivated = false;
+		}
+	}*/
 
 }
