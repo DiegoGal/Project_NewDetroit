@@ -100,7 +100,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 
     public void OnGUI ()
     {
-        GUI.skin.label.fontSize = 10;
+       /* GUI.skin.label.fontSize = 10;
 
         int icount = distancesMatrix.Count;
         int jcount;
@@ -115,7 +115,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                 else
                     GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), "---");
             }
-        }
+        }*/
     }
 
     private void SearchStep ()

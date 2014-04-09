@@ -1075,6 +1075,7 @@ public class ArmyController : MonoBehaviour
             {
                 unitList.Add(newUnit);
                 DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
+                Minimap.InsertUnit(newUnit.GetComponent<UnitController>());
             }
             // TODO: else mostrar aviso de que no hay recursos suficientes
         }
