@@ -98,7 +98,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 		
     } // Update
 
-    public void OnGUI ()
+    /*public void OnGUI ()
     {
         GUI.skin.label.fontSize = 10;
 
@@ -116,7 +116,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                     GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), "---");
             }
         }
-    }
+    }*/
 
     private void SearchStep ()
     {

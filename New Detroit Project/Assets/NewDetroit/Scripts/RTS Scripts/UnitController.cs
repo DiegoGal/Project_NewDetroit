@@ -121,14 +121,14 @@ public class UnitController : ControllableCharacter
     protected virtual void UpdateGoingTo ()
     {
         //Vector3 direction = destiny - transform.position;
-        Vector3 direction = destiny - transform.position;
+        /*Vector3 direction = destiny - transform.position;
         if (direction.magnitude >= destinyThreshold)
         {
-            /*Quaternion qu = new Quaternion();
+            Quaternion qu = new Quaternion();
             qu.SetLookRotation(direction, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, qu, Time.deltaTime * rotationVelocity);
             transform.position += direction.normalized *
-                velocity * Time.deltaTime;*/
+                velocity * Time.deltaTime;
 
             //transform.position = new Vector3(transform.position.x, 1, transform.position.z);
             //transform.Translate(direction.normalized * velocity * Time.deltaTime);
@@ -136,6 +136,16 @@ public class UnitController : ControllableCharacter
             //GetComponent<NavMeshAgent>().destination = destiny;
         }
         else
+        {
+            currentState = State.Idle;
+            PlayAnimationCrossFade("Idle01");
+        }*/
+
+        /*NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent.pathStatus == NavMeshPathStatus.PathComplete &&
+            agent.remainingDistance <= destinyThreshold)*/
+        Vector3 direction = destiny - transform.position;
+        if (direction.magnitude <= destinyThreshold)
         {
             currentState = State.Idle;
             PlayAnimationCrossFade("Idle01");

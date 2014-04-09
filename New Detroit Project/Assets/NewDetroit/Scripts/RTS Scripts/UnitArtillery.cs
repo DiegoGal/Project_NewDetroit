@@ -557,8 +557,8 @@ public class UnitArtillery : UnitController
             // launch a ray for each enemy inside the vision sphere
             for (int i = 0; i < count; i++)
             {
-                // check if the enemy is still in the game
-                if (enemiesInside[i])
+                // check if the enemy is still in the game and alive
+                if (enemiesInside[i] && enemiesInside[i].IsAlive())
                 {
                     Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
 
