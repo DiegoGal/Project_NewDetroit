@@ -10,7 +10,7 @@ public class UnitController : ControllableCharacter
     // the blood particles for when the unit has been hit
     public GameObject bloodParticles;
 
-    protected enum State
+    public enum State
     {
         Idle,	// reposo
         GoingTo,
@@ -20,7 +20,7 @@ public class UnitController : ControllableCharacter
         Dying, // the unit is falling death
         AscendingToHeaven
     }
-	protected State currentState = State.Idle;
+	public State currentState = State.Idle;
     private State lastState = State.Idle;
 	
     public float velocity = 3.5f;
@@ -72,21 +72,26 @@ public class UnitController : ControllableCharacter
     {
         base.Start();
 
-        timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
-
         currentLife = maximunLife;
-        GetComponent<NavMeshAgent>().speed = velocity;
+        if (isMine)
+        {
+            GetComponent<NavMeshAgent>().speed = velocity;
 
-        if (destiny == Vector3.zero)
-        {
-            destiny = transform.position;
-            PlayAnimation("Idle01");
+
+            timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
+
+            if (destiny == Vector3.zero)
+            {
+                destiny = transform.position;
+                PlayAnimation("Idle01");
+            }
+            else
+            {
+                currentState = State.GoingTo;
+                PlayAnimation("Walk");
+            }
         }
-        else
-        {
-            currentState = State.GoingTo;
-            PlayAnimation("Walk");
-        }
+
     }
 
     // Update is called once per frame
@@ -180,7 +185,6 @@ public class UnitController : ControllableCharacter
                     transform.LookAt(enemySelected.transform);
 
                     attackCadenceAux = attackCadence;
-
                     if (enemySelected.Damage(basicAttackPower))
                     {
                         // the enemy has die
@@ -275,7 +279,7 @@ public class UnitController : ControllableCharacter
                 0.01f,
                 transform.position.z
             );
-
+            if (isMine)
             currentState = State.AscendingToHeaven;
         }
     }
@@ -296,6 +300,20 @@ public class UnitController : ControllableCharacter
         model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
         if (alphaValue <= 0.0f)
             Destroy(this.gameObject);
+    }
+
+    public virtual void UpdateAnimation()
+    {
+         switch (currentState)
+            {
+                case State.Idle: UpdateIdle(); break;
+                case State.GoingTo: PlayAnimationCrossFade("Walk"); break;
+                case State.GoingToAnEnemy: PlayAnimationCrossFade("Walk"); break;
+                case State.Attacking: UpdateAttacking(); break;
+                case State.Flying: PlayAnimationCrossFade("Idle01"); break;
+                case State.Dying: UpdateDying(); break;
+                case State.AscendingToHeaven: UpdateAscendingToHeaven(); break;
+            }
     }
 
     public override void OnGUI ()

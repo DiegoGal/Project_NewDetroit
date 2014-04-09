@@ -25,6 +25,7 @@ public class GameManagerRTS : Photon.MonoBehaviour {
         }
         else
         {
+            GetComponent<AudioSource>().Play();
             Camera.main.GetComponent<CameraMOBAController>().enabled = false;
             if (!joinned)
             {
@@ -41,7 +42,7 @@ public class GameManagerRTS : Photon.MonoBehaviour {
             else
             {
                 Debug.Log("Second joinned");
-                Camera.main.transform.position = new Vector3(-21, 26, 76);
+                Camera.main.transform.position = new Vector3(66, 26, -30);
                 redBase.GetComponent<CSelectable>().enabled = false;
                 redBase.GetComponent<BaseController>().enabled = false;
                 redBase.GetComponent<FogOfWarUnit>().enabled = false;

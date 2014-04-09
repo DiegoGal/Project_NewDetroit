@@ -11,3 +11,16 @@ D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3
 D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass-vs.csprojResolveAssemblyReference.cache
 D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass.dll
 D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEditor.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEngine.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Mono.Cecil.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\nunit.framework.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.xml
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass-vs.csprojResolveAssemblyReference.cache
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass.pdb
