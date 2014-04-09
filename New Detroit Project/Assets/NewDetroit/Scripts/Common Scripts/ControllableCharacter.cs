@@ -100,6 +100,11 @@ public class ControllableCharacter : MonoBehaviour
 		return this.experienceGived;
 	}
 
+    public bool IsAlive ()
+    {
+        return (currentLife > 0);
+    }
+
     public virtual void EnemyEntersInVisionSphere (ControllableCharacter enemy)
     {
         
