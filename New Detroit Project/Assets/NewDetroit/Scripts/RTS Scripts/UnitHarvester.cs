@@ -38,7 +38,7 @@ public class UnitHarvester : UnitController
     private GameObject backpack;
     private GameObject glasses;
 
-    private enum HarvestState
+    public enum HarvestState
     {
         None,
         GoingToMine,
@@ -49,7 +49,7 @@ public class UnitHarvester : UnitController
         GoingToHealUnit,
         Healing  // curando a una unidad
     }
-    private HarvestState currentHarvestState = HarvestState.None;
+    public HarvestState currentHarvestState = HarvestState.None;
     private HarvestState nextHarvestState = HarvestState.None;
 
     // referencia a la mina que se está cosechando

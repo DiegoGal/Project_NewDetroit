@@ -10,7 +10,7 @@ public class UnitController : ControllableCharacter
     // the blood particles for when the unit has been hit
     public GameObject bloodParticles;
 
-    protected enum State
+    public enum State
     {
         Idle,	// reposo
         GoingTo,
@@ -20,7 +20,7 @@ public class UnitController : ControllableCharacter
         Dying, // the unit is falling death
         AscendingToHeaven
     }
-	protected State currentState = State.Idle;
+	public State currentState = State.Idle;
     private State lastState = State.Idle;
 	
     public float velocity = 3.5f;
