@@ -56,6 +56,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
             state = (UnitHarvester.HarvestState)stream.ReceiveNext();
             unitState = (UnitController.State)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
+            
 		}
 	}
 	
@@ -75,10 +76,6 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
             UnitHarvester script = GetComponent<UnitHarvester>();
             script.currentHarvestState = state;
             script.currentState = unitState;
-            if (currentLife < script.getLife())
-            {
-                script.Damage(script.getLife()-currentLife, 'P');
-            }
 		}
 	}
 	
