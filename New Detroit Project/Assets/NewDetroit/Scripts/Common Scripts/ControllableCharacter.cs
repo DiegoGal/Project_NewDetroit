@@ -31,6 +31,9 @@ public class ControllableCharacter : MonoBehaviour
     public float visionSphereRadious = 8.0f;
     public float maxAttackDistance = 2.0f;
 
+    // To determinate who's player belongs
+    public bool isMine = false; 
+
 	// --------------------------------------------------------------
 
     public virtual void Start ()
@@ -75,17 +78,17 @@ public class ControllableCharacter : MonoBehaviour
 
     public virtual bool Heal (float life)
     {
-        if (currentLife < maximunLife)
-        {
-            currentLife += life;
-            // si lo hemos curado "de más" le damos el valor máximo
-            if (maximunLife < currentLife)
-                currentLife = maximunLife;
-        }
-        if (currentLife == maximunLife)
-            return true;
-        else
-            return false;
+            if (currentLife < maximunLife)
+            {
+                currentLife += life;
+                // si lo hemos curado "de más" le damos el valor máximo
+                if (maximunLife < currentLife)
+                    currentLife = maximunLife;
+            }
+            if (currentLife == maximunLife)
+                return true;
+            else
+                return false;        
     }
 
 	// Return the current life of the heroe

@@ -68,3 +68,4 @@ D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-vs
 D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp.dll
 D:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp.pdb
 D:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
