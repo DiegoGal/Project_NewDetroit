@@ -11,13 +11,13 @@ public abstract class HeroeController : ControllableCharacter
 	//------------------------------------------------------------------------------------------------------
 	public enum StateHeroe // The state of the heroe
 	{
-		Dead,			// When is dead
 		Recover,		// After dead, he must be recovered
 		Idle,			// When is rest
 		Walk,			// When is walking
 		Run,			// When is running
 		AttackBasic,	// When he is attacking with his basic attack
-		AttackSecond	// When he is attacking with his secondary attack
+		AttackSecond,	// When he is attacking with his secondary attack
+		Dead			// When is dead
 	}
 	
 	public enum AttackSecond // The state of secondary attack
@@ -515,7 +515,7 @@ public abstract class HeroeController : ControllableCharacter
 		if (cooldown1 <= 0) cooldown1 = cooldown1total;
 		if (cooldown2 < cooldown2total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
 		if (cooldown2 <= 0) cooldown2 = cooldown2total;
-		if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
+		//if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
 		if (cooldown3 <= 0) cooldown3 = cooldown3total;
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------------
@@ -526,7 +526,7 @@ public abstract class HeroeController : ControllableCharacter
 		// If we are gonna do a skill
 		if (state == StateHeroe.AttackSecond && !doingSecondaryAnim)
 		{
-			if (stateAttackSecond == AttackSecond.Attack1) 
+			if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total) 
 			{
 				if (manaSkill1 != -1) 
 				{
@@ -539,7 +539,7 @@ public abstract class HeroeController : ControllableCharacter
 					currentAdren -= adrenSkill1;
 				}
 			}
-			else if (stateAttackSecond == AttackSecond.Attack2) 
+			else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total) 
 			{
 				if (manaSkill2 != -1) 
 				{
@@ -552,7 +552,7 @@ public abstract class HeroeController : ControllableCharacter
 					currentAdren -= adrenSkill2;
 				}
 			}
-			else 
+			else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
 			{
 				if (manaSkill3 != -1) 
 				{
@@ -562,7 +562,7 @@ public abstract class HeroeController : ControllableCharacter
 				else 
 				{
 					useAdren = true;
-					currentAdren -= adrenSkill3;
+					//currentAdren -= adrenSkill3;
 				}
 			}
 		}

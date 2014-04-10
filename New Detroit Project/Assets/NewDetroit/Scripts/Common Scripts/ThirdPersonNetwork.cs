@@ -46,13 +46,6 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		if (stream.isWriting)
 		{
 			//We own this player: send the others our data
-			//stream.SendNext((int)controllerScript._characterState);
-			/*stream.SendNext(animator.GetBool("isRunning"));
-			stream.SendNext(animator.GetFloat("Speed"));
-			stream.SendNext(animator.GetBool("isAttacking"));
-			stream.SendNext(animator.GetBool("isSecondAttack1"));
-			stream.SendNext(animator.GetBool("isSecondAttack2"));
-			stream.SendNext(animator.GetBool("isSecondAttack3"));*/
 			stream.SendNext(transform.position);
 			stream.SendNext(transform.rotation);
 			stream.SendNext(heroeControlScript.state);
@@ -95,13 +88,6 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		else
 		{
 			//Network player, receive data
-			//controllerScript._characterState = (CharacterState)(int)stream.ReceiveNext();
-			/*isRunning = (bool)stream.ReceiveNext();
-			Speed = (float)stream.ReceiveNext();
-			isAttacking = (bool)stream.ReceiveNext();
-			isSecondAttack1 = (bool)stream.ReceiveNext();
-			isSecondAttack2 = (bool)stream.ReceiveNext();
-			isSecondAttack3 = (bool)stream.ReceiveNext();*/
 			correctPlayerPos = (Vector3)stream.ReceiveNext();
 			correctPlayerRot = (Quaternion)stream.ReceiveNext();
             newState = (HeroeController.StateHeroe)stream.ReceiveNext();
@@ -140,12 +126,6 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
             heroeControlScript.state = newState;
             heroeControlScript.stateAttackSecond = newStateAttackSecond;
-			/*animator.SetBool("isRunning",isRunning);
-			animator.SetFloat("Speed",Speed);
-			animator.SetBool("isAttacking", isAttacking);
-			animator.SetBool("isSecondAttack1", isSecondAttack1);
-			animator.SetBool("isSecondAttack2", isSecondAttack2);
-			animator.SetBool("isSecondAttack3", isSecondAttack3);*/
 
 			this.updateCollidedOrc();
 

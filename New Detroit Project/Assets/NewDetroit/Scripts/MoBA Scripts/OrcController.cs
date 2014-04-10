@@ -42,6 +42,8 @@ public class OrcController : HeroeController
 	private bool smokeActivated = false;
 	private float smokeCD = 1.7f;
 	private GameObject smokeInst; // Smoke instantiation
+	// BullStrike particle
+	private bool bullStrikeActivated = false;
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// PRIVATE
@@ -142,7 +144,6 @@ public class OrcController : HeroeController
 		
 		//Initialize the animation
 		animation.Play ("Iddle01");
-		
 	}
 	
 	// Update is called once per frame
@@ -177,7 +178,7 @@ public class OrcController : HeroeController
 		}
 	}
 	
-	
+
 	//--------------------------------------------------------------------------------------------
 	//Animation
 	// Only can do an action if hero don't do a secondary attack
@@ -220,6 +221,12 @@ public class OrcController : HeroeController
 					transform.Translate(Vector3.up * 2);
 					Destroy(smokeInst, 5f);
 					smokeActivated = true;
+					//--------------------------------
+					GetComponent<OrcBullStrikeAttack>().EnableSphereCollider();
+					GetComponent<OrcBullStrikeAttack>().SetDamage(attackP + 100);
+					this.gameObject.AddComponent<Rigidbody>();
+
+					//Debug.Break();
 				}
 				doingSecondaryAnim= true;
 			}
@@ -286,6 +293,7 @@ public class OrcController : HeroeController
 			if (!animation.isPlaying) doingSecondaryAnim = false;
 		}
 	}
+
 	
 	//--------------------------------------------------------------------------------------------
 	//Particles
@@ -324,6 +332,11 @@ public class OrcController : HeroeController
 				smokeActivated = false;
 			}
 			else smokeCD -= Time.deltaTime;
+		}
+
+		if (bullStrikeActivated)
+		{
+
 		}
 	}
 }
