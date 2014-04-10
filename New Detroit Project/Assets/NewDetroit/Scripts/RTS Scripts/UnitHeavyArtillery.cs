@@ -19,6 +19,10 @@ public class UnitHeavyArtillery : UnitArtillery
 
     public GameObject frontWeapon, backWeapon;
 
+    //For attacking1
+    public GameObject rocket;
+    private GameObject newRocket;
+
     protected enum DeployState
     {
         Undeployed,	// sin desplegar
@@ -40,8 +44,7 @@ public class UnitHeavyArtillery : UnitArtillery
         if (dummyLeftWeaponGunBarrel == null)
             dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A/GunBarrelLeft");
         if (dummyRightWeapon == null)
-            dummyRightWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/mortero espalda");
-        
+            dummyRightWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/mortero espalda");   
         if (dummyLeftWeapon)
             frontWeapon = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A").gameObject;
         if (dummyRightWeapon)
@@ -101,8 +104,33 @@ public class UnitHeavyArtillery : UnitArtillery
 
     public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
     {
-        if (currentDeployState == DeployState.Undeployed)
+        if (currentDeployState == DeployState.Undeployed) // if undeployed
             base.RightClickOnSelected(destiny, destTransform);
+        else if (currentDeployState == DeployState.Deployed)// if deployed
+        {
+            ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
+            if (unit)
+            {
+                // check if the unit is not attacking the selected enemy yet
+                if (
+                     currentState != State.Attacking ||
+                     (currentState == State.Attacking && lastEnemyAttacked != unit)
+                   )
+                {
+                    if (teamNumber != unit.teamNumber)
+                    {
+                        enemySelected = unit;
+                        currentState = State.Attacking;
+                    }
+                }
+            }
+            else
+            {
+                enemySelected = null;
+                GoTo(destiny);
+            }
+            
+        }
     }
 
     private IEnumerator WaitAndCallback (float waitTime)
@@ -174,6 +202,96 @@ public class UnitHeavyArtillery : UnitArtillery
             Destroy(frontWeapon);
         if (backWeapon)
             Destroy(backWeapon);
+    }
+
+    protected override void UpdateAttacking()
+    {
+        if (currentDeployState == DeployState.Undeployed) // if undeployed
+            base.UpdateAttacking();
+        else
+        {
+            attackCadenceAux -= Time.deltaTime;
+
+            float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
+            if (enemySelected)
+            {
+                if (enemyDist <= maxAttackDistance)
+                {
+                    if (attackCadenceAux <= 0)
+                    {
+                        transform.LookAt(enemySelected.transform);
+
+                        if (!newRocket)
+                        {
+                            // Instanciate a new Fireball
+                            Debug.Log("Dummy position: " + dummyLeftWeaponGunBarrel.transform.position);
+                            Debug.Log("HeavyArtillery position: " + transform.position);
+                            newRocket = Instantiate
+                            (
+                                rocket,
+                                dummyLeftWeaponGunBarrel.transform.position,
+                                //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
+                                new Quaternion()
+                            ) as GameObject;
+                            newRocket.rigidbody.isKinematic = false;
+                            newRocket.transform.name = "Rocket";
+                            newRocket.transform.parent = dummyLeftWeaponGunBarrel;
+                            newRocket.transform.rotation = transform.rotation;
+                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetOwner(this.gameObject);
+                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDamage((int)attackPower2);
+                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDestroyTime(2.5f);
+                        }
+
+                        attackCadenceAux = attackCadence;
+                        Vector3 dir = enemySelected.transform.position - newRocket.transform.position;
+                        dir = dir.normalized;
+                        Vector3 dir1 = transform.forward.normalized;
+                        newRocket.transform.parent = null;
+                        newRocket.rigidbody.AddForce(new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
+                                                                            7,
+                                                                    dir.z * 8.0f * (enemyDist / maxAttackDistance)), ForceMode.Impulse);
+
+                        //newFireball.GetComponent<SphereCollider>().isTrigger = true;
+
+                        //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);
+                        if (enemySelected.currentLife <= 0.0f)
+                        {
+                            // the enemy has die
+                            enemySelected = null;
+                            currentState = State.Idle;
+
+                            PlayAnimationCrossFade("Idle01");
+                            attackCadenceAux = 2.5f;
+                        }
+                    }
+                }
+                else if (enemyDist <= visionSphereRadious)
+                {
+                    currentState = State.GoingToAnEnemy;
+
+                    this.destiny = enemySelected.transform.position;
+                    GetComponent<NavMeshAgent>().destination = destiny;
+
+                    PlayAnimationCrossFade("Walk");
+                    attackCadenceAux = 2.5f;
+                }
+                else
+                {
+                    enemySelected = null;
+                    currentState = State.Idle;
+                    attackCadenceAux = 2.5f;
+                    PlayAnimationCrossFade("Idle01");
+                }
+            }
+            else // the enemy is no longer alive
+            {
+                enemySelected = null;
+                currentState = State.Idle;
+
+                PlayAnimationCrossFade("Idle01");
+                attackCadenceAux = 2.5f;
+            }
+        }
     }
 
 } // class UnitHeavyArtillery
