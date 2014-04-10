@@ -77,6 +77,7 @@ public class ArmyController : MonoBehaviour
 
         // añadimos la base del ejército a la lista de edificios del ejército
         resourceBuildingList.Add(armyBase.GetComponent<CResourceBuilding>());
+        Minimap.SetBase(armyBase.GetComponent<CResourceBuilding>());
 
         // agregamos las unidades que tengamos del ejército por el escenario
         // OJO! FindObjectsOfType es MUY lento, cuidado con ello
@@ -88,6 +89,7 @@ public class ArmyController : MonoBehaviour
             {
                 unitList.Add(go);
                 DistanceMeasurerTool.InsertUnit(unit);
+                Minimap.InsertUnit(unit);
             }
         }
 
@@ -937,7 +939,7 @@ public class ArmyController : MonoBehaviour
             unitSelectedList.Remove(unit);
 
         DistanceMeasurerTool.DeleteUnit(unit.GetComponent<ControllableCharacter>());
-
+        Minimap.DeleteUnit(unit.GetComponent<UnitController>());
         // destroy the unit from the game
         //Destroy(unit, 4.0f); now this is done in the UnitControler itself
     }

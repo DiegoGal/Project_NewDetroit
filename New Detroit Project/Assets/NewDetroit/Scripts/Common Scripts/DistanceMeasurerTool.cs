@@ -30,16 +30,8 @@ public class DistanceMeasurerTool : MonoBehaviour
 	private static int prevIndexi = 0,
                        prevIndexj =  0;
 
-	// Use this for initialization
-	void Start ()
-	{
-        /*for (int i=0; i<MAX_UNITS; i++)
-            for (int j=0; j<MAX_UNITS; j++)
-                distancesMatrix[i][j] = float.MaxValue;*/
-    }
 	
-	// Update is called once per frame 
-    void Update ()
+    void LateUpdate ()
     {
         /*if (searchMode != SearchMode.no_search)
             Debug.Log("Búsqueda (" + searchMode.ToString() + "): " + prevIndexi + ", " + prevIndexj + ".");*/
@@ -98,7 +90,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 		
     } // Update
 
-    /*public void OnGUI ()
+    public void OnGUI ()
     {
         GUI.skin.label.fontSize = 10;
 
@@ -116,7 +108,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                     GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), "---");
             }
         }
-    }*/
+    }
 
     private void SearchStep ()
     {

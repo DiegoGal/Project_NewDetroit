@@ -42,9 +42,6 @@ public class UnitEngineer : UnitController
     private GameObject towerGoblin;
     private GameObject warehouse;
 
-    public GameObject laptopPrefab;
-    public GameObject hamerPrefab;
-
     private bool newTGConstruct = false;
     private bool newWConstruct = false;
     private Vector3 constructDestiny = new Vector3();
@@ -56,6 +53,7 @@ public class UnitEngineer : UnitController
     // reference to the laptop and hammer
     public GameObject laptop;
     public GameObject hammer;
+
     //For attacking1
     public GameObject fireball;
     private GameObject newFireball;
@@ -192,12 +190,9 @@ public class UnitEngineer : UnitController
                 if (currentState == State.Idle)
                 {
                     // when it have arrived to the repair position
-                    //Debug.Log("comenzando reparacion!!!!!!!");
                     currentEngineerState = EngineerState.Repairing;
 
-                    // intanciamos un Hammer
-                    //Debug.Log("Dummy position: " + dummyHand.transform.position);
-                    //Debug.Log("Engineer position: " + transform.position);
+                    // We instanciate a Hammer
                     GameObject newHammer = Instantiate
                     (
                         hammer,
@@ -215,12 +210,9 @@ public class UnitEngineer : UnitController
                 if (currentState == State.Idle)
                 {
                     // when it have arrived to the conquest position
-                    //Debug.Log("comenzando conquista!!!!!!!!");
                     currentEngineerState = EngineerState.Conquering;
 
-                    // intanciamos un laptop
-                    //Debug.Log("Dummy position: " + dummyLaptop.transform.position);
-                    //Debug.Log("Engineer position: " + transform.position);
+                    // We instanciate a laptop
                     GameObject newLaptop = Instantiate
                     (
                         laptop,
@@ -239,14 +231,15 @@ public class UnitEngineer : UnitController
                 {
                     if (currentState == State.Idle)
                     {
-                        // when it have arrived to the conquest position
-                        //Debug.Log("comenzando construccion!!!!!!!!");
+                        // when it have arrived to the construct position
                         currentEngineerState = EngineerState.Constructing;
+                        if (newTGConstruct)
+                            Minimap.InsertTower(towerGoblin.GetComponent<Tower>());
+                        else if (newWConstruct)
+                            Minimap.InsertWarehouse(warehouse.GetComponent<Warehouse>());
                         newTGConstruct = newWConstruct = false;
 
                         // intanciamos un Hammer
-                        //Debug.Log("Dummy position: " + dummyHand.transform.position);
-                        //Debug.Log("Engineer position: " + transform.position);
                         GameObject newHammer = Instantiate
                         (
                             hammer,
@@ -302,7 +295,7 @@ public class UnitEngineer : UnitController
                         Debug.Log("Torre Conquistada!");
                         currentEngineerState = EngineerState.None;
                         animation.Play("Idle01");
-
+                        Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
                         // We destroy the Laptop
                         Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
                         if (laptop1 != null)
@@ -730,5 +723,17 @@ public class UnitEngineer : UnitController
             PlayAnimationCrossFade("Idle01");
             attackCadenceAux = 2.5f;
         }
+    }
+
+    protected override void RemoveAssetsFromModel()
+    {
+        // We destroy the Hammer
+        Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+        if (hammer1 != null)
+            GameObject.Destroy(hammer1.gameObject);
+        // We destroy the Laptop
+        Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
+        if (laptop1 != null)
+            GameObject.Destroy(laptop1.gameObject);
     }
 }
