@@ -142,14 +142,20 @@ public class BaseController : CResourceBuilding
 		GameObject newUnit = null;
 
         if (isOnline)
-        {
+        {        
+            string unit;
             switch (id)
             {
                 case 0: // Harvester
                     if (resources >= harvesterUnitResourcesCost && economy >= harvesterUnitEconomyCost)
                     {
-                        newUnit = PhotonNetwork.Instantiate("UnitHarvester", spawnOrigin, new Quaternion(), 0)
-                                as GameObject;
+                        if (teamColor == 0)
+                            unit = "Goblin_Harvester_TeamA";
+                        else
+                            unit = "Goblin_Harvester_TeamB";
+                        // Instantiation with Photon
+                        newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
+                        // Remove part of resources
                         resources -= harvesterUnitResourcesCost;
                         economy -= harvesterUnitEconomyCost;
                     }
@@ -157,8 +163,13 @@ public class BaseController : CResourceBuilding
                 case 1: // Basic Artillery
                     if (resources >= basicArtilleryUnitResourcesCost && economy >= basicArtilleryUnitEconomyCost)
                     {
-                        newUnit = PhotonNetwork.Instantiate("UnitBasicArtillery", spawnOrigin, new Quaternion(), 0)
-                                as GameObject;
+                        if (teamColor == 0)
+                            unit = "Goblin_ArtilleryBasic_TeamA";
+                        else
+                            unit = "Goblin_ArtilleryBasic_TeamB";
+                        // Instantiation with Photon
+                        newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
+                        // Remove part of resources
                         resources -= basicArtilleryUnitResourcesCost;
                         economy -= basicArtilleryUnitEconomyCost;
                     }
@@ -166,8 +177,13 @@ public class BaseController : CResourceBuilding
                 case 2: // Heavy Artillery
                     if (resources >= heavyArtilleryUnitResourcesCost && economy >= heavyArtilleryUnitEconomyCost)
                     {
-                        newUnit = PhotonNetwork.Instantiate("UnitHeavyArtillery", spawnOrigin, new Quaternion(), 0)
-                                as GameObject;
+                        if (teamColor == 0)
+                            unit = "Goblin_ArtilleryHeavy_TeamA";
+                        else
+                            unit = "Goblin_ArtilleryHeavy_TeamB";
+                        // Instantiation with Photon
+                        newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
+                        // Remove part of resources
                         resources -= heavyArtilleryUnitResourcesCost;
                         economy -= heavyArtilleryUnitEconomyCost;
                     }
@@ -175,8 +191,13 @@ public class BaseController : CResourceBuilding
                 case 3: // Engineer
                     if (resources >= engineerUnitResourcesCost && economy >= engineerUnitEconomyCost)
                     {
-                        newUnit = PhotonNetwork.Instantiate("UnitEngineer", spawnOrigin, new Quaternion(), 0)
-                            as GameObject;
+                        if (teamColor == 0)
+                            unit = "Goblin_Engineer_TeamA";
+                        else
+                            unit = "Goblin_Engineer_TeamB";
+                        // Instantiation with Photon
+                        newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
+                        // Remove part of resources
                         resources -= engineerUnitResourcesCost;
                         economy -= engineerUnitEconomyCost;
                     }
@@ -184,8 +205,13 @@ public class BaseController : CResourceBuilding
                 case 4: // Scout
                     if (resources >= scoutUnitResourcesCost && economy >= scoutUnitEconomyCost)
                     {
-                        newUnit = PhotonNetwork.Instantiate("UnitScout", spawnOrigin, new Quaternion(), 0)
-                            as GameObject;
+                        if (teamColor == 0)
+                            unit = "Goblin_Scout_TeamA";
+                        else
+                            unit = "Goblin_Scout_TeamB";
+                        // Instantiation with Photon
+                        newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
+                        // Remove part of resources
                         resources -= scoutUnitResourcesCost;
                         economy -= scoutUnitEconomyCost;
                     }
@@ -251,6 +277,7 @@ public class BaseController : CResourceBuilding
 
         if (newUnit)
         {
+            newUnit.GetComponent<ControllableCharacter>().isMine = true;
             newUnit.GetComponent<UnitController>().SetArmyBase(this);
             newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
             newUnit.GetComponent<UnitController>().teamNumber = this.teamNumber;
@@ -274,5 +301,22 @@ public class BaseController : CResourceBuilding
     {
         return armyController;
     }
+
+    // RPC function for manualy PhotonNetwork instantiation
+    /*[RPC]
+    void SpawnOnNetwork(Vector3 pos, Quaternion rot, int id1, PhotonPlayer np, GameObject prefab)
+    {
+        GameObject newUnit = Instantiate(prefab, pos, rot) as GameObject;
+
+        // We do this here because here has to go the instantiation of the unit
+        newUnit.GetComponent<UnitController>().SetArmyBase(this);
+        newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
+        newUnit.GetComponent<UnitController>().teamNumber = this.teamNumber;
+        newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
+
+        // Set player's PhotonView
+        PhotonView[] nViews = newUnit.transform.GetComponentsInChildren<PhotonView>();
+        nViews[0].viewID = id1;
+    }*/
 
 } // class BaseController
