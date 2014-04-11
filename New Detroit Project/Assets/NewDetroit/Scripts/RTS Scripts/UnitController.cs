@@ -245,42 +245,47 @@ public class UnitController : ControllableCharacter
 
     protected virtual void UpdateFlying ()
     {
-        int maxTrapped = 5;
-        float delta = 0.4f;
-        if (!goingDown)
+        if (currentState == State.Dying)
         {
-            if (transform.position.y > lastPosY)
+            int maxTrapped = 5;
+            float delta = 0.4f;
+            if (!goingDown)
             {
-                lastPosY = transform.position.y;
+                if (transform.position.y > lastPosY)
+                {
+                    lastPosY = transform.position.y;
+                }
+                else
+                    goingDown = true;
             }
-            else
-                goingDown = true;
-        }
-        else if (transform.position.y <= posY + delta)
-        {
-            GetComponent<NavMeshAgent>().Resume();
-            Destroy(rigidbody);
-            currentState = State.Idle;
-            lastPosY = -1.0f;
-            goingDown = false;
-            contTrapped = 0;
-        }
-        else if (transform.position.y == lastPosY && goingDown)
-        {
-            if (contTrapped == maxTrapped)
+            else if (transform.position.y <= posY + delta)
             {
-                GetComponent<NavMeshAgent>().Resume();
+                if (GetComponent<NavMeshAgent>())
+                    GetComponent<NavMeshAgent>().Resume();
                 Destroy(rigidbody);
                 currentState = State.Idle;
                 lastPosY = -1.0f;
                 goingDown = false;
                 contTrapped = 0;
             }
+            else if (transform.position.y == lastPosY && goingDown)
+            {
+                if (contTrapped == maxTrapped)
+                {
+                    if (GetComponent<NavMeshAgent>())
+                        GetComponent<NavMeshAgent>().Resume();
+                    Destroy(rigidbody);
+                    currentState = State.Idle;
+                    lastPosY = -1.0f;
+                    goingDown = false;
+                    contTrapped = 0;
+                }
+                else
+                    contTrapped++;
+            }
             else
-                contTrapped++;
+                lastPosY = transform.position.y;
         }
-        else
-            lastPosY = transform.position.y;
     }
 
     private void UpdateDying ()
@@ -480,11 +485,14 @@ public class UnitController : ControllableCharacter
 
     public void Fly ()
     {
-        currentState = State.Flying;
-        if (posY == -1.0f)
+        if (currentState == State.Dying)
         {
-            posY = transform.position.y;
-            desiredRotation = transform.rotation;
+            currentState = State.Flying;
+            if (posY == -1.0f)
+            {
+                posY = transform.position.y;
+                desiredRotation = transform.rotation;
+            }
         }
     }
 

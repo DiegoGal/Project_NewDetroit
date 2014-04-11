@@ -60,12 +60,15 @@ public class UnitHeavyArtillery : UnitArtillery
         secondaryAttackPower = attackPower2;
 
         visionSphereRaiousOriginal = visionSphereRadious;
+
+        attackCadenceAux = 0.0f;
+        attackCadence = 2.0f;
 	}
 	
 	// Update is called once per frame
     public override void Update ()
 	{
-        if (currentDeployState == DeployState.Undeployed)
+        if (currentDeployState == DeployState.Undeployed || currentDeployState == DeployState.Deployed)
 		    base.Update();
 
         if (isSelected && Input.GetKeyDown(KeyCode.D))
@@ -86,10 +89,13 @@ public class UnitHeavyArtillery : UnitArtillery
                     currentDeployState = DeployState.Undeploying;*/
                     break;
                 case DeployState.Deployed:
-                    animation.CrossFade("Deployment-Up");
-                    StartCoroutine(WaitAndCallback(animation["Deployment-Up"].length));
-                    animation.CrossFadeQueued("Idle01");
-                    currentDeployState = DeployState.Undeploying;
+                    if (currentState != State.Attacking)
+                    {
+                        animation.CrossFade("Deployment-Up");
+                        StartCoroutine(WaitAndCallback(animation["Deployment-Up"].length));
+                        animation.CrossFadeQueued("Idle01");
+                        currentDeployState = DeployState.Undeploying;
+                    }
                     break;
                 case DeployState.Undeploying:
                     /*animation.CrossFade("Deployment-prepare");
@@ -121,6 +127,7 @@ public class UnitHeavyArtillery : UnitArtillery
                     {
                         enemySelected = unit;
                         currentState = State.Attacking;
+                       
                     }
                 }
             }
@@ -219,77 +226,69 @@ public class UnitHeavyArtillery : UnitArtillery
                 {
                     if (attackCadenceAux <= 0)
                     {
+                        animation.Play("Deployment-Shot");
                         transform.LookAt(enemySelected.transform);
 
-                        if (!newRocket)
-                        {
-                            // Instanciate a new Fireball
-                            Debug.Log("Dummy position: " + dummyLeftWeaponGunBarrel.transform.position);
-                            Debug.Log("HeavyArtillery position: " + transform.position);
-                            newRocket = Instantiate
-                            (
-                                rocket,
-                                dummyLeftWeaponGunBarrel.transform.position,
-                                //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
-                                new Quaternion()
-                            ) as GameObject;
-                            newRocket.rigidbody.isKinematic = false;
-                            newRocket.transform.name = "Rocket";
-                            newRocket.transform.parent = dummyLeftWeaponGunBarrel;
-                            newRocket.transform.rotation = transform.rotation;
-                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetOwner(this.gameObject);
-                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDamage((int)attackPower2);
-                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDestroyTime(2.5f);
-                        }
+                        // Instanciate a new Rocket
+                        Debug.Log("Dummy position: " + dummyLeftWeaponGunBarrel.transform.position);
+                        Debug.Log("HeavyArtillery position: " + transform.position);
+                        newRocket = Instantiate
+                        (
+                            rocket,
+                            dummyLeftWeaponGunBarrel.transform.position,
+                            new Quaternion()
+                        ) as GameObject;
+                        newRocket.rigidbody.isKinematic = false;
+                        newRocket.transform.name = "Rocket";
+                        newRocket.transform.rotation = dummyLeftWeaponGunBarrel.transform.rotation;
+                        newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetOwner(this.gameObject);
+                        newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDamage((int)attackPower2);
+                        newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDestroyTime(2.5f);
+
 
                         attackCadenceAux = attackCadence;
                         Vector3 dir = enemySelected.transform.position - newRocket.transform.position;
                         dir = dir.normalized;
                         Vector3 dir1 = transform.forward.normalized;
                         newRocket.transform.parent = null;
-                        newRocket.rigidbody.AddForce(new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
-                                                                            7,
-                                                                    dir.z * 8.0f * (enemyDist / maxAttackDistance)), ForceMode.Impulse);
+                        newRocket.rigidbody.AddForce(new Vector3(dir.x * 5.0f * (enemyDist / maxAttackDistance),
+                                                                            11,
+                                                                    dir.z * 5.0f * (enemyDist / maxAttackDistance)), ForceMode.Impulse);
 
-                        //newFireball.GetComponent<SphereCollider>().isTrigger = true;
-
-                        //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);
                         if (enemySelected.currentLife <= 0.0f)
                         {
                             // the enemy has die
                             enemySelected = null;
                             currentState = State.Idle;
-
-                            PlayAnimationCrossFade("Idle01");
-                            attackCadenceAux = 2.5f;
+                            //PlayAnimationCrossFade("Idle01");
+                            attackCadenceAux = 2f;
                         }
                     }
                 }
-                else if (enemyDist <= visionSphereRadious)
-                {
-                    currentState = State.GoingToAnEnemy;
+                //else if (enemyDist <= visionSphereRadious)
+                //{
+                //    currentState = State.GoingToAnEnemy;
 
-                    this.destiny = enemySelected.transform.position;
-                    GetComponent<NavMeshAgent>().destination = destiny;
+                //    this.destiny = enemySelected.transform.position;
+                //    GetComponent<NavMeshAgent>().destination = destiny;
 
-                    PlayAnimationCrossFade("Walk");
-                    attackCadenceAux = 2.5f;
-                }
+                //    PlayAnimationCrossFade("Walk");
+                //    attackCadenceAux = 2.5f;
+                //}
                 else
                 {
                     enemySelected = null;
                     currentState = State.Idle;
-                    attackCadenceAux = 2.5f;
-                    PlayAnimationCrossFade("Idle01");
+                    attackCadenceAux = 2f;
+                    //PlayAnimationCrossFade("Idle01");
                 }
             }
             else // the enemy is no longer alive
             {
                 enemySelected = null;
                 currentState = State.Idle;
-
-                PlayAnimationCrossFade("Idle01");
-                attackCadenceAux = 2.5f;
+                //PlayAnimationCrossFade("Idle01");
+                attackCadenceAux = 2f;
             }
         }
     }

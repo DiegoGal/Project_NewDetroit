@@ -21,7 +21,7 @@ public class RocketAttack : ParticleDamage
     {
         if (GetComponent<ParticleSystem>() && GetComponent<ParticleSystem>().particleCount > 0)
         {
-            if (sphereCollider.radius < 4.0f) 
+            if (sphereCollider.radius < 6.0f) 
                 sphereCollider.radius += Time.deltaTime * 10;
         }
     }
@@ -59,9 +59,9 @@ public class RocketAttack : ParticleDamage
                     Vector3 dir = other.transform.position - transform.position;
                     dir = dir.normalized;
 
-                    other.rigidbody.AddForce(new Vector3(dir.x * 1.4f,
-                                                          5.0f,
-                                                          dir.z * 1.4f),
+                    other.rigidbody.AddForce(new Vector3(dir.x * 3.5f,
+                                                          8.0f,
+                                                          dir.z * 3.5f),
                                                           ForceMode.Impulse);
                     otherUC.Fly();
                     unitList.Add(other);
