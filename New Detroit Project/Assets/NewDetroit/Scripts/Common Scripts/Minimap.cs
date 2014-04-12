@@ -34,7 +34,7 @@ public class Minimap : MonoBehaviour
     {
         private int fogType;
         private int cont;
-        private const int MAXCONT = 5;
+        private const int MAXCONT = 30;
 
         public StructMatrix()
         {
@@ -58,9 +58,19 @@ public class Minimap : MonoBehaviour
             return fogType;
         }
 
+        public int GetCont()
+        {
+            return cont;
+        }
+
         public void IncreaseCont()
         {
             cont++;
+        }
+
+        public void DecreaseCont()
+        {
+            cont--;
         }
 
         public bool IsMaxCont()
@@ -243,6 +253,8 @@ public class Minimap : MonoBehaviour
             int tileX = (int)((posx - margin) / tileSize);
             int tileY = (int)((posy - posHeight) / tileSize);
             fogTypeMatrix[tileX, tileY].SetFogType(2);
+            if (fogTypeMatrix[tileX, tileY].GetCont() != 0)
+                fogTypeMatrix[tileX, tileY].DecreaseCont();
         }
         contUpdate0 = (contUpdate0 + 1) % 4;
         
