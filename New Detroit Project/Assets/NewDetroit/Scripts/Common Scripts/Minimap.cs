@@ -29,12 +29,14 @@ public class Minimap : MonoBehaviour
 
     private int contUpdate0 = 0;
     private int contUpdate1 = 0;
+    private int contX = 0;
+    private int contY = 0;
 
     public class StructMatrix
     {
         private int fogType;
         private int cont;
-        private const int MAXCONT = 30;
+        private const int MAXCONT = 10;
 
         public StructMatrix()
         {
@@ -68,11 +70,6 @@ public class Minimap : MonoBehaviour
             cont++;
         }
 
-        public void DecreaseCont()
-        {
-            cont--;
-        }
-
         public bool IsMaxCont()
         {
             return cont == MAXCONT;
@@ -92,12 +89,6 @@ public class Minimap : MonoBehaviour
         {
             position = new Vector2();
             fogType = 0;
-        }
-
-        public StructUnitFogPos(Vector2 position, int fogType)
-        {
-            this.position = position;
-            this.fogType = fogType;
         }
 
         public void SetPosition(Vector2 position)
@@ -127,12 +118,6 @@ public class Minimap : MonoBehaviour
         private int tileX;
         private int tileY;
 
-        public StructBuildingFogPos()
-        {
-            position = new Vector2();
-            fogType = 0;
-        }
-
         public StructBuildingFogPos(Vector2 position, int fogType, int tileX, int tileY)
         {
             this.position = position;
@@ -140,17 +125,7 @@ public class Minimap : MonoBehaviour
             this.tileX = tileX;
             this.tileY = tileY;
         }
-
-        public void SetPosition(Vector2 position)
-        {
-            this.position = position;
-        }
-
-        public void SetFogType(int fogType)
-        {
-            this.fogType = fogType;
-        }
-
+        
         public Vector2 GetPosition()
         {
             return position;
@@ -219,14 +194,14 @@ public class Minimap : MonoBehaviour
     {
         int max0 = myArmy.Count;
         int max1 = enemyArmy.Count;
-        int auxContUpdate0 = contUpdate0;
         
         // The transparent positions of the matrix to semitransparent
-        for (int i = contUpdate0; i < MATRIXSIZE; i += 3)
+        for (int i = contX; i < MATRIXSIZE; i += 3)
         {
-            for (int j = 0; j < MATRIXSIZE; j ++)
+            for (int j = contY; j < MATRIXSIZE; j += 3)
             {
                 i = i % MATRIXSIZE;
+                j = j % MATRIXSIZE;
                 // If the tile is transparent and has to change to semitransparent
                 if (fogTypeMatrix[i, j].IsMaxCont() && fogTypeMatrix[i, j].GetFogType() == 2)
                 {
@@ -239,8 +214,10 @@ public class Minimap : MonoBehaviour
                     fogTypeMatrix[i, j].IncreaseCont();
             }
         }
-        contUpdate0 = auxContUpdate0;
-
+        contY = (contY + 1) % 4;
+        if (contY == 0)
+            contX = (contX + 1) % 4;
+        
         // myArmy
         for (int i = contUpdate0; i < max0; i += 3 )
         {            
@@ -254,7 +231,7 @@ public class Minimap : MonoBehaviour
             int tileY = (int)((posy - posHeight) / tileSize);
             fogTypeMatrix[tileX, tileY].SetFogType(2);
             if (fogTypeMatrix[tileX, tileY].GetCont() != 0)
-                fogTypeMatrix[tileX, tileY].DecreaseCont();
+                fogTypeMatrix[tileX, tileY].ResetCont();
         }
         contUpdate0 = (contUpdate0 + 1) % 4;
         
