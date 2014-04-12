@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Minimap : MonoBehaviour
 {
+    public static int teamNumber = 0;
 
     // Textures
     public Texture textureMap;
@@ -18,96 +19,277 @@ public class Minimap : MonoBehaviour
     public Texture textureTowerNeutral;
 
     // Minimap properties
-    public static float size = 180.0f;
-    public static float margin = 10.0f;
+    public static float size        = 180.0f;
+    public static float margin      = 10.0f;
     public static float posHeight;
 
     //Terrain properties
-    public static float sizeWorldFloor = 500;
+    public const float sizeWorldFloor = 500;
     public static float sizeProportion;
 
     private int contUpdate0 = 0;
     private int contUpdate1 = 0;
 
-    //Unit lists
-    public static List<UnitController> army0 = new List<UnitController>();
-    public static List<UnitController> army1 = new List<UnitController>();
-    /*public static List<TowerNeutral> towersNeutral = new List<TowerNeutral>();
-    public static List<Tower> towers0 = new List<Tower>();
-    public static List<Tower> towers1 = new List<Tower>();
-    */
-    // Positions of the GameObjects lists
-    public static List<Vector2> unitList0 = new List<Vector2>();
-    public static List<Vector2> unitList1 = new List<Vector2>();
-    public static List<Vector2> towerNeutralList = new List<Vector2>();
-    public static List<Vector2> towerList0 = new List<Vector2>();
-    public static List<Vector2> towerList1 = new List<Vector2>();
-    public static List<Vector2> warehouseList0 = new List<Vector2>();
-    public static List<Vector2> warehouseList1 = new List<Vector2>();
-    public static Vector2 base0;
-    public static Vector2 base1;
+    public class StructMatrix
+    {
+        private int fogType;
+        private int cont;
+        private const int MAXCONT = 5;
 
+        public StructMatrix()
+        {
+            fogType = 0;
+            cont = 0;
+        }
+
+        public StructMatrix(int fogType, int cont)
+        {
+            this.fogType = fogType;
+            this.cont = cont;
+        }
+
+        public void SetFogType(int fogType)
+        {
+            this.fogType = fogType;
+        }
+
+        public int GetFogType()
+        {
+            return fogType;
+        }
+
+        public void IncreaseCont()
+        {
+            cont++;
+        }
+
+        public bool IsMaxCont()
+        {
+            return cont == MAXCONT;
+        }
+
+        public void ResetCont()
+        {
+            cont = 0;
+        }
+    }
+    public class StructUnitFogPos
+    {
+        private Vector2 position;
+        private int fogType;
+
+        public StructUnitFogPos()
+        {
+            position = new Vector2();
+            fogType = 0;
+        }
+
+        public StructUnitFogPos(Vector2 position, int fogType)
+        {
+            this.position = position;
+            this.fogType = fogType;
+        }
+
+        public void SetPosition(Vector2 position)
+        {
+            this.position = position;
+        }
+
+        public void SetFogType(int fogType)
+        {
+            this.fogType = fogType;
+        }
+
+        public Vector2 GetPosition()
+        {
+            return position;
+        }
+
+        public int GetFogType()
+        {
+            return fogType;
+        }
+    }
+    public class StructBuildingFogPos
+    {
+        private Vector2 position;
+        private int fogType;
+        private int tileX;
+        private int tileY;
+
+        public StructBuildingFogPos()
+        {
+            position = new Vector2();
+            fogType = 0;
+        }
+
+        public StructBuildingFogPos(Vector2 position, int fogType, int tileX, int tileY)
+        {
+            this.position = position;
+            this.fogType = fogType;
+            this.tileX = tileX;
+            this.tileY = tileY;
+        }
+
+        public void SetPosition(Vector2 position)
+        {
+            this.position = position;
+        }
+
+        public void SetFogType(int fogType)
+        {
+            this.fogType = fogType;
+        }
+
+        public Vector2 GetPosition()
+        {
+            return position;
+        }
+
+        public int GetFogType()
+        {
+            return fogType;
+        }
+
+        public int GetTileX()
+        {
+            return tileX;
+        }
+        
+        public int GetTileY()
+        {
+            return tileY;
+        }
+    }
+
+    // Array for fogType
+    private StructMatrix[,] fogTypeMatrix; // 0 -> opaque, 1 -> semitransparent, 2 -> transparent
+    private const int MATRIXSIZE = 20;
+    private static float tileSize;
+    
+    //Unit lists
+    public static List<UnitController> myArmy       = new List<UnitController>();
+    public static List<UnitController> enemyArmy    = new List<UnitController>();
+
+    // Positions of the own GameObjects lists
+    public static List<Vector2> myUnitList          = new List<Vector2>();    
+    public static List<Vector2> myTowerNeutralList  = new List<Vector2>();
+    public static List<Vector2> myTowerList         = new List<Vector2>();
+    public static List<Vector2> myWarehouseList     = new List<Vector2>();
+    public static Vector2 myBase;
+
+    // Positions and fogtype of the enemy GameObjects lists
+    public static List<StructUnitFogPos> enemyUnitList              = new List<StructUnitFogPos>();
+    public static List<StructBuildingFogPos> enemyTowerNeutralList  = new List<StructBuildingFogPos>();
+    public static List<StructBuildingFogPos> enemyTowerList         = new List<StructBuildingFogPos>();
+    public static List<StructBuildingFogPos> enemyWarehouseList     = new List<StructBuildingFogPos>();
+    public static StructBuildingFogPos enemyBase;
+    
     private int cont = 0;
-    public static bool towersNeutralSetted = false;
 
 	// Use this for initialization
 	void Start () 
     {
         sizeProportion = size / sizeWorldFloor;
         posHeight = Screen.height - (size + margin);
+        
+        // Inicialize the matrix
+        fogTypeMatrix = new StructMatrix[MATRIXSIZE, MATRIXSIZE];
+        for (int i = 0; i < MATRIXSIZE; i++)
+        {
+            for (int j = 0; j < MATRIXSIZE; j++)
+            {
+                fogTypeMatrix[i, j] = new StructMatrix(0, 0);
+            }
+        }
+        tileSize = size / MATRIXSIZE;
 	}
 
 	void LateUpdate () 
     {
-        int max0 = army0.Count;
-        int max1 = army1.Count;
-        //army0
-        for (int i = contUpdate0; i < max0; i = i + 3 )
+        int max0 = myArmy.Count;
+        int max1 = enemyArmy.Count;
+        int auxContUpdate0 = contUpdate0;
+        
+        // The transparent positions of the matrix to semitransparent
+        for (int i = contUpdate0; i < MATRIXSIZE; i += 3)
         {
-            float posx = margin + (army0[i].transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
-            float posy = posHeight + ((sizeWorldFloor / 2) - army0[i].transform.position.z) * sizeProportion;
-            unitList0[i] = new Vector2(posx, posy);          
+            for (int j = 0; j < MATRIXSIZE; j ++)
+            {
+                i = i % MATRIXSIZE;
+                // If the tile is transparent and has to change to semitransparent
+                if (fogTypeMatrix[i, j].IsMaxCont() && fogTypeMatrix[i, j].GetFogType() == 2)
+                {
+                    fogTypeMatrix[i, j].SetFogType(1);
+                    fogTypeMatrix[i, j].ResetCont();
+                        
+                }
+                // else if the tile is transparent we increase its cont
+                else if (fogTypeMatrix[i, j].GetFogType() == 2)
+                    fogTypeMatrix[i, j].IncreaseCont();
+            }
+        }
+        contUpdate0 = auxContUpdate0;
+
+        // myArmy
+        for (int i = contUpdate0; i < max0; i += 3 )
+        {            
+            // Update the unit position
+            float posx = margin + (myArmy[i].transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
+            float posy = posHeight + ((sizeWorldFloor / 2) - myArmy[i].transform.position.z) * sizeProportion;
+            myUnitList[i] = new Vector2(posx, posy);          
+            
+            // Update the matrix
+            int tileX = (int)((posx - margin) / tileSize);
+            int tileY = (int)((posy - posHeight) / tileSize);
+            fogTypeMatrix[tileX, tileY].SetFogType(2);
         }
         contUpdate0 = (contUpdate0 + 1) % 4;
         
-        // army1
-        for (int i = contUpdate1; i < max1; i = i + 3)
+        // enemyArmy
+        for (int i = contUpdate1; i < max1; i += 3)
         {
-            float posx = margin + (army1[i].transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
-            float posy = posHeight + ((sizeWorldFloor / 2) - army1[i].transform.position.z) * sizeProportion;
-            unitList1[i] = new Vector2(posx, posy);
+            // update the unit position
+            float posx = margin + (enemyArmy[i].transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
+            float posy = posHeight + ((sizeWorldFloor / 2) - enemyArmy[i].transform.position.z) * sizeProportion;
+            enemyUnitList[i].SetPosition(new Vector2(posx, posy));
+
+            // update the unit fog type            
+            int tileX = (int)((posx - margin) / tileSize);
+            int tileY = (int)((posy - posHeight) / tileSize);
+            enemyUnitList[i].SetFogType(fogTypeMatrix[tileX, tileY].GetFogType());
         }
         contUpdate1 = (contUpdate1 + 1) % 4;
 	}
 
     public static void InsertUnit (UnitController unit)
     {
-        if (unit.teamNumber == 0)
+        if (unit.teamNumber == teamNumber)
         {
-            army0.Add(unit);
-            unitList0.Add(new Vector2());
+            myArmy.Add(unit);
+            myUnitList.Add(new Vector2());
         }
         else
         {
-            army1.Add(unit);
-            unitList1.Add(new Vector2());
+            enemyArmy.Add(unit);
+            enemyUnitList.Add(new StructUnitFogPos());
         }
                
     }
 
     public static void DeleteUnit (UnitController unit)
     {
-        if (unit.teamNumber == 0)
+        if (unit.teamNumber == teamNumber)
         {
-            int pos = army0.IndexOf(unit);
-            army0.Remove(unit);
-            unitList0.RemoveAt(pos);
+            int pos = myArmy.IndexOf(unit);
+            myArmy.Remove(unit);
+            myUnitList.RemoveAt(pos);
         }
         else
         {
-            int pos = army1.IndexOf(unit);
-            army1.Remove(unit);
-            unitList1.RemoveAt(pos);
+            int pos = enemyArmy.IndexOf(unit);
+            enemyArmy.Remove(unit);
+            enemyUnitList.RemoveAt(pos);
         }
 
     }
@@ -116,12 +298,16 @@ public class Minimap : MonoBehaviour
     {
         float posx = margin + (tower.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - tower.transform.position.z) * sizeProportion;
-        
-        if (tower.teamNumber == 0)
-            towerList0.Add(new Vector2(posx, posy));
-        else
-            towerList1.Add(new Vector2(posx, posy));
 
+        if (tower.teamNumber == teamNumber)
+            myTowerList.Add(new Vector2(posx, posy));
+        else
+        {
+            // Update the tile
+            int tileX = (int)((posx - margin) / tileSize);
+            int tileY = (int)((posy - posHeight) / tileSize);
+            enemyTowerList.Add(new StructBuildingFogPos(new Vector2(posx, posy), 0, tileX, tileY));
+        }
     }
 
     public static void InsertWarehouse (Warehouse warehouse)
@@ -129,11 +315,15 @@ public class Minimap : MonoBehaviour
         float posx = margin + (warehouse.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - warehouse.transform.position.z) * sizeProportion;
 
-        if (warehouse.teamNumber == 0)
-            warehouseList0.Add(new Vector2(posx, posy));
+        if (warehouse.teamNumber == teamNumber)
+            myWarehouseList.Add(new Vector2(posx, posy));
         else
-            warehouseList1.Add(new Vector2(posx, posy));
-
+        {
+            // Update the tile
+            int tileX = (int)((posx - margin) / tileSize);
+            int tileY = (int)((posy - posHeight) / tileSize);
+            enemyWarehouseList.Add(new StructBuildingFogPos(new Vector2(posx, posy), 0, tileX, tileY));
+        }
     }
 
     public static void SetTowerNeutral(TowerNeutral tower)
@@ -141,9 +331,16 @@ public class Minimap : MonoBehaviour
 
         float posx = margin + (tower.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - tower.transform.position.z) * sizeProportion;
-
-        towerNeutralList.Add(new Vector2(posx, posy));
-   
+        
+        if (tower.teamNumber == teamNumber)
+            myTowerNeutralList.Add(new Vector2(posx, posy));
+        else
+        {
+            // Update the tile
+            int tileX = (int)((posx - margin) / tileSize);
+            int tileY = (int)((posy - posHeight) / tileSize);
+            enemyTowerNeutralList.Add(new StructBuildingFogPos(new Vector2(posx, posy), 0, tileX, tileY));
+        }   
     }
 
     public static void SetBase(CResourceBuilding baseBuilding)
@@ -152,9 +349,14 @@ public class Minimap : MonoBehaviour
         float posy = posHeight + ((sizeWorldFloor / 2) - baseBuilding.transform.position.z) * sizeProportion;
 
         if (baseBuilding.teamNumber == 0)
-            base0 = new Vector2(posx, posy);
+            myBase = new Vector2(posx, posy);
         else
-            base1 = new Vector2(posx, posy);
+        {
+            // Update the tile
+            int tileX = (int)((posx - margin) / tileSize);
+            int tileY = (int)((posy - posHeight) / tileSize);
+            enemyBase = new StructBuildingFogPos(new Vector2(posx, posy), 0, tileX, tileY);
+        }  
     }
 
     public virtual void OnGUI()
@@ -164,47 +366,76 @@ public class Minimap : MonoBehaviour
         rect1 = new Rect(margin, posHeight, size, size);
         GUI.DrawTexture(rect1, textureMap);
         
-        foreach (Vector2 unit in unitList0)
+        // my own team
+        foreach (Vector2 unit in myUnitList)
         {
             rect1 = new Rect(unit.x, unit.y, 1.0f, 1.0f);
             GUI.DrawTexture(rect1, textureUnit0);
         }
-        foreach (Vector2 unit in unitList1)
-        {
-            rect1 = new Rect(unit.x, unit.y, 1.0f, 1.0f);
-            GUI.DrawTexture(rect1, textureUnit1);
-        }
-        foreach (Vector2 tower in towerList0)
+        foreach (Vector2 tower in myTowerList)
         {
             rect1 = new Rect(tower.x, tower.y, 3.0f, 3.0f);
             GUI.DrawTexture(rect1, textureTower0);
         }
-        foreach (Vector2 tower in towerList1)
-        {
-            rect1 = new Rect(tower.x, tower.y, 3.0f, 3.0f);
-            GUI.DrawTexture(rect1, textureTower1);
-        }
-        foreach (Vector2 warehouse in warehouseList0)
+        foreach (Vector2 warehouse in myWarehouseList)
         {
             rect1 = new Rect(warehouse.x, warehouse.y, 3.0f, 3.0f);
             GUI.DrawTexture(rect1, textureWarehouse0);
         }
-        foreach (Vector2 warehouse in warehouseList1)
-        {
-            rect1 = new Rect(warehouse.x, warehouse.y, 3.0f, 3.0f);
-            GUI.DrawTexture(rect1, textureWarehouse1);
-        }
-        foreach (Vector2 tower in towerNeutralList)
+        foreach (Vector2 tower in myTowerNeutralList)
         {
             rect1 = new Rect(tower.x, tower.y, 3.0f, 3.0f);
             GUI.DrawTexture(rect1, textureTowerNeutral);
         }
-        // Base0
-        rect1 = new Rect(base0.x, base0.y, 4.0f, 4.0f);
+
+        // enemy team
+        foreach (StructUnitFogPos unit in enemyUnitList)
+        {
+            if (unit.GetFogType() == 2)
+            {
+                Vector2 posUnit = unit.GetPosition();
+                rect1 = new Rect(posUnit.x, posUnit.y, 1.0f, 1.0f);
+                GUI.DrawTexture(rect1, textureUnit1);
+            }
+        } 
+        foreach (StructBuildingFogPos tower in enemyTowerList)
+        {
+            if (fogTypeMatrix[tower.GetTileX(), tower.GetTileY()].GetFogType() == 2)
+            {
+                Vector2 posBuilding = tower.GetPosition();
+                rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
+                GUI.DrawTexture(rect1, textureTower1);
+            }
+        }
+        foreach (StructBuildingFogPos warehouse in enemyWarehouseList)
+        {
+            if (fogTypeMatrix[warehouse.GetTileX(), warehouse.GetTileY()].GetFogType() == 2)
+            {
+                Vector2 posBuilding = warehouse.GetPosition();
+                rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
+                GUI.DrawTexture(rect1, textureWarehouse1);
+            }
+        }
+        foreach (StructBuildingFogPos tower in enemyTowerNeutralList)
+        {
+            if (fogTypeMatrix[tower.GetTileX(), tower.GetTileY()].GetFogType() == 2)
+            {
+                Vector2 posBuilding = tower.GetPosition();
+                rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
+                GUI.DrawTexture(rect1, textureTowerNeutral);
+            }
+        }
+        
+        // myBase
+        rect1 = new Rect(myBase.x, myBase.y, 4.0f, 4.0f);
         GUI.DrawTexture(rect1, textureBase0);
-        // Base1
-        rect1 = new Rect(base1.x, base1.y, 4.0f, 4.0f);
-        GUI.DrawTexture(rect1, textureBase1);
+        // enemyBase
+        if (fogTypeMatrix[enemyBase.GetTileX(), enemyBase.GetTileY()].GetFogType() == 2)
+        {
+            Vector2 posBuilding = enemyBase.GetPosition();
+            rect1 = new Rect(posBuilding.x, posBuilding.y, 4.0f, 4.0f);
+            GUI.DrawTexture(rect1, textureBase1);
+        }
     }
 
 }
