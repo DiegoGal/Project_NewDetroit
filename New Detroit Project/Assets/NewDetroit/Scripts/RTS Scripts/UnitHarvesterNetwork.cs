@@ -5,6 +5,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 
 	CSelectable selectableScript;
 	UnitHarvester harvesterScript;
+    UnitHarvesterExternal externalScript;
 	FogOfWarUnit fogOfWarScript;
 	NavMeshAgent navMes;
 	
@@ -14,6 +15,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 		harvesterScript = GetComponent<UnitHarvester>();
 		fogOfWarScript	= GetComponent<FogOfWarUnit>();
 		navMes			= GetComponent<NavMeshAgent>();
+        externalScript = GetComponent<UnitHarvesterExternal>();
 
 		if (photonView.isMine)
 		{
@@ -22,13 +24,15 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 			harvesterScript.enabled = true;
 			fogOfWarScript.enabled = true;
 			navMes.enabled = true;
+            externalScript.enabled = false;
 		}
 		else
 		{           
 			selectableScript.enabled = false;
-			harvesterScript.enabled = true;
+			harvesterScript.enabled = false;
 			fogOfWarScript.enabled = false;
 			navMes.enabled = false;
+            externalScript.enabled = true;
 		}
 		
 		gameObject.name = gameObject.name + photonView.viewID;
@@ -46,6 +50,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
             stream.SendNext(script.currentState);
             stream.SendNext(script.getLife());
             stream.SendNext(script.attackedUnitViewID);
+            stream.SendNext(script.loaded);
             // if we sent damage we reset damageStream for not sending it more times.
 
 		}
@@ -58,6 +63,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
             unitState = (UnitController.State)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
             attackedUnitViewID = (int)stream.ReceiveNext();
+            loaded = (bool)stream.ReceiveNext();
             
 		}
 	}
@@ -68,6 +74,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
     private UnitHarvester.State unitState; // new State of Unit
     private float currentLife; // for damage
     private int attackedUnitViewID; // to see the unit we are attacking
+    private bool loaded; //to see if the unit is carring something
 	
 	void Update()
 	{
@@ -76,10 +83,11 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 			//Update remote player (smooth this, this looks good, at the cost of some accuracy)
 			transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
-            UnitHarvester script = GetComponent<UnitHarvester>();
+            UnitHarvesterExternal script = GetComponent<UnitHarvesterExternal>();
             script.currentHarvestState = state;
             script.currentState = unitState;
             script.attackedUnitViewID = attackedUnitViewID;
+            script.loaded = loaded;
 		}
 	}
 	

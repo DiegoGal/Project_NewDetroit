@@ -153,6 +153,12 @@ public class UnitController : ControllableCharacter
             currentState = State.Idle;
             PlayAnimationCrossFade("Idle01");
         }
+        else 
+        {
+            if (timeToNextWaitAnimation!=0)
+                timeToNextWaitAnimation = 0;
+            PlayAnimationCrossFade("Walk");
+        }
     }
 
     protected virtual void UpdateGoingToAnEnemy ()

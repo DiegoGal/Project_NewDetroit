@@ -24,6 +24,7 @@ public class UnitHarvester : UnitController
 	// referencia al pack de minerales
 	public GameObject mineralPack;
     private GameObject actualMineralPack;
+    public bool loaded = false;
 
     // dummys donde se instanciará el pack de minerales y otros objetos
     public Transform dummyMineralPack;
@@ -220,6 +221,7 @@ public class UnitHarvester : UnitController
 
 						// intanciamos un pack de minerales encima de la unidad
                         //Debug.Log("Dummy position: " + dummyMineralPack.transform.position);
+                        loaded = true;
                         actualMineralPack = Instantiate
                         (
                             mineralPack,
@@ -430,6 +432,7 @@ public class UnitHarvester : UnitController
 			// eliminamos el pack de minerales
             if (actualMineralPack)
             {
+                loaded = false;
                 Destroy(actualMineralPack);
                 actualMineralPack = null;
             }
