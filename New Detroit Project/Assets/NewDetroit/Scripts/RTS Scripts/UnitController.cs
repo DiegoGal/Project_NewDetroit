@@ -62,6 +62,9 @@ public class UnitController : ControllableCharacter
     private Quaternion desiredRotation;
     private int contTrapped = 0;
 
+    // for damaging the other players
+    public int attackedUnitViewID = 0;
+
     public virtual void Awake ()
     {
         model = transform.FindChild("Model");
@@ -192,6 +195,8 @@ public class UnitController : ControllableCharacter
     protected virtual void UpdateAttacking ()
     {
         attackCadenceAux -= Time.deltaTime;
+        if (attackedUnitViewID != 0)
+            enemySelected = PhotonView.Find(attackedUnitViewID).gameObject.GetComponent<ControllableCharacter>();
 
         float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
         if (enemySelected)
@@ -208,6 +213,7 @@ public class UnitController : ControllableCharacter
                     {
                         // the enemy has die
                         enemySelected = null;
+                        attackedUnitViewID = 0;
                         currentState = State.Idle;
 
                         PlayAnimationCrossFade("Idle01");
@@ -228,6 +234,7 @@ public class UnitController : ControllableCharacter
             else
             {
                 enemySelected = null;
+                attackedUnitViewID = 0;
                 currentState = State.Idle;
 
                 PlayAnimationCrossFade("Idle01");
@@ -236,6 +243,7 @@ public class UnitController : ControllableCharacter
         else // the enemy is no longer alive
         {
             enemySelected = null;
+            attackedUnitViewID = 0;
             currentState = State.Idle;
 
             PlayAnimationCrossFade("Idle01");
@@ -381,6 +389,7 @@ public class UnitController : ControllableCharacter
             {
                 if (teamNumber != unit.teamNumber)
                 {
+                    attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
                     GoTo(destiny);
                     enemySelected = unit;
                     currentState = State.GoingToAnEnemy;

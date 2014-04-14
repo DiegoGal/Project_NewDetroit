@@ -45,6 +45,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
             stream.SendNext(script.currentHarvestState);
             stream.SendNext(script.currentState);
             stream.SendNext(script.getLife());
+            stream.SendNext(script.attackedUnitViewID);
             // if we sent damage we reset damageStream for not sending it more times.
 
 		}
@@ -56,6 +57,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
             state = (UnitHarvester.HarvestState)stream.ReceiveNext();
             unitState = (UnitController.State)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
+            attackedUnitViewID = (int)stream.ReceiveNext();
             
 		}
 	}
@@ -65,6 +67,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
     private UnitHarvester.HarvestState state; // new State of the HarvesterUnit
     private UnitHarvester.State unitState; // new State of Unit
     private float currentLife; // for damage
+    private int attackedUnitViewID; // to see the unit we are attacking
 	
 	void Update()
 	{
@@ -76,6 +79,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
             UnitHarvester script = GetComponent<UnitHarvester>();
             script.currentHarvestState = state;
             script.currentState = unitState;
+            script.attackedUnitViewID = attackedUnitViewID;
 		}
 	}
 	
