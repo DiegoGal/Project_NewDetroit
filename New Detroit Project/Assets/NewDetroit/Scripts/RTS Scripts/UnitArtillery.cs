@@ -72,7 +72,7 @@ public class UnitArtillery : UnitController
             SphereCollider sphere = sphereTransform.GetComponent<SphereCollider>();
             if (sphere)
             {
-                visionSphereRadious = sphere.radius;
+                visionSphereRadius = sphere.radius;
                 thereIsVisionSphere = true;
             }
             else
@@ -84,7 +84,7 @@ public class UnitArtillery : UnitController
         if (attack2Selected)
             maxAttackDistance = maxAttackDistance2;
         else
-            maxAttackDistance = visionSphereRadious;
+            maxAttackDistance = visionSphereRadius;
     }
 
 	// Update is called once per frame
@@ -119,7 +119,7 @@ public class UnitArtillery : UnitController
                         Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.3f);
                         Vector3 fwd = enemySelected.transform.position - this.transform.position;
                         fwd.Normalize();
-                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
+                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadius);
                         Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
                         RaycastHit myHit;
                         if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, 100))
@@ -332,7 +332,7 @@ public class UnitArtillery : UnitController
 
                         Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
                         fwd.Normalize();
-                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadious);
+                        Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadius);
                         Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
                         RaycastHit myHit;
                         if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, 100))
@@ -585,12 +585,12 @@ public class UnitArtillery : UnitController
 
                             if (attack2Selected)
                             {
-                                animation.CrossFade("Attack2");
+                                PlayAnimationCrossFade("Attack2");
                                 //currentArtilleryState = ArtilleryState.Attacking2;
                             }
                             else
                             {
-                                animation.CrossFade("Attack1");
+                                PlayAnimationCrossFade("Attack1");
                                 //currentArtilleryState = ArtilleryState.Attacking1;
                             }
                             enemySelected = enemy;

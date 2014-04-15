@@ -628,7 +628,7 @@ public class UnitEngineer : UnitController
                 Destroy(newFireball.gameObject);*/
         }
         // 2- comprobamos si el enemigo esta "a vista"
-        else if (distToEnemy <= visionSphereRadious)
+        else if (distToEnemy <= visionSphereRadius)
         {
             this.destiny = enemySelected.transform.position;
             GetComponent<NavMeshAgent>().destination = destiny;
@@ -697,7 +697,7 @@ public class UnitEngineer : UnitController
                     }
                 }
             }
-            else if (enemyDist <= visionSphereRadious)
+            else if (enemyDist <= visionSphereRadius)
             {
                 currentState = State.GoingToAnEnemy;
 

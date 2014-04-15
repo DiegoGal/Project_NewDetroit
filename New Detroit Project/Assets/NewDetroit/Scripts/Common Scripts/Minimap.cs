@@ -348,7 +348,7 @@ public class Minimap : MonoBehaviour
         }  
     }
 
-    public virtual void OnGUI()
+    /*public virtual void OnGUI ()
     {
         // Esquina superior izquierda: x = -250, z = 250;
         Rect rect1;
@@ -425,6 +425,6 @@ public class Minimap : MonoBehaviour
             rect1 = new Rect(posBuilding.x, posBuilding.y, 4.0f, 4.0f);
             GUI.DrawTexture(rect1, textureBase1);
         }
-    }
+    }*/
 
 }

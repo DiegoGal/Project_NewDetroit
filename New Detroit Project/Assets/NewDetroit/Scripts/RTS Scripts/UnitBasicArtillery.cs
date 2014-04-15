@@ -61,7 +61,7 @@ public class UnitBasicArtillery : UnitArtillery
             //Debug.Break();
             if (attack2Selected) // change to attack1
             {
-                maxAttackDistance = visionSphereRadious;
+                maxAttackDistance = visionSphereRadius;
                 attackCadence = attack1Cadence;
                     
                 attack2Selected = false;

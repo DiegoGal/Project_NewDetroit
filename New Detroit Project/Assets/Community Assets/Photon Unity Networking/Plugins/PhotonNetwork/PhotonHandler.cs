@@ -144,7 +144,7 @@ internal class PhotonHandler : Photon.MonoBehaviour, IPhotonPeerListener
 
         sendThreadShouldRun = true;
         // WAT DESCOMENTAR ESTO
-        SupportClass.CallInBackground(FallbackSendAckThread);   // thread will call this every 100ms until method returns false
+        //SupportClass.CallInBackground(FallbackSendAckThread);   // thread will call this every 100ms until method returns false
     }
 
     public static void StopFallbackSendAckThread()

@@ -87,7 +87,7 @@ public class ArmyController : MonoBehaviour
             UnitController unit = go.GetComponent<UnitController>();
             if ((unit != null) && (unit.teamNumber == teamNumber))
             {
-                Debug.Log("Added to the list: " + go.name);
+                //Debug.Log("Added to the list: " + go.name);
                 unitList.Add(go);
                 DistanceMeasurerTool.InsertUnit(unit);
                 Minimap.InsertUnit(unit);

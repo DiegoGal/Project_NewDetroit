@@ -178,7 +178,7 @@ public class UnitController : ControllableCharacter
                 transform.LookAt(enemySelected.transform);
             }
             // 2- comprobamos si el enemigo esta "a vista"
-            else if (distToEnemy <= visionSphereRadious)
+            else if (distToEnemy <= visionSphereRadius)
             {
                 this.destiny = enemySelected.transform.position;
                 GetComponent<NavMeshAgent>().SetDestination(destiny);
@@ -227,7 +227,7 @@ public class UnitController : ControllableCharacter
                     }
                 }
             }
-            else if (enemyDist <= visionSphereRadious)
+            else if (enemyDist <= visionSphereRadius)
             {
                 currentState = State.GoingToAnEnemy;
 
@@ -395,7 +395,7 @@ public class UnitController : ControllableCharacter
             {
                 if (teamNumber != unit.teamNumber)
                 {
-                    attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
+                    //attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
                     GoTo(destiny);
                     enemySelected = unit;
                     currentState = State.GoingToAnEnemy;

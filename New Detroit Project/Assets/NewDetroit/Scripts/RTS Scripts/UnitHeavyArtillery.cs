@@ -8,14 +8,14 @@ public class UnitHeavyArtillery : UnitArtillery
     public float attackPower2 = 40.0f;
 
     // the vision radious of the unit
-    // base: protected float visionSphereRadious;
+    // base: protected float visionSphereRadius;
     // extended vision radious (when its Deployed)
     // this is added to the original radious
-    public float visionSphereRadiousExtended = 8.0f;
+    public float visionSphereRadiusExtended = 8.0f;
 
     // we need to save the original size of the vision sphere
     // in order to restore it after the deployed mode
-    private float visionSphereRaiousOriginal;
+    private float visionSphereRaiusOriginal;
 
     public GameObject frontWeapon, backWeapon;
 
@@ -59,7 +59,11 @@ public class UnitHeavyArtillery : UnitArtillery
         basicAttackPower = attackPower1;
         secondaryAttackPower = attackPower2;
 
-        visionSphereRaiousOriginal = visionSphereRadious;
+        visionSphereRaiusOriginal = visionSphereRadius;
+
+        maxAttackDistance1 = visionSphereRaiusOriginal;
+        maxAttackDistance2 = visionSphereRaiusOriginal + visionSphereRadiusExtended;
+        maxAttackDistance = maxAttackDistance1;
 
         attackCadenceAux = 0.0f;
         attackCadence = 2.0f;
@@ -68,7 +72,7 @@ public class UnitHeavyArtillery : UnitArtillery
 	// Update is called once per frame
     public override void Update ()
 	{
-        if (currentDeployState == DeployState.Undeployed || currentDeployState == DeployState.Deployed)
+        //if (currentDeployState == DeployState.Undeployed || currentDeployState == DeployState.Deployed)
 		    base.Update();
 
         if (isSelected && Input.GetKeyDown(KeyCode.D))
@@ -108,110 +112,31 @@ public class UnitHeavyArtillery : UnitArtillery
 
 	} // Update
 
-    public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
+    protected override void UpdateGoingToAnEnemy ()
     {
-        if (currentDeployState == DeployState.Undeployed) // if undeployed
-            base.RightClickOnSelected(destiny, destTransform);
-        else if (currentDeployState == DeployState.Deployed)// if deployed
+        // si esta seleccionado el ataque normal (sin desplegar) miramos si la unidad
+        // de verdad "ve" al enemigo seleccionado
+        if (currentDeployState == DeployState.Undeployed)
         {
-            ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
-            if (unit)
+            if (currentArtilleryState == ArtilleryState.Alert)
             {
-                // check if the unit is not attacking the selected enemy yet
-                if (
-                     currentState != State.Attacking ||
-                     (currentState == State.Attacking && lastEnemyAttacked != unit)
-                   )
+                if (alertHitTimerAux <= 0)
                 {
-                    if (teamNumber != unit.teamNumber)
-                    {
-                        enemySelected = unit;
-                        currentState = State.Attacking;
-                       
-                    }
+                    SearchForAnEnemy();
+                    // reset the timer
+                    alertHitTimerAux = alertHitTimer;
                 }
+                else
+                    alertHitTimerAux -= Time.deltaTime;
             }
-            else
-            {
-                enemySelected = null;
-                GoTo(destiny);
-            }
-            
         }
-    }
-
-    private IEnumerator WaitAndCallback (float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-        AnimationFinished();
-    }
-
-    private void AnimationFinished ()
-    {
-        switch (currentDeployState)
+        else if (currentDeployState == DeployState.Deployed)
         {
-            case DeployState.Undeployed:
-                currentDeployState = DeployState.Deployed;
-                attack2Selected = true;
-                if (thereIsVisionSphere)
-                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
-                        visionSphereRadious + visionSphereRadiousExtended;
-                else
-                    visionSphereRadious = visionSphereRaiousOriginal + visionSphereRadiousExtended;
-                break;
 
-            case DeployState.Deploying:
-
-                currentDeployState = DeployState.Deployed;
-                attack2Selected = true;
-                if (thereIsVisionSphere)
-                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
-                        visionSphereRadious + visionSphereRadiousExtended;
-                else
-                    visionSphereRadious = visionSphereRaiousOriginal + visionSphereRadiousExtended;
-
-                break;
-
-            case DeployState.Deployed:
-
-                currentDeployState = DeployState.Undeployed;
-                attack2Selected = false;
-                if (thereIsVisionSphere)
-                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
-                        visionSphereRadious;
-                else
-                    visionSphereRadious = visionSphereRaiousOriginal;
-
-                break;
-
-            case DeployState.Undeploying:
-
-                currentDeployState = DeployState.Undeployed;
-                attack2Selected = false;
-                if (thereIsVisionSphere)
-                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
-                        visionSphereRadious;
-                else
-                    visionSphereRadious = visionSphereRaiousOriginal;
-
-                break;
         }
     }
 
-    public override int GetUnitType ()
-    {
-        return 2;
-    }
-
-    protected override void RemoveAssetsFromModel()
-    {
-        if (frontWeapon)
-            Destroy(frontWeapon);
-        if (backWeapon)
-            Destroy(backWeapon);
-    }
-
-    protected override void UpdateAttacking()
+    protected override void UpdateAttacking ()
     {
         if (currentDeployState == DeployState.Undeployed) // if undeployed
             base.UpdateAttacking();
@@ -251,9 +176,16 @@ public class UnitHeavyArtillery : UnitArtillery
                         dir = dir.normalized;
                         Vector3 dir1 = transform.forward.normalized;
                         newRocket.transform.parent = null;
-                        newRocket.rigidbody.AddForce(new Vector3(dir.x * 5.0f * (enemyDist / maxAttackDistance),
-                                                                            11,
-                                                                    dir.z * 5.0f * (enemyDist / maxAttackDistance)), ForceMode.Impulse);
+                        newRocket.rigidbody.AddForce
+                        (
+                            new Vector3
+                            (
+                                dir.x * 10.0f * (enemyDist / maxAttackDistance),
+                                11,
+                                dir.z * 10.0f * (enemyDist / maxAttackDistance)
+                            ),
+                            ForceMode.Impulse
+                        );
 
                         if (enemySelected.currentLife <= 0.0f)
                         {
@@ -265,7 +197,7 @@ public class UnitHeavyArtillery : UnitArtillery
                         }
                     }
                 }
-                //else if (enemyDist <= visionSphereRadious)
+                //else if (enemyDist <= visionSphereRadius)
                 //{
                 //    currentState = State.GoingToAnEnemy;
 
@@ -291,6 +223,179 @@ public class UnitHeavyArtillery : UnitArtillery
                 attackCadenceAux = 2f;
             }
         }
+    }
+
+    public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
+    {
+        if (currentDeployState == DeployState.Undeployed) // if undeployed
+            base.RightClickOnSelected(destiny, destTransform);
+        else if (currentDeployState == DeployState.Deployed)// if deployed
+        {
+            ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
+            if (unit)
+            {
+                // check if the unit is not attacking the selected enemy yet
+                if (
+                     currentState != State.Attacking ||
+                     (currentState == State.Attacking && lastEnemyAttacked != unit)
+                   )
+                {
+                    if (teamNumber != unit.teamNumber)
+                    {
+                        //attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
+                        //GoTo(destiny);
+                        enemySelected = unit;
+                        //currentState = State.GoingToAnEnemy;
+                        
+                        // comprobamos que el enemigo seleccionado este a "vista"
+                        Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.3f);
+
+                        Vector3 fwd = enemySelected.transform.position - this.transform.position;
+                        fwd.Normalize();
+                        Vector3 aux = transform.position + eyesPosition + (fwd * maxAttackDistance);
+                        Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
+                        RaycastHit myHit;
+                        if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, maxAttackDistance))
+                        {
+                            //Debug.Log(myHit.transform.name);
+                            // the ray has hit something
+                            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
+                            if ((enemy != null) && (enemy == enemySelected))
+                            {
+                                // this "something" is the enemy we are looking for...
+                                //Debug.Log("LE HE DADO!!!");
+                                // rotate the unit in the enemy direction
+                                transform.LookAt(enemy.transform.position);
+                                lastEnemyAttacked = enemy;
+                                alertHitTimerAux = alertHitTimer;
+
+                                currentState = State.Attacking;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+                enemySelected = null;
+        }
+    }
+
+    public override void AttackMovement (Vector3 destiny)
+    {
+        if (currentDeployState == DeployState.Undeployed)
+            base.AttackMovement(destiny);
+    }
+
+    private IEnumerator WaitAndCallback (float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        AnimationFinished();
+    }
+
+    private void AnimationFinished ()
+    {
+        switch (currentDeployState)
+        {
+            case DeployState.Undeployed:
+                currentDeployState = DeployState.Deployed;
+                attack2Selected = true;
+                if (thereIsVisionSphere)
+                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
+                        visionSphereRadius + visionSphereRadiusExtended;
+                else
+                {
+                    visionSphereRadius = visionSphereRaiusOriginal + visionSphereRadiusExtended;
+                    maxAttackDistance = maxAttackDistance2;
+                }
+                    
+                break;
+
+            case DeployState.Deploying:
+
+                currentDeployState = DeployState.Deployed;
+                attack2Selected = true;
+                if (thereIsVisionSphere)
+                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
+                        visionSphereRadius + visionSphereRadiusExtended;
+                else
+                {
+                    visionSphereRadius = visionSphereRaiusOriginal + visionSphereRadiusExtended;
+                    maxAttackDistance = maxAttackDistance2;
+                }
+
+                break;
+
+            case DeployState.Deployed:
+
+                currentDeployState = DeployState.Undeployed;
+                attack2Selected = false;
+                if (thereIsVisionSphere)
+                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
+                        visionSphereRadius;
+                else
+                {
+                    visionSphereRadius = visionSphereRaiusOriginal;
+                    maxAttackDistance = maxAttackDistance1;
+                }
+
+                break;
+
+            case DeployState.Undeploying:
+
+                currentDeployState = DeployState.Undeployed;
+                attack2Selected = false;
+                if (thereIsVisionSphere)
+                    transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
+                        visionSphereRadius;
+                else
+                {
+                    visionSphereRadius = visionSphereRaiusOriginal;
+                    maxAttackDistance = maxAttackDistance1;
+                }
+
+                break;
+        }
+    }
+
+    protected override void PlayAnimationCrossFade (string animationName)
+    {
+        if (currentDeployState != DeployState.Undeployed)
+        {
+            if (animationName == "Idle01")
+                animation.CrossFade("Deployment-iddle");
+            /*else if (animationName == "Idle Wait")
+                animation.CrossFade("Idle Wait Deployed");*/
+            else if (animationName == "Attack2")
+                animation.CrossFade("Deployment-Shot");
+        }
+        else
+            base.PlayAnimationCrossFade(animationName);
+    }
+
+    protected override void PlayAnimationCrossFadeQueued (string animationName)
+    {
+        if (currentDeployState != DeployState.Undeployed)
+        {
+            if (animationName == "Idle01")
+                animation.CrossFadeQueued("Deployment-iddle");
+            /*else if (animationName == "Idle Wait")
+                animation.CrossFade("Idle Wait Deployed");*/
+        }
+        else
+            base.PlayAnimationCrossFadeQueued(animationName);
+    }
+
+    public override int GetUnitType ()
+    {
+        return 2;
+    }
+
+    protected override void RemoveAssetsFromModel ()
+    {
+        if (frontWeapon)
+            Destroy(frontWeapon);
+        if (backWeapon)
+            Destroy(backWeapon);
     }
 
 } // class UnitHeavyArtillery

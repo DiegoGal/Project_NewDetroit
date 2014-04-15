@@ -127,10 +127,10 @@ public class DistanceMeasurerTool : MonoBehaviour
                     // descartamos los casos por las distancias de x y z
                     float auxDist = Mathf.Abs(unit0.transform.position.x - unit1.transform.position.x);
                     float prevDist = distancesMatrix[i % list0Count][j % list1Count];
-                    if (auxDist < unit0.visionSphereRadious || auxDist < unit1.visionSphereRadious)
+                    if (auxDist < unit0.visionSphereRadius || auxDist < unit1.visionSphereRadius)
                     {
                         auxDist = Mathf.Abs(unit0.transform.position.z - unit1.transform.position.z);
-                        if (auxDist < unit0.visionSphereRadious || auxDist < unit1.visionSphereRadious)
+                        if (auxDist < unit0.visionSphereRadius || auxDist < unit1.visionSphereRadius)
                         {
                             // se calcula la nueva distancia
                             float newDist = Vector3.Distance
@@ -145,22 +145,22 @@ public class DistanceMeasurerTool : MonoBehaviour
                             // significa que una nueva unidad ha entrado en el área de visión
                             // si, en cambio, la distancia previa era menor al área de visión y la nueva
                             // es mayor, significa que antes estaba dentro y acaba de salir
-                            if (prevDist >= unit0.visionSphereRadious && newDist <= unit0.visionSphereRadious)
+                            if (prevDist >= unit0.visionSphereRadius && newDist <= unit0.visionSphereRadius)
                                 unit0.EnemyEntersInVisionSphere(unit1);
-                            else if (prevDist < unit0.visionSphereRadious && newDist > unit0.visionSphereRadious)
+                            else if (prevDist < unit0.visionSphereRadius && newDist > unit0.visionSphereRadius)
                                 unit0.EnemyLeavesVisionSphere(unit1);
 
-                            if (prevDist >= unit1.visionSphereRadious && newDist <= unit1.visionSphereRadious)
+                            if (prevDist >= unit1.visionSphereRadius && newDist <= unit1.visionSphereRadius)
                                 unit1.EnemyEntersInVisionSphere(unit0);
-                            else if (prevDist < unit1.visionSphereRadious && newDist > unit1.visionSphereRadious)
+                            else if (prevDist < unit1.visionSphereRadius && newDist > unit1.visionSphereRadius)
                                 unit1.EnemyLeavesVisionSphere(unit0);
                         }
                     }
                     else
                     {
-                        if (prevDist <= unit0.visionSphereRadious)
+                        if (prevDist <= unit0.visionSphereRadius)
                             unit0.EnemyLeavesVisionSphere(unit1);
-                        if (prevDist <= unit1.visionSphereRadious)
+                        if (prevDist <= unit1.visionSphereRadius)
                             unit1.EnemyLeavesVisionSphere(unit0);
 
                         distancesMatrix[i % list0Count][j % list1Count] = float.MaxValue;
