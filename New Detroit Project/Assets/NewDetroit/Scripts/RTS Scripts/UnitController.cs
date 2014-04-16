@@ -259,10 +259,10 @@ public class UnitController : ControllableCharacter
 
     protected virtual void UpdateFlying ()
     {
-        if (currentState == State.Dying)
+        if (currentState != State.Dying)
         {
             int maxTrapped = 5;
-            float delta = 0.4f;
+            float delta = 0.8f;
             if (!goingDown)
             {
                 if (transform.position.y > lastPosY)
@@ -276,7 +276,7 @@ public class UnitController : ControllableCharacter
             {
                 if (GetComponent<NavMeshAgent>())
                     GetComponent<NavMeshAgent>().Resume();
-                Destroy(rigidbody);
+                Destroy(this.rigidbody);
                 currentState = State.Idle;
                 lastPosY = -1.0f;
                 goingDown = false;
@@ -288,7 +288,7 @@ public class UnitController : ControllableCharacter
                 {
                     if (GetComponent<NavMeshAgent>())
                         GetComponent<NavMeshAgent>().Resume();
-                    Destroy(rigidbody);
+                    Destroy(this.rigidbody);
                     currentState = State.Idle;
                     lastPosY = -1.0f;
                     goingDown = false;
@@ -500,7 +500,7 @@ public class UnitController : ControllableCharacter
 
     public void Fly ()
     {
-        if (currentState == State.Dying)
+        if (currentState != State.Dying)
         {
             currentState = State.Flying;
             if (posY == -1.0f)

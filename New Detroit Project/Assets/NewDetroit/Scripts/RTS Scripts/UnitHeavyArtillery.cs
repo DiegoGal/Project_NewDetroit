@@ -22,6 +22,8 @@ public class UnitHeavyArtillery : UnitArtillery
     //For attacking1
     public GameObject rocket;
     private GameObject newRocket;
+    bool zoneAttackMode = false;
+    Vector3 zoneAttack;
 
     protected enum DeployState
     {
@@ -143,16 +145,22 @@ public class UnitHeavyArtillery : UnitArtillery
         else
         {
             attackCadenceAux -= Time.deltaTime;
+            // depend on the type of attack
+            float enemyDist;
+            if (zoneAttackMode)
+                enemyDist = Vector3.Distance(transform.position, zoneAttack);
+            else
+                enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
 
-            float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
-            if (enemySelected)
+            if (enemySelected || zoneAttackMode)
             {
-                if (enemyDist <= maxAttackDistance)
+                if ((enemySelected || zoneAttackMode) && (enemyDist <= maxAttackDistance))
                 {
                     if (attackCadenceAux <= 0)
                     {
                         animation.Play("Deployment-Shot");
-                        transform.LookAt(enemySelected.transform);
+                         if (enemySelected)
+                             transform.LookAt(enemySelected.transform);
 
                         // Instanciate a new Rocket
                         Debug.Log("Dummy position: " + dummyLeftWeaponGunBarrel.transform.position);
@@ -172,7 +180,11 @@ public class UnitHeavyArtillery : UnitArtillery
 
 
                         attackCadenceAux = attackCadence;
-                        Vector3 dir = enemySelected.transform.position - newRocket.transform.position;
+                        Vector3 dir;
+                        if (zoneAttackMode)
+                            dir = zoneAttack - newRocket.transform.position;
+                        else
+                            dir = enemySelected.transform.position - newRocket.transform.position;
                         dir = dir.normalized;
                         Vector3 dir1 = transform.forward.normalized;
                         newRocket.transform.parent = null;
@@ -180,14 +192,14 @@ public class UnitHeavyArtillery : UnitArtillery
                         (
                             new Vector3
                             (
-                                dir.x * 10.0f * (enemyDist / maxAttackDistance),
+                                dir.x * 8.0f * (enemyDist / maxAttackDistance),
                                 11,
-                                dir.z * 10.0f * (enemyDist / maxAttackDistance)
+                                dir.z * 8.0f * (enemyDist / maxAttackDistance)
                             ),
                             ForceMode.Impulse
                         );
 
-                        if (enemySelected.currentLife <= 0.0f)
+                        if (enemySelected && enemySelected.currentLife <= 0.0f)
                         {
                             // the enemy has die
                             enemySelected = null;
@@ -197,16 +209,6 @@ public class UnitHeavyArtillery : UnitArtillery
                         }
                     }
                 }
-                //else if (enemyDist <= visionSphereRadius)
-                //{
-                //    currentState = State.GoingToAnEnemy;
-
-                //    this.destiny = enemySelected.transform.position;
-                //    GetComponent<NavMeshAgent>().destination = destiny;
-
-                //    PlayAnimationCrossFade("Walk");
-                //    attackCadenceAux = 2.5f;
-                //}
                 else
                 {
                     enemySelected = null;
@@ -227,18 +229,37 @@ public class UnitHeavyArtillery : UnitArtillery
 
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
-        if (currentDeployState == DeployState.Undeployed) // if undeployed
-            base.RightClickOnSelected(destiny, destTransform);
-        else if (currentDeployState == DeployState.Deployed)// if deployed
+        if (currentDeployState == DeployState.Deployed && Input.GetKey(KeyCode.E))
         {
+            zoneAttackMode = true;
+            zoneAttack = destiny;
+            // comprobamos que el enemigo seleccionado este a "vista"
+            Debug.DrawLine(transform.position, destiny, Color.yellow, 0.3f);
+
+            Vector3 fwd = destiny - this.transform.position;
+            fwd.Normalize();
+            Vector3 aux = transform.position + eyesPosition + (fwd * maxAttackDistance);
+            Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
+            RaycastHit myHit;
+            
+            // rotate the unit in the enemy direction
+            transform.LookAt(destiny);
+            alertHitTimerAux = alertHitTimer;
+            // Change the state
+            currentState = State.Attacking;
+            
+        }
+        else if (currentDeployState == DeployState.Deployed) // if deployed
+        {
+            zoneAttackMode = false;
             ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
             if (unit)
             {
                 // check if the unit is not attacking the selected enemy yet
                 if (
-                     currentState != State.Attacking ||
-                     (currentState == State.Attacking && lastEnemyAttacked != unit)
-                   )
+                        currentState != State.Attacking ||
+                        (currentState == State.Attacking && lastEnemyAttacked != unit)
+                    )
                 {
                     if (teamNumber != unit.teamNumber)
                     {
@@ -246,7 +267,7 @@ public class UnitHeavyArtillery : UnitArtillery
                         //GoTo(destiny);
                         enemySelected = unit;
                         //currentState = State.GoingToAnEnemy;
-                        
+
                         // comprobamos que el enemigo seleccionado este a "vista"
                         Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.3f);
 
@@ -276,7 +297,17 @@ public class UnitHeavyArtillery : UnitArtillery
                 }
             }
             else
+            {
                 enemySelected = null;
+                currentState = State.Idle;
+                //PlayAnimationCrossFade("Idle01");
+                attackCadenceAux = 2f;
+            }
+        }
+        else if (currentDeployState == DeployState.Undeployed) // if undeployed
+        {
+            zoneAttackMode = false;
+            base.RightClickOnSelected(destiny, destTransform);
         }
     }
 

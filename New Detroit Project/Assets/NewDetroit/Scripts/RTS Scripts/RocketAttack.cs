@@ -50,7 +50,8 @@ public class RocketAttack : ParticleDamage
                     otherUC.Damage(GetDamage(), 'P');
 
                     // For add a force to the minions so they can fly
-                    other.gameObject.AddComponent<Rigidbody>();
+                    if (!other.rigidbody)
+                        other.gameObject.AddComponent<Rigidbody>();
                     other.rigidbody.isKinematic = false;
                     other.rigidbody.useGravity = true;
 
