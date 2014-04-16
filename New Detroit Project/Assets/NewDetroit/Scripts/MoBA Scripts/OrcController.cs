@@ -52,13 +52,13 @@ public class OrcController : HeroeController
 	{
 		if (this.hasNewLevel) 
 		{
-			int maxLife = (int) maximunLife,
+            int maxLife = (int)life.maximunLife,
 				maxAdren = adren,
 				maxMana = mana;
 			switch (level)
 			{
 			case 2:
-				this.maximunLife = LIFE_2;
+				this.life.maximunLife = LIFE_2;
 				this.attackP = ATT_P_2;
 				this.attackM = ATT_M_2;
 				this.speedAtt = ATT_SPEED_2;
@@ -69,7 +69,7 @@ public class OrcController : HeroeController
 				this.speedMov = MOV_SPEED_2;
 				break;
 			case 3:
-				this.maximunLife = LIFE_3;
+                this.life.maximunLife = LIFE_3;
 				this.attackP = ATT_P_3;
 				this.attackM = ATT_M_3;
 				this.speedAtt = ATT_SPEED_3;
@@ -80,7 +80,7 @@ public class OrcController : HeroeController
 				this.speedMov = MOV_SPEED_3;
 				break;
 			case 4:
-				this.maximunLife = LIFE_4;
+                this.life.maximunLife = LIFE_4;
 				this.attackP = ATT_P_4;
 				this.attackM = ATT_M_4;
 				this.speedAtt = ATT_SPEED_4;
@@ -91,9 +91,9 @@ public class OrcController : HeroeController
 				this.speedMov = MOV_SPEED_4;
 				break;
 			}//end switch (level)
-			
-			float percentage = (float)(maximunLife - maxLife) / maxLife;
-			currentLife = (1 + percentage) * currentLife;
+
+            float percentage = (float)(life.maximunLife - maxLife) / maxLife;
+            life.currentLife = (1 + percentage) * life.currentLife;
 			
 			percentage = (float)(adren - maxAdren) / maxAdren;
 			currentAdren = (int) ((1 + percentage) * currentAdren);
@@ -112,12 +112,12 @@ public class OrcController : HeroeController
 	public override void Start ()
 	{
 		base.Start ();
-		
-		this.currentLife = LIFE_1;
+
+        this.life.currentLife = LIFE_1;
 		this.currentMana = MANA_1;
 		this.currentAdren = ADREN_1;
-		
-		this.maximunLife = LIFE_1;
+
+        this.life.maximunLife = LIFE_1;
 		this.attackP = ATT_P_1;
 		this.attackM = ATT_M_1;
 		this.speedAtt = ATT_SPEED_1;
@@ -258,7 +258,7 @@ public class OrcController : HeroeController
 			}
 			else if (state == StateHeroe.Dead)
 			{
-				this.currentLife = 0;
+                this.life.currentLife = 0;
 				this.transform.position = this.initialPosition;
 				isMine = false;
 				//this.GetComponent<ThirdPersonController>().enabled = false;
@@ -269,10 +269,10 @@ public class OrcController : HeroeController
 				else
 				{
 					this.timeCountLife = 0;
-					this.currentLife += 20;
-					if (this.currentLife >= this.maximunLife)
+                    this.life.currentLife += 20;
+                    if (this.life.currentLife >= this.life.maximunLife)
 					{
-						this.currentLife = this.maximunLife;
+                        this.life.currentLife = this.life.maximunLife;
 						this.state = StateHeroe.Idle;
 						isMine = true;
 					}

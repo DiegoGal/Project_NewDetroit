@@ -90,11 +90,10 @@ public class UnitEngineer : UnitController
             Destroy(towerGoblin);
             Destroy(warehouse);
         }
-        if (currentLife <= 0.0f)
+        if (life.currentLife <= 0.0f)
         {
             LeaveQueues();
             currentEngineerState = EngineerState.None;
-
         }
         switch (currentEngineerState)
         {
@@ -686,7 +685,7 @@ public class UnitEngineer : UnitController
                     //newFireball.GetComponent<SphereCollider>().isTrigger = true;
                     
                     //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);
-                    if (enemySelected.currentLife <= 0.0f)
+                    if (enemySelected.life.currentLife <= 0.0f)
                     {
                         // the enemy has die
                         enemySelected = null;

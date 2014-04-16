@@ -11,11 +11,8 @@ public class BuildingController : Photon.MonoBehaviour
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
 
-    //Constant for the life of the Building
-    protected const float totalLife = 100.0f;
-
-    //The currentLife of the Building
-    protected float currentLife = 100.0f;
+    // reference to the Life component of the character
+    public CLife life;
 
     // the damage particles for when the building has been hit
     public GameObject damageParticles;
@@ -58,6 +55,8 @@ public class BuildingController : Photon.MonoBehaviour
         cubes = new GameObject[numEngineerPositions];
         // inicialization of the engineer queue
         engineerQueue = new List<UnitEngineer>();
+
+        life = GetComponent<CLife>();
 	}
 	
 	// Update is called once per frame
@@ -70,13 +69,13 @@ public class BuildingController : Photon.MonoBehaviour
     public bool Repair (float sum)
     {
         // increasement of the towers life
-        if (currentLife < totalLife)
+        if (life.currentLife < life.maximunLife)
         {
-            currentLife += sum;
-            if (totalLife < currentLife)
-                currentLife = totalLife;
+            life.currentLife += sum;
+            if (life.maximunLife < life.currentLife)
+                life.currentLife = life.maximunLife;
         }
-        if (currentLife == totalLife)
+        if (life.currentLife == life.maximunLife)
         {
             RemoveEngineersInQueue();
             for (int i = 0; i < numEngineerPositions; i++)
@@ -90,7 +89,7 @@ public class BuildingController : Photon.MonoBehaviour
     public void Damage (float damage)
     {
         //Debug.Log("damage");
-        currentLife -= damage;
+        life.currentLife -= damage;
         // blood!
         GameObject particles = (GameObject)Instantiate
         (
@@ -161,6 +160,6 @@ public class BuildingController : Photon.MonoBehaviour
 
     public bool HasTotalLife ()
     {
-        return currentLife == totalLife;
+        return life.currentLife == life.maximunLife;
     }
 }

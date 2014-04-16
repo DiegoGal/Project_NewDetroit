@@ -199,7 +199,7 @@ public class UnitHeavyArtillery : UnitArtillery
                             ForceMode.Impulse
                         );
 
-                        if (enemySelected && enemySelected.currentLife <= 0.0f)
+                        if (enemySelected && enemySelected.life.currentLife <= 0.0f)
                         {
                             // the enemy has die
                             enemySelected = null;

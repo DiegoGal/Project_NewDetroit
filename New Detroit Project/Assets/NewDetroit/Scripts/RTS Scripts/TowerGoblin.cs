@@ -147,7 +147,7 @@ public class TowerGoblin : Tower
                 case TowerState.Idle:
 
                     // we change the state to neutral if the tower dies
-                    if (currentLife <= 0.0f)
+                    if (life.currentLife <= 0.0f)
                         currentTowerState = TowerState.Destroyed;
                     // we change the state to Alert if there are enemies inside vision
                     if (enemiesInside.Count > 0)
@@ -196,7 +196,7 @@ public class TowerGoblin : Tower
                     if (enemiesInside.Count == 0)
                         currentTowerState = TowerState.Idle;
                     // we change the state to neutral if the tower dies
-                    if (currentLife <= 0.0f)
+                    if (life.currentLife <= 0.0f)
                         currentTowerState = TowerState.Destroyed;
                     break;
 
@@ -237,7 +237,7 @@ public class TowerGoblin : Tower
                     else
                         attackCadenceAux -= Time.deltaTime;
                     // we change the state to neutral if the tower dies
-                    if (currentLife <= 0.0f)
+                    if (life.currentLife <= 0.0f)
                         currentTowerState = TowerState.Destroyed;
                     // we change the state to Iddle if there aren't enemies inside vision
                     if (enemiesInside.Count == 0)
@@ -258,7 +258,7 @@ public class TowerGoblin : Tower
         if (constructed)
         {
             rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
-            rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (currentLife / totalLife), 4.0f);
+            rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f);
         }
         else
         {
@@ -304,7 +304,7 @@ public class TowerGoblin : Tower
             }
             if (contConstr == finalCont)
             {
-                currentLife = 50.0f;
+                life.currentLife = 50.0f;
                 UpdateEnemiesInside(this.teamNumber);
                 RemoveEngineersInQueue();
                 for (int i = 0; i < numEngineerPositions; i++)

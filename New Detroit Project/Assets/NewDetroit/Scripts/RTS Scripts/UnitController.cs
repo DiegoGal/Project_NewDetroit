@@ -77,8 +77,8 @@ public class UnitController : ControllableCharacter
 
         timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
 
-        currentLife = maximunLife;
         GetComponent<NavMeshAgent>().speed = velocity;
+        GetComponent<NavMeshAgent>().stoppingDistance = destinyThreshold;
 
         if (destiny == Vector3.zero)
         {
@@ -91,12 +91,13 @@ public class UnitController : ControllableCharacter
             PlayAnimation("Walk");
         }
 
-        GetComponent<NavMeshAgent>().stoppingDistance = destinyThreshold;
     }
 
     // Update is called once per frame
     public virtual void Update ()
     {
+        base.Update();
+
         switch (currentState)
         {
             case State.Idle:              UpdateIdle();              break;
@@ -340,9 +341,8 @@ public class UnitController : ControllableCharacter
             Destroy(this.gameObject);
     }
 
-    public override void OnGUI ()
+    public virtual void OnGUI ()
     {
-        base.OnGUI();
         /*Vector2 size = new Vector2(48.0f, 12.0f);
 
         // draw the background:
@@ -359,7 +359,7 @@ public class UnitController : ControllableCharacter
         // rectángulo donde se dibujará la barra
         Rect rect1 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f, 3.0f);
         GUI.DrawTexture(rect1, progressBarEmpty);
-        Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (currentLife / maximunLife), 3.0f);
+        Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (life.currentLife / life.maximunLife), 3.0f);
         GUI.DrawTexture(rect2, progressBarFull);
     }
 
@@ -426,7 +426,7 @@ public class UnitController : ControllableCharacter
                 transform.position + transform.forward, transform.rotation);
             Destroy(blood, 0.4f);
 
-            if (currentLife <= 0)
+            if (life.currentLife <= 0)
             {
                 //Debug.Log("MUEROOOOOOOOOO");
                 currentState = State.Dying;

@@ -27,7 +27,7 @@ public class RobotController : HeroeController
 	{
 		if (hasNewLevel) 
 		{
-			currentLife += IN_LIFE;
+            life.currentLife += IN_LIFE;
 			attackP += IN_ATT_P;
 			attackM += IN_ATT_M;
 			speedAtt += IN_SPEED_ATT;
@@ -49,7 +49,7 @@ public class RobotController : HeroeController
 	public override void Start ()
 	{
 		base.Start ();
-		this.currentLife = 375;
+        this.life.currentLife = 375;
 		this.attackP = 30;
 		this.attackM = 25;
 		this.speedAtt = 0.9f;

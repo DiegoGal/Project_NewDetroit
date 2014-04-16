@@ -56,7 +56,7 @@ public class CameraMOBAController : MonoBehaviour
 		rectangleLabelSMov = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + 5*height, rectangleAttributes.width, height);
 		rectangleLabelLevel = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + 6*height,rectangleAttributes.width, height);
 		// Bars for life, adrenaline and mana
-		float 	positiveLife = (float) heroe.currentLife / heroe.maximunLife, // percentage of positive life
+		float 	positiveLife = (float) heroe.life.currentLife / heroe.life.maximunLife, // percentage of positive life
 				positiveAdren = (float) heroe.currentAdren / heroe.adren, // percentage of positive adrenaline
 				positiveMana = (float) heroe.currentMana / heroe.mana; // percentage of positive mana
 		y = rectangleLifeManaAdrenSkills.y + rectangleLifeManaAdrenSkills.height/2;
@@ -190,7 +190,7 @@ public class CameraMOBAController : MonoBehaviour
 			ta = GUI.skin.label.alignment;
 			GUI.skin.label.fontStyle = FontStyle.Bold;
 			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-			GUI.Label (rectangleLabelLife, "" + heroe.currentLife + " / " + heroe.maximunLife);
+			GUI.Label (rectangleLabelLife, "" + heroe.life.currentLife + " / " + heroe.life.maximunLife);
 			GUI.Label (rectangleLabelAdren, "" + heroe.currentAdren + " / " + heroe.adren);
 			GUI.Label (rectangleLabelMana, "" + heroe.currentMana + " / " + heroe.mana);
 			GUI.skin.label.fontStyle = fs;

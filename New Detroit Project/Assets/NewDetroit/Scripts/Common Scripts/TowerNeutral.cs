@@ -93,7 +93,7 @@ public class TowerNeutral : Tower
             case TowerState.Iddle:
 
                 // we change the state to neutral if the tower dies
-                if (currentLife <= 0.0f)
+                if (life.currentLife <= 0.0f)
                     currentTowerState = TowerState.Neutral;
                 // we change the state to Alert if there are enemies inside vision
                 if (enemiesInside.Count > 0)
@@ -142,7 +142,7 @@ public class TowerNeutral : Tower
                 if (enemiesInside.Count == 0)
                     currentTowerState = TowerState.Iddle;
                 // we change the state to neutral if the tower dies
-                if (currentLife <= 0.0f)
+                if (life.currentLife <= 0.0f)
                     currentTowerState = TowerState.Neutral;
                 break;
 
@@ -183,7 +183,7 @@ public class TowerNeutral : Tower
                 else
                     attackCadenceAux -= Time.deltaTime;
                 // we change the state to neutral if the tower dies
-                if (currentLife <= 0.0f)
+                if (life.currentLife <= 0.0f)
                     currentTowerState = TowerState.Neutral;
                 // we change the state to Iddle if there aren't enemies inside vision
                 if (enemiesInside.Count == 0)
@@ -201,7 +201,7 @@ public class TowerNeutral : Tower
         {
             for (int i = 0; i < teamsPlaying; i++)
                 contConq[i] = 0;
-            currentLife = 80.0f;
+            life.currentLife = 80.0f;
             teamNumber = team;
             currentTowerState = TowerState.Iddle;
             UpdateEnemiesInside(team);
@@ -256,7 +256,7 @@ public class TowerNeutral : Tower
             // rectángulo donde se dibujará la barra de vida
             Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f, 4.0f);
             GUI.DrawTexture(rect1, progressBarEmpty);
-            Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f * (currentLife / totalLife), 4.0f);
+            Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f);
             GUI.DrawTexture(rect2, progressBarFull);
 
         }
