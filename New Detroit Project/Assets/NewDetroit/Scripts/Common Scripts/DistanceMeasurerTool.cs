@@ -15,8 +15,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 
     private static int maxCalculationsPerUpdate = 2; // ojo esto se eleva al cuadrado
     private static int calculationsPerUpdate = 1;
-
-    private static bool pair = true;
+    
     private enum SearchMode
     {
         no_search,
@@ -28,7 +27,7 @@ public class DistanceMeasurerTool : MonoBehaviour
     private static SearchMode searchMode = SearchMode.no_search;
 	
 	private static int prevIndexi = 0,
-                       prevIndexj =  0;
+                       prevIndexj = 0;
 
 	
     void LateUpdate ()
@@ -120,13 +119,16 @@ public class DistanceMeasurerTool : MonoBehaviour
             for (int j = prevIndexj; j <= calculationsPerUpdate + prevIndexj; j += 2)
             {
                 //Debug.Log("Búsqueda: i:" + i + ", j:" + j + ".");
-                ControllableCharacter unit0 = Army0[i % list0Count],
-                                      unit1 = Army1[j % list1Count];
+                int iAux = i % list0Count,
+                    jAux = j % list1Count;
+
+                ControllableCharacter unit0 = Army0[iAux],
+                                      unit1 = Army1[jAux];
                 if (unit0 && unit1)
                 {
                     // descartamos los casos por las distancias de x y z
                     float auxDist = Mathf.Abs(unit0.transform.position.x - unit1.transform.position.x);
-                    float prevDist = distancesMatrix[i % list0Count][j % list1Count];
+                    float prevDist = distancesMatrix[iAux][jAux];
                     if (auxDist < unit0.visionSphereRadius || auxDist < unit1.visionSphereRadius)
                     {
                         auxDist = Mathf.Abs(unit0.transform.position.z - unit1.transform.position.z);
@@ -138,7 +140,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                                 unit0.transform.position,
                                 unit1.transform.position
                             );
-                            distancesMatrix[i % list0Count][j % list1Count] = newDist;
+                            distancesMatrix[iAux][jAux] = newDist;
                             
                             // si la nueva distancia está dentro del área de visión de alguna de
                             // las dos unidades y la distancia prévia fuera mayor al área de visión
@@ -163,7 +165,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                         if (prevDist <= unit1.visionSphereRadius)
                             unit1.EnemyLeavesVisionSphere(unit0);
 
-                        distancesMatrix[i % list0Count][j % list1Count] = float.MaxValue;
+                        distancesMatrix[iAux][jAux] = float.MaxValue;
                     }
                 }
             } // for j
