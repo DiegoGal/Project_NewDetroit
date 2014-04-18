@@ -53,6 +53,10 @@ public class UnitController : ControllableCharacter
     protected ControllableCharacter lastEnemyAttacked;
     protected ControllableCharacter enemySelected;
 
+    // for damaging the other players
+    public int attackedUnitViewID = 0;
+    public int lastAttackedUnitViewID = 0;
+
     // Cool Down for detecting less time the collision with particles
     private float CDParticleCollision;
 
@@ -62,8 +66,7 @@ public class UnitController : ControllableCharacter
     private Quaternion desiredRotation;
     private int contTrapped = 0;
 
-    // for damaging the other players
-    public int attackedUnitViewID = 0;
+   
 
     public virtual void Awake ()
     {

@@ -12,7 +12,7 @@ public class UnitArtillery : UnitController
 
     protected bool movingAttacking = false;
 
-    protected enum ArtilleryState
+    public enum ArtilleryState
     {
         None,
         Alert,      // indicates if an enemy is inside de vision sphere
@@ -20,7 +20,7 @@ public class UnitArtillery : UnitController
         Attacking2, // secondary attack
         Chasing
     }
-    protected ArtilleryState currentArtilleryState = ArtilleryState.None;
+    public ArtilleryState currentArtilleryState = ArtilleryState.None;
 
     // dummys
     public Transform dummyLeftWeapon;
@@ -44,7 +44,7 @@ public class UnitArtillery : UnitController
     // frecuencia (en segundos) de ataque secundario
     public float secondaryAttackCadence = 1.0f;
 
-    protected bool attack2Selected = false; // false = attack1; true = attack2
+    public bool attack2Selected = false; // false = attack1; true = attack2
 
     public float maxAttackDistance1, maxAttackDistance2 = 2.0f;
 
@@ -533,7 +533,10 @@ public class UnitArtillery : UnitController
                 //Debug.Log("LE HE DADO!!!");
                 // rotate the unit in the enemy direction
                 transform.LookAt(enemy.transform.position);
-                lastEnemyAttacked = enemy;
+                if (lastAttackedUnitViewID != 0)
+                    lastEnemyAttacked = PhotonView.Find(lastAttackedUnitViewID).gameObject.GetComponent<ControllableCharacter>();
+                else
+                    lastEnemyAttacked = enemy;
                 alertHitTimerAux = alertHitTimer;
                 // the unit stops moving
                 StopMoving();

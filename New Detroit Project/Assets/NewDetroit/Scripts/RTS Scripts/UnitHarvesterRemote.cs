@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UnitHarvesterExternal : UnitController
+public class UnitHarvesterRemote : UnitController
 {
 
     public int attackPower = 1;
@@ -175,7 +175,6 @@ public class UnitHarvesterExternal : UnitController
         // comprobamos si el harvester base está cargado
         if (loaded && actualMineralPack == null)
         {
-            Debug.Log("WHAHHAWHA");
             actualMineralPack = Instantiate
             (
                 mineralPack,
