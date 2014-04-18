@@ -13,7 +13,7 @@ public class UnitBasicArtilleryRemote : UnitArtillery
     private GameObject leftWeapon, rightWeapon, baseballBat;
     public Transform dummyBat;
 
-    public bool changedAttack = true;
+    public bool changedAttack = false;
 
     public override void Awake()
     {
@@ -52,8 +52,8 @@ public class UnitBasicArtilleryRemote : UnitArtillery
         primaryAttackCadence = attack1Cadence;
         secondaryAttackCadence = attack2Cadence;
 
-        maxAttackDistance = visionSphereRadius;
-        attackCadence = attack1Cadence;
+        maxAttackDistance = maxAttackDistance2;
+        attackCadence = attack2Cadence;
     }
 
     // Update is called once per frame

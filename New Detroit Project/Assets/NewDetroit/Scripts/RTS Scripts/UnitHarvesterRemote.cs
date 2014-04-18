@@ -24,7 +24,6 @@ public class UnitHarvesterRemote : UnitController
     private GameObject glasses;
 
     public UnitHarvester.HarvestState currentHarvestState = UnitHarvester.HarvestState.None;
-    private UnitHarvester.HarvestState nextHarvestState = UnitHarvester.HarvestState.None;
 
     // última posición a donde se va a dejar los recursos
     // es el punto más cercano de la base a la mina de recursos actual

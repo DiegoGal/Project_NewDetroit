@@ -205,7 +205,7 @@ public class UnitController : ControllableCharacter
     protected virtual void UpdateAttacking ()
     {
         attackCadenceAux -= Time.deltaTime;
-        if (attackedUnitViewID != 0)
+        if (!isMine && attackedUnitViewID != 0)
             enemySelected = PhotonView.Find(attackedUnitViewID).gameObject.GetComponent<ControllableCharacter>();
 
         float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
@@ -236,7 +236,8 @@ public class UnitController : ControllableCharacter
                 currentState = State.GoingToAnEnemy;
 
                 this.destiny = enemySelected.transform.position;
-                GetComponent<NavMeshAgent>().SetDestination(destiny);
+                if (GetComponent<NavMeshAgent>() != null)
+                    GetComponent<NavMeshAgent>().SetDestination(destiny);
 
                 PlayAnimationCrossFade("Walk");
                 attackCadenceAux = 0.5f;
@@ -398,7 +399,8 @@ public class UnitController : ControllableCharacter
             {
                 if (teamNumber != unit.teamNumber)
                 {
-                    //attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
+                    if (destTransform.GetComponent<PhotonView>()!=null)
+                        attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
                     GoTo(destiny);
                     enemySelected = unit;
                     currentState = State.GoingToAnEnemy;
