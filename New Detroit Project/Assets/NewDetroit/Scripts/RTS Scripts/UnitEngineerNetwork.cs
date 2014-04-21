@@ -5,6 +5,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
 	
 	CSelectable selectableScript;
 	UnitEngineer engineerScript;
+    UnitEngineerRemote remoteScript;
 	FogOfWarUnit fogOfWarScript;
 	NavMeshAgent navMes;
 	
@@ -12,14 +13,16 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
 	{
 		selectableScript = GetComponent<CSelectable>();
 		engineerScript   = GetComponent<UnitEngineer>();
-		fogOfWarScript	= GetComponent<FogOfWarUnit>();
-		navMes			= GetComponent<NavMeshAgent>();
+        remoteScript     = GetComponent<UnitEngineerRemote>();
+		fogOfWarScript	 = GetComponent<FogOfWarUnit>();
+		navMes			 = GetComponent<NavMeshAgent>();
 		
 		if (photonView.isMine)
 		{
 			//MINE: local player, simply enable the local scripts
 			selectableScript.enabled = true;
 			engineerScript.enabled = true;
+            remoteScript.enabled = false;
 			fogOfWarScript.enabled = true;
 			navMes.enabled = true;
 		}
@@ -27,6 +30,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
 		{           
 			selectableScript.enabled = false;
 			engineerScript.enabled = false;
+            remoteScript.enabled = true;
 			fogOfWarScript.enabled = false;
 			navMes.enabled = false;
 		}
@@ -40,19 +44,37 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
 		{
 			//We own this player: send the others our data
 			stream.SendNext(transform.position);
-			stream.SendNext(transform.rotation); 
+			stream.SendNext(transform.rotation);
+            UnitEngineer script = this.GetComponent<UnitEngineer>();
+            stream.SendNext(script.currentEngineerState);
+            stream.SendNext(script.currentState);
+            stream.SendNext(script.getLife());
+            stream.SendNext(script.attackedUnitViewID);
+            stream.SendNext(script.conquest);
+            stream.SendNext(script.construct);
 		}
 		else
 		{
 			//Network player, receive data
 			correctPlayerPos = (Vector3)stream.ReceiveNext();
 			correctPlayerRot = (Quaternion)stream.ReceiveNext();
+            state = (UnitEngineer.EngineerState)stream.ReceiveNext();
+            unitState = (UnitController.State)stream.ReceiveNext();
+            currentLife = (float)stream.ReceiveNext();
+            attackedUnitViewID = (int)stream.ReceiveNext();
+            conquest = (bool)stream.ReceiveNext();
+            construct = (bool)stream.ReceiveNext();
 		}
 	}
 	
 	private Vector3 correctPlayerPos = Vector3.zero; //We lerp towards this
 	private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
-	
+    private UnitEngineer.EngineerState state; // new State of the HarvesterUnit
+    private UnitHarvester.State unitState; // new State of Unit
+    private float currentLife; // for damage
+    private int attackedUnitViewID; // to see the unit we are attacking
+    private bool conquest, construct; // to see when we finish one of this task
+
 	void Update()
 	{
 		if (!photonView.isMine)
@@ -60,6 +82,12 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
 			//Update remote player (smooth this, this looks good, at the cost of some accuracy)
 			transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
+            UnitEngineerRemote script = GetComponent<UnitEngineerRemote>();
+            script.currentEngineerState = state;
+            script.currentState = unitState;
+            script.attackedUnitViewID = attackedUnitViewID;
+            script.conquest = conquest;
+            script.construct = construct;
 		}
 	}
 	

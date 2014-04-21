@@ -13,7 +13,7 @@ public class UnitEngineer : UnitController
 	// cantidad de construccion, conquista y/o reparacion por unidad de recolección
 	public int amountPerAction = 2;
 
-    private enum EngineerState
+    public enum EngineerState
     {
         None,
         GoingToRepairItem,
@@ -27,7 +27,7 @@ public class UnitEngineer : UnitController
         Conquering,
 		Constructing
     }
-	private EngineerState currentEngineerState = EngineerState.None;
+	public EngineerState currentEngineerState = EngineerState.None;
 	
 	// referencia al item que se está construyendo, conquistando o reparando
 	private Transform currentItem;
@@ -58,6 +58,10 @@ public class UnitEngineer : UnitController
     public GameObject fireball;
     private GameObject newFireball;
 
+    // To knows if we done the job
+    public bool construct;
+    public bool conquest;
+
     public override void Awake ()
     {
         base.Awake();
@@ -76,6 +80,7 @@ public class UnitEngineer : UnitController
         basicAttackPower = secondaryAttackPower = attackPower;
         attackCadenceAux = 2.5f;
         attackCadence = 3.2f;
+        construct = conquest = false;
     }
 	
 	// Update is called once per frame
@@ -284,7 +289,7 @@ public class UnitEngineer : UnitController
             case EngineerState.Conquering:
                 animation.Play("Capture");
                 actualEngineerTime += Time.deltaTime;
-                bool conquest = false;
+                conquest = false;
                 if (actualEngineerTime >= engineerTime)
                 {
                     conquest = currentItem.GetComponent<TowerNeutral>().Conquest(amountPerAction, teamNumber);
@@ -306,7 +311,7 @@ public class UnitEngineer : UnitController
             case EngineerState.Constructing:
                 animation.Play("Build");
                 actualEngineerTime += Time.deltaTime;
-                bool construct = false;
+                construct = false;
                 if (currentItem.GetComponent<TowerGoblin>() != null)
                 {
                     if (actualEngineerTime >= engineerTime)
