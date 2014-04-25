@@ -60,9 +60,9 @@ public class RocketAttack : ParticleDamage
                     Vector3 dir = other.transform.position - transform.position;
                     dir = dir.normalized;
 
-                    other.rigidbody.AddForce(new Vector3(dir.x * 3.5f,
-                                                          8.0f,
-                                                          dir.z * 3.5f),
+                    other.rigidbody.AddForce(new Vector3(dir.x * 5.0f,
+                                                          9.0f,
+                                                          dir.z * 5.0f),
                                                           ForceMode.Impulse);
                     otherUC.Fly();
                     unitList.Add(other);
