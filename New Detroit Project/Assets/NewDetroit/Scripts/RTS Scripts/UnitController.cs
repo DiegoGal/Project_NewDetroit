@@ -438,9 +438,9 @@ public class UnitController : ControllableCharacter
                 // the unit DIES, set the special material
                 if (dyingMaterial)
                     model.renderer.material = dyingMaterial;
-                // play the dead animation
+                // play the dead animation             
                 PlayAnimationCrossFade("Die");
-                // and comunicate it to the army manager
+                // and comunicate it to the army manager              
                 baseController.armyController.UnitDied(this.gameObject);
 
                 // delete the Nave Mesh Agent for elevate the model
