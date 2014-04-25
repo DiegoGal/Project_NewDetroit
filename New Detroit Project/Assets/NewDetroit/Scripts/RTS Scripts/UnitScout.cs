@@ -24,12 +24,12 @@ public class UnitScout : UnitController
 	private GameObject fireMowerInst;
 	private GameObject piecesMowerInst;
 
-	private enum ScoutState
+	public enum ScoutState
 	{
 		None,
 		Patrolling
 	}
-	private ScoutState currentScoutState = ScoutState.None;
+	public ScoutState currentScoutState = ScoutState.None;
 
     // modelo del asset de la máquina cortacesped
     public GameObject mower;

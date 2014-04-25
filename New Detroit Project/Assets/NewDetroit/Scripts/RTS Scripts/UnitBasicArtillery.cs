@@ -13,6 +13,8 @@ public class UnitBasicArtillery : UnitArtillery
     private GameObject leftWeapon, rightWeapon, baseballBat;
     public Transform dummyBat;
 
+    public bool changedAttack = false;
+
     public override void Awake ()
     {
         base.Awake();
@@ -58,12 +60,13 @@ public class UnitBasicArtillery : UnitArtillery
 
         if (isSelected && Input.GetKeyDown(KeyCode.D))
         {
+            changedAttack = true;
             //Debug.Break();
             if (attack2Selected) // change to attack1
             {
                 maxAttackDistance = visionSphereRadius;
                 attackCadence = attack1Cadence;
-                    
+
                 attack2Selected = false;
             }
             else // change to attack2
@@ -74,6 +77,8 @@ public class UnitBasicArtillery : UnitArtillery
                 attack2Selected = true;
             }
         }
+        else
+            changedAttack = false;
 	}
 
     protected override void UpdateGoingToAnEnemy ()

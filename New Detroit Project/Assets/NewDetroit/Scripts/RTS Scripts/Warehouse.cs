@@ -145,7 +145,7 @@ public class Warehouse : CResourceBuilding
             }
             if (contConstr == finalCont)
             {
-                currentLife = 50.0f;
+                life.currentLife = 50.0f;
                 RemoveEngineersInQueue();
                 for (int i = 0; i < numEngineerPositions; i++)
                     cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
@@ -191,7 +191,7 @@ public class Warehouse : CResourceBuilding
         if (constructed)
         {
             rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
-            rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (currentLife / totalLife), 4.0f);
+            rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f);
         }
         else
         {

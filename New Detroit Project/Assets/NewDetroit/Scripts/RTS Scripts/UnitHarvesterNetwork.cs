@@ -5,7 +5,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 
 	CSelectable selectableScript;
 	UnitHarvester harvesterScript;
-    UnitHarvesterExternal externalScript;
+    UnitHarvesterRemote remoteScript;
 	FogOfWarUnit fogOfWarScript;
 	NavMeshAgent navMes;
 	
@@ -15,7 +15,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 		harvesterScript = GetComponent<UnitHarvester>();
 		fogOfWarScript	= GetComponent<FogOfWarUnit>();
 		navMes			= GetComponent<NavMeshAgent>();
-        externalScript = GetComponent<UnitHarvesterExternal>();
+        remoteScript = GetComponent<UnitHarvesterRemote>();
 
 		if (photonView.isMine)
 		{
@@ -24,7 +24,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 			harvesterScript.enabled = true;
 			fogOfWarScript.enabled = true;
 			navMes.enabled = true;
-            externalScript.enabled = false;
+            remoteScript.enabled = false;
 		}
 		else
 		{           
@@ -32,7 +32,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 			harvesterScript.enabled = false;
 			fogOfWarScript.enabled = false;
 			navMes.enabled = false;
-            externalScript.enabled = true;
+            remoteScript.enabled = true;
 		}
 		
 		gameObject.name = gameObject.name + photonView.viewID;
@@ -83,7 +83,7 @@ public class UnitHarvesterNetwork : Photon.MonoBehaviour {
 			//Update remote player (smooth this, this looks good, at the cost of some accuracy)
 			transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
-            UnitHarvesterExternal script = GetComponent<UnitHarvesterExternal>();
+            UnitHarvesterRemote script = GetComponent<UnitHarvesterRemote>();
             script.currentHarvestState = state;
             script.currentState = unitState;
             script.attackedUnitViewID = attackedUnitViewID;

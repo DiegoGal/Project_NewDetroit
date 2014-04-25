@@ -21,3 +21,4 @@ C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\De
 C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-Editor-vs.csprojResolveAssemblyReference.cache
 C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-Editor.dll
 C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-Editor.pdb
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb

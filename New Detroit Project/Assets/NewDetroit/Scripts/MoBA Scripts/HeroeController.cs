@@ -142,7 +142,7 @@ public abstract class HeroeController : ControllableCharacter
 				lengthLifeAdrenMana = this.GetComponent<ThirdPersonCamera> ().distance / distance, // percentage of the distance
 				widthAll = Screen.width / 10,
 				widthHalf = widthAll / 2,
-				positiveLife = (float) this.currentLife / this.maximunLife, // percentage of positive life
+				positiveLife = (float) this.life.currentLife / this.life.maximunLife, // percentage of positive life
 				positiveAdren = (float) this.currentAdren / this.adren, // percentage of positive adrenaline
 				positiveMana = (float) this.currentMana / this.mana; // percentage of positive mana
 		// Life
@@ -210,11 +210,11 @@ public abstract class HeroeController : ControllableCharacter
 	public override bool Damage (float damage,char type)
 	{
         if (type == 'P')
-		    currentLife -= damage - defP;
+		    life.currentLife -= damage - defP;
         else
             if (type == 'M')
-                currentLife -= damage - defM;
-		return (currentLife <= 0);
+                life.currentLife -= damage - defM;
+        return (life.currentLife <= 0);
 	}
 	
 	// Increment the experience
@@ -488,7 +488,7 @@ public abstract class HeroeController : ControllableCharacter
                     stateAttackSecond = AttackSecond.None;
                 }
 				// Heroe dead
-                else if (this.currentLife <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover)
+                else if (this.life.currentLife <= 0 && this.state != StateHeroe.Dead && this.state != StateHeroe.Recover)
                 {
                     this.state = StateHeroe.Dead;
                 }

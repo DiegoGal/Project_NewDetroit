@@ -22,17 +22,17 @@ public class UnitHeavyArtillery : UnitArtillery
     //For attacking1
     public GameObject rocket;
     private GameObject newRocket;
-    bool zoneAttackMode = false;
+    public bool zoneAttackMode = false;
     Vector3 zoneAttack;
 
-    protected enum DeployState
+    public enum DeployState
     {
         Undeployed,	// sin desplegar
         Deploying,  // desplegando
         Deployed,   // desplegado
         Undeploying // anular despliegue
     }
-    protected DeployState currentDeployState = DeployState.Undeployed;
+    public DeployState currentDeployState = DeployState.Undeployed;
 
     public override void Awake ()
     {
@@ -199,7 +199,7 @@ public class UnitHeavyArtillery : UnitArtillery
                             ForceMode.Impulse
                         );
 
-                        if (enemySelected && enemySelected.currentLife <= 0.0f)
+                        if (enemySelected && enemySelected.life.currentLife <= 0.0f)
                         {
                             // the enemy has die
                             enemySelected = null;

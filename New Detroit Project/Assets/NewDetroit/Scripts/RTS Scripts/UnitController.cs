@@ -53,6 +53,10 @@ public class UnitController : ControllableCharacter
     protected ControllableCharacter lastEnemyAttacked;
     protected ControllableCharacter enemySelected;
 
+    // for damaging the other players
+    public int attackedUnitViewID = 0;
+    public int lastAttackedUnitViewID = 0;
+
     // Cool Down for detecting less time the collision with particles
     private float CDParticleCollision;
 
@@ -62,8 +66,7 @@ public class UnitController : ControllableCharacter
     private Quaternion desiredRotation;
     private int contTrapped = 0;
 
-    // for damaging the other players
-    public int attackedUnitViewID = 0;
+   
 
     public virtual void Awake ()
     {
@@ -77,8 +80,8 @@ public class UnitController : ControllableCharacter
 
         timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
 
-        currentLife = maximunLife;
         GetComponent<NavMeshAgent>().speed = velocity;
+        GetComponent<NavMeshAgent>().stoppingDistance = destinyThreshold;
 
         if (destiny == Vector3.zero)
         {
@@ -91,12 +94,13 @@ public class UnitController : ControllableCharacter
             PlayAnimation("Walk");
         }
 
-        GetComponent<NavMeshAgent>().stoppingDistance = destinyThreshold;
     }
 
     // Update is called once per frame
     public virtual void Update ()
     {
+        base.Update();
+
         switch (currentState)
         {
             case State.Idle:              UpdateIdle();              break;
@@ -201,7 +205,7 @@ public class UnitController : ControllableCharacter
     protected virtual void UpdateAttacking ()
     {
         attackCadenceAux -= Time.deltaTime;
-        if (attackedUnitViewID != 0)
+        if (!isMine && attackedUnitViewID != 0)
             enemySelected = PhotonView.Find(attackedUnitViewID).gameObject.GetComponent<ControllableCharacter>();
 
         float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
@@ -232,7 +236,8 @@ public class UnitController : ControllableCharacter
                 currentState = State.GoingToAnEnemy;
 
                 this.destiny = enemySelected.transform.position;
-                GetComponent<NavMeshAgent>().SetDestination(destiny);
+                if (GetComponent<NavMeshAgent>() != null)
+                    GetComponent<NavMeshAgent>().SetDestination(destiny);
 
                 PlayAnimationCrossFade("Walk");
                 attackCadenceAux = 0.5f;
@@ -340,9 +345,8 @@ public class UnitController : ControllableCharacter
             Destroy(this.gameObject);
     }
 
-    public override void OnGUI ()
+    public virtual void OnGUI ()
     {
-        base.OnGUI();
         /*Vector2 size = new Vector2(48.0f, 12.0f);
 
         // draw the background:
@@ -359,7 +363,7 @@ public class UnitController : ControllableCharacter
         // rectángulo donde se dibujará la barra
         Rect rect1 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f, 3.0f);
         GUI.DrawTexture(rect1, progressBarEmpty);
-        Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (currentLife / maximunLife), 3.0f);
+        Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (life.currentLife / life.maximunLife), 3.0f);
         GUI.DrawTexture(rect2, progressBarFull);
     }
 
@@ -395,7 +399,8 @@ public class UnitController : ControllableCharacter
             {
                 if (teamNumber != unit.teamNumber)
                 {
-                    //attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
+                    if (destTransform.GetComponent<PhotonView>()!=null)
+                        attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
                     GoTo(destiny);
                     enemySelected = unit;
                     currentState = State.GoingToAnEnemy;
@@ -426,7 +431,7 @@ public class UnitController : ControllableCharacter
                 transform.position + transform.forward, transform.rotation);
             Destroy(blood, 0.4f);
 
-            if (currentLife <= 0)
+            if (life.currentLife <= 0)
             {
                 //Debug.Log("MUEROOOOOOOOOO");
                 currentState = State.Dying;

@@ -5,13 +5,11 @@ public class ControllableCharacter : MonoBehaviour
 {
 	// --------------------------------------------------------------
 
-    
 	// number that identifies the team to which the character belongs
     public int teamNumber;
 
-    // Life variables
-    public float maximunLife = 100.0f;
-    public float currentLife;
+    // reference to the Life component of the character
+    public CLife life;
 
     // Reference to the position of the unit team base
     protected Vector3 basePosition = new Vector3();
@@ -22,7 +20,7 @@ public class ControllableCharacter : MonoBehaviour
 	public int experienceGived = 0;
 
     // Indicates if the unit can receive damage or not
-    public bool invincible = false;
+    //public bool invincible = false;
 
     // the screen position of the character
     protected Vector3 screenPosition;
@@ -32,16 +30,19 @@ public class ControllableCharacter : MonoBehaviour
     public float maxAttackDistance = 2.0f;
 
     // To determinate who's player belongs
-    public bool isMine = false; 
+    public bool isMine = false;
 
 	// --------------------------------------------------------------
 
     public virtual void Start ()
     {
         screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+
+        life = GetComponent<CLife>();
+        teamNumber = life.teamNumber;
     }
 
-    public virtual void OnGUI ()
+    public virtual void Update ()
     {
         screenPosition = Camera.main.WorldToScreenPoint(transform.position);
     }
@@ -59,42 +60,23 @@ public class ControllableCharacter : MonoBehaviour
     // if type == 'P' is phisical damage if type == 'M' is magical damage
     public virtual bool Damage (float damage, char type = 'P')
     {
-        //Debug.Log("damage");
-        if (!invincible)
-            currentLife -= damage;
-        if (currentLife <= 0)
-        {
-            Die();
-            return true;
-        }
-        else
-            return false;
+        return life.Damage(damage, type);
     }
 
     public virtual void Die ()
     {
-        currentLife = 0;
+        life.Die();
     }
 
-    public virtual bool Heal (float life)
+    public virtual bool Heal (float amount)
     {
-            if (currentLife < maximunLife)
-            {
-                currentLife += life;
-                // si lo hemos curado "de más" le damos el valor máximo
-                if (maximunLife < currentLife)
-                    currentLife = maximunLife;
-            }
-            if (currentLife == maximunLife)
-                return true;
-            else
-                return false;        
+        return life.Heal(amount);
     }
 
 	// Return the current life of the heroe
 	public float getLife ()
 	{
-		return this.currentLife;
+		return life.currentLife;
 	}
 
 	// Returns the gived experience when it dies
@@ -105,7 +87,7 @@ public class ControllableCharacter : MonoBehaviour
 
     public bool IsAlive ()
     {
-        return (currentLife > 0);
+        return (life.currentLife > 0);
     }
 
     public virtual void EnemyEntersInVisionSphere (ControllableCharacter enemy)

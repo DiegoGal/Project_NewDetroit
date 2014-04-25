@@ -145,8 +145,8 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 		if (this.nameOrcLA != null && this.nameOrcRA != null && this.nameOrcLA == this.nameOrcRA)
 		{
 			GameObject go = GameObject.Find(nameOrcLA);
-			if (this.lifeOrcLA <= this.lifeOrcRA) go.GetComponent<HeroeController>().currentLife = lifeOrcLA;
-			else go.GetComponent<HeroeController>().currentLife = lifeOrcRA;
+			if (this.lifeOrcLA <= this.lifeOrcRA) go.GetComponent<HeroeController>().GetComponent<CLife>().currentLife = lifeOrcLA;
+            else go.GetComponent<HeroeController>().GetComponent<CLife>().currentLife = lifeOrcRA;
 
 			this.nameOrcLA = null;
 			this.nameOrcRA = null;
@@ -157,7 +157,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			if (nameOrcLA != null)
 			{
 				GameObject go = GameObject.Find(nameOrcLA);
-				go.GetComponent<HeroeController>().currentLife = lifeOrcLA;
+                go.GetComponent<HeroeController>().GetComponent<CLife>().currentLife = lifeOrcLA;
 				this.nameOrcLA = null;
 				// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
 			}
@@ -165,7 +165,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			if (nameOrcRA != null)
 			{
 				GameObject go = GameObject.Find(nameOrcRA);
-				go.GetComponent<HeroeController>().currentLife = lifeOrcRA;
+                go.GetComponent<HeroeController>().GetComponent<CLife>().currentLife = lifeOrcRA;
 				this.nameOrcRA = null;
 				// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
 			}
