@@ -85,7 +85,8 @@ public class ArmyController : MonoBehaviour
         foreach (GameObject go in objects)
         {
             UnitController unit = go.GetComponent<UnitController>();
-            if ((unit != null) && (unit.teamNumber == teamNumber))
+            //if ((unit != null) && (unit.teamNumber == teamNumber))
+            if (unit != null)
             {
                 //Debug.Log("Added to the list: " + go.name);
                 unitList.Add(go);
