@@ -85,12 +85,12 @@ public class ArmyController : MonoBehaviour
         foreach (GameObject go in objects)
         {
             UnitController unit = go.GetComponent<UnitController>();
-            //if ((unit != null) && (unit.teamNumber == teamNumber))
-            if (unit != null)
+            if ((unit != null) && (unit.teamNumber == teamNumber))
+            //if (unit != null)
             {
                 //Debug.Log("Added to the list: " + go.name);
                 unitList.Add(go);
-                DistanceMeasurerTool.InsertUnit(unit);
+                //DistanceMeasurerTool.InsertUnit(unit);
                 Minimap.InsertUnit(unit);
             }
         }
@@ -1078,7 +1078,7 @@ public class ArmyController : MonoBehaviour
             if (newUnit)
             {
                 unitList.Add(newUnit);
-                DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
+                //DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
                 Minimap.InsertUnit(newUnit.GetComponent<UnitController>());
             }
             // TODO: else mostrar aviso de que no hay recursos suficientes

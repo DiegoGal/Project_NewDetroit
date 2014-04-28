@@ -94,6 +94,8 @@ public class UnitController : ControllableCharacter
             PlayAnimation("Walk");
         }
 
+		// DistanceMeasureTool - Network
+		network ();
     }
 
     // Update is called once per frame
@@ -521,4 +523,9 @@ public class UnitController : ControllableCharacter
         GoTo(destiny);
     }
 
+	//DistanceMeasureTool - Network
+	private void network()
+	{
+		DistanceMeasurerTool.InsertUnit(GetComponent<ControllableCharacter>());
+	}
 }
