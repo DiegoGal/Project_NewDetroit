@@ -348,7 +348,7 @@ public class Minimap : MonoBehaviour
         }  
     }
 
-    /*public virtual void OnGUI ()
+    public virtual void OnGUI ()
     {
         // Esquina superior izquierda: x = -250, z = 250;
         Rect rect1;
@@ -389,7 +389,8 @@ public class Minimap : MonoBehaviour
         } 
         foreach (StructBuildingFogPos tower in enemyTowerList)
         {
-            if (fogTypeMatrix[tower.GetTileX(), tower.GetTileY()].GetFogType() == 2)
+            int fogT = fogTypeMatrix[tower.GetTileX(), tower.GetTileY()].GetFogType();
+            if (fogT != 0)
             {
                 Vector2 posBuilding = tower.GetPosition();
                 rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
@@ -398,7 +399,8 @@ public class Minimap : MonoBehaviour
         }
         foreach (StructBuildingFogPos warehouse in enemyWarehouseList)
         {
-            if (fogTypeMatrix[warehouse.GetTileX(), warehouse.GetTileY()].GetFogType() == 2)
+            int fogT = fogTypeMatrix[warehouse.GetTileX(), warehouse.GetTileY()].GetFogType();
+            if (fogT != 0)
             {
                 Vector2 posBuilding = warehouse.GetPosition();
                 rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
@@ -407,7 +409,8 @@ public class Minimap : MonoBehaviour
         }
         foreach (StructBuildingFogPos tower in enemyTowerNeutralList)
         {
-            if (fogTypeMatrix[tower.GetTileX(), tower.GetTileY()].GetFogType() == 2)
+            int fogT = fogTypeMatrix[tower.GetTileX(), tower.GetTileY()].GetFogType();
+            if (fogT != 0)
             {
                 Vector2 posBuilding = tower.GetPosition();
                 rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
@@ -419,12 +422,13 @@ public class Minimap : MonoBehaviour
         rect1 = new Rect(myBase.x, myBase.y, 4.0f, 4.0f);
         GUI.DrawTexture(rect1, textureBase0);
         // enemyBase
-        if (fogTypeMatrix[enemyBase.GetTileX(), enemyBase.GetTileY()].GetFogType() == 2)
+        int fogTBase = fogTypeMatrix[enemyBase.GetTileX(), enemyBase.GetTileY()].GetFogType();
+        if (fogTBase != 0)
         {
             Vector2 posBuilding = enemyBase.GetPosition();
             rect1 = new Rect(posBuilding.x, posBuilding.y, 4.0f, 4.0f);
             GUI.DrawTexture(rect1, textureBase1);
         }
-    }*/
+    }
 
 }
