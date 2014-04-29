@@ -30,7 +30,7 @@ public class ControllableCharacter : MonoBehaviour
     public float maxAttackDistance = 2.0f;
 
     // To determinate who's player belongs
-    public bool isMine = false;
+    public bool isMine; // Tell us if that instance if ours or not
 
 	// --------------------------------------------------------------
 

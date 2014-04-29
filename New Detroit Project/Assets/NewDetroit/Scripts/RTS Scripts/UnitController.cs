@@ -21,7 +21,7 @@ public class UnitController : ControllableCharacter
         AscendingToHeaven
     }
 	public State currentState = State.Idle;
-    private State lastState = State.Idle;
+    public State lastState = State.Idle;
 	
     public float velocity = 3.5f;
     protected Vector3 destiny = new Vector3();

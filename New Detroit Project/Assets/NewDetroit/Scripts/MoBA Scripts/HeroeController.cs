@@ -77,7 +77,6 @@ public abstract class HeroeController : ControllableCharacter
 					currentAdren;
 	public double 	speedAtt;
 	public bool attackInstantiate;	// Activate the spheres of arms
-	public bool isMine; // Tell us if that instance if ours or not
 	public TypeHeroe type;	// Type of heroe
 	public StateHeroe state = StateHeroe.Idle; // The state of the heroe
 	public AttackSecond stateAttackSecond;	// The state of secondary attack
