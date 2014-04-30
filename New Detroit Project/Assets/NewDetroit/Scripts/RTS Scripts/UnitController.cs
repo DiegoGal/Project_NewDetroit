@@ -438,8 +438,7 @@ public class UnitController : ControllableCharacter
                 //Debug.Log("MUEROOOOOOOOOO");
                 currentState = State.Dying;
                 // the unit DIES, set the special material
-                if (dyingMaterial)
-                    model.renderer.material = dyingMaterial;
+                setDyingMaterial();
                 // play the dead animation             
                 PlayAnimationCrossFade("Die");
                 // and comunicate it to the army manager              
@@ -455,6 +454,12 @@ public class UnitController : ControllableCharacter
         }
         else
             return true;
+    }
+
+    public void setDyingMaterial()
+    {
+        if (dyingMaterial)
+            model.renderer.material = dyingMaterial; 
     }
 
     protected virtual void RemoveAssetsFromModel ()

@@ -67,14 +67,14 @@ public class UnitBasicArtillery : UnitArtillery
                 maxAttackDistance = visionSphereRadius;
                 attackCadence = attack1Cadence;
 
-                attack2Selected = false;
+                attack2Selected = true;
             }
             else // change to attack2
             {
                 maxAttackDistance = maxAttackDistance2;
                 attackCadence = attack2Cadence;
 
-                attack2Selected = true;
+                attack2Selected = false;
             }
         }
         else
