@@ -6,7 +6,7 @@ public class CLife : MonoBehaviour
     
     // Life variables
     public float maximunLife = 100.0f;
-    public float currentLife { get; set; }
+    public float currentLife;
 
     // Indicates if the unit can receive damage or not
     public bool invincible = false;

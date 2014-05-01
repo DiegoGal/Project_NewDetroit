@@ -67,14 +67,14 @@ public class UnitHarvester : UnitController
     private ControllableCharacter currentCharacterHealed;
 
     // distancia mínima a la que la unidad es capaz de curar
-    public float minDistanceToHeal = 5.0f;
+    public float minDistanceToHeal = 2.0f;
 
     // tiempo en segundos que la unidad tarda en realizar una curación
     public float healTime = 1.0f;
     private float actualHealTime = 0.0f;
 
     // cantidad de curación por unidad de curación (healTime)
-    public int amountOfLifePerHeal = 5;
+    public int amountOfLifePerHeal = 4;
 
     // capacidad total de vida curada por la unidad
     private int totalHealed = 0;
@@ -210,6 +210,7 @@ public class UnitHarvester : UnitController
             case HarvestState.None:
                 base.Update();
                 break;
+
             case HarvestState.GoingToMine:
                 // si la distancia a la mina es menor que la distanceToWait preguntamos si hay hueco
 				float distMine = Vector3.Distance(transform.position, currentMine.position);
@@ -237,9 +238,11 @@ public class UnitHarvester : UnitController
                 else
                     base.Update();
                 break;
+
             case HarvestState.Waiting:
 
                 break;
+
             case HarvestState.GoingToChopPosition:
                 //if (Vector3.Distance(transform.position, lastHarvestPos) < destinyThreshold)
                 if (currentState == State.Idle)
@@ -250,6 +253,7 @@ public class UnitHarvester : UnitController
                 else
                     base.Update();
                 break;
+
             case HarvestState.Choping:
                 actualHarvestTime += Time.deltaTime;
                 if (actualHarvestTime >= harvestTime)
@@ -290,54 +294,80 @@ public class UnitHarvester : UnitController
                     actualHarvestTime = 0;
                 }
                 break;
+
             case HarvestState.ReturningToBase:
                 if (currentState == State.Idle)
                     ArrivedToBase();
                 else
                     base.Update();
                 break;
+
             case HarvestState.GoingToHealUnit:
-                float distItem = Vector3.Distance(transform.position, currentCharacterHealed.transform.position);
-                //base.GoTo(currentItem.position);
+                float distItem = Vector3.Distance(transform.position, currentCharacterHealed.transform.position)
+                    - currentCharacterHealed.GetRadius();
                 if (distItem <= minDistanceToHeal)
                 {
+                    // se ha llegado al compañero a curar, se cambia el estado:
                     currentHarvestState = HarvestState.Healing;
-
+                    // paramos el GoTo
+                    StopMoving();
+                    // escondemos el pico
+                    peak.renderer.enabled = false;
+                    // se reproduce la animación de curar
                     animation.CrossFade("Heal");
-                }
-                // si el currentState es Idle significa que la unidad ya ha llegado al herido
-                if (currentState == State.Idle)
-                {
-
                 }
                 else
                     base.Update();
                 break;
+
             case HarvestState.Healing:
-                /*actualHealTime += Time.deltaTime;
-                distItem = Vector3.Distance(transform.position, currentItem.position);
-                bool healed = false;
-                if (distItem < 4.0f)
+                actualHealTime += Time.deltaTime;
+                distItem = Vector3.Distance(transform.position, currentCharacterHealed.transform.position)
+                    - currentCharacterHealed.GetRadius();
+
+                if ( (actualHealTime >= healTime) &&
+                     (currentCharacterHealed.getLife() < currentCharacterHealed.GetMaximunLife() ) )
                 {
-                    base.GoTo(transform.position);
-                }
-                else if (distItem > 8.0f)
-                {
-                    currentHarvestState = HarvestState.None;
-                    nextHarvestState = HarvestState.None;
-                }
-                if (actualHealTime >= healTime)
-                {
-                    healed = currentItem.GetComponent<ControllableCharacter>().Heal(amountOfLifePerHeal);
-                    // The item has been repaired
-                    if (healed)
+                    // primero se comprueba que la unidad a curar siga estando "a tiro"
+                    if (distItem <= minDistanceToHeal + 1.0f)
                     {
-                        Debug.Log("Unidad curada");
+                        transform.LookAt(currentCharacterHealed.transform);
+                        if (currentCharacterHealed.Heal(amountOfLifePerHeal))
+                        {
+                            // el compañero ya ha sido curado
+                            Debug.Log("Unidad curada");
+                            currentHarvestState = HarvestState.None;
+                            nextHarvestState = HarvestState.None;
+
+                            currentCharacterHealed = null;
+
+                            // se vuelve a mostrar el pico
+                            peak.renderer.enabled = true;
+                        }
+
+                        // se actualiza el contador de "curación" propio
+                        totalHealed += amountOfLifePerHeal;
+
+                        actualHealTime = 0.0f;
+                    }
+                    else if (distItem < minDistanceToHeal * 2.0f)
+                    {
+                        // la unidad a curar se ha alejado pero todavía esta a "vista"
+                        // cambia el estado para dirigirse a la unidad a curar
+                        currentHarvestState = HarvestState.GoingToHealUnit;
+                        GoTo(currentCharacterHealed.transform.position);
+                    }
+                    else
+                    {
+                        // la unidad a curar ha salido y no está a vista
+                        StopMoving();
                         currentHarvestState = HarvestState.None;
                         nextHarvestState = HarvestState.None;
+
+                        // se vuelve a mostrar el pico
+                        peak.renderer.enabled = true;
                     }
-                    actualHealTime = 0;
-                }*/
+                }               
                 break;
         }
     } // Update
@@ -369,12 +399,18 @@ public class UnitHarvester : UnitController
                 currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
             else if (currentHarvestState == HarvestState.Waiting)
                 currentMine.GetComponent<CResources>().LeaveQueue(this);
+            else if (currentHarvestState == HarvestState.Healing)
+                peak.renderer.enabled = true;
+
             nextHarvestState = HarvestState.None;
             currentHarvestState = HarvestState.None;
+
             base.RightClickOnSelected(destiny, destTransform);
         }
-        else if ((destTransform.name == "Resources Mine") || (destTransform.name == "Metro") )
+        else if ( (destTransform.name == "Resources Mine") || (destTransform.name == "Metro") )
         {
+            peak.renderer.enabled = true;
+
             baseController.GetArmyController().UpdateMines(destTransform);
             // actualizar la referencia de la última mina seleccionada
             currentMine = destTransform;
@@ -429,8 +465,9 @@ public class UnitHarvester : UnitController
                 }
             }
         }
-        else if ((destTransform.name == "Army Base") || (destTransform.name == "The Stinky Squid"))
+        else if ( (destTransform.name == "Army Base") || (destTransform.name == "The Stinky Squid") )
         {
+            peak.renderer.enabled = true;
             // vuelve a la base, si tiene recursos los deja
             if (resourcesLoaded > 0)
             {
@@ -445,7 +482,22 @@ public class UnitHarvester : UnitController
             }
             nextHarvestState = HarvestState.None;
         }
-        else
+        else if (destTransform.GetComponent<ControllableCharacter>())
+        {
+            // se ha hecho click derecho en una unidad
+            ControllableCharacter unit = destTransform.GetComponent<ControllableCharacter>();
+            // se comprueba que la unidad sea del mismo equipo y que no tenga la vida máxima
+            if ( (unit.teamNumber == teamNumber) && (unit.getLife() < unit.GetMaximunLife()) )
+            {
+                // la unidad es del mismo equipo
+                Debug.Log("¡A curar!");
+                // se actualiza la referencia a la unidad que se está curando
+                currentCharacterHealed = unit;
+                // cambia el estado para dirigirse a la unidad a curar
+                currentHarvestState = HarvestState.GoingToHealUnit;
+                GoTo(destiny);
+            }
+        }
             base.RightClickOnSelected(destiny, destTransform);
     } // RightClickOnSelected
 

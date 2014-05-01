@@ -232,6 +232,11 @@ public abstract class HeroeController : ControllableCharacter
 	// MAIN
 	// Use this for initialization
 	virtual public void Start () {
+
+        base.Start();
+
+        radius = transform.FindChild("Pivot").GetComponent<NavMeshObstacle>().radius * transform.localScale.x;
+
 		this.level = 1;
 		this.experience = 0;
 		this.hasNewLevel = false;
@@ -248,6 +253,8 @@ public abstract class HeroeController : ControllableCharacter
 	
 	// Update is called once per frame
 	virtual public void Update () {
+        base.Update();
+
 		// Unlock abilities
 		if (counterAbility > 0)
 		{

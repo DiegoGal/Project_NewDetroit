@@ -32,6 +32,8 @@ public class ControllableCharacter : MonoBehaviour
     // To determinate who's player belongs
     public bool isMine; // Tell us if that instance if ours or not
 
+    public float radius;
+
 	// --------------------------------------------------------------
 
     public virtual void Start ()
@@ -79,6 +81,11 @@ public class ControllableCharacter : MonoBehaviour
 		return life.currentLife;
 	}
 
+    public float GetMaximunLife ()
+    {
+        return life.maximunLife;
+    }
+
 	// Returns the gived experience when it dies
 	public int getExperienceGived ()
 	{
@@ -98,6 +105,11 @@ public class ControllableCharacter : MonoBehaviour
     public virtual void EnemyLeavesVisionSphere (ControllableCharacter enemy)
     {
         
+    }
+
+    public float GetRadius ()
+    {
+        return radius;
     }
 
 } // class ControllableCharacter

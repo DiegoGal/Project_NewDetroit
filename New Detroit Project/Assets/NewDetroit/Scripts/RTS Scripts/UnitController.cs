@@ -26,7 +26,7 @@ public class UnitController : ControllableCharacter
     public float velocity = 3.5f;
     protected Vector3 destiny = new Vector3();
     protected float destinyThreshold = 0.25f;
-
+    
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
 
@@ -71,6 +71,8 @@ public class UnitController : ControllableCharacter
     public virtual void Awake ()
     {
         model = transform.FindChild("Model");
+
+        radius = 0.25f;
     }
 
     // Use this for initialization
