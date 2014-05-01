@@ -103,44 +103,90 @@ public class UnitHarvester : UnitController
 
         basicAttackPower = secondaryAttackPower = attackPower;
 
-        // instanciamos un casco o un cono encima de la cabeza
-        if (Random.value <= 0.5f)
+        // instanciamos un casco o un cono encima de la cabeza (o nada)
+        float rand = Random.value;
+        if (rand <= 0.25f)
+        {
             helmet = (GameObject)Instantiate
             (
-                Resources.Load("Goblin Army/GoblinHarvesterHelmet"),
+                Resources.Load("Goblin Army/GoblinHarvesterHelmet_A"),
                 dummyHead.transform.position,
                 dummyHead.transform.rotation
             );
-        else
+            helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
+            helmet.transform.parent = dummyHead;
+        }
+        else if (rand <= 0.5f)
+        {
+            helmet = (GameObject)Instantiate
+            (
+                Resources.Load("Goblin Army/GoblinHarvesterHelmet_B"),
+                dummyHead.transform.position,
+                dummyHead.transform.rotation
+            );
+            helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
+            helmet.transform.parent = dummyHead;
+        }
+        else if (rand <= 0.75f)
+        {
             helmet = (GameObject)Instantiate
             (
                 Resources.Load("Goblin Army/GoblinHarvesterCone"),
                 dummyHead.transform.position,
                 dummyHead.transform.rotation
             );
-        helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
-        helmet.transform.parent = dummyHead;
-        // instanciamos aleatóriamente una mochila detrás
-        if (Random.value <= 0.5f)
+            helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
+            helmet.transform.parent = dummyHead;
+        }
+        
+        // instanciamos aleatóriamente una mochila detrás (o nada)
+        rand = Random.value;
+        if (Random.value <= 0.33f)
         {
             backpack = (GameObject)Instantiate
             (
-                Resources.Load("Goblin Army/GoblinHarvesterBackpack"),
+                Resources.Load("Goblin Army/GoblinHarvesterBackpack_A"),
                 dummyBackPack.transform.position,
                 new Quaternion()
             );
             backpack.transform.parent = dummyBackPack;
         }
-        // instanciamos unas gafas
-        glasses = (GameObject)Instantiate
-        (
-            Resources.Load("Goblin Army/GoblinHarvesterGlasses"),
-            dummyGlasses.transform.position,
-            new Quaternion()
-            //dummyGlasses.transform.rotation
-        );
-        glasses.transform.parent = dummyGlasses;
-        glasses.transform.Rotate(new Vector3(0.0f, transform.rotation.y, 0.0f));
+        else if (rand <= 0.66f)
+        {
+            backpack = (GameObject)Instantiate
+            (
+                Resources.Load("Goblin Army/GoblinHarvesterBackpack_B"),
+                dummyBackPack.transform.position,
+                new Quaternion()
+            );
+            backpack.transform.parent = dummyBackPack;
+        }
+
+        // instanciamos unas gafas (o nada)
+        rand = Random.value;
+        if (Random.value <= 0.33f)
+        {
+            glasses = (GameObject)Instantiate
+            (
+                Resources.Load("Goblin Army/GoblinHarvesterGlasses_A"),
+                dummyGlasses.transform.position,
+                new Quaternion()
+                //dummyGlasses.transform.rotation
+            );
+            glasses.transform.parent = dummyGlasses;
+            glasses.transform.Rotate(new Vector3(0.0f, transform.rotation.y, 0.0f));
+        }
+        else if (Random.value <= 0.66f)
+        {
+            glasses = (GameObject)Instantiate
+            (
+                Resources.Load("Goblin Army/GoblinHarvesterGlasses_B"),
+                dummyGlasses.transform.position,
+                new Quaternion()
+            );
+            glasses.transform.parent = dummyGlasses;
+            glasses.transform.Rotate(new Vector3(0.0f, transform.rotation.y, 0.0f));
+        }
 
         // capturamos la instancia del pico en la mano
         if (dummyHand)
