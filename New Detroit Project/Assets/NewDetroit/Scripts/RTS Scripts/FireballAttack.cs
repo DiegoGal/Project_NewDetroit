@@ -47,7 +47,8 @@ public class FireballAttack : ParticleDamage
                 {
                     // For damage
                     UnitController otherUC = other.GetComponent<UnitController>();
-                    otherUC.Damage(GetDamage(), 'P');
+                    float enemyDist = Vector3.Distance(transform.position, other.transform.position);
+                    otherUC.Damage(GetDamage() / enemyDist, 'P');
 
                     // For add a force to the minions so they can fly
                     if (!other.rigidbody)
@@ -56,7 +57,6 @@ public class FireballAttack : ParticleDamage
                     other.rigidbody.useGravity = true;
 
                     other.GetComponent<NavMeshAgent>().Stop(true);
-                    //Vector3 dir = new Vector3(1.0f, 1.0f, 1.0f);
                     Vector3 dir = other.transform.position - transform.position;
                     dir = dir.normalized;
 

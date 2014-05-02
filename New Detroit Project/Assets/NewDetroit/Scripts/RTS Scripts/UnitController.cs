@@ -63,9 +63,7 @@ public class UnitController : ControllableCharacter
     private float posY = -1.0f;
     private float lastPosY = -1.0f;
     private bool goingDown = false;
-    private Quaternion desiredRotation;
     private int contTrapped = 0;
-    private int cont = 0;
 
    
 
@@ -272,9 +270,9 @@ public class UnitController : ControllableCharacter
         if (currentState != State.Dying)
         {
             int maxTrapped = 35;
-            float delta = 0.8f;
             if (!goingDown)
             {
+                rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
                 contTrapped = 0;
                 if (transform.position.y > lastPosY)
                 {
@@ -282,18 +280,7 @@ public class UnitController : ControllableCharacter
                 }
                 else
                     goingDown = true;
-            }/*
-            else if (transform.position.y <= posY + delta)
-            {
-                
-                if (GetComponent<NavMeshAgent>())
-                    GetComponent<NavMeshAgent>().Resume();
-                Destroy(this.rigidbody);
-                currentState = State.Idle;
-                lastPosY = -1.0f;
-                goingDown = false;
-                contTrapped = 0;
-            }*/
+            }
             else if ((transform.position.y == lastPosY)  && goingDown)
             {
                 if (contTrapped == maxTrapped)
@@ -308,16 +295,14 @@ public class UnitController : ControllableCharacter
                     lastPosY = -1.0f;
                     goingDown = false;
                     contTrapped = 0;
+                    
                 }
                 else
                     contTrapped++;
                 lastPosY = transform.position.y;
             }
             else
-            {
-                //contTrapped = 0;
                 lastPosY = transform.position.y;
-            }
         }
     }
 
@@ -530,7 +515,6 @@ public class UnitController : ControllableCharacter
             if (posY == -1.0f)
             {
                 posY = transform.position.y;
-                desiredRotation = transform.rotation;
             }
         }
     }

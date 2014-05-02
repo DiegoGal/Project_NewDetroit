@@ -47,7 +47,8 @@ public class RocketAttack : ParticleDamage
                 {
                     // For damage
                     UnitController otherUC = other.GetComponent<UnitController>();
-                    otherUC.Damage(GetDamage(), 'P');
+                    float enemyDist = Vector3.Distance(transform.position, other.transform.position);
+                    otherUC.Damage(GetDamage() / enemyDist, 'P');
 
                     // For add a force to the minions so they can fly
                     if (!other.rigidbody)
