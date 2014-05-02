@@ -196,9 +196,9 @@ public class Minimap : MonoBehaviour
         int max1 = enemyArmy.Count;
         
         // The transparent positions of the matrix to semitransparent
-        for (int i = contX; i < MATRIXSIZE; i += 3)
+        for (int i = contY; i < MATRIXSIZE; i += 3)
         {
-            for (int j = contY; j < MATRIXSIZE; j += 3)
+            for (int j = contX; j < MATRIXSIZE; j += 3)
             {
                 i = i % MATRIXSIZE;
                 j = j % MATRIXSIZE;
@@ -214,9 +214,9 @@ public class Minimap : MonoBehaviour
                     fogTypeMatrix[i, j].IncreaseCont();
             }
         }
-        contY = (contY + 1) % 4;
-        if (contY == 0)
-            contX = (contX + 1) % 4;
+        contX = (contX + 1) % 4;
+        if (contX == 0)
+            contY = (contY + 1) % 4;
         
         // myArmy
         for (int i = contUpdate0; i < max0; i += 3 )
