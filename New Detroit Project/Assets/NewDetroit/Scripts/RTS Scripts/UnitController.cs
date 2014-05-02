@@ -65,6 +65,7 @@ public class UnitController : ControllableCharacter
     private bool goingDown = false;
     private Quaternion desiredRotation;
     private int contTrapped = 0;
+    private int cont = 0;
 
    
 
@@ -270,19 +271,21 @@ public class UnitController : ControllableCharacter
     {
         if (currentState != State.Dying)
         {
-            int maxTrapped = 5;
+            int maxTrapped = 35;
             float delta = 0.8f;
             if (!goingDown)
             {
+                contTrapped = 0;
                 if (transform.position.y > lastPosY)
                 {
                     lastPosY = transform.position.y;
                 }
                 else
                     goingDown = true;
-            }
+            }/*
             else if (transform.position.y <= posY + delta)
             {
+                
                 if (GetComponent<NavMeshAgent>())
                     GetComponent<NavMeshAgent>().Resume();
                 Destroy(this.rigidbody);
@@ -290,13 +293,16 @@ public class UnitController : ControllableCharacter
                 lastPosY = -1.0f;
                 goingDown = false;
                 contTrapped = 0;
-            }
-            else if (transform.position.y == lastPosY && goingDown)
+            }*/
+            else if ((transform.position.y == lastPosY)  && goingDown)
             {
                 if (contTrapped == maxTrapped)
                 {
                     if (GetComponent<NavMeshAgent>())
+                    {
                         GetComponent<NavMeshAgent>().Resume();
+                        GetComponent<NavMeshAgent>().ResetPath();
+                    }
                     Destroy(this.rigidbody);
                     currentState = State.Idle;
                     lastPosY = -1.0f;
@@ -305,9 +311,13 @@ public class UnitController : ControllableCharacter
                 }
                 else
                     contTrapped++;
+                lastPosY = transform.position.y;
             }
             else
+            {
+                //contTrapped = 0;
                 lastPosY = transform.position.y;
+            }
         }
     }
 
