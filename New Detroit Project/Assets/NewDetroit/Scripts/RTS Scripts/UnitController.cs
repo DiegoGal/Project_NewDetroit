@@ -164,7 +164,7 @@ public class UnitController : ControllableCharacter
         {
             if (timeToNextWaitAnimation!=0)
                 timeToNextWaitAnimation = 0;
-            PlayAnimationCrossFade("Walk");
+            //PlayAnimationCrossFade("Walk");
         }
     }
 

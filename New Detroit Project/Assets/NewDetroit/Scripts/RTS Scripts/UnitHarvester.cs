@@ -192,18 +192,21 @@ public class UnitHarvester : UnitController
         if (dummyHand)
             peak = dummyHand.FindChild("GoblinHarvesterBeak").gameObject;
 
-        /*GameObject newPack = Instantiate
+        // intanciamos un pack de minerales encima de la unidad
+        actualMineralPack = (GameObject)Instantiate
         (
             mineralPack,
-            dummyPack.transform.position,
+            dummyMineralPack.transform.position,
             new Quaternion()
         ) as GameObject;
-        newPack.transform.name = "MineralPack";
-        newPack.transform.parent = dummyPack;
-        newPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));*/
+        actualMineralPack.transform.name = "MineralPack";
+        actualMineralPack.transform.parent = dummyMineralPack;
+        // se esconde:
+        ShowMineralPack(loaded);
+
     }
     
-    public override void Update ()
+    /*public override void Update ()
     {
         switch (currentHarvestState)
         {
@@ -269,18 +272,9 @@ public class UnitHarvester : UnitController
                         currentHarvestState = HarvestState.ReturningToBase;
 					    nextHarvestState = HarvestState.GoingToMine;
 
-						// intanciamos un pack de minerales encima de la unidad
-                        //Debug.Log("Dummy position: " + dummyMineralPack.transform.position);
+						// se muestra el pack de minerales
                         loaded = true;
-                        actualMineralPack = Instantiate
-                        (
-                            mineralPack,
-                            dummyMineralPack.transform.position,
-                            new Quaternion()
-                        ) as GameObject;
-                        actualMineralPack.transform.name = "MineralPack";
-                        actualMineralPack.transform.parent = dummyMineralPack;
-                        actualMineralPack.transform.Rotate(new Vector3(180.0f, 180.0f, 180.0f));
+                        ShowMineralPack(loaded);
 
                         CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
                         float radious = resourceBuilding.GetRadious();
@@ -370,7 +364,71 @@ public class UnitHarvester : UnitController
                 }               
                 break;
         }
-    } // Update
+    } // Update*/
+
+    protected override void UpdateGoingTo ()
+    {
+        base.UpdateGoingTo();
+
+        switch (currentHarvestState)
+        {
+            case HarvestState.GoingToMine:
+                // si la distancia a la mina es menor que la distanceToWait preguntamos si hay hueco
+                float distMine = Vector3.Distance(transform.position, currentMine.position);
+                float distToWait = currentMine.GetComponent<CResources>().distanceToWait;
+                if (distMine < distToWait)
+                {
+                    if (currentMine.GetComponent<CResources>().GetHarvestPosition(
+                            ref lastHarvestPos,
+                            ref lastHarvestIndex,
+                            this)
+                        )
+                    {
+                        // hay hueco y tenemos la posicion
+                        currentHarvestState = HarvestState.GoingToChopPosition;
+                        base.GoTo(lastHarvestPos);
+                    }
+                    else
+                    {
+                        currentHarvestState = HarvestState.Waiting;
+                        GetComponent<NavMeshAgent>().destination = transform.position;
+                        //animation.CrossFade("Idle Wait");
+                        animation.CrossFadeQueued("Idle01");
+                    }
+                }
+                break;
+
+            case HarvestState.GoingToChopPosition:
+                //if (Vector3.Distance(transform.position, lastHarvestPos) < destinyThreshold)
+                if (currentState == State.Idle)
+                {
+                    // ha llegado a la posición de extracción
+                    StartChoping();
+                }
+                break;
+
+            case HarvestState.ReturningToBase:
+                if (currentState == State.Idle)
+                    ArrivedToBase();
+                break;
+
+            case HarvestState.GoingToHealUnit:
+                float distItem = Vector3.Distance(transform.position, currentCharacterHealed.transform.position)
+                    - currentCharacterHealed.GetRadius();
+                if (distItem <= minDistanceToHeal)
+                {
+                    // se ha llegado al compañero a curar, se cambia el estado:
+                    currentHarvestState = HarvestState.Healing;
+                    // paramos el GoTo
+                    StopMoving();
+                    // escondemos el pico
+                    peak.renderer.enabled = false;
+                    // se reproduce la animación de curar
+                    animation.CrossFade("Heal");
+                }
+                break;
+        }
+    }
 
     public override void OnGUI ()
     {
@@ -389,7 +447,7 @@ public class UnitHarvester : UnitController
         }
     }
 
-    public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
+    /*public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
         if (destTransform.name == "WorldFloor")
         {
@@ -404,16 +462,16 @@ public class UnitHarvester : UnitController
 
             nextHarvestState = HarvestState.None;
             currentHarvestState = HarvestState.None;
-
-            base.RightClickOnSelected(destiny, destTransform);
         }
         else if ( (destTransform.name == "Resources Mine") || (destTransform.name == "Metro") )
         {
             peak.renderer.enabled = true;
 
             baseController.GetArmyController().UpdateMines(destTransform);
+
             // actualizar la referencia de la última mina seleccionada
             currentMine = destTransform;
+
             // actualizar la posición de la base o del almacén donde se dejarán los recursos
             CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
             float radius = resourceBuilding.GetRadious();
@@ -422,10 +480,10 @@ public class UnitHarvester : UnitController
             lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radius);
             lastBasePos.z = resourceBuilding.transform.position.z + (Mathf.Sin(alpha) * radius);
 
-            /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.position = lastBasePos;
             cube.renderer.material.color = Color.red;
-            cube.transform.parent = baseController.transform;*/
+            cube.transform.parent = baseController.transform;
 
             Debug.Log("vamos pa la mina!");
             if (currentHarvestState == HarvestState.None)
@@ -436,7 +494,7 @@ public class UnitHarvester : UnitController
                     // si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
                     currentHarvestState = HarvestState.ReturningToBase;
                     GoTo(lastBasePos);
-                    nextHarvestState = HarvestState.None;
+                    nextHarvestState = HarvestState.GoingToMine;
                 }
                 else
                 {
@@ -499,6 +557,121 @@ public class UnitHarvester : UnitController
             }
         }
             base.RightClickOnSelected(destiny, destTransform);
+    } // RightClickOnSelected*/
+
+    public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
+    {
+        base.RightClickOnSelected(destiny, destTransform);
+
+        if (destTransform.name == "WorldFloor")
+        {
+            if (currentHarvestState == HarvestState.GoingToChopPosition ||
+                currentHarvestState == HarvestState.Choping)
+                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
+            else if (currentHarvestState == HarvestState.Waiting)
+                currentMine.GetComponent<CResources>().LeaveQueue(this);
+            else if (currentHarvestState == HarvestState.Healing)
+                peak.renderer.enabled = true;
+
+            nextHarvestState = HarvestState.None;
+            currentHarvestState = HarvestState.None;
+        }
+        else if ((destTransform.name == "Resources Mine") || (destTransform.name == "Metro"))
+        {
+            baseController.GetArmyController().UpdateMines(destTransform);
+
+            // actualizar la referencia de la última mina seleccionada
+            currentMine = destTransform;
+
+            // actualizar la posición de la base o del almacén donde se dejarán los recursos
+            CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
+            float radius = resourceBuilding.GetRadious();
+            float alpha = Mathf.Atan2((currentMine.transform.position.z - resourceBuilding.transform.position.z),
+                (currentMine.transform.position.x - resourceBuilding.transform.position.x));
+            lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radius);
+            lastBasePos.z = resourceBuilding.transform.position.z + (Mathf.Sin(alpha) * radius);
+
+            /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.position = lastBasePos;
+            cube.renderer.material.color = Color.red;
+            cube.transform.parent = baseController.transform;*/
+
+            if (currentHarvestState == HarvestState.None)
+            {
+                // actualizar el estado de cosecha
+                if (resourcesLoaded == harvestCapacity)
+                {
+                    // si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
+                    Debug.Log("primero voy a dejar los recursos que tengo, y despues pa la mina!");
+                    currentHarvestState = HarvestState.ReturningToBase;
+                    GoTo(lastBasePos);
+                    nextHarvestState = HarvestState.GoingToMine;
+                }
+                else
+                {
+                    // todavía tiene capacidad para más recursos, se le envía a la mina
+                    Debug.Log("vamos pa la mina!");
+                    currentHarvestState = HarvestState.GoingToMine;
+                    GoTo(destiny);
+                    nextHarvestState = HarvestState.Choping;
+                }
+            }
+            else if (currentHarvestState == HarvestState.ReturningToBase)
+            {
+                // actualizar el estado de cosecha
+                if (resourcesLoaded == harvestCapacity)
+                {
+                    // si la unidad ya esta llena de recursos, vuelve a la base para dejarlos
+                    //currentHarvestState = HarvestState.ReturningToBase;
+                    GoTo(lastBasePos);
+                    nextHarvestState = HarvestState.GoingToMine;
+                }
+                else
+                {
+                    // todavía tiene capacidad para más recursos, se le envía a la mina
+                    currentHarvestState = HarvestState.GoingToMine;
+                    GoTo(destiny);
+                    nextHarvestState = HarvestState.Choping;
+                }
+            }
+            if (currentHarvestState == HarvestState.Healing)
+                peak.renderer.enabled = true;  
+        }
+         else if ((destTransform.name == "Army Base") || (destTransform.name == "The Stinky Squid"))
+         {
+             peak.renderer.enabled = true;
+             // vuelve a la base, si tiene recursos los deja
+             if (resourcesLoaded > 0)
+             {
+                 Debug.Log("vuelta a la base");
+                 currentHarvestState = HarvestState.ReturningToBase;
+                 //GoTo(lastBasePos);
+             }
+             else
+             {
+                 currentHarvestState = HarvestState.None;
+                 //GoTo(basePosition);
+             }
+             nextHarvestState = HarvestState.None;
+         }
+         else if (destTransform.GetComponent<ControllableCharacter>())
+         {
+             // se ha hecho click derecho en una unidad
+             ControllableCharacter unit = destTransform.GetComponent<ControllableCharacter>();
+             // se comprueba que la unidad sea del mismo equipo y que no tenga la vida máxima
+             if ((unit.teamNumber == teamNumber) && (unit.getLife() < unit.GetMaximunLife()))
+             {
+                 // la unidad es del mismo equipo
+                 Debug.Log("¡A curar!");
+                 // se actualiza la referencia a la unidad que se está curando
+                 currentCharacterHealed = unit;
+                 // cambia el estado para dirigirse a la unidad a curar
+                 currentHarvestState = HarvestState.GoingToHealUnit;
+                 nextHarvestState = HarvestState.Healing;
+                 //GoTo(destiny);
+             }
+         }
+        //base.RightClickOnSelected(destiny, destTransform);
     } // RightClickOnSelected
 
     public void FinishWaiting (Vector3 chopPosition, int chopIndex)
@@ -527,13 +700,9 @@ public class UnitHarvester : UnitController
             totalHarvest += resourcesLoaded;
             resourcesLoaded = 0;
 
-			// eliminamos el pack de minerales
-            if (actualMineralPack)
-            {
-                loaded = false;
-                Destroy(actualMineralPack);
-                actualMineralPack = null;
-            }
+			// escondemos el pack de minerales
+            loaded = false;
+            ShowMineralPack(false);
 
             if (nextHarvestState == HarvestState.GoingToMine)
             {
@@ -548,17 +717,26 @@ public class UnitHarvester : UnitController
         }
     }
 
+    // esconde (o muestra) todos los objetos que componen el pack de minerales
+    private void ShowMineralPack (bool enable=true)
+    {
+        Renderer[] renderers = actualMineralPack.GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+            r.enabled = enable;
+    }
+
     protected override void PlayAnimationCrossFade (string animationName)
     {
+        Debug.Log("animation: " + animationName);
         // si la unidad esta cargada de minerales cambian algunas animaciones
-        if (actualMineralPack)
+        if (loaded)
         {
             if (animationName == "Walk")
                 animation.CrossFade("Walk Loaded");
             else if (animationName == "Idle01")
                 animation.CrossFade("Idle Loaded");
             else if (animationName == "Idle Wait")
-                animation.CrossFade("Idle01");
+                animation.CrossFade("Idle Loaded");
             else
                 base.PlayAnimationCrossFade(animationName);
         }
@@ -569,14 +747,14 @@ public class UnitHarvester : UnitController
     protected override void PlayAnimationCrossFadeQueued (string animationName)
     {
         // si la unidad esta cargada de minerales cambian algunas animaciones
-        if (actualMineralPack)
+        if (loaded)
         {
             if (animationName == "Walk")
                 animation.CrossFadeQueued("Walk Loaded");
             else if (animationName == "Idle01")
                 animation.CrossFadeQueued("Idle Loaded");
             else if (animationName == "Idle Wait")
-                animation.CrossFadeQueued("Idle01");
+                animation.CrossFadeQueued("Idle Loaded");
             else
                 base.PlayAnimationCrossFadeQueued(animationName);
         }
