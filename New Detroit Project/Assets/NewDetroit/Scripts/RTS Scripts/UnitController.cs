@@ -154,7 +154,15 @@ public class UnitController : ControllableCharacter
         /*NavMeshAgent agent = GetComponent<NavMeshAgent>();
         if (agent.pathStatus == NavMeshPathStatus.PathComplete &&
             agent.remainingDistance <= destinyThreshold)*/
+
         Vector3 direction = destiny - transform.position;
+        /*Vector3 direction = new Vector3
+        (
+            destiny.x - transform.position.x,
+            0.0f,
+            destiny.z - transform.position.z
+        );*/
+
         if (direction.magnitude <= destinyThreshold)
         {
             currentState = State.Idle;
@@ -388,7 +396,7 @@ public class UnitController : ControllableCharacter
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
         ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
-        if (unit)
+        if (unit && teamNumber != unit.teamNumber)
         {
             // check if the unit is not attacking the selected enemy yet
             if (
@@ -396,14 +404,11 @@ public class UnitController : ControllableCharacter
                  (currentState == State.Attacking && lastEnemyAttacked != unit)
                )
             {
-                if (teamNumber != unit.teamNumber)
-                {
-                    if (destTransform.GetComponent<PhotonView>()!=null)
-                        attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
-                    GoTo(destiny);
-                    enemySelected = unit;
-                    currentState = State.GoingToAnEnemy;
-                }
+                if (destTransform.GetComponent<PhotonView>()!=null)
+                    attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
+                GoTo(destiny);
+                enemySelected = unit;
+                currentState = State.GoingToAnEnemy;
             }
         }
         else

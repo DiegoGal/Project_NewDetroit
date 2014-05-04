@@ -366,6 +366,100 @@ public class UnitHarvester : UnitController
         }
     } // Update*/
 
+    protected override void UpdateIdle ()
+    {
+        base.UpdateIdle();
+
+        switch (currentHarvestState)
+        {
+            case HarvestState.Choping:
+                actualHarvestTime += Time.deltaTime;
+                if (actualHarvestTime >= harvestTime)
+                {
+                    resourcesLoaded +=
+                        currentMine.GetComponent<CResources>().GetResources(amountOfResourcesPerHarvest);
+                    //Debug.Log("Chop! " + resourcesLoaded);
+                    if (resourcesLoaded >= harvestCapacity)
+                    {
+                        // la unidad se ha "llenado"
+                        Debug.Log("Estoy lleno, vamos pa la base");
+                        currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
+                        currentHarvestState = HarvestState.ReturningToBase;
+                        nextHarvestState = HarvestState.GoingToMine;
+
+                        // se muestra el pack de minerales
+                        loaded = true;
+                        ShowMineralPack(loaded);
+
+                        CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
+                        float radious = resourceBuilding.GetRadious();
+                        float alpha = Mathf.Atan2((currentMine.transform.position.z - resourceBuilding.transform.position.z),
+                           (currentMine.transform.position.x - resourceBuilding.transform.position.x));
+                        lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radious);
+                        lastBasePos.z = resourceBuilding.transform.position.z + (Mathf.Sin(alpha) * radious);
+
+                        GoTo(lastBasePos);
+                    }
+                    actualHarvestTime = 0;
+                }
+                break;
+
+            case HarvestState.Healing:
+                actualHealTime += Time.deltaTime;
+                float distItem = Vector3.Distance
+                (
+                    transform.position,
+                    currentCharacterHealed.transform.position
+                ) - currentCharacterHealed.GetRadius();
+
+                if ( (actualHealTime >= healTime) &&
+                     (currentCharacterHealed.getLife() < currentCharacterHealed.GetMaximunLife()))
+                {
+                    // primero se comprueba que la unidad a curar siga estando "a tiro"
+                    if (distItem <= minDistanceToHeal + 1.0f)
+                    {
+                        transform.LookAt(currentCharacterHealed.transform);
+                        if ( currentCharacterHealed.Heal(amountOfLifePerHeal) )
+                        {
+                            // el compañero ya ha sido curado
+                            Debug.Log("Unidad curada");
+                            currentHarvestState = HarvestState.None;
+                            nextHarvestState = HarvestState.None;
+
+                            currentCharacterHealed = null;
+
+                            // se vuelve a mostrar el pico
+                            peak.renderer.enabled = true;
+                        }
+
+                        // se actualiza el contador de "curación" propio
+                        totalHealed += amountOfLifePerHeal;
+
+                        actualHealTime = 0.0f;
+                    }
+                    else if (distItem < visionSphereRadius)
+                    {
+                        // la unidad a curar se ha alejado pero todavía esta a "vista"
+                        // cambia el estado para dirigirse a la unidad a curar
+                        currentHarvestState = HarvestState.GoingToHealUnit;
+                        GoTo(currentCharacterHealed.transform.position);
+                    }
+                    else
+                    {
+                        // la unidad a curar ha salido y no está a vista
+                        StopMoving();
+                        currentHarvestState = HarvestState.None;
+                        nextHarvestState = HarvestState.None;
+
+                        // se vuelve a mostrar el pico
+                        peak.renderer.enabled = true;
+                    }
+                }
+                break;
+        }
+
+    } // UpdateIdle
+
     protected override void UpdateGoingTo ()
     {
         base.UpdateGoingTo();
@@ -399,12 +493,8 @@ public class UnitHarvester : UnitController
                 break;
 
             case HarvestState.GoingToChopPosition:
-                //if (Vector3.Distance(transform.position, lastHarvestPos) < destinyThreshold)
                 if (currentState == State.Idle)
-                {
-                    // ha llegado a la posición de extracción
                     StartChoping();
-                }
                 break;
 
             case HarvestState.ReturningToBase:
@@ -413,8 +503,12 @@ public class UnitHarvester : UnitController
                 break;
 
             case HarvestState.GoingToHealUnit:
-                float distItem = Vector3.Distance(transform.position, currentCharacterHealed.transform.position)
-                    - currentCharacterHealed.GetRadius();
+                float distItem = Vector3.Distance
+                (
+                    transform.position,
+                    currentCharacterHealed.transform.position
+                ) - currentCharacterHealed.GetRadius();
+                // se ha llegado al sitio donde estaba el compañero
                 if (distItem <= minDistanceToHeal)
                 {
                     // se ha llegado al compañero a curar, se cambia el estado:
@@ -426,9 +520,12 @@ public class UnitHarvester : UnitController
                     // se reproduce la animación de curar
                     animation.CrossFade("Heal");
                 }
+                else if (distItem <= visionSphereRadius)
+                    GoTo(currentCharacterHealed.transform.position);
                 break;
         }
-    }
+
+    } // UpdateGoingTo
 
     public override void OnGUI ()
     {
@@ -440,8 +537,8 @@ public class UnitHarvester : UnitController
 
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
                 currentState.ToString());
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
-                currentHarvestState.ToString());
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 150, 50),
+                currentHarvestState.ToString() + " -> " + nextHarvestState.ToString());
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
                 "resources: " + resourcesLoaded);
         }
@@ -637,21 +734,18 @@ public class UnitHarvester : UnitController
             if (currentHarvestState == HarvestState.Healing)
                 peak.renderer.enabled = true;  
         }
-         else if ((destTransform.name == "Army Base") || (destTransform.name == "The Stinky Squid"))
-         {
+        else if ( (destTransform.name == "Army Base") || (destTransform.name == "The Stinky Squid") )
+        {
              peak.renderer.enabled = true;
              // vuelve a la base, si tiene recursos los deja
              if (resourcesLoaded > 0)
              {
                  Debug.Log("vuelta a la base");
                  currentHarvestState = HarvestState.ReturningToBase;
-                 //GoTo(lastBasePos);
              }
              else
-             {
                  currentHarvestState = HarvestState.None;
-                 //GoTo(basePosition);
-             }
+
              nextHarvestState = HarvestState.None;
          }
          else if (destTransform.GetComponent<ControllableCharacter>())
@@ -659,19 +753,17 @@ public class UnitHarvester : UnitController
              // se ha hecho click derecho en una unidad
              ControllableCharacter unit = destTransform.GetComponent<ControllableCharacter>();
              // se comprueba que la unidad sea del mismo equipo y que no tenga la vida máxima
-             if ((unit.teamNumber == teamNumber) && (unit.getLife() < unit.GetMaximunLife()))
+             if ( (unit.teamNumber == teamNumber) && (unit.getLife() < unit.GetMaximunLife()) )
              {
                  // la unidad es del mismo equipo
-                 Debug.Log("¡A curar!");
+                 Debug.Log("A curar!");
                  // se actualiza la referencia a la unidad que se está curando
                  currentCharacterHealed = unit;
                  // cambia el estado para dirigirse a la unidad a curar
                  currentHarvestState = HarvestState.GoingToHealUnit;
                  nextHarvestState = HarvestState.Healing;
-                 //GoTo(destiny);
              }
          }
-        //base.RightClickOnSelected(destiny, destTransform);
     } // RightClickOnSelected
 
     public void FinishWaiting (Vector3 chopPosition, int chopIndex)
@@ -679,6 +771,8 @@ public class UnitHarvester : UnitController
         lastHarvestPos = chopPosition;
         lastHarvestIndex = chopIndex;
         currentHarvestState = HarvestState.GoingToChopPosition;
+        nextHarvestState = HarvestState.Choping;
+
         base.GoTo(lastHarvestPos);
     }
 
@@ -740,7 +834,7 @@ public class UnitHarvester : UnitController
             else
                 base.PlayAnimationCrossFade(animationName);
         }
-        else
+        else if (currentHarvestState != HarvestState.Healing)
             base.PlayAnimationCrossFade(animationName);
     }
 
@@ -758,7 +852,7 @@ public class UnitHarvester : UnitController
             else
                 base.PlayAnimationCrossFadeQueued(animationName);
         }
-        else
+        else if (currentHarvestState != HarvestState.Healing)
             base.PlayAnimationCrossFadeQueued(animationName);
     }
 
