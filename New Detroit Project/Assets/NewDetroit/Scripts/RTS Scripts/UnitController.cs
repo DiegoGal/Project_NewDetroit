@@ -122,8 +122,7 @@ public class UnitController : ControllableCharacter
         timeToNextWaitAnimation -= Time.deltaTime;
         if (timeToNextWaitAnimation <= 0)
         {
-            PlayAnimationCrossFade("Idle Wait");
-            PlayAnimationCrossFadeQueued("Idle01");
+            PlayIdleWaitAnimation();
             timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
         }
     }
@@ -486,6 +485,12 @@ public class UnitController : ControllableCharacter
     protected virtual void PlayAnimationCrossFadeQueued (string animationName)
     {
         animation.CrossFadeQueued(animationName);
+    }
+
+    protected virtual void PlayIdleWaitAnimation ()
+    {
+        PlayAnimationCrossFade("Idle Wait");
+        PlayAnimationCrossFadeQueued("Idle01");
     }
 
     public virtual int GetUnitType ()

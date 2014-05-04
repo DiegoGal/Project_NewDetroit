@@ -535,12 +535,17 @@ public class UnitHarvester : UnitController
 
             GUI.skin.label.fontSize = 10;
 
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 200, 50),
+                currentState.ToString() + "\n" +
+                currentHarvestState.ToString() + " -> " + nextHarvestState.ToString() + "\n" +
+                "resources: " + resourcesLoaded );
+
+            /*GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
                 currentState.ToString());
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 150, 50),
+            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 200, 50),
                 currentHarvestState.ToString() + " -> " + nextHarvestState.ToString());
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
-                "resources: " + resourcesLoaded);
+                "resources: " + resourcesLoaded);*/
         }
     }
 
@@ -673,7 +678,7 @@ public class UnitHarvester : UnitController
             nextHarvestState = HarvestState.None;
             currentHarvestState = HarvestState.None;
         }
-        else if ((destTransform.name == "Resources Mine") || (destTransform.name == "Metro"))
+        else if ( (destTransform.name == "Resources Mine") || (destTransform.name == "Metro") )
         {
             baseController.GetArmyController().UpdateMines(destTransform);
 
@@ -734,7 +739,7 @@ public class UnitHarvester : UnitController
             if (currentHarvestState == HarvestState.Healing)
                 peak.renderer.enabled = true;  
         }
-        else if ( (destTransform.name == "Army Base") || (destTransform.name == "The Stinky Squid") )
+        else if ( (destTransform.name == ("Army Base Team" + teamNumber)) || (destTransform.name == "The Stinky Squid") )
         {
              peak.renderer.enabled = true;
              // vuelve a la base, si tiene recursos los deja
@@ -747,6 +752,8 @@ public class UnitHarvester : UnitController
                  currentHarvestState = HarvestState.None;
 
              nextHarvestState = HarvestState.None;
+
+             GoTo(lastBasePos);
          }
          else if (destTransform.GetComponent<ControllableCharacter>())
          {
@@ -807,7 +814,11 @@ public class UnitHarvester : UnitController
                 nextHarvestState = HarvestState.Choping;
             }
             else
+            {
                 PlayAnimationCrossFade("Idle01");
+                currentHarvestState = HarvestState.None;
+                nextHarvestState = HarvestState.None;
+            }
         }
     }
 
@@ -834,7 +845,7 @@ public class UnitHarvester : UnitController
             else
                 base.PlayAnimationCrossFade(animationName);
         }
-        else if (currentHarvestState != HarvestState.Healing)
+        else
             base.PlayAnimationCrossFade(animationName);
     }
 
@@ -852,8 +863,15 @@ public class UnitHarvester : UnitController
             else
                 base.PlayAnimationCrossFadeQueued(animationName);
         }
-        else if (currentHarvestState != HarvestState.Healing)
+        else
             base.PlayAnimationCrossFadeQueued(animationName);
+    }
+
+    protected override void PlayIdleWaitAnimation()
+    {
+        // solo se reproduce la animación de espera si el estado es None
+        if (currentHarvestState == HarvestState.None)
+            base.PlayIdleWaitAnimation();
     }
 
     public override int GetUnitType ()
