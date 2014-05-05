@@ -29,7 +29,7 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
 		else
 		{           
 			selectableScript.enabled = false;
-			heavyScript.enabled = false;
+			heavyScript.enabled = true;
             remoteScript.enabled = true;
 			fogOfWarScript.enabled = false;
 			navMes.enabled = false;
@@ -51,9 +51,6 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
             stream.SendNext(script.currentState);
             stream.SendNext(script.attack2Selected);
             stream.SendNext(script.getLife());
-            stream.SendNext(script.attackedUnitViewID);
-            stream.SendNext(script.lastAttackedUnitViewID);
-            stream.SendNext(script.zoneAttackMode);
 		}
 		else
 		{
@@ -65,9 +62,6 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
             unitState = (UnitController.State)stream.ReceiveNext();
             attack2Selected = (bool)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
-            attackedUnitViewID = (int)stream.ReceiveNext();
-            lastAttackedUnitViewID = (int)stream.ReceiveNext();
-            zoneAttackMode = (bool)stream.ReceiveNext();
 		}
 	}
 	
@@ -78,9 +72,6 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
     private UnitController.State unitState; // new State of Unit
     private bool attack2Selected; //to change the current type of attack
     private float currentLife; // for damage
-    private int attackedUnitViewID; // to see the unit we are attacking
-    private int lastAttackedUnitViewID; //to see the last unit we are attacking
-    private bool zoneAttackMode; // check if the zoneAttackMode is activated
 	
 	void Update()
 	{
@@ -91,12 +82,9 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
             UnitHeavyArtilleryRemote script = GetComponent<UnitHeavyArtilleryRemote>();
             script.currentDeployState = deployState;
+            script.currentState = unitState;
             script.currentArtilleryState = state;
             script.attack2Selected = attack2Selected;
-            script.currentState = unitState;
-            script.attackedUnitViewID = attackedUnitViewID;
-            script.lastAttackedUnitViewID = lastAttackedUnitViewID;
-            script.zoneAttackMode = zoneAttackMode;
 		}
 	}
 	
