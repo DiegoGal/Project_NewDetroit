@@ -13,22 +13,34 @@ public class UnitHeavyArtilleryRemote : MonoBehaviour
     private float timeToNextWaitAnimation;
     // indicates if the second attack is selected
     public bool attack2Selected = false;
-    // to instantiate blood particles
-    public GameObject bloodParticles;
+    // dummys
+    public Transform dummyLeftWeapon;
+    public Transform dummyRightWeapon;
+    public Transform dummyLeftWeaponGunBarrel;
+    public Transform dummyRightWeaponGunBarrel;
 
-    public CLife life;
+    public GameObject frontWeapon, backWeapon;
 
-    //TODO Animar según el estado actual
-    public void Start()
+    public bool launchRocket = false; // true if the rocket is launch
+    public Vector3 rocketDir; //direction of the rocket
+    public GameObject rocket;
+    public float attackPower2 = 40.0f;
+    private float attackCadenceAux = 0.0f;
+    // Animar según el estado actual
+    public void Awake()
     {
-        if (life == null)
-        {
-            Debug.Log("No hay Clife en el atributo life en UnitBasicArtilleryRemote");
-        }
-        if (bloodParticles == null)
-        {
-            Debug.Log("No hay Gameobject en el atributo bloodParticles en UnitBasicArtilleryRemote");
-        }
+        // Por si no se han establecido las referencias a los dummys del modelo
+        // en el editor de Unity las buscamos ahora:
+        if (dummyLeftWeapon == null)
+            dummyLeftWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/Bip002 Spine1/Bip002 Neck/Bip002 R Clavicle/Bip002 R UpperArm/Bip002 R Forearm/Bip002 R Hand/arma mano derecha");
+        if (dummyLeftWeaponGunBarrel == null)
+            dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A/GunBarrelLeft");
+        if (dummyRightWeapon == null)
+            dummyRightWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/mortero espalda");
+        if (dummyLeftWeapon)
+            frontWeapon = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A").gameObject;
+        if (dummyRightWeapon)
+            backWeapon = dummyRightWeapon.FindChild("GoblinHeavyArtilleryWeapon01_B").gameObject;
     }
 
     public void changeAttack()
@@ -38,6 +50,7 @@ public class UnitHeavyArtilleryRemote : MonoBehaviour
 
     public void Update()
     {
+
         switch (currentState)
         {
             case UnitController.State.Idle: UpdateIdle(); break;
@@ -48,17 +61,74 @@ public class UnitHeavyArtilleryRemote : MonoBehaviour
             case UnitController.State.Dying: UpdateDying(); break;
             case UnitController.State.AscendingToHeaven: UpdateAscendingToHeaven(); break;
         }
+
+        switch (currentDeployState)
+        {
+            case UnitHeavyArtillery.DeployState.Undeployed:
+                break;
+            case UnitHeavyArtillery.DeployState.Deploying:
+                animation.CrossFade("Deployment-prepare");
+                break;
+            case UnitHeavyArtillery.DeployState.Deployed:
+                if (currentState != UnitController.State.Attacking)
+                {
+                    animation.CrossFadeQueued("Deployment-iddle");
+                }
+                else
+                {
+                    if (attackCadenceAux >0)
+                        attackCadenceAux -= Time.deltaTime;
+                    if (launchRocket)
+                    {
+                        
+                        if (attackCadenceAux <= 0)
+                        {
+                            animation.Play("Deployment-Shot");
+
+                            // Instanciate a new Rocket
+                            GameObject newRocket = Instantiate
+                            (
+                                rocket,
+                                dummyLeftWeaponGunBarrel.transform.position,
+                                new Quaternion()
+                            ) as GameObject;
+                            newRocket.rigidbody.isKinematic = false;
+                            newRocket.transform.name = "Rocket";
+                            newRocket.transform.rotation = dummyLeftWeaponGunBarrel.transform.rotation;
+                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetOwner(this.gameObject);
+                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDamage((int)attackPower2);
+                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDestroyTime(2.5f);
+
+                            newRocket.transform.parent = null;
+                            newRocket.rigidbody.AddForce
+                            (
+                                rocketDir,
+                                ForceMode.Impulse
+                            );
+                            attackCadenceAux = 2.0f;
+                        }
+                    }
+                }
+                break;
+            case UnitHeavyArtillery.DeployState.Undeploying:
+                animation.CrossFade("Deployment-Up");
+                animation.CrossFadeQueued("Idle01");
+                break;
+        }
     }
 
     private void UpdateIdle()
     {
         // plays the waiting idle animation
-        timeToNextWaitAnimation -= Time.deltaTime;
-        if (timeToNextWaitAnimation <= 0)
+        if (currentDeployState == UnitHeavyArtillery.DeployState.Undeployed)
         {
-            PlayAnimationCrossFade("Idle Wait");
-            PlayAnimationCrossFadeQueued("Idle01");
-            timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
+            timeToNextWaitAnimation -= Time.deltaTime;
+            if (timeToNextWaitAnimation <= 0)
+            {
+                PlayAnimationCrossFade("Idle Wait");
+                PlayAnimationCrossFadeQueued("Idle01");
+                timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
+            }
         }
     }
 
@@ -78,14 +148,14 @@ public class UnitHeavyArtilleryRemote : MonoBehaviour
 
     private void UpdateAttacking()
     {
-        if (currentArtilleryState == UnitArtillery.ArtilleryState.Attacking1 && attack2Selected == false)
+        if (attack2Selected == false)
         {
-            animation.CrossFade("Attack1");
+            PlayAnimationCrossFade("Attack1");
         }
         else
-            if (currentArtilleryState == UnitArtillery.ArtilleryState.Attacking2 && attack2Selected == true)
+            if (attack2Selected == true)
             {
-                animation.CrossFade("Attack2");
+                PlayAnimationCrossFade("Attack2");
             }
     }
 
@@ -96,46 +166,13 @@ public class UnitHeavyArtilleryRemote : MonoBehaviour
 
     private void UpdateDying()
     {
-        //Do nothing
+        PlayAnimationCrossFade("Die");
     }
 
     private void UpdateAscendingToHeaven()
     {
         //Do nothing
     }
-
-    public bool Damage(float damage, char type)
-    {
-        if (life != null)
-        {
-            life.Damage(damage, type);
-        }
-        // blood!
-        GameObject blood = (GameObject)Instantiate(bloodParticles,
-            transform.position + transform.forward, transform.rotation);
-        Destroy(blood, 0.4f);
-
-        if (life.currentLife <= 0)
-        {
-            // the unit DIES, set the special material
-            UnitController mineController = GetComponent<UnitController>();
-            if (mineController != null)
-            {
-                mineController.setDyingMaterial();
-            }
-            // play the dead animation             
-            PlayAnimationCrossFade("Die");
-
-            // delete the Nave Mesh Agent for elevate the model
-            Destroy(GetComponent<NavMeshAgent>());
-
-            return true;
-        }
-        else
-            return false;
-    }
-    
-
 
     protected virtual void PlayAnimation(string animationName)
     {

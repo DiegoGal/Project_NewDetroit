@@ -25,6 +25,10 @@ public class UnitHeavyArtillery : UnitArtillery
     public bool zoneAttackMode = false;
     Vector3 zoneAttack;
 
+    // Sents if a rocket has been launched
+    public bool launchRocket = false;
+    public Vector3 rocketDir;
+
     public enum DeployState
     {
         Undeployed,	// sin desplegar
@@ -158,9 +162,10 @@ public class UnitHeavyArtillery : UnitArtillery
                 {
                     if (attackCadenceAux <= 0)
                     {
+                        launchRocket = true;
                         animation.Play("Deployment-Shot");
-                         if (enemySelected)
-                             transform.LookAt(enemySelected.transform);
+                        if (enemySelected)
+                            transform.LookAt(enemySelected.transform);
 
                         // Instanciate a new Rocket
                         Debug.Log("Dummy position: " + dummyLeftWeaponGunBarrel.transform.position);
@@ -186,16 +191,17 @@ public class UnitHeavyArtillery : UnitArtillery
                         else
                             dir = enemySelected.transform.position - newRocket.transform.position;
                         dir = dir.normalized;
-                        Vector3 dir1 = transform.forward.normalized;
-                        newRocket.transform.parent = null;
-                        newRocket.rigidbody.AddForce
-                        (
-                            new Vector3
+                        rocketDir = new Vector3
                             (
                                 dir.x * 8.0f * (enemyDist / maxAttackDistance),
                                 11,
                                 dir.z * 8.0f * (enemyDist / maxAttackDistance)
-                            ),
+                            );
+                        //Vector3 dir1 = transform.forward.normalized;
+                        newRocket.transform.parent = null;
+                        newRocket.rigidbody.AddForce
+                        (
+                            rocketDir,
                             ForceMode.Impulse
                         );
 
@@ -214,6 +220,7 @@ public class UnitHeavyArtillery : UnitArtillery
                     enemySelected = null;
                     currentState = State.Idle;
                     attackCadenceAux = 2f;
+                    launchRocket = false; 
                     //PlayAnimationCrossFade("Idle01");
                 }
             }
@@ -223,6 +230,7 @@ public class UnitHeavyArtillery : UnitArtillery
                 currentState = State.Idle;
                 //PlayAnimationCrossFade("Idle01");
                 attackCadenceAux = 2f;
+                launchRocket = false; 
             }
         }
     }

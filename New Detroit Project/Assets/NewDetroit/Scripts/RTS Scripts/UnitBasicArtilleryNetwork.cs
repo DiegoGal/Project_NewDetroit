@@ -29,7 +29,7 @@ public class UnitBasicArtilleryNetwork : Photon.MonoBehaviour {
 		else
 		{           
 			selectableScript.enabled = false;
-			soldierScript.enabled = true;
+			soldierScript.enabled = false;
             remoteScript.enabled = true;
 			fogOfWarScript.enabled = false;
 			navMes.enabled = false;

@@ -13,22 +13,10 @@ public class UnitBasicArtilleryRemote : MonoBehaviour
     private float timeToNextWaitAnimation;
     // indicates if the second attack is selected
     public bool attack2Selected = false;
-    // to instantiate blood particles
-    public GameObject bloodParticles;
-
-    public CLife life;
 
     //TODO Animar según el estado actual
     public void Start()
     {
-        if (life == null)
-        {
-            Debug.Log("No hay Clife en el atributo life en UnitBasicArtilleryRemote");
-        }
-        if (bloodParticles == null)
-        {
-            Debug.Log("No hay Gameobject en el atributo bloodParticles en UnitBasicArtilleryRemote");
-        }
     }
 
     public void changeAttack()
@@ -102,37 +90,6 @@ public class UnitBasicArtilleryRemote : MonoBehaviour
     private void UpdateAscendingToHeaven()
     {
         //Do nothing
-    }
-
-    public bool Damage(float damage, char type)
-    {
-        if (life!=null)
-        {
-            life.Damage(damage, type);
-        }
-        // blood!
-        GameObject blood = (GameObject)Instantiate(bloodParticles,
-            transform.position + transform.forward, transform.rotation);
-        Destroy(blood, 0.4f);
-
-        if (life.currentLife <= 0)
-        {
-            // the unit DIES, set the special material
-            UnitController mineController = GetComponent<UnitController>();
-            if (mineController != null)
-            {
-                mineController.setDyingMaterial();
-            }
-            // play the dead animation             
-            PlayAnimationCrossFade("Die");
-
-            // delete the Nave Mesh Agent for elevate the model
-            Destroy(GetComponent<NavMeshAgent>());
-
-            return true;
-        }
-        else
-            return false;
     }
 
     protected virtual void PlayAnimation(string animationName)
