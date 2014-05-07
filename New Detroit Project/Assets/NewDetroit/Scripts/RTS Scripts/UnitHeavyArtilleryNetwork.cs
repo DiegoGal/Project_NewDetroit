@@ -8,6 +8,7 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
     UnitHeavyArtilleryRemote remoteScript;
 	FogOfWarUnit fogOfWarScript;
 	NavMeshAgent navMes;
+    ControllableCharacter ctrlScript; // Needed for the distance measurer tool
 	
 	void Awake()
 	{

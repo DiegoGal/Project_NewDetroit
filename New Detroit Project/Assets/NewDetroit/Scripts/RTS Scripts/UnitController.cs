@@ -53,10 +53,6 @@ public class UnitController : ControllableCharacter
     protected ControllableCharacter lastEnemyAttacked;
     protected ControllableCharacter enemySelected;
 
-    // for damaging the other players
-    public int attackedUnitViewID = 0;
-    public int lastAttackedUnitViewID = 0;
-
     // Cool Down for detecting less time the collision with particles
     private float CDParticleCollision;
 
@@ -215,8 +211,6 @@ public class UnitController : ControllableCharacter
     protected virtual void UpdateAttacking ()
     {
         attackCadenceAux -= Time.deltaTime;
-        if (!isMine && attackedUnitViewID != 0)
-            enemySelected = PhotonView.Find(attackedUnitViewID).gameObject.GetComponent<ControllableCharacter>();
 
         float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
         if (enemySelected)
@@ -233,7 +227,6 @@ public class UnitController : ControllableCharacter
                     {
                         // the enemy has die
                         enemySelected = null;
-                        attackedUnitViewID = 0;
                         currentState = State.Idle;
 
                         PlayAnimationCrossFade("Idle01");
@@ -255,7 +248,6 @@ public class UnitController : ControllableCharacter
             else
             {
                 enemySelected = null;
-                attackedUnitViewID = 0;
                 currentState = State.Idle;
 
                 PlayAnimationCrossFade("Idle01");
@@ -264,7 +256,6 @@ public class UnitController : ControllableCharacter
         else // the enemy is no longer alive
         {
             enemySelected = null;
-            attackedUnitViewID = 0;
             currentState = State.Idle;
 
             PlayAnimationCrossFade("Idle01");
@@ -403,8 +394,6 @@ public class UnitController : ControllableCharacter
                  (currentState == State.Attacking && lastEnemyAttacked != unit)
                )
             {
-                if (destTransform.GetComponent<PhotonView>()!=null)
-                    attackedUnitViewID = destTransform.GetComponent<PhotonView>().viewID;
                 GoTo(destiny);
                 enemySelected = unit;
                 currentState = State.GoingToAnEnemy;
@@ -534,9 +523,5 @@ public class UnitController : ControllableCharacter
         GoTo(destiny);
     }
 
-	//DistanceMeasureTool - Network
-	private void network()
-	{
-		DistanceMeasurerTool.InsertUnit(GetComponent<ControllableCharacter>());
-	}
+
 }

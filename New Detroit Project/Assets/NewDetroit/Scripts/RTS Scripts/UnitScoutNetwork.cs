@@ -50,7 +50,6 @@ public class UnitScoutNetwork: Photon.MonoBehaviour
             stream.SendNext(script.currentScoutState);
             stream.SendNext(script.currentState);
             stream.SendNext(script.getLife());
-            stream.SendNext(script.attackedUnitViewID);
         }
         else
         {
@@ -60,7 +59,6 @@ public class UnitScoutNetwork: Photon.MonoBehaviour
             state = (UnitScout.ScoutState)stream.ReceiveNext();
             unitState = (UnitController.State)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
-            attackedUnitViewID = (int)stream.ReceiveNext();
         }
     }
 
@@ -69,7 +67,6 @@ public class UnitScoutNetwork: Photon.MonoBehaviour
     private UnitScout.ScoutState state; // new State of the HarvesterUnit
     private UnitHarvester.State unitState; // new State of Unit
     private float currentLife; // for damage
-    private int attackedUnitViewID; // to see the unit we are attacking
 
     void Update()
     {
@@ -81,7 +78,6 @@ public class UnitScoutNetwork: Photon.MonoBehaviour
             UnitScoutRemote script = GetComponent<UnitScoutRemote>();
             script.currentScoutState = state;
             script.currentState = unitState;
-            script.attackedUnitViewID = attackedUnitViewID;
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UnitHeavyArtilleryRemote : MonoBehaviour
+public class UnitHeavyArtilleryRemote : ControllableCharacter
 {
 
     public UnitArtillery.ArtilleryState currentArtilleryState = UnitArtillery.ArtilleryState.None;
@@ -41,6 +41,11 @@ public class UnitHeavyArtilleryRemote : MonoBehaviour
             frontWeapon = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A").gameObject;
         if (dummyRightWeapon)
             backWeapon = dummyRightWeapon.FindChild("GoblinHeavyArtilleryWeapon01_B").gameObject;
+    }
+
+    public void Start()
+    {
+        network();
     }
 
     public void changeAttack()
@@ -221,5 +226,4 @@ public class UnitHeavyArtilleryRemote : MonoBehaviour
         else
             PlayAnimationCrossFadeQueued2(animationName);
     }
-
 }

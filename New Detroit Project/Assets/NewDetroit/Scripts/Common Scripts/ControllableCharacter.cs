@@ -112,4 +112,10 @@ public class ControllableCharacter : MonoBehaviour
         return radius;
     }
 
+    //DistanceMeasureTool - Network
+    protected void network()
+    {
+        DistanceMeasurerTool.InsertUnit(GetComponent<ControllableCharacter>());
+    }
+
 } // class ControllableCharacter

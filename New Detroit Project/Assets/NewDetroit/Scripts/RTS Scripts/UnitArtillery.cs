@@ -533,14 +533,7 @@ public class UnitArtillery : UnitController
                 //Debug.Log("LE HE DADO!!!");
                 // rotate the unit in the enemy direction
                 transform.LookAt(enemy.transform.position);
-                if (!isMine && lastAttackedUnitViewID != 0)
-                    lastEnemyAttacked = PhotonView.Find(lastAttackedUnitViewID).gameObject.GetComponent<ControllableCharacter>();
-                else
-                {
-                    lastEnemyAttacked = enemy;
-                    if (enemy.GetComponent<PhotonView>()!= null)
-                        lastAttackedUnitViewID = enemy.GetComponent<PhotonView>().viewID;
-                }
+                lastEnemyAttacked = enemy;
                 alertHitTimerAux = alertHitTimer;
                 // the unit stops moving
                 StopMoving();
