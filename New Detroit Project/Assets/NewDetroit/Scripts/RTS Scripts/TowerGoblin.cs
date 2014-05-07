@@ -105,6 +105,11 @@ public class TowerGoblin : Tower
         model.renderer.material = activeMaterial;
     }
 
+    public void SetBaseController(BaseController baseController)
+    {
+        this.baseController = baseController;
+    }
+    
 	// Update is called once per frame
 	public override void Update () 
     {

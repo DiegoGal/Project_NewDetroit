@@ -80,9 +80,14 @@ public class Warehouse : CResourceBuilding
         return false;
     }
 
-        public void SetActiveMaterial()
+    public void SetActiveMaterial()
     {
         renderer.material = activeMaterial;
+    }
+
+    public void SetBaseController(BaseController baseController)
+    {
+        this.baseController = baseController;
     }
 
 	// Update is called once per frame
