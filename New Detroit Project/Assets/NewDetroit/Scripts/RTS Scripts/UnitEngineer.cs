@@ -597,6 +597,7 @@ public class UnitEngineer : UnitController
                     as GameObject; //rotation (-90, -180, 0)
                 towerGoblin.name = towerGoblin.name.Replace("(Clone)", "");
                 towerGoblin.GetComponent<TowerGoblin>().SetTeamNumber(this.teamNumber);
+                towerGoblin.GetComponent<TowerGoblin>().SetBaseController(baseController);
                 newTGConstruct = true;
                 break;
             case 1:
@@ -604,6 +605,7 @@ public class UnitEngineer : UnitController
                     as GameObject; //rotation (-90, -180, 0)
                 warehouse.name = warehouse.name.Replace("(Clone)", "");
                 warehouse.GetComponent<Warehouse>().SetTeamNumber(this.teamNumber);
+                warehouse.GetComponent<Warehouse>().SetBaseController(baseController);
                 newWConstruct = true;
                 break;
         }
