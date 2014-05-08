@@ -62,13 +62,19 @@ public class CameraMOBAController : MonoBehaviour
 		y = rectangleLifeManaAdrenSkills.y + rectangleLifeManaAdrenSkills.height/2;
 		width = rectangleLifeManaAdrenSkills.width*positiveLife;
 		height = rectangleLifeManaAdrenSkills.height/6;
-		rectangleLife = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, width - 6*positiveLife, height - 6);
+		float 	widthRect = width - 6 * positiveLife,
+				heightRect = height - 6;
+		rectangleLife = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, widthRect, heightRect);
 		y = y + height;
 		width = rectangleLifeManaAdrenSkills.width*positiveAdren;
-		rectangleAdren = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, width - 6*positiveAdren, height - 6);
+		widthRect = width - 6 * positiveAdren;
+		heightRect = height - 6;
+		rectangleAdren = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, widthRect, heightRect);
 		y = y + height;
 		width = rectangleLifeManaAdrenSkills.width*positiveMana;
-		rectangleMana = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, width - 6*positiveMana, height - 6);
+		widthRect = width - 6 * positiveMana;
+		heightRect = height - 6;
+		rectangleMana = new Rect(rectangleLifeManaAdrenSkills.x + 3, y + 3, widthRect, heightRect);
 		// Labels for life, adrenaline and mana
 		x = rectangleLifeManaAdrenSkills.x + rectangleLifeManaAdrenSkills.width/2;
 		rectangleLabelLife = new Rect(x - 40, rectangleLife.y, 80, rectangleLife.height);
@@ -77,11 +83,13 @@ public class CameraMOBAController : MonoBehaviour
 		// Skills
 		width = rectangleLifeManaAdrenSkills.width/3;
 		height = rectangleLifeManaAdrenSkills.height/2;
-		rectangleButtonSkill1 = new Rect(rectangleLifeManaAdrenSkills.x + 3, rectangleLifeManaAdrenSkills.y + 3, width - 6, height - 6);
+		widthRect = width - 6;
+		heightRect = height - 6;
+		rectangleButtonSkill1 = new Rect(rectangleLifeManaAdrenSkills.x + 3, rectangleLifeManaAdrenSkills.y + 3, widthRect, heightRect);
 		x = rectangleLifeManaAdrenSkills.x + width;
-		rectangleButtonSkill2 = new Rect(x + 3, rectangleLifeManaAdrenSkills.y + 3, width - 6, height - 6);
+		rectangleButtonSkill2 = new Rect(x + 3, rectangleLifeManaAdrenSkills.y + 3, widthRect, heightRect);
 		x = x + width;
-		rectangleButtonSkill3 = new Rect(x + 3, rectangleLifeManaAdrenSkills.y + 3, width - 6, height - 6);
+		rectangleButtonSkill3 = new Rect(x + 3, rectangleLifeManaAdrenSkills.y + 3, widthRect, heightRect);
 		// Select skills
 		y = rectangleLifeManaAdrenSkills.y - height;
 		rectangleSelectSkill1 = new Rect(rectangleButtonSkill1.x + 3, y + 3, width - 6, height - 6);
