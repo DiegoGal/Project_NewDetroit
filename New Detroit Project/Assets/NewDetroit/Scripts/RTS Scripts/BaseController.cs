@@ -68,8 +68,10 @@ public class BaseController : CResourceBuilding
             colliderSize = transform.GetComponent<BoxCollider>().size.x;
         else if (transform.GetComponent<CapsuleCollider>())
             colliderSize = transform.GetComponent<CapsuleCollider>().radius;
-        else
+        else if (transform.GetComponent<SphereCollider>())
             colliderSize = transform.GetComponent<SphereCollider>().radius;
+        else
+            colliderSize = 10.0f;
 
         for (int i = 0; i < numEngineerPositions; i++)
         {

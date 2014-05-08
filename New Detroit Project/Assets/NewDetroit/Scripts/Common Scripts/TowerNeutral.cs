@@ -51,11 +51,11 @@ public class TowerNeutral : Tower
 			Vector3 pos = new Vector3
 			(
 				center.x +
-				    (transform.GetComponent<BoxCollider>().size.x + despPosition) *
+				    (transform.GetComponent<CapsuleCollider>().radius + despPosition) *
                      Mathf.Sin(i * (twoPi / numEngineerPositions)),
 				0,
 				center.z +
-				    (transform.GetComponent<BoxCollider>().size.x + despPosition) *
+                    (transform.GetComponent<CapsuleCollider>().radius + despPosition) *
                      Mathf.Cos(i * (twoPi / numEngineerPositions))
 			);
 			engineerPositions[i] = pos;
