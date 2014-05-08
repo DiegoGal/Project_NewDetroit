@@ -271,14 +271,20 @@ public class Minimap : MonoBehaviour
         if (unit.teamNumber == teamNumber)
         {
             int pos = myArmy.IndexOf(unit);
-            myArmy.Remove(unit);
-            myUnitList.RemoveAt(pos);
+            if (pos != -1)
+            {
+                myArmy.Remove(unit);
+                myUnitList.RemoveAt(pos);
+            }
         }
         else
         {
             int pos = enemyArmy.IndexOf(unit);
-            enemyArmy.Remove(unit);
-            enemyUnitList.RemoveAt(pos);
+            if (pos != -1)
+            {
+                enemyArmy.Remove(unit);
+                enemyUnitList.RemoveAt(pos);
+            }
         }
 
     }

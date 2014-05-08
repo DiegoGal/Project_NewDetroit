@@ -439,6 +439,8 @@ public class UnitController : ControllableCharacter
                 // delete the Nave Mesh Agent for elevate the model
                 Destroy(GetComponent<NavMeshAgent>());
 
+                Minimap.DeleteUnit(this);
+
                 return true;
             }
             else

@@ -82,7 +82,7 @@ public class UnitEngineer : UnitController
         attackCadence = 3.2f;
         construct = conquest = false;
     }
-	
+	/*
 	// Update is called once per frame
 	public override void Update () 
 	{
@@ -360,6 +360,293 @@ public class UnitEngineer : UnitController
         } // Switch
 
 	} // Update
+    */
+    protected override void UpdateIdle()
+    {
+        base.UpdateIdle();
+
+        // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
+        if (Input.anyKeyDown && (newTGConstruct || newWConstruct) && Input.GetMouseButtonDown(0) &&
+            (currentEngineerState != EngineerState.GoingToConstructItem) && (currentEngineerState != EngineerState.GoingToConstructPosition) &&
+            (currentState != State.Dying) && (currentState != State.AscendingToHeaven))
+        {
+            newTGConstruct = newWConstruct = false;
+            Destroy(towerGoblin);
+            Destroy(warehouse);
+        }
+        if (life.currentLife <= 0.0f)
+        {
+            LeaveQueues();
+            currentEngineerState = EngineerState.None;
+        }
+        switch (currentEngineerState)
+        {
+            
+            case EngineerState.Waiting:
+                animation.Play("Idle Wait");
+
+                break;
+            case EngineerState.Repairing:
+                animation.Play("Build");
+                actualEngineerTime += Time.deltaTime;
+                bool repaired = false;
+                if (actualEngineerTime >= engineerTime)
+                {
+                    repaired = currentItem.GetComponent<BuildingController>().Repair(amountPerAction);
+                    // The item has been repaired
+                    if (repaired || currentItem.GetComponent<BuildingController>().HasTotalLife())
+                    {
+                        Debug.Log("Torre Reparada");
+                        currentEngineerState = EngineerState.None;
+                        animation.Play("Idle01");
+
+                        // We destroy the Hammer
+                        Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+                        if (hammer1 != null)
+                            GameObject.Destroy(hammer1.gameObject);
+                    }
+                    actualEngineerTime = 0;
+                }
+                break;
+            case EngineerState.Conquering:
+                animation.Play("Capture");
+                actualEngineerTime += Time.deltaTime;
+                conquest = false;
+                if (actualEngineerTime >= engineerTime)
+                {
+                    conquest = currentItem.GetComponent<TowerNeutral>().Conquest(amountPerAction, teamNumber);
+                    // The item has been conquered
+                    if (conquest || !currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral())
+                    {
+                        Debug.Log("Torre Conquistada!");
+                        currentEngineerState = EngineerState.None;
+                        animation.Play("Idle01");
+                        Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
+                        // We destroy the Laptop
+                        Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
+                        if (laptop1 != null)
+                            GameObject.Destroy(laptop1.gameObject);
+                    }
+                    actualEngineerTime = 0;
+                }
+                break;
+            case EngineerState.Constructing:
+                animation.Play("Build");
+                actualEngineerTime += Time.deltaTime;
+                construct = false;
+                if (currentItem.GetComponent<TowerGoblin>() != null)
+                {
+                    if (actualEngineerTime >= engineerTime)
+                    {
+                        construct = currentItem.GetComponent<TowerGoblin>().Construct(amountPerAction);
+                        // The item has been constructed
+                        if (construct)
+                        {
+                            Debug.Log("Torre construida!");
+                            currentEngineerState = EngineerState.None;
+                            currentItem.GetComponent<TowerGoblin>().SetActiveMaterial();
+                            animation.Play("Idle01");
+
+                            // We destroy the Hammer
+                            Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+                            if (hammer1 != null)
+                                GameObject.Destroy(hammer1.gameObject);
+                        }
+                        actualEngineerTime = 0;
+                    }
+                }
+                else if (currentItem.GetComponent<Warehouse>() != null)
+                {
+                    if (actualEngineerTime >= engineerTime)
+                    {
+                        construct = currentItem.GetComponent<Warehouse>().Construct(amountPerAction);
+                        // The item has been constructed
+                        if (construct)
+                        {
+                            Debug.Log("Almacen construido!");
+                            currentEngineerState = EngineerState.None;
+                            currentItem.GetComponent<Warehouse>().SetActiveMaterial();
+                            animation.Play("Idle01");
+
+                            // We destroy the Hammer
+                            Transform hammer1 = dummyHand.transform.FindChild("Hammer");
+                            if (hammer1 != null)
+                                GameObject.Destroy(hammer1.gameObject);
+
+                            baseController.GetArmyController().AddWarehouse(currentItem.GetComponent<CResourceBuilding>());
+                        }
+                        actualEngineerTime = 0;
+                    }
+                }
+                break;
+        } // Switch
+    }
+
+    protected override void UpdateGoingTo()
+    {
+        base.UpdateGoingTo();
+
+        // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
+        if (Input.anyKeyDown && (newTGConstruct || newWConstruct) && Input.GetMouseButtonDown(0) && 
+            (currentEngineerState != EngineerState.GoingToConstructItem) && (currentEngineerState != EngineerState.GoingToConstructPosition) &&
+            (currentState != State.Dying) && (currentState != State.AscendingToHeaven))
+        {
+            newTGConstruct = newWConstruct = false;
+            Destroy(towerGoblin);
+            Destroy(warehouse);
+        }
+        if (life.currentLife <= 0.0f)
+        {
+            LeaveQueues();
+            currentEngineerState = EngineerState.None;
+        }
+        switch (currentEngineerState)
+        {
+            case EngineerState.GoingToRepairItem:
+                // if the distance to the item is less than distanceToWait we ask if there is gap
+                float distItem = Vector3.Distance(transform.position, currentItem.position);
+                float distToWait = currentItem.GetComponent<BuildingController>().distanceToWait;
+                if (distItem < 10.0f)
+                {
+                    if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
+                            ref lastEngineerPos,
+                            ref lastEngineerIndex,
+                            this))
+                    {
+                        // there is a gap and we have the position
+                        currentEngineerState = EngineerState.GoingToRepairPosition;
+                        base.GoTo(lastEngineerPos);
+                    }
+                    else
+                    {
+                        currentEngineerState = EngineerState.Waiting;
+                        GetComponent<NavMeshAgent>().destination = transform.position;
+                    }
+                }
+                break;
+            case EngineerState.GoingToConquerableItem:
+                // if the distance to the item is less than distanceToWait we ask if there is gap
+                distItem = Vector3.Distance(transform.position, currentItem.position);
+                distToWait = currentItem.GetComponent<BuildingController>().distanceToWait;
+                if (distItem < 10.0f)
+                {
+                    if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
+                        ref lastEngineerPos,
+                        ref lastEngineerIndex,
+                        this))
+                    {
+                        // there is a gap and we have the position
+                        currentEngineerState = EngineerState.GoingToConquestPosition;
+                        base.GoTo(lastEngineerPos);
+                    }
+                    else
+                    {
+                        currentEngineerState = EngineerState.Waiting;
+                        GetComponent<NavMeshAgent>().destination = transform.position;
+                    }
+                }
+                break;
+            case EngineerState.GoingToConstructItem:
+                // if the distance to the item is less than distanceToWait we ask if there is gap
+                if (currentItem != null)
+                {
+                    distItem = Vector3.Distance(transform.position, currentItem.position);
+                    distToWait = currentItem.GetComponent<BuildingController>().distanceToWait;
+                    if (distItem < 10.0f)
+                    {
+                        if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
+                                ref lastEngineerPos,
+                                ref lastEngineerIndex,
+                                this))
+                        {
+                            // there is a gap and we have the position
+                            currentEngineerState = EngineerState.GoingToConstructPosition;
+                            base.GoTo(lastEngineerPos);
+                        }
+                        else
+                        {
+                            currentEngineerState = EngineerState.Waiting;
+                            GetComponent<NavMeshAgent>().destination = transform.position;
+                        }
+                    }
+                }
+                else
+                {
+                    currentEngineerState = EngineerState.None;
+                    animation.Play("Idle01");
+                    newTGConstruct = newWConstruct = false;
+                }
+                break;
+            case EngineerState.GoingToRepairPosition:
+                if (currentState == State.Idle)
+                {
+                    // when it have arrived to the repair position
+                    currentEngineerState = EngineerState.Repairing;
+
+                    // We instanciate a Hammer
+                    GameObject newHammer = Instantiate
+                    (
+                        hammer,
+                        dummyHand.transform.position,
+                        new Quaternion()
+                    ) as GameObject;
+                    newHammer.transform.name = "Hammer";
+                    newHammer.transform.parent = dummyHand;
+                    newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
+                }
+                break;
+            case EngineerState.GoingToConquestPosition:
+                if (currentState == State.Idle)
+                {
+                    // when it have arrived to the conquest position
+                    currentEngineerState = EngineerState.Conquering;
+
+                    // We instanciate a laptop
+                    GameObject newLaptop = Instantiate
+                    (
+                        laptop,
+                        dummyLaptop.transform.position,
+                        new Quaternion()
+                    ) as GameObject;
+                    newLaptop.transform.name = "Laptop";
+                    newLaptop.transform.parent = dummyLaptop;
+                    newLaptop.transform.rotation = transform.rotation;
+                }
+                break;
+            case EngineerState.GoingToConstructPosition:
+                if (currentItem != null)
+                {
+                    if (currentState == State.Idle)
+                    {
+                        // when it have arrived to the construct position
+                        currentEngineerState = EngineerState.Constructing;
+                        if (newTGConstruct)
+                            Minimap.InsertTower(towerGoblin.GetComponent<Tower>());
+                        else if (newWConstruct)
+                            Minimap.InsertWarehouse(warehouse.GetComponent<Warehouse>());
+                        newTGConstruct = newWConstruct = false;
+
+                        // intanciamos un Hammer
+                        GameObject newHammer = Instantiate
+                        (
+                            hammer,
+                            dummyHand.transform.position,
+                            new Quaternion()
+                        ) as GameObject;
+                        newHammer.transform.name = "Hammer";
+                        newHammer.transform.parent = dummyHand;
+                        newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
+                    }
+                }
+                else
+                {
+                    currentEngineerState = EngineerState.None;
+                    animation.Play("Idle01");
+                    newTGConstruct = newWConstruct = false;
+                }
+                break;
+        }
+    }
 
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
@@ -409,7 +696,7 @@ public class UnitEngineer : UnitController
                 GoTo(destiny);
             }
         }
-        else if (destTransform.name == "TowerBoxConstruct" || destTransform.name == "TowerGoblin")// If he has to go to a TowerGoblin
+        else if (destTransform.name == "TowerBoxConstruct" || destTransform.name == "Tower Goblin")// If he has to go to a TowerGoblin
         {
             attackCadenceAux = 2.5f;
             GameObject comp1 = null;

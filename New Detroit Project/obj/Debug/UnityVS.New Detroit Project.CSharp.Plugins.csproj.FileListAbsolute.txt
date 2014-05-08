@@ -34,3 +34,4 @@ C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detr
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.Plugins.csprojResolveAssemblyReference.cache
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.Plugins.dll
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.CSharp.Plugins.pdb
+C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\EasyRoads3D.dll
