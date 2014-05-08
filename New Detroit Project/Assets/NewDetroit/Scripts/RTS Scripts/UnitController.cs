@@ -121,6 +121,10 @@ public class UnitController : ControllableCharacter
             PlayIdleWaitAnimation();
             timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
         }
+        else
+        {
+            PlayAnimationCrossFadeQueued("Idle01");
+        }
     }
 
     protected virtual void UpdateGoingTo ()
@@ -165,9 +169,7 @@ public class UnitController : ControllableCharacter
         }
         else 
         {
-            if (timeToNextWaitAnimation!=0)
-                timeToNextWaitAnimation = 0;
-            //PlayAnimationCrossFade("Walk");
+            PlayAnimationCrossFade("Walk");
         }
     }
 

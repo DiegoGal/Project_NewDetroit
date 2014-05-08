@@ -134,20 +134,21 @@ public class UnitHeavyArtilleryRemote : ControllableCharacter
                 PlayAnimationCrossFadeQueued("Idle01");
                 timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
             }
+            else
+            {
+                if (!animation.IsPlaying("Idle Wait"))
+                    PlayAnimationCrossFade("Idle01");
+            }
         }
     }
 
     private void UpdateGoingTo()
     {
-        if (timeToNextWaitAnimation != 0)
-            timeToNextWaitAnimation = 0;
         PlayAnimationCrossFade("Walk");
     }
 
     private void UpdateGoingToAnEnemy()
     {
-        if (timeToNextWaitAnimation != 0)
-            timeToNextWaitAnimation = 0;
         PlayAnimationCrossFade("Walk");
     }
 
@@ -176,27 +177,17 @@ public class UnitHeavyArtilleryRemote : ControllableCharacter
 
     private void UpdateAscendingToHeaven()
     {
-        //Do nothing
+        RemoveAssetsFromModel();
     }
 
-    protected virtual void PlayAnimation(string animationName)
+    protected void PlayAnimation(string animationName)
     {
         animation.Play(animationName);
     }
 
-    protected virtual void PlayAnimationQueued(string animationName)
+    protected void PlayAnimationQueued(string animationName)
     {
         animation.PlayQueued(animationName);
-    }
-
-    protected virtual void PlayAnimationCrossFade2(string animationName)
-    {
-        animation.CrossFade(animationName);
-    }
-
-    protected virtual void PlayAnimationCrossFadeQueued2(string animationName)
-    {
-        animation.CrossFadeQueued(animationName);
     }
 
     protected void PlayAnimationCrossFade(string animationName)
@@ -211,7 +202,7 @@ public class UnitHeavyArtilleryRemote : ControllableCharacter
                 animation.CrossFade("Deployment-Shot");
         }
         else
-            PlayAnimationCrossFade2(animationName);
+            animation.CrossFade(animationName);
     }
 
     protected void PlayAnimationCrossFadeQueued(string animationName)
@@ -224,6 +215,14 @@ public class UnitHeavyArtilleryRemote : ControllableCharacter
                 animation.CrossFade("Idle Wait Deployed");*/
         }
         else
-            PlayAnimationCrossFadeQueued2(animationName);
+            animation.CrossFadeQueued(animationName);
     }
+    protected void RemoveAssetsFromModel()
+    {
+        if (frontWeapon)
+            Destroy(frontWeapon);
+        if (backWeapon)
+            Destroy(backWeapon);
+    }
+
 }
