@@ -285,7 +285,7 @@ public abstract class HeroeController : ControllableCharacter
 	{
 		// Debug
 		Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
-		GUI.Label(new Rect(pos.x + 20, Screen.height - pos.y, 80, 20), "State: " + state.ToString());
+		GUI.Label(new Rect(pos.x + 20, Screen.height - pos.y, 200, 20), "State: " + state.ToString());
 		//---------------------------------------------------------------
         GUI.DrawTexture(rectanglePositiveLife, textureLifePositive);
         GUI.DrawTexture(rectangleNegativeLife, textureLifeNegative);
@@ -380,7 +380,8 @@ public abstract class HeroeController : ControllableCharacter
 			bool isOrcUsingAbility = state == HeroeController.StateHeroe.AttackSecond;
             if (targetDirection != Vector3.zero && !isOrcUsingAbility)
 			{
-				moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+				//moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+				moveDirection = targetDirection;
 				moveDirection = moveDirection.normalized;
 			}
 			
