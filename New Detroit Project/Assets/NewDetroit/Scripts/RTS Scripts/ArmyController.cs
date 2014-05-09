@@ -38,6 +38,10 @@ public class ArmyController : MonoBehaviour
     private List<Vector3> patrolPosList = new List<Vector3>();
     private bool keyPPressed = false;
 
+    // References to the Army Buildings
+    public GameObject warehousePrefab;
+    public GameObject towerPrefab;
+
     // Army Base & Warehouses
     public GameObject armyBase;
     public List<CResourceBuilding> resourceBuildingList = new List<CResourceBuilding>();

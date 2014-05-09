@@ -851,6 +851,23 @@ public class UnitHarvester : UnitController
             r.enabled = enable;
     }
 
+    public override bool Damage (float damage, char type)
+    {
+        if ( base.Damage(damage, type) )
+        {
+            // salir de las colas
+            if (currentHarvestState == HarvestState.GoingToChopPosition ||
+                currentHarvestState == HarvestState.Choping)
+                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
+            else if (currentHarvestState == HarvestState.Waiting)
+                currentMine.GetComponent<CResources>().LeaveQueue(this);
+
+            return true;
+        }
+        else
+            return false;
+    }
+
     protected override void PlayAnimationCrossFade (string animationName)
     {
         // si la unidad esta cargada de minerales cambian algunas animaciones
