@@ -675,7 +675,7 @@ public class UnitEngineer : UnitController
             base.RightClickOnSelected(destiny, destTransform);
             attackCadenceAux = 2.5f;
         }
-        else if (destTransform.name == "TowerNeutral")// If he has to go to a TowerNeutral
+        else if (destTransform.name == "Tower Neutral")// If he has to go to a TowerNeutral
         {
             attackCadenceAux = 2.5f;
             newTGConstruct = newWConstruct = false;

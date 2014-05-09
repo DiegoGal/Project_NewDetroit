@@ -56,7 +56,8 @@ public class FireballAttack : ParticleDamage
                     other.rigidbody.isKinematic = false;
                     other.rigidbody.useGravity = true;
 
-                    other.GetComponent<NavMeshAgent>().Stop(true);
+                    if (other.GetComponent<NavMeshAgent>())
+                        other.GetComponent<NavMeshAgent>().Stop(true);
                     Vector3 dir = other.transform.position - transform.position;
                     dir = dir.normalized;
 

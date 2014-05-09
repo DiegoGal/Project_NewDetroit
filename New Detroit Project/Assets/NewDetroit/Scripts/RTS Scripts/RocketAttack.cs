@@ -56,7 +56,8 @@ public class RocketAttack : ParticleDamage
                     other.rigidbody.isKinematic = false;
                     other.rigidbody.useGravity = true;
 
-                    other.GetComponent<NavMeshAgent>().Stop(true);
+                    if (other.GetComponent<NavMeshAgent>())
+                        other.GetComponent<NavMeshAgent>().Stop(true);
                     //Vector3 dir = new Vector3(1.0f, 1.0f, 1.0f);
                     Vector3 dir = other.transform.position - transform.position;
                     dir = dir.normalized;
