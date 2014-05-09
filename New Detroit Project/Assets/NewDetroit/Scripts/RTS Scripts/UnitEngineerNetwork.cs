@@ -49,8 +49,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
             stream.SendNext(script.currentEngineerState);
             stream.SendNext(script.currentState);
             stream.SendNext(script.getLife());
-            stream.SendNext(script.conquest);
-            stream.SendNext(script.construct);
+            stream.SendNext(script.fireballDir);
 		}
 		else
 		{
@@ -60,8 +59,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
             state = (UnitEngineer.EngineerState)stream.ReceiveNext();
             unitState = (UnitController.State)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
-            conquest = (bool)stream.ReceiveNext();
-            construct = (bool)stream.ReceiveNext();
+            fireballDir = (Vector3)stream.ReceiveNext();
 		}
 	}
 	
@@ -70,7 +68,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
     private UnitEngineer.EngineerState state; // new State of the HarvesterUnit
     private UnitHarvester.State unitState; // new State of Unit
     private float currentLife; // for damage
-    private bool conquest, construct; // to see when we finish one of this task
+    private Vector3 fireballDir; // direction of the fireball
 
 	void Update()
 	{
@@ -82,8 +80,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
             UnitEngineerRemote script = GetComponent<UnitEngineerRemote>();
             script.currentEngineerState = state;
             script.currentState = unitState;
-            script.conquest = conquest;
-            script.construct = construct;
+            script.fireballDir = fireballDir;
 		}
 	}
 	

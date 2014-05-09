@@ -62,6 +62,9 @@ public class UnitEngineer : UnitController
     public bool construct;
     public bool conquest;
 
+    // To knows the direction of the fireball
+    public Vector3 fireballDir;
+
     public override void Awake ()
     {
         base.Awake();
@@ -970,11 +973,11 @@ public class UnitEngineer : UnitController
                     attackCadenceAux = attackCadence;
                     Vector3 dir = enemySelected.transform.position - newFireball.transform.position;
                     dir = dir.normalized;
-                    Vector3 dir1 = transform.forward.normalized;
-                    newFireball.transform.parent = null;
-                    newFireball.rigidbody.AddForce(new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
+                    fireballDir = new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
                                                                         7,
-                                                                dir.z * 8.0f * (enemyDist / maxAttackDistance)), ForceMode.Impulse);
+                                                                dir.z * 8.0f * (enemyDist / maxAttackDistance));
+                    newFireball.transform.parent = null;
+                    newFireball.rigidbody.AddForce(fireballDir, ForceMode.Impulse);
 
                     //newFireball.GetComponent<SphereCollider>().isTrigger = true;
                     

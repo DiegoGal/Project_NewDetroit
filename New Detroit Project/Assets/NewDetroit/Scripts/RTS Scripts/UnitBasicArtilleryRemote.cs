@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UnitBasicArtilleryRemote : MonoBehaviour
+public class UnitBasicArtilleryRemote : ControllableCharacter
 {
 
     public UnitArtillery.ArtilleryState currentArtilleryState = UnitArtillery.ArtilleryState.None;
@@ -14,9 +14,48 @@ public class UnitBasicArtilleryRemote : MonoBehaviour
     // indicates if the second attack is selected
     public bool attack2Selected = false;
 
+    // dummys
+    public Transform dummyLeftWeapon;
+    public Transform dummyRightWeapon;
+    public Transform dummyLeftWeaponGunBarrel;
+    public Transform dummyRightWeaponGunBarrel;
+
+    private GameObject leftWeapon, rightWeapon, baseballBat;
+    public Transform dummyBat;
+
+    public GameObject shotParticles;
+
+    private float attackCadenceAux;
+    private bool setPistols = true;
+
+    public void Awake()
+    {
+
+        // Por si no se han establecido las referencias a los dummys del modelo
+        // en el editor de Unity las buscamos ahora:
+        if (dummyLeftWeapon == null)
+            dummyLeftWeapon = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 L Clavicle/Bip001 L UpperArm/Bip001 L Forearm/Bip001 L Hand/Mano IZQ/WeaponLeft");
+        if (dummyRightWeapon == null)
+            dummyRightWeapon = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Mano DER/WeaponRight");
+        if (dummyLeftWeaponGunBarrel == null)
+            dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GunBarrelLeft");
+        if (dummyRightWeaponGunBarrel == null)
+            dummyRightWeaponGunBarrel = dummyRightWeapon.FindChild("GunBarrelRight");
+        if (dummyBat == null)
+            dummyBat = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Arma Blanca/Cylinder002");
+
+        if (dummyLeftWeapon)
+            leftWeapon = dummyLeftWeapon.gameObject;
+        if (dummyRightWeapon)
+            rightWeapon = dummyRightWeapon.gameObject;
+        if (dummyBat)
+            baseballBat = dummyBat.gameObject;
+    }
     //TODO Animar según el estado actual
     public void Start()
     {
+        network();
+        timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
     }
 
     public void changeAttack()
@@ -48,32 +87,53 @@ public class UnitBasicArtilleryRemote : MonoBehaviour
             PlayAnimationCrossFadeQueued("Idle01");
             timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
         }
+        else
+        {
+            if (!animation.IsPlaying("Idle Wait"))
+                PlayAnimationCrossFade("Idle01");
+        }
     }
 
     private void UpdateGoingTo()
     {
-        if (timeToNextWaitAnimation != 0)
-            timeToNextWaitAnimation = 0;
         PlayAnimationCrossFade("Walk");
     }
 
     private void UpdateGoingToAnEnemy()
     {
-        if (timeToNextWaitAnimation != 0)
-            timeToNextWaitAnimation = 0;
         PlayAnimationCrossFade("Walk");
     }
 
     private void UpdateAttacking()
     {
-        if (currentArtilleryState == UnitArtillery.ArtilleryState.Attacking1 && attack2Selected == false)
+        if (attack2Selected == false)
         {
-            animation.CrossFade("Attack1");
+            if (attackCadenceAux <= 0.0f)
+            {
+                attackCadenceAux = 1.0f;
+                animation.CrossFade("Attack1");
+                GameObject particles1 = (GameObject)Instantiate(shotParticles,
+                dummyLeftWeaponGunBarrel.transform.position,
+                transform.rotation);
+                Destroy(particles1, 0.4f);
+                GameObject particles2 = (GameObject)Instantiate(shotParticles,
+                dummyRightWeaponGunBarrel.transform.position,
+                transform.rotation);
+                Destroy(particles2, 0.4f);
+            }
+            else
+            attackCadenceAux -= Time.deltaTime;
         }
         else
-            if (currentArtilleryState == UnitArtillery.ArtilleryState.Attacking2 && attack2Selected == true)
+            if (attack2Selected == true)
             {
-                animation.CrossFade("Attack2");
+                if (attackCadenceAux <= 0.0f)
+                {
+                    attackCadenceAux = 1.0f;
+                    animation.CrossFade("Attack2");
+                }
+                else
+                    attackCadenceAux -= Time.deltaTime;
             }
     }
 
@@ -84,32 +144,42 @@ public class UnitBasicArtilleryRemote : MonoBehaviour
 
     private void UpdateDying()
     {
-        //Do nothing
+        PlayAnimationCrossFade("Die");
     }
 
     private void UpdateAscendingToHeaven()
     {
-        //Do nothing
+        RemoveAssetsFromModel();
     }
 
-    protected virtual void PlayAnimation(string animationName)
+    protected void PlayAnimation(string animationName)
     {
         animation.Play(animationName);
     }
 
-    protected virtual void PlayAnimationQueued(string animationName)
+    protected void PlayAnimationQueued(string animationName)
     {
         animation.PlayQueued(animationName);
     }
 
-    protected virtual void PlayAnimationCrossFade(string animationName)
+    protected void PlayAnimationCrossFade(string animationName)
     {
         animation.CrossFade(animationName);
     }
 
-    protected virtual void PlayAnimationCrossFadeQueued(string animationName)
+    protected void PlayAnimationCrossFadeQueued(string animationName)
     {
         animation.CrossFadeQueued(animationName);
+    }
+
+    protected void RemoveAssetsFromModel()
+    {
+        if (leftWeapon)
+            Destroy(leftWeapon);
+        if (rightWeapon)
+            Destroy(rightWeapon);
+        if (baseballBat)
+            Destroy(baseballBat);
     }
 
 }

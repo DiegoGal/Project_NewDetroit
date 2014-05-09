@@ -1,179 +1,182 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UnitScoutRemote : UnitController
+public class UnitScoutRemote : ControllableCharacter
 {
 
-    public int attackPower = 2;
+    // Explosion particles references
+    public GameObject particlesExplosionSmoke;
+    public GameObject particlesExplosionFire;
+    public GameObject particlesExplosionPieces;
 
-    private int nextPositionIndex = 0;
+    // Explosion particles instances
+    private GameObject explosionSmokeInst;
+    private GameObject explosionFireInst;
+    private GameObject explosionPiecesInst;
 
-    // Explosion particle
-    public GameObject particlesSmokeMower;
-    public GameObject particlesPiecesMower;
+    // fire particles
     public GameObject fireMower;
-    public GameObject piecesMower;
-    public GameObject explosion;
-    private bool explosionActivated = false;
-    private bool otherParticlesActivated = false;
-    private float explosionCD = 1.5f;
-    private GameObject explosionInst;
     private GameObject fireMowerInst;
-    private GameObject piecesMowerInst;
+
+    // ardiendo
+    public bool afire = false;
+    private bool auxAfire = false;
 
     public UnitScout.ScoutState currentScoutState = UnitScout.ScoutState.None;
+    public UnitController.State currentState = UnitController.State.Idle;
 
     // modelo del asset de la máquina cortacesped
     public GameObject mower;
 
-    public override void Awake()
-    {
-        base.Awake();
+    private float timeToNextWaitAnimation;
 
+    private bool instantiateParticlesWhenDead = true;
+
+    public void Awake()
+    {
         if (!mower)
             mower = transform.FindChild("Box002").gameObject;
     }
 
     // Use this for initialization
-    public override void Start()
+    public void Start()
     {
-        base.Start();
-
-        basicAttackPower = secondaryAttackPower = attackPower;
+        network();
+        timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
     }
 
     // Update is called once per frame
-    public override void Update()
+    public void Update()
     {
-        base.Update();
-        //UpdateParticles();
-    }
-
-    public override void OnGUI()
-    {
-        if (currentState != State.AscendingToHeaven)
+        switch (currentState)
         {
-            base.OnGUI();
-
-            GUI.skin.label.fontSize = 10;
-
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
-                currentState.ToString());
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 100, 50),
-                currentScoutState.ToString());
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
-                "NextPatrolPoint: " + nextPositionIndex);
+            case UnitController.State.Idle: UpdateIdle(); break;
+            case UnitController.State.GoingTo: UpdateGoingTo(); break;
+            case UnitController.State.GoingToAnEnemy: UpdateGoingToAnEnemy(); break;
+            case UnitController.State.Attacking: UpdateAttacking(); break;
+            case UnitController.State.Flying: UpdateFlying(); break;
+            case UnitController.State.Dying: UpdateDying(); break;
+            case UnitController.State.AscendingToHeaven: UpdateAscendingToHeaven(); break;
         }
+        // la vida es muy baja, instanciar el fuego
+        if (afire && !auxAfire)
+        {
+            auxAfire = true;
+            fireMowerInst = Instantiate
+            (
+                fireMower,
+                mower.transform.position,
+                mower.transform.rotation
+            ) as GameObject;
+            fireMowerInst.transform.parent = mower.transform;
+        }
+        if (!afire)
+            auxAfire = false;
     }
 
-    public override bool Damage(float damage, char type)
+    private void UpdateIdle()
     {
-        if (base.Damage(damage, type))
+        // plays the waiting idle animation
+        timeToNextWaitAnimation -= Time.deltaTime;
+        if (timeToNextWaitAnimation <= 0)
         {
-            if (mower)
-            {
-                Destroy(mower);
-                // TODO: instanciar una explosión
-
-                /*fireMowerInst = Instantiate
-                    (
-                        fireMower,
-                        transform.position,
-                        transform.rotation
-                        ) as GameObject;
-
-                Destroy(fireMowerInst, 1f);
-                explosionActivated = true;*/
-
-                explosionInst = Instantiate
-                    (
-                        explosion,
-                        transform.position,
-                        transform.rotation
-                        ) as GameObject;
-
-                Quaternion rotationAux = new Quaternion(0f, 180f, 180f, 0f);
-
-                piecesMowerInst = Instantiate
-                    (
-                        piecesMower,
-                        transform.position,
-                        rotationAux
-                        ) as GameObject;
-
-                Destroy(piecesMowerInst, 1.5f);
-                Destroy(explosionInst, 1.5f);
-
-            }
-            return true;
+            PlayAnimationCrossFade("Idle Wait");
+            PlayAnimationCrossFadeQueued("Idle01");
+            timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
         }
         else
-            return false;
+        {
+            if (!animation.IsPlaying("Idle Wait"))
+                PlayAnimationCrossFade("Idle01");
+        }
     }
 
-    protected override void PlayAnimationCrossFade(string animationName)
+    private void UpdateGoingTo()
+    {
+        PlayAnimationCrossFade("Walk");
+    }
+
+    private void UpdateGoingToAnEnemy()
+    {
+        PlayAnimationCrossFade("Walk");
+    }
+
+    private void UpdateAttacking()
+    {
+        PlayAnimationCrossFade("Attack1");
+    }
+
+    private void UpdateFlying()
+    {
+        PlayAnimationCrossFade("Idle01");
+    }
+
+    private void UpdateDying()
+    {
+        PlayAnimationCrossFade("Die");
+
+        if (instantiateParticlesWhenDead)
+        {
+            instantiateParticlesWhenDead = false;
+            if (mower)
+                Destroy(mower);
+
+            explosionFireInst = Instantiate
+            (
+                particlesExplosionFire,
+                transform.position,
+                transform.rotation
+            ) as GameObject;
+
+            explosionSmokeInst = Instantiate
+            (
+                particlesExplosionSmoke,
+                transform.position,
+                new Quaternion(0f, 180f, 180f, 0f)
+            ) as GameObject;
+
+            explosionPiecesInst = Instantiate
+            (
+                particlesExplosionPieces,
+                transform.position,
+                new Quaternion(0f, 180f, 180f, 0f)
+            ) as GameObject;
+
+            Destroy(explosionFireInst, 2.5f);
+            Destroy(explosionSmokeInst, 2.5f);
+            Destroy(explosionPiecesInst, 2.5f);
+        }
+    }
+
+    private void UpdateAscendingToHeaven()
+    {
+        RemoveAssetsFromModel();
+    }
+
+    protected void PlayAnimationCrossFade(string animationName)
     {
         // esta unidad no tiene animación de Idle Wait
         if (animationName != "Idle Wait")
-            base.PlayAnimationCrossFade(animationName);
+            animation.CrossFade(animationName);
     }
 
-    protected override void PlayAnimationCrossFadeQueued(string animationName)
+    protected void PlayAnimationCrossFadeQueued(string animationName)
     {
         // esta unidad no tiene animación de Idle Wait
         if (animationName != "Idle Wait")
-            base.PlayAnimationCrossFadeQueued(animationName);
+            animation.CrossFadeQueued(animationName);
     }
 
-    public override int GetUnitType()
+    public int GetUnitType()
     {
         return 4;
     }
 
-    protected override void RemoveAssetsFromModel()
+    protected void RemoveAssetsFromModel()
     {
         if (mower)
             Destroy(mower);
     }
 
-    //Particles
-    /*protected void UpdateParticles()
-    {		
-        if (explosionActivated)
-        {
-            if (explosionCD <= 0)
-            {
-                explosionCD = 1.5f;
-                explosionActivated = false;
-                otherParticlesActivated = true;
-            }
-            else explosionCD -= Time.deltaTime;
-        }
-
-        if (otherParticlesActivated)
-        {
-            //Destroy(mower);
-            explosionInst = Instantiate
-                (
-                    explosion,
-                    transform.position,
-                    transform.rotation
-                    ) as GameObject;
-
-            Quaternion rotationAux = new Quaternion(0f,180f,180f, 0f);
-
-            piecesMowerInst = Instantiate
-                (
-                    piecesMower,
-                    transform.position,
-                    rotationAux
-                    ) as GameObject;
-			
-            Destroy(piecesMowerInst, 1.7f);
-            Destroy(explosionInst, 1.7f);
-			
-            otherParticlesActivated = false;
-        }
-    }*/
 
 }

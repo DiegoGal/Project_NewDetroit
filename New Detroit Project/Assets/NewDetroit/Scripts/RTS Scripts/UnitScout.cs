@@ -19,7 +19,7 @@ public class UnitScout : UnitController
     private GameObject fireMowerInst;
 
     // ardiendo
-    private bool afire = false;
+    public bool afire = false;
 
     // indica el porcentaje de vida al que empieza a salir fuego de la montura
     public float startAfire = 0.25f;

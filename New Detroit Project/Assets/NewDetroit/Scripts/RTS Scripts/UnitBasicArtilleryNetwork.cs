@@ -50,7 +50,7 @@ public class UnitBasicArtilleryNetwork : Photon.MonoBehaviour {
             stream.SendNext(script.currentState);
             stream.SendNext(script.lastState);
             stream.SendNext(script.getLife());
-            stream.SendNext(script.changedAttack);
+            stream.SendNext(script.attack2Selected);
 		}
 		else
 		{
@@ -61,7 +61,7 @@ public class UnitBasicArtilleryNetwork : Photon.MonoBehaviour {
             unitState =              (UnitController.State)stream.ReceiveNext();
             lastState =              (UnitController.State)stream.ReceiveNext();
             currentLife =            (float)stream.ReceiveNext();
-            changedAttack =          (bool)stream.ReceiveNext();
+            attack2Selected = (bool)stream.ReceiveNext();
 		}
 	}
 	
@@ -71,7 +71,7 @@ public class UnitBasicArtilleryNetwork : Photon.MonoBehaviour {
     private UnitController.State unitState; // new State of Unit
     private UnitController.State lastState; // last State of Unit
     private float currentLife; // for damage
-    private bool changedAttack; // to see if the attack has changed
+    private bool attack2Selected; // to see if the attack has changed
 	
 	void Update()
 	{
@@ -84,10 +84,7 @@ public class UnitBasicArtilleryNetwork : Photon.MonoBehaviour {
             script.currentArtilleryState = state;
             script.lastState = lastState;
             script.currentState = unitState;
-            if (changedAttack)
-            {
-                script.changeAttack();
-            }
+            script.attack2Selected = attack2Selected;
 		}
 	}
 	

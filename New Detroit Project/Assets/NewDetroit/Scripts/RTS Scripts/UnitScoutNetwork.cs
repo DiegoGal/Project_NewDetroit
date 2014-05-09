@@ -49,6 +49,7 @@ public class UnitScoutNetwork: Photon.MonoBehaviour
             UnitScout script = this.GetComponent<UnitScout>();
             stream.SendNext(script.currentScoutState);
             stream.SendNext(script.currentState);
+            stream.SendNext(script.afire);
             stream.SendNext(script.getLife());
         }
         else
@@ -58,6 +59,7 @@ public class UnitScoutNetwork: Photon.MonoBehaviour
             correctPlayerRot = (Quaternion)stream.ReceiveNext();
             state = (UnitScout.ScoutState)stream.ReceiveNext();
             unitState = (UnitController.State)stream.ReceiveNext();
+            afire = (bool)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
         }
     }
@@ -66,6 +68,7 @@ public class UnitScoutNetwork: Photon.MonoBehaviour
     private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
     private UnitScout.ScoutState state; // new State of the HarvesterUnit
     private UnitHarvester.State unitState; // new State of Unit
+    private bool afire; //there is fire instantiated
     private float currentLife; // for damage
 
     void Update()
@@ -78,6 +81,7 @@ public class UnitScoutNetwork: Photon.MonoBehaviour
             UnitScoutRemote script = GetComponent<UnitScoutRemote>();
             script.currentScoutState = state;
             script.currentState = unitState;
+            script.afire = afire;
         }
     }
 

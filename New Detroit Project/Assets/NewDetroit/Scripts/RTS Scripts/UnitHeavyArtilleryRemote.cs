@@ -46,6 +46,7 @@ public class UnitHeavyArtilleryRemote : ControllableCharacter
     public void Start()
     {
         network();
+        timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
     }
 
     public void changeAttack()
