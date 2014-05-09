@@ -6,7 +6,7 @@ public class BaseController : CResourceBuilding
     public bool isOnline = false;
 
     // indicates the color of the units, 0=green, 1=purple
-    public int teamColor = 0;
+    private int teamColor;
 
 	//Donde van a aparecer las unidades
 	private Vector3 spawnDestiny;
@@ -41,6 +41,8 @@ public class BaseController : CResourceBuilding
     {
         base.Start();
 
+        teamColor = GetComponent<CTeam>().teamColor;
+
         radious = baseRadius;
 
         spawnOrigin = transform.FindChild("SpawnPoint").position;
@@ -60,7 +62,7 @@ public class BaseController : CResourceBuilding
         cubeSpawnDest.transform.position = spawnDestiny;
 
         // inicialización de las posiciones de los ingenieros (para reparación)        
-        float twoPi = Mathf.PI * 2;
+        float twoPi = Mathf.PI * 2.0f;
         Vector3 center = transform.position;
 
         float colliderSize;
@@ -282,7 +284,7 @@ public class BaseController : CResourceBuilding
             newUnit.GetComponent<ControllableCharacter>().isMine = true;
             newUnit.GetComponent<UnitController>().SetArmyBase(this);
             newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
-            newUnit.GetComponent<UnitController>().teamNumber = this.teamNumber;
+            newUnit.GetComponent<CTeam>().teamNumber = this.teamNumber;
             newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
         }
 

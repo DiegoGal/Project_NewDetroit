@@ -1,15 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CTriggerTowerVisionSphere : MonoBehaviour {
+public class CTriggerTowerVisionSphere : MonoBehaviour
+{
 
     private int search = 0;
     private bool up = false;
-	// Use this for initialization
-	void Start () 
-    {
-	    
-	}
 	
 	// Update is called once per frame
 	void Update () 
@@ -33,7 +29,7 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 		{
             //Debug.Log("Entra uno!");
 			Tower selfUnit = transform.parent.GetComponent<Tower>();
-			if ( (selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber) )
+            if ( (selfUnit != null) && (selfUnit.teamNumber != unit.GetTeamNumber()) )
 			{
 				selfUnit.EnemyEntersInVisionSphere(unit);
 			}
@@ -47,7 +43,7 @@ public class CTriggerTowerVisionSphere : MonoBehaviour {
 		if (unit != null)
 		{
             Tower selfUnit = transform.parent.GetComponent<Tower>();
-            if ((selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber))
+            if ( (selfUnit != null) && (selfUnit.teamNumber != unit.GetTeamNumber()) )
             {
                 selfUnit.EnemyExitsInVisionSphere(unit);
             }

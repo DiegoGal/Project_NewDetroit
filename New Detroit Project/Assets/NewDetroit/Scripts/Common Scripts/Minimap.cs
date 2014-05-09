@@ -253,7 +253,7 @@ public class Minimap : MonoBehaviour
 
     public static void InsertUnit (UnitController unit)
     {
-        if (unit.teamNumber == teamNumber)
+        if (unit.GetTeamNumber() == teamNumber)
         {
             myArmy.Add(unit);
             myUnitList.Add(new Vector2());
@@ -268,7 +268,7 @@ public class Minimap : MonoBehaviour
 
     public static void DeleteUnit (UnitController unit)
     {
-        if (unit.teamNumber == teamNumber)
+        if (unit.GetTeamNumber() == teamNumber)
         {
             int pos = myArmy.IndexOf(unit);
             if (pos != -1)

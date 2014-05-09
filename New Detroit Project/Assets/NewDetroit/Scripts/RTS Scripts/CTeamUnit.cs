@@ -1,0 +1,25 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class CTeamUnit : CTeam
+{
+
+    // referent to the component of the Unit itself
+    private ControllableCharacter selfUnit;
+
+    public void Awake ()
+    {
+        selfUnit = GetComponent<ControllableCharacter>();
+    }
+
+    public override void EnemyEntersInVisionSphere (CTeam unit)
+    {
+
+    }
+
+    public override void EnemyLeavesVisionSphere(CTeam unit)
+    {
+
+    }
+
+}

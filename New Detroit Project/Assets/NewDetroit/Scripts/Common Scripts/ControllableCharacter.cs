@@ -5,8 +5,11 @@ public class ControllableCharacter : MonoBehaviour
 {
 	// --------------------------------------------------------------
 
+    // referente to the Team component of the character
+    public CTeam team;
+
 	// number that identifies the team to which the character belongs
-    public int teamNumber;
+    private int teamNumber;
 
     // reference to the Life component of the character
     public CLife life;
@@ -40,8 +43,10 @@ public class ControllableCharacter : MonoBehaviour
     {
         screenPosition = Camera.main.WorldToScreenPoint(transform.position);
 
+        team = GetComponent<CTeam>();
         life = GetComponent<CLife>();
-        teamNumber = life.teamNumber;
+        teamNumber = team.teamNumber;
+        team.visionSphereRadius = visionSphereRadius;
     }
 
     public virtual void Update ()
@@ -57,6 +62,12 @@ public class ControllableCharacter : MonoBehaviour
     public void SetArmyBase (BaseController baseController)
     {
         this.baseController = baseController;
+    }
+
+    protected virtual void SetVisionRadiuSphere (float newRadius)
+    {
+        visionSphereRadius = newRadius;
+        team.visionSphereRadius = visionSphereRadius;
     }
 
     // if type == 'P' is phisical damage if type == 'M' is magical damage
@@ -112,10 +123,15 @@ public class ControllableCharacter : MonoBehaviour
         return radius;
     }
 
+    public int GetTeamNumber()
+    {
+        return teamNumber;
+    }
+
     //DistanceMeasureTool - Network
     protected void network()
     {
-        DistanceMeasurerTool.InsertUnit(GetComponent<ControllableCharacter>());
+        DistanceMeasurerTool.InsertUnit(GetComponent<CTeam>());
     }
 
 } // class ControllableCharacter

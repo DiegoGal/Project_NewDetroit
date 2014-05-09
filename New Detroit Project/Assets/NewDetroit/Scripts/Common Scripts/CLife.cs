@@ -11,9 +11,6 @@ public class CLife : MonoBehaviour
     // Indicates if the unit can receive damage or not
     public bool invincible = false;
 
-    // number that identifies the team to which the character belongs
-    public int teamNumber;
-
     public void Start ()
     {
         currentLife = maximunLife;

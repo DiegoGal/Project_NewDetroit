@@ -89,7 +89,7 @@ public class ArmyController : MonoBehaviour
         foreach (GameObject go in objects)
         {
             UnitController unit = go.GetComponent<UnitController>();
-            if ((unit != null) && (unit.teamNumber == teamNumber))
+            if ( (unit != null) && (unit.GetTeamNumber() == teamNumber) )
             //if (unit != null)
             {
                 //Debug.Log("Added to the list: " + go.name);
@@ -214,7 +214,7 @@ public class ArmyController : MonoBehaviour
 
                         //Miramos si el objeto es una unidad
                         UnitController unitCont = (UnitController)objSel.GetComponent("UnitController");
-                        if (unitCont != null && unitCont.teamNumber == teamNumber)
+                        if (unitCont != null && unitCont.GetTeamNumber() == teamNumber)
                         {
                             // si NO tenemos control pulsada, se deselecciona lo que hubiera
                             // y se selecciona la nueva unidad
@@ -944,7 +944,7 @@ public class ArmyController : MonoBehaviour
         if (unitSelectedList.Contains(unit))
             unitSelectedList.Remove(unit);
 
-        DistanceMeasurerTool.DeleteUnit(unit.GetComponent<ControllableCharacter>());
+        DistanceMeasurerTool.DeleteUnit(unit.GetComponent<CTeam>());
         Minimap.DeleteUnit(unit.GetComponent<UnitController>());
         // destroy the unit from the game
         //Destroy(unit, 4.0f); now this is done in the UnitControler itself

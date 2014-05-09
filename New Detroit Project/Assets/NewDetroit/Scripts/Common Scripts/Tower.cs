@@ -71,7 +71,7 @@ public class Tower : BuildingController
     }
 
     // It is called when a team has conquered it. The units of this team have to leave the array enemiesInside
-    protected void UpdateEnemiesInside(int team)
+    protected void UpdateEnemiesInside (int team)
     {
         int max = enemiesInside.Count;
         int i = 0;
@@ -79,7 +79,7 @@ public class Tower : BuildingController
         while (cont < max)
         {
             ControllableCharacter unit = enemiesInside[i].transform.GetComponent<ControllableCharacter>();
-            int teamUnit = unit.teamNumber;
+            int teamUnit = unit.GetTeamNumber();
             if (teamUnit == team)
             {
                 enemiesInside.Remove(unit);

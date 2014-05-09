@@ -5,9 +5,9 @@ public class DistanceMeasurerTool : MonoBehaviour
 {
 
     // List of references at all the units of the Team 0
-    public static List< ControllableCharacter > Army0 = new List< ControllableCharacter >();
+    public static List< CTeam > Army0 = new List< CTeam >();
     // List of references al all the units of the Team 1
-    public static List< ControllableCharacter > Army1 = new List< ControllableCharacter >();
+    public static List< CTeam > Army1 = new List< CTeam >();
 
     // rows = Team 0, cols = Team 1
     // example distancesMatrix[2][3] is the distances between the units Army0[2] and Army1[3]
@@ -43,9 +43,7 @@ public class DistanceMeasurerTool : MonoBehaviour
             case SearchMode.pair_pair:
 
                 SearchStep();
-
                 prevIndexj = (prevIndexj + 1) % Army1.Count;
-
                 searchMode = SearchMode.pair_odd;
 			
                 break;
@@ -122,8 +120,8 @@ public class DistanceMeasurerTool : MonoBehaviour
                 int iAux = i % list0Count,
                     jAux = j % list1Count;
 
-                ControllableCharacter unit0 = Army0[iAux],
-                                      unit1 = Army1[jAux];
+                CTeam unit0 = Army0[iAux],
+                      unit1 = Army1[jAux];
                 if (unit0 && unit1)
                 {
                     // descartamos los casos por las distancias de x y z
@@ -173,7 +171,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 
     } // SearchStep
 
-    public static void InsertUnit (ControllableCharacter unit)
+    public static void InsertUnit (CTeam unit)
     {
         if (unit.teamNumber == 0)
         {
@@ -204,7 +202,7 @@ public class DistanceMeasurerTool : MonoBehaviour
             searchMode = SearchMode.pair_pair;
     }
 
-    public static void DeleteUnit (ControllableCharacter unit)
+    public static void DeleteUnit(CTeam unit)
     {
         if (unit.teamNumber == 0)
         {
