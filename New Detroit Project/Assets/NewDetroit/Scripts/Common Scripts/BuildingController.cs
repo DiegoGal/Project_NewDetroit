@@ -45,8 +45,10 @@ public class BuildingController : Photon.MonoBehaviour
         // setting of the distance to wait
         if (transform.GetComponent<BoxCollider>())
             distanceToWait += transform.GetComponent<BoxCollider>().size.x + despPosition;
-        else
+        else if (transform.GetComponent<CapsuleCollider>())
             distanceToWait += transform.GetComponent<CapsuleCollider>().radius + despPosition;
+        else
+            distanceToWait += distanceToWait;
 
         // inicialization of the engineerPositions and engineerPosTaken arrays depending of tnumEngineerPositions
         engineerPositions = new Vector3[numEngineerPositions];

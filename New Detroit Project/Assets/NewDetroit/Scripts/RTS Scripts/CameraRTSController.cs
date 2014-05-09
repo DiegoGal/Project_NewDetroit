@@ -6,6 +6,9 @@ public class CameraRTSController : MonoBehaviour
     private Vector3 initPosition;
     private Vector3 initRotation;
 
+    public Vector2 xMinMax = new Vector2();
+    public Vector2 zMinMax = new Vector2();
+
     public float scrollSpeed = 15.0f;
     private float scrollSpeedMult;
     public float scrollEdge = 0.01f;
@@ -58,28 +61,40 @@ public class CameraRTSController : MonoBehaviour
         }
         else
         {
-            if ( Input.GetKey(KeyCode.UpArrow) ||
-                 Input.GetKey(KeyCode.W) /*||
-                (Input.mousePosition.y >= Screen.height * (1 - scrollEdge))*/ )
+            if (
+                 ( Input.GetKey(KeyCode.UpArrow) ||
+                   Input.GetKey(KeyCode.W) /*||
+                   (Input.mousePosition.y >= Screen.height * (1 - scrollEdge)) */ )
+                 && (transform.position.z < zMinMax.y)
+                )
             {
                 transform.Translate(Vector3.forward * scrollSpeedMult * Time.deltaTime, Space.World);
             }
-            else if (Input.GetKey(KeyCode.DownArrow) ||
-                 Input.GetKey(KeyCode.S) /*||
-                (Input.mousePosition.y <= Screen.height * scrollEdge)*/ )
+            else if (
+                 ( Input.GetKey(KeyCode.DownArrow) ||
+                   Input.GetKey(KeyCode.S) /*||
+                   (Input.mousePosition.y <= Screen.height * scrollEdge)*/ )
+                 && (transform.position.z > zMinMax.x)
+                )
             {
                 transform.Translate(Vector3.forward * -scrollSpeedMult * Time.deltaTime, Space.World);
             }
 
-            if (Input.GetKey(KeyCode.RightArrow) ||
-                 Input.GetKey(KeyCode.D) /*||
-                (Input.mousePosition.x >= Screen.width * (1 - scrollEdge))*/ )
+            if (
+                 ( Input.GetKey(KeyCode.RightArrow) ||
+                   Input.GetKey(KeyCode.D) /*||
+                   (Input.mousePosition.x >= Screen.width * (1 - scrollEdge))*/ )
+                 && (transform.position.x < xMinMax.y)
+                )
             {
                 transform.Translate(Vector3.right * scrollSpeedMult * Time.deltaTime, Space.World);
             }
-            else if (Input.GetKey(KeyCode.LeftArrow) ||
-                 Input.GetKey(KeyCode.A) /*||
-                (Input.mousePosition.x <= Screen.width * scrollEdge)*/ )
+            else if (
+                ( Input.GetKey(KeyCode.LeftArrow) ||
+                  Input.GetKey(KeyCode.A) /*||
+                  (Input.mousePosition.x <= Screen.width * scrollEdge)*/ )
+                 && (transform.position.x > xMinMax.x)
+                )
             {
                 transform.Translate(Vector3.right * -scrollSpeedMult * Time.deltaTime, Space.World);
             }
