@@ -12,6 +12,9 @@ public class CSelectable : MonoBehaviour
 
     private Transform model;
 
+    // indicates the number of materials in its model
+    private int numberOfMaterials;
+
 	private bool selected;
 
     private UnitController unitReference = null;
@@ -21,13 +24,19 @@ public class CSelectable : MonoBehaviour
     {
 
         model = transform.FindChild("Model");
-        if (model != null)
+        if (model)
         {
             // if there is a "model" children in the object it is a unit
+            numberOfMaterials = model.renderer.materials.Length;
+
             outlineWidth = model.renderer.material.GetFloat("_OutlineWidth");
-            teamColor = outlineColor = model.renderer.material.GetColor("_OutlineColor");
+
+            for (int i = 0; i < numberOfMaterials; i++)
+                model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
 
             model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
+
+            teamColor = outlineColor = model.renderer.material.GetColor("_OutlineColor");
         }
         else
         {
@@ -44,13 +53,16 @@ public class CSelectable : MonoBehaviour
     public void ResetTeamColor ()
     {
         teamColor = outlineColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];
+        for (int i = 0; i < numberOfMaterials; i++)
+            model.renderer.materials[i].SetColor("_OutlineColor", teamColor);
     }
 
 	public void SetSelected ()
 	{
 		selected = true;
-        if (model != null)
-            model.renderer.material.SetFloat("_OutlineWidth", outlineWidth);
+        if (model)
+            for (int i = 0; i < numberOfMaterials; i++)
+                model.renderer.materials[i].SetFloat("_OutlineWidth", outlineWidth);
         else
 		    this.renderer.material.SetColor("_DiffuseColor", teamColor);
 
@@ -61,8 +73,9 @@ public class CSelectable : MonoBehaviour
 	public void SetDeselect ()
 	{
 		selected = false;
-        if (model != null)
-            model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
+        if (model)
+            for (int i = 0; i < numberOfMaterials; i++)
+                model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
         else
             this.renderer.material.SetColor("_DiffuseColor", origColor);
 
@@ -91,7 +104,8 @@ public class CSelectable : MonoBehaviour
     public void SetOutlineColor (Color color)
     {
         outlineColor = color;
-        model.renderer.material.SetColor("_OutlineColor", outlineColor);
+        for (int i = 0; i < numberOfMaterials; i++)
+            model.renderer.materials[i].SetColor("_OutlineColor", outlineColor);
     }
 
 }
