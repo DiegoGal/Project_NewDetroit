@@ -39,12 +39,16 @@ public class ControllableCharacter : MonoBehaviour
 
 	// --------------------------------------------------------------
 
+    public virtual void Awake ()
+    {
+        team = GetComponent<CTeam>();
+        life = GetComponent<CLife>();
+    }
+
     public virtual void Start ()
     {
         screenPosition = Camera.main.WorldToScreenPoint(transform.position);
 
-        team = GetComponent<CTeam>();
-        life = GetComponent<CLife>();
         teamNumber = team.teamNumber;
         team.visionSphereRadius = visionSphereRadius;
     }

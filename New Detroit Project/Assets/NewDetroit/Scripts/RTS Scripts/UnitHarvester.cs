@@ -398,6 +398,10 @@ public class UnitHarvester : UnitController
                         lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radious);
                         lastBasePos.z = resourceBuilding.transform.position.z + (Mathf.Sin(alpha) * radious);
 
+                        /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        cube.transform.position = lastBasePos;
+                        cube.renderer.material.color = Color.red;*/
+
                         GoTo(lastBasePos);
                     }
                     actualHarvestTime = 0;
@@ -736,7 +740,7 @@ public class UnitHarvester : UnitController
                     Debug.Log("vamos pa la mina!");
                     currentHarvestState = HarvestState.GoingToMine;
                     GoTo(destiny);
-                    nextHarvestState = HarvestState.Choping;
+                    nextHarvestState = HarvestState.GoingToChopPosition;
                 }
             }
             else if (currentHarvestState == HarvestState.ReturningToBase)

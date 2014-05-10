@@ -31,7 +31,7 @@ public class BaseController : CResourceBuilding
 
     private GameObject cubeSpawnDest; // cubo que representa el spawnDestiny
 
-    public float baseRadius = 14.0f;
+    public float baseRadius = 12.0f;
 
 	// Use this for initialization
     public override void Start ()
@@ -276,6 +276,7 @@ public class BaseController : CResourceBuilding
             newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
             newUnit.GetComponent<CTeam>().teamNumber = this.teamNumber;
             newUnit.GetComponent<CTeam>().teamColorIndex = GetComponent<CTeam>().teamColorIndex;
+            newUnit.GetComponent<CSelectable>().ResetTeamColor();
             newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
         }
 
@@ -285,11 +286,6 @@ public class BaseController : CResourceBuilding
     public Vector3 GetSpawnOrigin ()
     {
         return spawnOrigin;
-    }
-
-    public float GetRadious ()
-    {
-        return radious;
     }
 
     public ArmyController GetArmyController ()

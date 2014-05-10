@@ -20,7 +20,7 @@ public class CSelectable : MonoBehaviour
     private UnitController unitReference = null;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
 
         model = transform.FindChild("Model");
