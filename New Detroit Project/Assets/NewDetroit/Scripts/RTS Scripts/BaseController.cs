@@ -5,9 +5,6 @@ public class BaseController : CResourceBuilding
 {
     public bool isOnline = false;
 
-    // indicates the color of the units, 0=green, 1=purple
-    private int teamColor;
-
 	//Donde van a aparecer las unidades
 	private Vector3 spawnDestiny;
 	//Donde van a aparecer las unidades
@@ -40,8 +37,6 @@ public class BaseController : CResourceBuilding
     public override void Start ()
     {
         base.Start();
-
-        teamColor = GetComponent<CTeam>().teamColor;
 
         radious = baseRadius;
 
@@ -153,7 +148,7 @@ public class BaseController : CResourceBuilding
                 case 0: // Harvester
                     if (resources >= harvesterUnitResourcesCost && economy >= harvesterUnitEconomyCost)
                     {
-                        if (teamColor == 0)
+                        if ((teamNumber % 2) == 0)
                             unit = "Goblin_Harvester_TeamA";
                         else
                             unit = "Goblin_Harvester_TeamB";
@@ -167,7 +162,7 @@ public class BaseController : CResourceBuilding
                 case 1: // Basic Artillery
                     if (resources >= basicArtilleryUnitResourcesCost && economy >= basicArtilleryUnitEconomyCost)
                     {
-                        if (teamColor == 0)
+                        if ((teamNumber % 2) == 0)
                             unit = "Goblin_ArtilleryBasic_TeamA";
                         else
                             unit = "Goblin_ArtilleryBasic_TeamB";
@@ -181,7 +176,7 @@ public class BaseController : CResourceBuilding
                 case 2: // Heavy Artillery
                     if (resources >= heavyArtilleryUnitResourcesCost && economy >= heavyArtilleryUnitEconomyCost)
                     {
-                        if (teamColor == 0)
+                        if ((teamNumber % 2) == 0)
                             unit = "Goblin_ArtilleryHeavy_TeamA";
                         else
                             unit = "Goblin_ArtilleryHeavy_TeamB";
@@ -195,7 +190,7 @@ public class BaseController : CResourceBuilding
                 case 3: // Engineer
                     if (resources >= engineerUnitResourcesCost && economy >= engineerUnitEconomyCost)
                     {
-                        if (teamColor == 0)
+                        if ((teamNumber % 2) == 0)
                             unit = "Goblin_Engineer_TeamA";
                         else
                             unit = "Goblin_Engineer_TeamB";
@@ -209,7 +204,7 @@ public class BaseController : CResourceBuilding
                 case 4: // Scout
                     if (resources >= scoutUnitResourcesCost && economy >= scoutUnitEconomyCost)
                     {
-                        if (teamColor == 0)
+                        if ((teamNumber % 2) == 0)
                             unit = "Goblin_Scout_TeamA";
                         else
                             unit = "Goblin_Scout_TeamB";
@@ -272,11 +267,6 @@ public class BaseController : CResourceBuilding
                     }
                     break;
             }
-            // set the texture of the unit
-            /*if (newUnit && teamColor != 0)
-            {
-                newUnit.GetComponent<CSelectable>().SetOutlineColor(new Color(0.0f, 0.7843f, 1.0f));
-            }*/
         }
 
         if (newUnit)
@@ -285,6 +275,7 @@ public class BaseController : CResourceBuilding
             newUnit.GetComponent<UnitController>().SetArmyBase(this);
             newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
             newUnit.GetComponent<CTeam>().teamNumber = this.teamNumber;
+            newUnit.GetComponent<CTeam>().teamColorIndex = GetComponent<CTeam>().teamColorIndex;
             newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
         }
 

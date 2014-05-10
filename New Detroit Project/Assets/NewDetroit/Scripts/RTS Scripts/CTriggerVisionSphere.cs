@@ -10,7 +10,7 @@ public class CTriggerVisionSphere : MonoBehaviour
         if (unit != null)
         {
             UnitArtillery selfUnit = transform.parent.GetComponent<UnitArtillery>();
-            if ( (selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber) )
+            if ( (selfUnit != null) && (selfUnit.GetTeamNumber() != unit.GetTeamNumber()) )
             {
                 selfUnit.EnemyEntersInVisionSphere(unit);
             }
@@ -23,7 +23,7 @@ public class CTriggerVisionSphere : MonoBehaviour
         if (unit != null)
         {
             UnitArtillery selfUnit = transform.parent.GetComponent<UnitArtillery>();
-            if ((selfUnit != null) && (selfUnit.teamNumber != unit.teamNumber))
+            if ( (selfUnit != null) && (selfUnit.GetTeamNumber() != unit.GetTeamNumber()) )
             {
                 selfUnit.EnemyLeavesVisionSphere(unit);
             }

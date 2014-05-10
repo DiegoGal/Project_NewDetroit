@@ -7,7 +7,7 @@ public class CTeam : MonoBehaviour
     public int teamNumber = -1;
 
     // indicates the color of the units, 0=green, 1=purple
-    public int teamColor = 0;
+    public int teamColorIndex = 0;
 
     public float visionSphereRadius;
 

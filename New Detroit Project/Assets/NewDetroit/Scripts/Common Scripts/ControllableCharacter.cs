@@ -9,7 +9,7 @@ public class ControllableCharacter : MonoBehaviour
     public CTeam team;
 
 	// number that identifies the team to which the character belongs
-    private int teamNumber;
+    public int teamNumber { get; private set; }
 
     // reference to the Life component of the character
     public CLife life;
@@ -68,6 +68,12 @@ public class ControllableCharacter : MonoBehaviour
     {
         visionSphereRadius = newRadius;
         team.visionSphereRadius = visionSphereRadius;
+    }
+
+    public void SetTeamColorIndex (int newColorIndex)
+    {
+        team.teamColorIndex = newColorIndex;
+        GetComponent<CSelectable>().ResetTeamColor();
     }
 
     // if type == 'P' is phisical damage if type == 'M' is magical damage

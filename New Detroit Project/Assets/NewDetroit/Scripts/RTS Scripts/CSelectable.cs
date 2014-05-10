@@ -4,8 +4,8 @@ using System.Collections;
 public class CSelectable : MonoBehaviour
 {
 	
-	private Color origColor;
-	private Color selectColor = Color.yellow;
+	private Color teamColor;
+    private Color origColor;
     
     private float outlineWidth;
     private Color outlineColor;
@@ -17,18 +17,23 @@ public class CSelectable : MonoBehaviour
     private UnitController unitReference = null;
 
 	// Use this for initialization
-	void Awake ()
+	void Start ()
     {
-        if (this.renderer != null)
-		    origColor = this.renderer.material.color;
 
         model = transform.FindChild("Model");
         if (model != null)
         {
+            // if there is a "model" children in the object it is a unit
             outlineWidth = model.renderer.material.GetFloat("_OutlineWidth");
-            outlineColor = model.renderer.material.GetColor("_OutlineColor");
-            
+            teamColor = outlineColor = model.renderer.material.GetColor("_OutlineColor");
+
             model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
+        }
+        else
+        {
+            // if not, it is a building
+            teamColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];
+            origColor = renderer.material.GetColor("_DiffuseColor");
         }
 
 		selected = false;
@@ -36,13 +41,18 @@ public class CSelectable : MonoBehaviour
         unitReference = GetComponent<UnitController>();
 	}
 
+    public void ResetTeamColor ()
+    {
+        teamColor = outlineColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];
+    }
+
 	public void SetSelected ()
 	{
 		selected = true;
         if (model != null)
             model.renderer.material.SetFloat("_OutlineWidth", outlineWidth);
-        else if (this.renderer != null)
-		    this.renderer.material.color = selectColor;
+        else
+		    this.renderer.material.SetColor("_DiffuseColor", teamColor);
 
         if (unitReference)
             unitReference.isSelected = true;
@@ -53,8 +63,8 @@ public class CSelectable : MonoBehaviour
 		selected = false;
         if (model != null)
             model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
-        else if (this.renderer != null)
-		    this.renderer.material.color = origColor;
+        else
+            this.renderer.material.SetColor("_DiffuseColor", origColor);
 
         if (unitReference)
             unitReference.isSelected = false;
