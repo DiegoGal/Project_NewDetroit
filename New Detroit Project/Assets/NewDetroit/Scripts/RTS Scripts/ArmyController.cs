@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class ArmyController : MonoBehaviour
 {
 	public int teamNumber;
+    public int teamColorIndex;
 
     public List<GameObject> unitList = new List<GameObject>();
     public List<GameObject> unitSelectedList = new List<GameObject>();
@@ -83,6 +84,9 @@ public class ArmyController : MonoBehaviour
         resourceBuildingList.Add(armyBase.GetComponent<CResourceBuilding>());
         Minimap.SetBase(armyBase.GetComponent<CResourceBuilding>());
 
+        // se establece el número y el color del equipo en la base
+        armyBase.GetComponent<BaseController>().SetTeamNumber(teamNumber, teamColorIndex);
+
         // agregamos las unidades que tengamos del ejército por el escenario
         // OJO! FindObjectsOfType es MUY lento, cuidado con ello
         GameObject[] objects = FindObjectsOfType(typeof(GameObject)) as GameObject[];
@@ -93,6 +97,7 @@ public class ArmyController : MonoBehaviour
             //if (unit != null)
             {
                 //Debug.Log("Added to the list: " + go.name);
+                unit.SetTeamColorIndex(teamColorIndex);
                 unitList.Add(go);
                 //DistanceMeasurerTool.InsertUnit(unit);
                 Minimap.InsertUnit(unit);
@@ -1077,7 +1082,7 @@ public class ArmyController : MonoBehaviour
     {
         if (armyBase.GetComponent<CSelectable>().IsSelected())
         {
-            // spawn a new harvester
+            // spawn a new unit
             GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(unitId, ref resources, ref economy);
             if (newUnit)
             {

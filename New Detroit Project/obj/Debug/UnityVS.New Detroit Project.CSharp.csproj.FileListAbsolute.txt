@@ -39,3 +39,5 @@ C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New D
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.CSharp.Plugins.pdb
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\EasyRoads3D.dll
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.pdb
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\EasyRoads3D.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.pdb

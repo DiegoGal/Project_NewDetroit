@@ -65,6 +65,8 @@ public class UnitController : ControllableCharacter
 
     public virtual void Awake ()
     {
+        base.Awake();
+
         model = transform.FindChild("Model");
 
         radius = 0.25f;

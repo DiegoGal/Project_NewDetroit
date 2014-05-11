@@ -11,3 +11,16 @@ C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detr
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.unityprojResolveAssemblyReference.cache
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.dll
 C:\Users\Public\Documents\Unity Projects\Proyecto SI\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.pdb
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.pdb
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\EasyRoads3D.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Photon3Unity3D.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEditor.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\UnityEngine.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Mono.Cecil.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\nunit.framework.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\Unity.DataContract.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.unityprojResolveAssemblyReference.cache
+C:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.dll
+C:\Proyectos\Project_NewDetroit\New Detroit Project\obj\Debug\UnityVS.New Detroit Project.UnityScript.Plugins.pdb

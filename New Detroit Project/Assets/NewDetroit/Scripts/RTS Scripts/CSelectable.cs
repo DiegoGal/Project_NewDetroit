@@ -4,13 +4,16 @@ using System.Collections;
 public class CSelectable : MonoBehaviour
 {
 	
-	private Color origColor;
-	private Color selectColor = Color.yellow;
+	private Color teamColor;
+    private Color origColor;
     
     private float outlineWidth;
     private Color outlineColor;
 
     private Transform model;
+
+    // indicates the number of materials in its model
+    private int numberOfMaterials;
 
 	private bool selected;
 
@@ -19,16 +22,27 @@ public class CSelectable : MonoBehaviour
 	// Use this for initialization
 	void Awake ()
     {
-        if (this.renderer != null)
-		    origColor = this.renderer.material.color;
 
         model = transform.FindChild("Model");
-        if (model != null)
+        if (model)
         {
+            // if there is a "model" children in the object it is a unit
+            numberOfMaterials = model.renderer.materials.Length;
+
             outlineWidth = model.renderer.material.GetFloat("_OutlineWidth");
-            outlineColor = model.renderer.material.GetColor("_OutlineColor");
-            
+
+            for (int i = 0; i < numberOfMaterials; i++)
+                model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
+
             model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
+
+            teamColor = outlineColor = model.renderer.material.GetColor("_OutlineColor");
+        }
+        else
+        {
+            // if not, it is a building
+            teamColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];
+            origColor = renderer.material.GetColor("_DiffuseColor");
         }
 
 		selected = false;
@@ -36,13 +50,21 @@ public class CSelectable : MonoBehaviour
         unitReference = GetComponent<UnitController>();
 	}
 
+    public void ResetTeamColor ()
+    {
+        teamColor = outlineColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];
+        for (int i = 0; i < numberOfMaterials; i++)
+            model.renderer.materials[i].SetColor("_OutlineColor", teamColor);
+    }
+
 	public void SetSelected ()
 	{
 		selected = true;
-        if (model != null)
-            model.renderer.material.SetFloat("_OutlineWidth", outlineWidth);
-        else if (this.renderer != null)
-		    this.renderer.material.color = selectColor;
+        if (model)
+            for (int i = 0; i < numberOfMaterials; i++)
+                model.renderer.materials[i].SetFloat("_OutlineWidth", outlineWidth);
+        else
+		    this.renderer.material.SetColor("_DiffuseColor", teamColor);
 
         if (unitReference)
             unitReference.isSelected = true;
@@ -51,10 +73,11 @@ public class CSelectable : MonoBehaviour
 	public void SetDeselect ()
 	{
 		selected = false;
-        if (model != null)
-            model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
-        else if (this.renderer != null)
-		    this.renderer.material.color = origColor;
+        if (model)
+            for (int i = 0; i < numberOfMaterials; i++)
+                model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
+        else
+            this.renderer.material.SetColor("_DiffuseColor", origColor);
 
         if (unitReference)
             unitReference.isSelected = false;
@@ -81,7 +104,8 @@ public class CSelectable : MonoBehaviour
     public void SetOutlineColor (Color color)
     {
         outlineColor = color;
-        model.renderer.material.SetColor("_OutlineColor", outlineColor);
+        for (int i = 0; i < numberOfMaterials; i++)
+            model.renderer.materials[i].SetColor("_OutlineColor", outlineColor);
     }
 
 }

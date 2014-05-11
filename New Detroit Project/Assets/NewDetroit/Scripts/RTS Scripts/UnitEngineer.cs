@@ -886,7 +886,7 @@ public class UnitEngineer : UnitController
                 towerGoblin = Instantiate(towerGoblinPrefab, new Vector3(Input.mousePosition.x, 0, Input.mousePosition.z), new Quaternion(0, 0, 0, 0))
                     as GameObject; //rotation (-90, -180, 0)
                 towerGoblin.name = towerGoblin.name.Replace("(Clone)", "");
-                towerGoblin.GetComponent<TowerGoblin>().SetTeamNumber(this.teamNumber);
+                towerGoblin.GetComponent<TowerGoblin>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
                 towerGoblin.GetComponent<TowerGoblin>().SetBaseController(baseController);
                 newTGConstruct = true;
                 break;
@@ -894,7 +894,7 @@ public class UnitEngineer : UnitController
                 warehouse = Instantiate(warehousePrefab, new Vector3(Input.mousePosition.x, 0, Input.mousePosition.z), new Quaternion(0, 0, 0, 0))
                     as GameObject; //rotation (-90, -180, 0)
                 warehouse.name = warehouse.name.Replace("(Clone)", "");
-                warehouse.GetComponent<Warehouse>().SetTeamNumber(this.teamNumber);
+                warehouse.GetComponent<Warehouse>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
                 warehouse.GetComponent<Warehouse>().SetBaseController(baseController);
                 newWConstruct = true;
                 break;

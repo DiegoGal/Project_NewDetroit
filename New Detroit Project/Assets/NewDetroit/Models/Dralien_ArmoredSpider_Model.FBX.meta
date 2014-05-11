@@ -61,6 +61,8 @@ ModelImporter:
     100110: IK Chain008
     100112: IK Chain009
     100114: IK Chain010
+    100116: cryAnimationExportNode
+    100118: cryExporterSettingsNode
     400000: Dralien
     400002: //RootNode
     400004: Dummy_Cuerpo
@@ -119,6 +121,8 @@ ModelImporter:
     400110: IK Chain008
     400112: IK Chain009
     400114: IK Chain010
+    400116: cryAnimationExportNode
+    400118: cryExporterSettingsNode
     4300000: Dralien
     7400000: Walk
     7400002: Run
@@ -126,6 +130,9 @@ ModelImporter:
     7400006: Attack2
     7400008: Attack3
     7400010: Dying
+    7400012: Eating
+    7400014: Idle
+    7400016: Digging
     9500000: //RootNode
     11100000: //RootNode
     13700000: Dralien
@@ -859,7 +866,7 @@ ModelImporter:
       takeName: Take 001
       firstFrame: 191
       lastFrame: 250
-      wrapMode: 0
+      wrapMode: 1
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
@@ -879,6 +886,444 @@ ModelImporter:
       events: []
       transformMask:
       - path: 
+        weight: 1
+      - path: Dralien
+        weight: 1
+      - path: Dummy_Cuerpo
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha003
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha003/IK Chain006
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha004
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha004/IK Chain005
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Articulacion3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Pata_Delantera_Izq4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Pata_Delantera_Izq4/Hueso_Pata_Delantera_Izq5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Articulacion3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Pata_Delantera_Izq4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Pata_Delantera_Izq4(mirrored)/Hueso_Pata_Delantera_Izq5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Articulacion6
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Pata_Trasera_Izq4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Pata_Trasera_Izq4/Hueso_Pata_Trasera_Izq5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Articulacion6(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Pata_Trasera_Izq4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Pata_Trasera_Izq4(mirrored)/Hueso_Pata_Trasera_Izq5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1/Hueso_Pinza_Dcha2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1/Hueso_Pinza_Dcha2/Hueso_Pinza_Dcha3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1/Hueso_Pinza_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1/Hueso_Pinza_Izq2/Hueso_Pinza_Izq3
+        weight: 1
+      - path: Dummy_Inferior_Dcha1
+        weight: 1
+      - path: Dummy_Inferior_Dcha1/Dummy_Superior_Dcha1
+        weight: 1
+      - path: Dummy_Inferior_Dcha1/IK Chain008
+        weight: 1
+      - path: Dummy_Inferior_Dcha2
+        weight: 1
+      - path: Dummy_Inferior_Dcha2/Dummy_Superior_Dcha2
+        weight: 1
+      - path: Dummy_Inferior_Dcha2/IK Chain010
+        weight: 1
+      - path: Dummy_Inferior_Izq1
+        weight: 1
+      - path: Dummy_Inferior_Izq1/Dummy_Superior_Izq1
+        weight: 1
+      - path: Dummy_Inferior_Izq1/IK Chain007
+        weight: 1
+      - path: Dummy_Inferior_Izq2
+        weight: 1
+      - path: Dummy_Inferior_Izq2/Dummy_Superior_Izq2
+        weight: 1
+      - path: Dummy_Inferior_Izq2/IK Chain009
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Eating
+      takeName: Take 001
+      firstFrame: 260
+      lastFrame: 360
+      wrapMode: 1
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: cryAnimationExportNode
+        weight: 1
+      - path: cryExporterSettingsNode
+        weight: 1
+      - path: Dralien
+        weight: 1
+      - path: Dummy_Cuerpo
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha003
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha003/IK Chain006
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha004
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha004/IK Chain005
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Articulacion3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Pata_Delantera_Izq4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Pata_Delantera_Izq4/Hueso_Pata_Delantera_Izq5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Articulacion3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Pata_Delantera_Izq4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Pata_Delantera_Izq4(mirrored)/Hueso_Pata_Delantera_Izq5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Articulacion6
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Pata_Trasera_Izq4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Pata_Trasera_Izq4/Hueso_Pata_Trasera_Izq5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Articulacion6(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Pata_Trasera_Izq4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Pata_Trasera_Izq4(mirrored)/Hueso_Pata_Trasera_Izq5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1/Hueso_Pinza_Dcha2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1/Hueso_Pinza_Dcha2/Hueso_Pinza_Dcha3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1/Hueso_Pinza_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1/Hueso_Pinza_Izq2/Hueso_Pinza_Izq3
+        weight: 1
+      - path: Dummy_Inferior_Dcha1
+        weight: 1
+      - path: Dummy_Inferior_Dcha1/Dummy_Superior_Dcha1
+        weight: 1
+      - path: Dummy_Inferior_Dcha1/IK Chain008
+        weight: 1
+      - path: Dummy_Inferior_Dcha2
+        weight: 1
+      - path: Dummy_Inferior_Dcha2/Dummy_Superior_Dcha2
+        weight: 1
+      - path: Dummy_Inferior_Dcha2/IK Chain010
+        weight: 1
+      - path: Dummy_Inferior_Izq1
+        weight: 1
+      - path: Dummy_Inferior_Izq1/Dummy_Superior_Izq1
+        weight: 1
+      - path: Dummy_Inferior_Izq1/IK Chain007
+        weight: 1
+      - path: Dummy_Inferior_Izq2
+        weight: 1
+      - path: Dummy_Inferior_Izq2/Dummy_Superior_Izq2
+        weight: 1
+      - path: Dummy_Inferior_Izq2/IK Chain009
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle
+      takeName: Take 001
+      firstFrame: 361
+      lastFrame: 400
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: cryAnimationExportNode
+        weight: 1
+      - path: cryExporterSettingsNode
+        weight: 1
+      - path: Dralien
+        weight: 1
+      - path: Dummy_Cuerpo
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha003
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha003/IK Chain006
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha004
+        weight: 1
+      - path: Dummy_Cuerpo/Dummy_Superior_Dcha004/IK Chain005
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Articulacion3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Pata_Delantera_Izq4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1/Hueso_Articulacion1/Hueso_Pata_Delantera_Izq2/Hueso_Articulacion2/Hueso_Pata_Delantera_Izq3/Hueso_Pata_Delantera_Izq4/Hueso_Pata_Delantera_Izq5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Articulacion3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Pata_Delantera_Izq4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Delantera_Izq1(mirrored)/Hueso_Articulacion1(mirrored)/Hueso_Pata_Delantera_Izq2(mirrored)/Hueso_Articulacion2(mirrored)/Hueso_Pata_Delantera_Izq3(mirrored)/Hueso_Pata_Delantera_Izq4(mirrored)/Hueso_Pata_Delantera_Izq5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Articulacion6
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Pata_Trasera_Izq4
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1/Hueso_Articulacion4/Hueso_Pata_Trasera_Izq2/Hueso_Articulacion5/Hueso_Pata_Trasera_Izq3/Hueso_Pata_Trasera_Izq4/Hueso_Pata_Trasera_Izq5
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Articulacion6(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Pata_Trasera_Izq4(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pata_Trasera_Izq1(mirrored)/Hueso_Articulacion4(mirrored)/Hueso_Pata_Trasera_Izq2(mirrored)/Hueso_Articulacion5(mirrored)/Hueso_Pata_Trasera_Izq3(mirrored)/Hueso_Pata_Trasera_Izq4(mirrored)/Hueso_Pata_Trasera_Izq5(mirrored)
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1/Hueso_Pinza_Dcha2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Dcha1/Hueso_Pinza_Dcha2/Hueso_Pinza_Dcha3
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1/Hueso_Pinza_Izq2
+        weight: 1
+      - path: Dummy_Cuerpo/Hueso_Cuerpo/Hueso_Pinza_Izq1/Hueso_Pinza_Izq2/Hueso_Pinza_Izq3
+        weight: 1
+      - path: Dummy_Inferior_Dcha1
+        weight: 1
+      - path: Dummy_Inferior_Dcha1/Dummy_Superior_Dcha1
+        weight: 1
+      - path: Dummy_Inferior_Dcha1/IK Chain008
+        weight: 1
+      - path: Dummy_Inferior_Dcha2
+        weight: 1
+      - path: Dummy_Inferior_Dcha2/Dummy_Superior_Dcha2
+        weight: 1
+      - path: Dummy_Inferior_Dcha2/IK Chain010
+        weight: 1
+      - path: Dummy_Inferior_Izq1
+        weight: 1
+      - path: Dummy_Inferior_Izq1/Dummy_Superior_Izq1
+        weight: 1
+      - path: Dummy_Inferior_Izq1/IK Chain007
+        weight: 1
+      - path: Dummy_Inferior_Izq2
+        weight: 1
+      - path: Dummy_Inferior_Izq2/Dummy_Superior_Izq2
+        weight: 1
+      - path: Dummy_Inferior_Izq2/IK Chain009
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Digging
+      takeName: Take 001
+      firstFrame: 410
+      lastFrame: 520
+      wrapMode: 1
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: cryAnimationExportNode
+        weight: 1
+      - path: cryExporterSettingsNode
         weight: 1
       - path: Dralien
         weight: 1

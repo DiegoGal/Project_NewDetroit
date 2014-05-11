@@ -148,9 +148,17 @@ public class BuildingController : Photon.MonoBehaviour
         return found;
     }
 
-    public void SetTeamNumber (int teamNumber)
+    public void SetTeamNumber (int teamNumber, int teamColorIndex)
     {
         this.teamNumber = teamNumber;
+
+        CTeam cteam = GetComponent<CTeam>();
+        cteam.teamNumber = teamNumber;
+        cteam.teamColorIndex = teamColorIndex;
+
+        CSelectable csel = GetComponent<CSelectable>();
+        if (csel)
+            csel.ResetTeamColor();
     }
 
     protected void RemoveEngineersInQueue ()
