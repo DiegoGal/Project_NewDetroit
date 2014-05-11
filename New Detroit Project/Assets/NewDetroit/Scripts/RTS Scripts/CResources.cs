@@ -14,7 +14,7 @@ public class CResources : MonoBehaviour
     private bool[] harvestPosTaken;
 
     // desplazamiento de los harvest positions
-    public float despPosition = 0.8f;
+    public float despPosition = 1.4f;
 
     // Queue of units harversters which are waiting in the mine
     private List<UnitHarvester> harvesterQueue;
