@@ -434,7 +434,7 @@ public class UnitHarvester : UnitController
 
     } // UpdateGoingTo
 
-    public override void OnGUI ()
+    /*public override void OnGUI ()
     {
         if (currentState != State.AscendingToHeaven)
         {
@@ -446,15 +446,8 @@ public class UnitHarvester : UnitController
                 currentState.ToString() + "\n" +
                 currentHarvestState.ToString() + " -> " + nextHarvestState.ToString() + "\n" +
                 "resources: " + resourcesLoaded );
-
-            /*GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 45, 100, 50),
-                currentState.ToString());
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 55, 200, 50),
-                currentHarvestState.ToString() + " -> " + nextHarvestState.ToString());
-            GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 65, 100, 50),
-                "resources: " + resourcesLoaded);*/
         }
-    }
+    }*/
 
     /*public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {

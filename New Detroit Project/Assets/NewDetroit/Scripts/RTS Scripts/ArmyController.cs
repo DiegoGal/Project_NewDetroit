@@ -168,7 +168,7 @@ public class ArmyController : MonoBehaviour
                     myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                     if (
                          Physics.Raycast(myRay, out myHit, 1000f, layerMask) &&
-                         (myHit.transform.name == "WorldFloor")
+                         (myHit.transform.name == "WorldFloor" || myHit.transform.name == "Terrain")
                        )
                     {
                         //Debug.Log("Añadimos punto a la ruta");
@@ -210,7 +210,7 @@ public class ArmyController : MonoBehaviour
                 myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
                 {
-                    //Debug.Log("he tocado: " + myHit.transform.name);
+                    Debug.Log("he tocado: " + myHit.transform.name);
                     CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
                     if (objSel != null)
                     {
@@ -402,7 +402,7 @@ public class ArmyController : MonoBehaviour
             keyPPressed = true;
         if (keyPPressed && Input.GetKeyUp(KeyCode.P))
         {
-            Debug.Log("finalizar puntos de ruta");
+            //Debug.Log("finalizar puntos de ruta");
             keyPPressed = false;
             bool allExplorers = true;
             foreach (GameObject u in unitSelectedList)
@@ -417,7 +417,7 @@ public class ArmyController : MonoBehaviour
 
             if (allExplorers)
             {
-                Debug.Log("lista de posiciones: " + patrolPosList);
+                //Debug.Log("lista de posiciones: " + patrolPosList);
                 foreach (GameObject u in unitSelectedList)
                     u.GetComponent<UnitScout>().StartPatrol(patrolPosList);
                 patrolPosList.Clear();
@@ -489,7 +489,7 @@ public class ArmyController : MonoBehaviour
 
     void OnGUI ()
     {
-		GUI.skin.label.fontSize = 12;
+		/*GUI.skin.label.fontSize = 12;
 
         if (teamNumber == 0)
             GUI.Label(new Rect(5, 5, 150, 100), "Team_A\n\tTotal resources: " + resources +
@@ -498,7 +498,7 @@ public class ArmyController : MonoBehaviour
         else if (teamNumber == 1)
             GUI.Label(new Rect(Screen.width - 140, 5, 150, 100), "Team_B\n\tTotal resources: " + resources +
                 "\n\tEconomy: " + economy +
-                "\n\tTotal Units: " + unitList.Count);
+                "\n\tTotal Units: " + unitList.Count);*/
 
         // selecting rectangle
         if (selecting)
@@ -1086,6 +1086,7 @@ public class ArmyController : MonoBehaviour
             GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(unitId, ref resources, ref economy);
             if (newUnit)
             {
+                newUnit.GetComponent<ControllableCharacter>().SetTeamNumber(this.teamNumber);
                 unitList.Add(newUnit);
                 //DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
                 Minimap.InsertUnit(newUnit.GetComponent<UnitController>());

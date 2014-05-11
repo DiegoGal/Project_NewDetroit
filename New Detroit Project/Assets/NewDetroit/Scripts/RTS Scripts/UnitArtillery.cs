@@ -428,7 +428,7 @@ public class UnitArtillery : UnitController
 
     } // UpdateModeIdle*/
 
-    public override void OnGUI ()
+    /*public override void OnGUI ()
     {
         if (currentState != State.AscendingToHeaven)
         {
@@ -445,7 +445,7 @@ public class UnitArtillery : UnitController
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 75, 100, 50),
                 "Attack2 sel: " + attack2Selected);
         }
-    } // OnGUI
+    } // OnGUI*/
 
 	public override void EnemyEntersInVisionSphere (CTeam enemy)
     {

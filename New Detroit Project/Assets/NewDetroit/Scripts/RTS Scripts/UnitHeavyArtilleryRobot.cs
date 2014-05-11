@@ -4,6 +4,8 @@ using System.Collections;
 public class UnitHeavyArtilleryRobot : UnitHeavyArtillery
 {
 
+    public GameObject dome;
+
     public override void Awake ()
     {
         base.Awake();
@@ -12,15 +14,19 @@ public class UnitHeavyArtilleryRobot : UnitHeavyArtillery
         // Por si no se han establecido las referencias a los dummys del modelo
         // en el editor de Unity las buscamos ahora:
         if (dummyLeftWeapon == null)
-            dummyLeftWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/Bip002 Spine1/Bip002 Neck/Bip002 R Clavicle/Bip002 R UpperArm/Bip002 R Forearm/Bip002 R Hand/arma mano derecha");
+            dummyLeftWeapon = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 L Clavicle/Bip001 L UpperArm/Bip001 L Forearm/Bip001 L Hand");
         if (dummyLeftWeaponGunBarrel == null)
-            dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A/GunBarrelLeft");
-        if (dummyRightWeapon == null)
-            dummyRightWeapon = transform.FindChild("Bip002/Bip002 Pelvis/Bip002 Spine/mortero espalda");   
-        if (dummyLeftWeapon)
-            frontWeapon = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A").gameObject;
-        if (dummyRightWeapon)
-            backWeapon = dummyRightWeapon.FindChild("GoblinHeavyArtilleryWeapon01_B").gameObject;
+            dummyLeftWeaponGunBarrel = dummyLeftWeapon.FindChild("GunBarrel");
+
+        if (!dome)
+            dome = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Xtra01").gameObject;
     }
 
+    protected override void RemoveAssetsFromModel()
+    {
+        base.RemoveAssetsFromModel();
+
+        if (dome)
+            Destroy(dome);
+    }
 } // class UnitHeavyArtilleryRobot

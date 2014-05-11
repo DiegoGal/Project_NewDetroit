@@ -15,7 +15,7 @@ public class UnitHeavyArtillery : UnitArtillery
 
     // we need to save the original size of the vision sphere
     // in order to restore it after the deployed mode
-    private float visionSphereRaiusOriginal;
+    private float visionSphereRadiusOriginal;
 
     public GameObject frontWeapon, backWeapon;
 
@@ -46,10 +46,10 @@ public class UnitHeavyArtillery : UnitArtillery
         basicAttackPower = attackPower1;
         secondaryAttackPower = attackPower2;
 
-        visionSphereRaiusOriginal = visionSphereRadius;
+        visionSphereRadiusOriginal = visionSphereRadius;
 
-        maxAttackDistance1 = visionSphereRaiusOriginal;
-        maxAttackDistance2 = visionSphereRaiusOriginal + visionSphereRadiusExtended;
+        maxAttackDistance1 = visionSphereRadiusOriginal;
+        maxAttackDistance2 = visionSphereRadiusOriginal + visionSphereRadiusExtended;
         maxAttackDistance = maxAttackDistance1;
 
         attackCadenceAux = 0.0f;
@@ -324,7 +324,8 @@ public class UnitHeavyArtillery : UnitArtillery
                         visionSphereRadius + visionSphereRadiusExtended;
                 else
                 {
-                    visionSphereRadius = visionSphereRaiusOriginal + visionSphereRadiusExtended;
+                    visionSphereRadius = visionSphereRadiusOriginal + visionSphereRadiusExtended;
+                    team.visionSphereRadius = visionSphereRadius;
                     maxAttackDistance = maxAttackDistance2;
                 }
                     
@@ -339,7 +340,8 @@ public class UnitHeavyArtillery : UnitArtillery
                         visionSphereRadius + visionSphereRadiusExtended;
                 else
                 {
-                    visionSphereRadius = visionSphereRaiusOriginal + visionSphereRadiusExtended;
+                    visionSphereRadius = visionSphereRadiusOriginal + visionSphereRadiusExtended;
+                    team.visionSphereRadius = visionSphereRadius;
                     maxAttackDistance = maxAttackDistance2;
                 }
 
@@ -354,7 +356,8 @@ public class UnitHeavyArtillery : UnitArtillery
                         visionSphereRadius;
                 else
                 {
-                    visionSphereRadius = visionSphereRaiusOriginal;
+                    visionSphereRadius = visionSphereRadiusOriginal;
+                    team.visionSphereRadius = visionSphereRadius;
                     maxAttackDistance = maxAttackDistance1;
                 }
 
@@ -369,7 +372,8 @@ public class UnitHeavyArtillery : UnitArtillery
                         visionSphereRadius;
                 else
                 {
-                    visionSphereRadius = visionSphereRaiusOriginal;
+                    visionSphereRadius = visionSphereRadiusOriginal;
+                    team.visionSphereRadius = visionSphereRadius;
                     maxAttackDistance = maxAttackDistance1;
                 }
 

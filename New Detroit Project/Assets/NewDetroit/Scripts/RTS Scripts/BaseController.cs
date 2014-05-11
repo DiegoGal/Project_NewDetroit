@@ -33,6 +33,8 @@ public class BaseController : CResourceBuilding
 
     public float baseRadius = 12.0f;
 
+    public bool createCubes = false;
+
 	// Use this for initialization
     public override void Start ()
     {
@@ -88,6 +90,7 @@ public class BaseController : CResourceBuilding
             Destroy(cubes[i].GetComponent<BoxCollider>());
             cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
             cubes[i].transform.parent = this.transform;
+            cubes[i].SetActive(createCubes);
         }
 
         life.currentLife = life.maximunLife;

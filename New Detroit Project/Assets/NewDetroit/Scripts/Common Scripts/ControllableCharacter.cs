@@ -134,9 +134,15 @@ public class ControllableCharacter : MonoBehaviour
         return radius;
     }
 
-    public int GetTeamNumber()
+    public int GetTeamNumber ()
     {
         return teamNumber;
+    }
+
+
+    public void SetTeamNumber (int teamNumber)
+    {
+        this.teamNumber = teamNumber;
     }
 
     //DistanceMeasureTool - Network

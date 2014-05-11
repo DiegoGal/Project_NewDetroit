@@ -82,13 +82,13 @@ public class CResources : MonoBehaviour
         }
     }
 
-    void OnGUI ()
+    /*void OnGUI ()
     {
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 
         GUI.Label(new Rect(camPos.x - 35, Screen.height - camPos.y - 20, 100, 50),
             actualResources.ToString());
-    }
+    }*/
 
     public int GetResources (int cant)
     {
