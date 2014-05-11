@@ -447,37 +447,45 @@ public class UnitArtillery : UnitController
         }
     } // OnGUI
 
-	public override void EnemyEntersInVisionSphere (ControllableCharacter enemy)
+	public override void EnemyEntersInVisionSphere (CTeam enemy)
     {
-        //if (!enemiesInside.Contains(enemy))
-        //{
-            //Debug.Log("enemigo a la vista!");
-            enemiesInside.Add(enemy);
-            if (currentArtilleryState == ArtilleryState.None)
-            {
-                currentArtilleryState = ArtilleryState.Alert;
-                alertHitTimerAux = 0.0f;
-            }
-        //}
+        ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
+        if (enemyCC)
+        {
+            //if (!enemiesInside.Contains(enemy))
+            //{
+            //  Debug.Log("enemigo a la vista!");
+                enemiesInside.Add(enemyCC);
+                if (currentArtilleryState == ArtilleryState.None)
+                {
+                    currentArtilleryState = ArtilleryState.Alert;
+                    alertHitTimerAux = 0.0f;
+                }
+            //}
+        }
     }
 
-    public override void EnemyLeavesVisionSphere (ControllableCharacter enemy)
+    public override void EnemyLeavesVisionSphere (CTeam enemy)
     {
-        enemiesInside.Remove(enemy);
-        /*if (enemiesInside.Remove(enemy))
-            Debug.Log("Enemy out");
-        else
-            Debug.Log("Enemy NOT removed");*/
-
-        if (enemiesInside.Count == 0)
+        ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
+        if (enemyCC)
         {
-            //Debug.Log("all enemies out");
+            enemiesInside.Remove(enemyCC);
+            /*if (enemiesInside.Remove(enemy))
+                Debug.Log("Enemy out");
+            else
+                Debug.Log("Enemy NOT removed");*/
 
-            if (currentArtilleryState == ArtilleryState.Attacking1)
-                PlayAnimationCrossFade("Idle01");
+            if (enemiesInside.Count == 0)
+            {
+                //Debug.Log("all enemies out");
 
-            currentArtilleryState = ArtilleryState.None;
-            alertHitTimerAux = 0.0f;
+                if (currentArtilleryState == ArtilleryState.Attacking1)
+                    PlayAnimationCrossFade("Idle01");
+
+                currentArtilleryState = ArtilleryState.None;
+                alertHitTimerAux = 0.0f;
+            }
         }
     }
 

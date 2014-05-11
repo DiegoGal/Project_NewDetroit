@@ -114,18 +114,19 @@ public class UnitBasicArtillery : UnitArtillery
                         // Attack!
                         Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
                         transform.LookAt(lastEnemyAttacked.transform);
-                        // play the attack animation:
-                        //animation.CrossFade("Attack1");
-                        //animation.CrossFadeQueued("Idle01");
+
                         // emite some particles:
                         GameObject particles1 = (GameObject)Instantiate(shotParticles,
                             dummyLeftWeaponGunBarrel.transform.position,
                             transform.rotation);
                         Destroy(particles1, 0.4f);
-                        GameObject particles2 = (GameObject)Instantiate(shotParticles,
-                            dummyRightWeaponGunBarrel.transform.position,
-                            transform.rotation);
-                        Destroy(particles2, 0.4f);
+                        if (numberOfWeapons > 1)
+                        {
+                            GameObject particles2 = (GameObject)Instantiate(shotParticles,
+                                dummyRightWeaponGunBarrel.transform.position,
+                                transform.rotation);
+                            Destroy(particles2, 0.4f);
+                        }
 
                         // first we check if the enemy is now alive
                         if (lastEnemyAttacked.Damage(basicAttackPower))
@@ -176,7 +177,7 @@ public class UnitBasicArtillery : UnitArtillery
             base.PlayAnimationCrossFade(animationName);
     }
 
-    public override int GetUnitType()
+    public override int GetUnitType ()
     {
         return 1;
     }

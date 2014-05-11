@@ -14,12 +14,12 @@ public class CTeamUnit : CTeam
 
     public override void EnemyEntersInVisionSphere (CTeam unit)
     {
-
+        selfUnit.EnemyEntersInVisionSphere(unit);
     }
 
     public override void EnemyLeavesVisionSphere(CTeam unit)
     {
-
+        selfUnit.EnemyLeavesVisionSphere(unit);
     }
 
 }

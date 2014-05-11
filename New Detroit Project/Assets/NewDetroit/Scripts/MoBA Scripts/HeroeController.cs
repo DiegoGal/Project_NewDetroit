@@ -231,7 +231,8 @@ public abstract class HeroeController : ControllableCharacter
 	// ------------------------------------------------------------------------------------------------------
 	// MAIN
 	// Use this for initialization
-	virtual public void Start () {
+	public override void Start ()
+    {
 
         base.Start();
 
@@ -252,7 +253,8 @@ public abstract class HeroeController : ControllableCharacter
 	}//Start
 	
 	// Update is called once per frame
-	virtual public void Update () {
+	public override void Update ()
+    {
         base.Update();
 
 		// Unlock abilities

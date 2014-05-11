@@ -28,8 +28,9 @@ public class UnitBasicArtilleryRemote : ControllableCharacter
     private float attackCadenceAux;
     private bool setPistols = true;
 
-    public void Awake()
+    public override void Awake ()
     {
+        base.Awake();
 
         // Por si no se han establecido las referencias a los dummys del modelo
         // en el editor de Unity las buscamos ahora:
@@ -52,8 +53,10 @@ public class UnitBasicArtilleryRemote : ControllableCharacter
             baseballBat = dummyBat.gameObject;
     }
     //TODO Animar según el estado actual
-    public void Start()
+    public override void Start()
     {
+        base.Start();
+
         network();
         timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
     }

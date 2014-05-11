@@ -118,12 +118,12 @@ public class ControllableCharacter : MonoBehaviour
         return (life.currentLife > 0);
     }
 
-    public virtual void EnemyEntersInVisionSphere (ControllableCharacter enemy)
+    public virtual void EnemyEntersInVisionSphere (CTeam enemy)
     {
         
     }
 
-    public virtual void EnemyLeavesVisionSphere (ControllableCharacter enemy)
+    public virtual void EnemyLeavesVisionSphere (CTeam enemy)
     {
         
     }

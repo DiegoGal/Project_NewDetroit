@@ -63,7 +63,7 @@ public class UnitController : ControllableCharacter
 
    
 
-    public virtual void Awake ()
+    public override void Awake ()
     {
         base.Awake();
 
@@ -98,7 +98,7 @@ public class UnitController : ControllableCharacter
     }
 
     // Update is called once per frame
-    public virtual void Update ()
+    public override void Update ()
     {
         base.Update();
 

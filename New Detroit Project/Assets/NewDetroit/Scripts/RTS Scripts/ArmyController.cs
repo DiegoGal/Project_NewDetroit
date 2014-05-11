@@ -479,7 +479,7 @@ public class ArmyController : MonoBehaviour
 
     private bool UnitIntoScreen(GameObject unit)
     {
-        Vector3 pos = unit.transform.position;
+        //Vector3 pos = unit.transform.position;
         // capture the screen position of the unit
         Vector3 unitScreenPos = Camera.main.WorldToScreenPoint(unit.transform.position);
         if (unitScreenPos.x >= 0.0f && unitScreenPos.x <= Screen.width && unitScreenPos.y >= 0.0f && unitScreenPos.y <= Screen.height)
