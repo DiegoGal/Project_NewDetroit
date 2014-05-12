@@ -6,8 +6,8 @@ public class CameraRTSController : MonoBehaviour
     private Vector3 initPosition;
     private Vector3 initRotation;
 
-    public Vector2 xMinMax = new Vector2();
-    public Vector2 zMinMax = new Vector2();
+    public Vector2 xMinMax = new Vector2(-100.0f, 100.0f);
+    public Vector2 zMinMax = new Vector2(-126.0f,  92.0f);
 
     public float scrollSpeed = 15.0f;
     private float scrollSpeedMult;

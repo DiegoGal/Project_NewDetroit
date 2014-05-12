@@ -18,7 +18,7 @@ public class Warehouse : CResourceBuilding
     // Constant when the tower is constructed
     private const float finalCont = 100.0f;
     // The distance over the floor
-    private const int delta = 7;
+    private const int delta = 5;
 
     private bool constructed = false;
     private bool canConstruct = true;
@@ -30,7 +30,7 @@ public class Warehouse : CResourceBuilding
     public float warehouseRadius = 12.0f;
 
     // Use this for initialization
-    public override void Start()
+    public override void Start ()
     {
         base.Start();
 
@@ -39,6 +39,40 @@ public class Warehouse : CResourceBuilding
         // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
         // Bit shift the index of the layer (9) to get a bit mask
         layerMask = 1 << 9;
+    }
+
+    // Update is called once per frame
+    public override void Update ()
+    {
+        base.Update();
+
+        if (GetComponent<CSelectable>().IsSelected() && Input.GetKey(KeyCode.Delete))
+        {
+            //TODO que ingenieros cambien de estado
+            Destroy(gameObject);
+            baseController.IncreaseResources(costResources);
+        }
+        else if (!isActive)
+        {
+            Light light = transform.FindChild("Light").light;
+            if (canConstruct)
+            {
+                light.color = Color.green;
+                renderer.material.SetColor("_AlphaColor", Color.green);
+            }
+            else
+            {
+                light.color = Color.red;
+                renderer.material.SetColor("_AlphaColor", Color.red);
+            }
+            myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+            {
+                Debug.Break();
+                destiny = new Vector3(myHit.point.x, myHit.point.y + delta, myHit.point.z);
+                transform.position = destiny;
+            }
+        }
     }
 
     public bool StartConstruct (Vector3 destiny, BaseController baseController)
@@ -96,39 +130,6 @@ public class Warehouse : CResourceBuilding
     public void SetBaseController (BaseController baseController)
     {
         this.baseController = baseController;
-    }
-
-	// Update is called once per frame
-    public override void Update ()
-    {
-        base.Update();
-
-        if (GetComponent<CSelectable>().IsSelected() && Input.GetKey(KeyCode.Delete))
-        {
-            //TODO que ingenieros cambien de estado
-            Destroy(gameObject);
-            baseController.IncreaseResources(costResources);
-        }
-        else if (!isActive)
-        {
-            Light light = transform.FindChild("Light").light;
-            if (canConstruct)
-            {
-                light.color = Color.green;
-                renderer.material.SetColor("_AlphaColor", Color.green);
-            }
-            else
-            {
-                light.color = Color.red;
-                renderer.material.SetColor("_AlphaColor", Color.red);
-            }
-            myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
-            {
-                destiny = new Vector3(myHit.point.x, myHit.point.y + delta, myHit.point.z);
-                transform.position = destiny;
-            }
-        }
     }
 
     public void SetCanConstruct (bool b)
