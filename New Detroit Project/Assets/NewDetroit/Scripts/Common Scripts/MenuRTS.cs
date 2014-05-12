@@ -164,6 +164,7 @@ public class MenuRTS : MonoBehaviour {
     public void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom");
+
     }
 
     public void OnCreatedRoom()
