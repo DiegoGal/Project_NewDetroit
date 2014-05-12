@@ -54,6 +54,10 @@ public class UnitEngineer : UnitController
     public GameObject laptop;
     public GameObject hammer;
 
+    // instances of the laptop and the hammer
+    private GameObject laptopInst;
+    private GameObject hammerInst;
+
     //For attacking1
     public GameObject fireball;
     private GameObject newFireball;
@@ -75,6 +79,32 @@ public class UnitEngineer : UnitController
             dummyLaptop = transform.FindChild("Bip001/Bip001 Footsteps");
         if (dummyHand == null)
             dummyHand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Mano Der");
+
+        // instanciate a laptop
+        laptopInst = Instantiate
+        (
+            laptop,
+            dummyLaptop.transform.position,
+            new Quaternion()
+        ) as GameObject;
+        laptopInst.transform.name = "Laptop";
+        laptopInst.transform.parent = dummyLaptop;
+        laptopInst.transform.rotation = transform.rotation;
+        // hide it
+        laptopInst.SetActive(false);
+
+        // instanciate a Hammer
+        hammerInst = Instantiate
+        (
+            hammer,
+            dummyHand.transform.position,
+            new Quaternion()
+        ) as GameObject;
+        hammerInst.transform.name = "Hammer";
+        hammerInst.transform.parent = dummyHand;
+        hammerInst.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
+        // ide it
+        hammerInst.SetActive(false);
     }
 
     public override void Start ()
@@ -85,9 +115,9 @@ public class UnitEngineer : UnitController
         attackCadence = 3.2f;
         construct = conquest = false;
     }
-	/*
+	
 	// Update is called once per frame
-	public override void Update () 
+	/*public override void Update () 
 	{
         // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
         if (Input.anyKeyDown && (newTGConstruct || newWConstruct) && Input.GetMouseButtonDown(0) && 
@@ -362,9 +392,9 @@ public class UnitEngineer : UnitController
                 break;
         } // Switch
 
-	} // Update
-    */
-    protected override void UpdateIdle()
+	} // Update*/
+    
+    protected override void UpdateIdle ()
     {
         base.UpdateIdle();
 
@@ -485,7 +515,7 @@ public class UnitEngineer : UnitController
         } // Switch
     }
 
-    protected override void UpdateGoingTo()
+    protected override void UpdateGoingTo ()
     {
         base.UpdateGoingTo();
 
@@ -503,6 +533,7 @@ public class UnitEngineer : UnitController
             LeaveQueues();
             currentEngineerState = EngineerState.None;
         }
+
         switch (currentEngineerState)
         {
             case EngineerState.GoingToRepairItem:
@@ -604,16 +635,8 @@ public class UnitEngineer : UnitController
                     // when it have arrived to the conquest position
                     currentEngineerState = EngineerState.Conquering;
 
-                    // We instanciate a laptop
-                    GameObject newLaptop = Instantiate
-                    (
-                        laptop,
-                        dummyLaptop.transform.position,
-                        new Quaternion()
-                    ) as GameObject;
-                    newLaptop.transform.name = "Laptop";
-                    newLaptop.transform.parent = dummyLaptop;
-                    newLaptop.transform.rotation = transform.rotation;
+                    // show the laptop
+                    laptopInst.SetActive(true);
                 }
                 break;
             case EngineerState.GoingToConstructPosition:
@@ -629,16 +652,8 @@ public class UnitEngineer : UnitController
                             Minimap.InsertWarehouse(warehouse.GetComponent<Warehouse>());
                         newTGConstruct = newWConstruct = false;
 
-                        // intanciamos un Hammer
-                        GameObject newHammer = Instantiate
-                        (
-                            hammer,
-                            dummyHand.transform.position,
-                            new Quaternion()
-                        ) as GameObject;
-                        newHammer.transform.name = "Hammer";
-                        newHammer.transform.parent = dummyHand;
-                        newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
+                        // show the hammer
+                        hammerInst.SetActive(true);
                     }
                 }
                 else
@@ -651,23 +666,133 @@ public class UnitEngineer : UnitController
         }
     }
 
+    protected override void UpdateGoingToAnEnemy ()
+    {
+        // 1- comprobamos si el enemigo está "a mano" y se le puede atacar
+        float distToEnemy = Vector3.Distance(transform.position, enemySelected.transform.position);
+        if (distToEnemy <= maxAttackDistance)
+        {
+            // change to Attack state
+            currentState = State.Attacking;
+            PlayAnimationCrossFade("Attack1");
+            GetComponent<NavMeshAgent>().destination = transform.position;
+
+            transform.LookAt(enemySelected.transform);
+
+
+            /* if (newFireball)
+                 Destroy(newFireball.gameObject);*/
+        }
+        // 2- comprobamos si el enemigo esta "a vista"
+        else if (distToEnemy <= visionSphereRadius)
+        {
+            this.destiny = enemySelected.transform.position;
+            GetComponent<NavMeshAgent>().destination = destiny;
+        }
+        // 3- se ha llegado al destino y se ha perdido de vista al enemigo
+        else if (Vector3.Distance(transform.position, destiny) <= destinyThreshold)
+        {
+            StopMoving();
+        }
+    }
+
+    protected override void UpdateAttacking ()
+    {
+        attackCadenceAux -= Time.deltaTime;
+
+        float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
+        if (enemySelected)
+        {
+            if (enemyDist <= maxAttackDistance)
+            {
+                if (attackCadenceAux <= 0)
+                {
+                    transform.LookAt(enemySelected.transform);
+
+                    if (!newFireball)
+                    {
+                        // Instanciate a new Fireball
+                        Debug.Log("Dummy position: " + dummyHand.transform.position);
+                        Debug.Log("Engineer position: " + transform.position);
+                        newFireball = Instantiate
+                        (
+                            fireball,
+                            dummyHand.transform.position,
+                            //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
+                            new Quaternion()
+                        ) as GameObject;
+                        newFireball.rigidbody.isKinematic = false;
+                        newFireball.transform.name = "Fireball";
+                        newFireball.transform.parent = dummyHand;
+                        newFireball.transform.rotation = transform.rotation;
+                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
+                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
+                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
+                    }
+
+                    attackCadenceAux = attackCadence;
+                    Vector3 dir = enemySelected.transform.position - newFireball.transform.position;
+                    dir = dir.normalized;
+                    fireballDir = new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
+                                                                        7,
+                                                                dir.z * 8.0f * (enemyDist / maxAttackDistance));
+                    newFireball.transform.parent = null;
+                    newFireball.rigidbody.AddForce(fireballDir, ForceMode.Impulse);
+
+                    //newFireball.GetComponent<SphereCollider>().isTrigger = true;
+
+                    //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);
+                    if (enemySelected.life.currentLife <= 0.0f)
+                    {
+                        // the enemy has die
+                        enemySelected = null;
+                        currentState = State.Idle;
+
+                        PlayAnimationCrossFade("Idle01");
+                        attackCadenceAux = 2.5f;
+                    }
+                }
+            }
+            else if (enemyDist <= visionSphereRadius)
+            {
+                currentState = State.GoingToAnEnemy;
+
+                this.destiny = enemySelected.transform.position;
+                GetComponent<NavMeshAgent>().destination = destiny;
+
+                PlayAnimationCrossFade("Walk");
+                attackCadenceAux = 2.5f;
+            }
+            else
+            {
+                enemySelected = null;
+                currentState = State.Idle;
+                attackCadenceAux = 2.5f;
+                PlayAnimationCrossFade("Idle01");
+            }
+        }
+        else // the enemy is no longer alive
+        {
+            enemySelected = null;
+            currentState = State.Idle;
+
+            PlayAnimationCrossFade("Idle01");
+            attackCadenceAux = 2.5f;
+        }
+    }
+
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
-        // We destroy the Laptop if it exist
-        Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
-        if (laptop1 != null)
-            GameObject.Destroy(laptop1.gameObject);
-        // We destroy the Hammer if it exist
-        Transform hammer1 = dummyHand.transform.FindChild("Hammer");
-        if (hammer1 != null)
-            GameObject.Destroy(hammer1.gameObject);
-        destiny.y = 0;
+        // hide the laptop
+        laptopInst.SetActive(false);
+        // hide the hammer
+        hammerInst.SetActive(false);
 
         LeaveQueues();
 
         // He has to go to another position if he has to
         // destTransform.name == "TowerGoblin" || destTransform.name == "Goblin Warehouse" 
-        if (destTransform.name == "WorldFloor")// If he has to go to another position of the worldfloor he goes
+        if ( destTransform.name == "WorldFloor" || destTransform.name == "Terrain" )// If he has to go to another position of the worldfloor he goes
         {
             newTGConstruct = newWConstruct = false;
             currentEngineerState = EngineerState.None;
@@ -812,6 +937,12 @@ public class UnitEngineer : UnitController
             base.RightClickOnSelected(destiny, destTransform);
     }// RightClickOSelected
 
+    public void SetBuildingPrefabsReferences (GameObject tower, GameObject warehouse)
+    {
+        towerGoblinPrefab = tower;
+        warehousePrefab = warehouse;
+    }
+
     private void LeaveQueues()
     {
         // He has to leave the engineerPosition if he has to
@@ -906,121 +1037,6 @@ public class UnitEngineer : UnitController
         return 3;
     }
 
-    protected override void UpdateGoingToAnEnemy()
-    {
-        // 1- comprobamos si el enemigo está "a mano" y se le puede atacar
-        float distToEnemy = Vector3.Distance(transform.position, enemySelected.transform.position);
-        if (distToEnemy <= maxAttackDistance)
-        {
-            // change to Attack state
-            currentState = State.Attacking;
-            PlayAnimationCrossFade("Attack1");
-            GetComponent<NavMeshAgent>().destination = transform.position;
-
-            transform.LookAt(enemySelected.transform);
-
-            
-           /* if (newFireball)
-                Destroy(newFireball.gameObject);*/
-        }
-        // 2- comprobamos si el enemigo esta "a vista"
-        else if (distToEnemy <= visionSphereRadius)
-        {
-            this.destiny = enemySelected.transform.position;
-            GetComponent<NavMeshAgent>().destination = destiny;
-        }
-        // 3- se ha llegado al destino y se ha perdido de vista al enemigo
-        else if (Vector3.Distance(transform.position, destiny) <= destinyThreshold)
-        {
-            StopMoving();
-        }
-    }
-
-    protected override void UpdateAttacking()
-    {
-        attackCadenceAux -= Time.deltaTime;
-
-        float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
-        if (enemySelected)
-        {
-            if (enemyDist <= maxAttackDistance)
-            {
-                if (attackCadenceAux <= 0)
-                {
-                    transform.LookAt(enemySelected.transform);
-
-                    if (!newFireball)
-                    {
-                        // Instanciate a new Fireball
-                        Debug.Log("Dummy position: " + dummyHand.transform.position);
-                        Debug.Log("Engineer position: " + transform.position);
-                        newFireball = Instantiate
-                        (
-                            fireball,
-                            dummyHand.transform.position,
-                            //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
-                            new Quaternion()
-                        ) as GameObject;
-                        newFireball.rigidbody.isKinematic = false;
-                        newFireball.transform.name = "Fireball";
-                        newFireball.transform.parent = dummyHand;
-                        newFireball.transform.rotation = transform.rotation;
-                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
-                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
-                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
-                    }
-
-                    attackCadenceAux = attackCadence;
-                    Vector3 dir = enemySelected.transform.position - newFireball.transform.position;
-                    dir = dir.normalized;
-                    fireballDir = new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
-                                                                        7,
-                                                                dir.z * 8.0f * (enemyDist / maxAttackDistance));
-                    newFireball.transform.parent = null;
-                    newFireball.rigidbody.AddForce(fireballDir, ForceMode.Impulse);
-
-                    //newFireball.GetComponent<SphereCollider>().isTrigger = true;
-                    
-                    //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);
-                    if (enemySelected.life.currentLife <= 0.0f)
-                    {
-                        // the enemy has die
-                        enemySelected = null;
-                        currentState = State.Idle;
-
-                        PlayAnimationCrossFade("Idle01");
-                        attackCadenceAux = 2.5f;
-                    }
-                }
-            }
-            else if (enemyDist <= visionSphereRadius)
-            {
-                currentState = State.GoingToAnEnemy;
-
-                this.destiny = enemySelected.transform.position;
-                GetComponent<NavMeshAgent>().destination = destiny;
-
-                PlayAnimationCrossFade("Walk");
-                attackCadenceAux = 2.5f;
-            }
-            else
-            {
-                enemySelected = null;
-                currentState = State.Idle;
-                attackCadenceAux = 2.5f;
-                PlayAnimationCrossFade("Idle01");
-            }
-        }
-        else // the enemy is no longer alive
-        {
-            enemySelected = null;
-            currentState = State.Idle;
-
-            PlayAnimationCrossFade("Idle01");
-            attackCadenceAux = 2.5f;
-        }
-    }
-
     protected override void RemoveAssetsFromModel()
     {
         // We destroy the Hammer
@@ -1032,4 +1048,5 @@ public class UnitEngineer : UnitController
         if (laptop1 != null)
             GameObject.Destroy(laptop1.gameObject);
     }
+
 }
