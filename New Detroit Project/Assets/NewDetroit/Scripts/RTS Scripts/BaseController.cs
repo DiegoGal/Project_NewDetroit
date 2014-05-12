@@ -40,7 +40,7 @@ public class BaseController : CResourceBuilding
     {
         base.Start();
 
-        radious = baseRadius;
+        radius = baseRadius;
 
         spawnOrigin = transform.FindChild("SpawnPoint").position;
         /*spawnDestiny = new Vector3(

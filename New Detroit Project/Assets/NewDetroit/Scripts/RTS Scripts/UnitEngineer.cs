@@ -103,7 +103,7 @@ public class UnitEngineer : UnitController
         hammerInst.transform.name = "Hammer";
         hammerInst.transform.parent = dummyHand;
         hammerInst.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
-        // ide it
+        // hide it
         hammerInst.SetActive(false);
     }
 
@@ -399,19 +399,19 @@ public class UnitEngineer : UnitController
         base.UpdateIdle();
 
         // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
-        if (Input.anyKeyDown && (newTGConstruct || newWConstruct) && Input.GetMouseButtonDown(0) &&
-            (currentEngineerState != EngineerState.GoingToConstructItem) && (currentEngineerState != EngineerState.GoingToConstructPosition) &&
-            (currentState != State.Dying) && (currentState != State.AscendingToHeaven))
+        if (
+             Input.anyKeyDown &&
+             (newTGConstruct || newWConstruct) &&
+             Input.GetMouseButtonDown(0) &&
+             (currentEngineerState != EngineerState.GoingToConstructItem) &&
+             (currentEngineerState != EngineerState.GoingToConstructPosition)
+           )
         {
             newTGConstruct = newWConstruct = false;
             Destroy(towerGoblin);
             Destroy(warehouse);
         }
-        if (life.currentLife <= 0.0f)
-        {
-            LeaveQueues();
-            currentEngineerState = EngineerState.None;
-        }
+
         switch (currentEngineerState)
         {
             
@@ -520,18 +520,17 @@ public class UnitEngineer : UnitController
         base.UpdateGoingTo();
 
         // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
-        if (Input.anyKeyDown && (newTGConstruct || newWConstruct) && Input.GetMouseButtonDown(0) && 
-            (currentEngineerState != EngineerState.GoingToConstructItem) && (currentEngineerState != EngineerState.GoingToConstructPosition) &&
-            (currentState != State.Dying) && (currentState != State.AscendingToHeaven))
+        if (
+             Input.anyKeyDown &&
+             (newTGConstruct || newWConstruct) &&
+             Input.GetMouseButtonDown(0) &&
+             (currentEngineerState != EngineerState.GoingToConstructItem) &&
+             (currentEngineerState != EngineerState.GoingToConstructPosition)
+           )
         {
             newTGConstruct = newWConstruct = false;
             Destroy(towerGoblin);
             Destroy(warehouse);
-        }
-        if (life.currentLife <= 0.0f)
-        {
-            LeaveQueues();
-            currentEngineerState = EngineerState.None;
         }
 
         switch (currentEngineerState)
@@ -943,7 +942,19 @@ public class UnitEngineer : UnitController
         warehousePrefab = warehouse;
     }
 
-    private void LeaveQueues()
+    public override bool Damage (float damage, char type)
+    {
+        if ( base.Damage(damage, type) )
+        {
+            LeaveQueues();
+            currentEngineerState = EngineerState.None;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private void LeaveQueues ()
     {
         // He has to leave the engineerPosition if he has to
         if (currentEngineerState == EngineerState.GoingToConquestPosition || currentEngineerState == EngineerState.Conquering)
@@ -1014,16 +1025,26 @@ public class UnitEngineer : UnitController
         switch (item)
         {
             case 0:
-                towerGoblin = Instantiate(towerGoblinPrefab, new Vector3(Input.mousePosition.x, 0, Input.mousePosition.z), new Quaternion(0, 0, 0, 0))
-                    as GameObject; //rotation (-90, -180, 0)
+                towerGoblin = Instantiate
+                (
+                    towerGoblinPrefab,
+                    transform.position,
+                    new Quaternion(0, 0, 0, 0)
+                ) as GameObject;
+                towerGoblin.transform.Rotate(0.0f, 180.0f, 0.0f);
                 towerGoblin.name = towerGoblin.name.Replace("(Clone)", "");
                 towerGoblin.GetComponent<TowerGoblin>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
                 towerGoblin.GetComponent<TowerGoblin>().SetBaseController(baseController);
                 newTGConstruct = true;
                 break;
             case 1:
-                warehouse = Instantiate(warehousePrefab, new Vector3(Input.mousePosition.x, 0, Input.mousePosition.z), new Quaternion(0, 0, 0, 0))
-                    as GameObject; //rotation (-90, -180, 0)
+                warehouse = Instantiate
+                (
+                    warehousePrefab,
+                    transform.position,
+                    new Quaternion(0, 0, 0, 0)
+                ) as GameObject;
+                warehouse.transform.Rotate(0.0f, 180.0f, 0.0f);
                 warehouse.name = warehouse.name.Replace("(Clone)", "");
                 warehouse.GetComponent<Warehouse>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
                 warehouse.GetComponent<Warehouse>().SetBaseController(baseController);
@@ -1032,21 +1053,19 @@ public class UnitEngineer : UnitController
         }
 	}
 
-    public override int GetUnitType()
+    public override int GetUnitType ()
     {
         return 3;
     }
 
-    protected override void RemoveAssetsFromModel()
+    protected override void RemoveAssetsFromModel ()
     {
         // We destroy the Hammer
-        Transform hammer1 = dummyHand.transform.FindChild("Hammer");
-        if (hammer1 != null)
-            GameObject.Destroy(hammer1.gameObject);
+        if (laptopInst)
+            Destroy(laptopInst);
         // We destroy the Laptop
-        Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
-        if (laptop1 != null)
-            GameObject.Destroy(laptop1.gameObject);
+        if (hammerInst)
+            Destroy(laptopInst);
     }
 
 }

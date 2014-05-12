@@ -11,7 +11,9 @@ public class CSelectable : MonoBehaviour
     private Color outlineColor;
 
     private Transform model;
-    private int selectType; // 0 = Unit model, 1 = building with DiffuseColor, 2 = renderer.color
+    // 0 = Unit model, 1 = building with DiffuseColor, 2 = renderer.color, 3 = AlphaColor
+    private int selectType;
+    
 
     // indicates the number of materials in its model
     private int numberOfMaterials;
@@ -47,6 +49,12 @@ public class CSelectable : MonoBehaviour
             {
                 selectType = 1;
                 origColor = renderer.material.GetColor("_DiffuseColor");
+            }
+            else if (renderer.material.HasProperty("_AlphaColor"))
+            {
+                // is a buildable (construible) building
+                selectType = 1;
+                origColor = Color.white;
             }
             else
             {

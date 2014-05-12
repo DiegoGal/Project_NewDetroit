@@ -158,7 +158,7 @@ public class UnitHarvester : UnitController
                         ShowMineralPack(loaded);
 
                         CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
-                        float radious = resourceBuilding.GetRadious();
+                        float radious = resourceBuilding.GetRadius();
                         float alpha = Mathf.Atan2((currentMine.transform.position.z - resourceBuilding.transform.position.z),
                            (currentMine.transform.position.x - resourceBuilding.transform.position.x));
                         lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radious);
@@ -273,7 +273,7 @@ public class UnitHarvester : UnitController
                         ShowMineralPack(loaded);
 
                         CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
-                        float radious = resourceBuilding.GetRadious();
+                        float radious = resourceBuilding.GetRadius();
                         float alpha = Mathf.Atan2((currentMine.transform.position.z - resourceBuilding.transform.position.z),
                            (currentMine.transform.position.x - resourceBuilding.transform.position.x));
                         lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radious);
@@ -476,7 +476,7 @@ public class UnitHarvester : UnitController
 
             // actualizar la posición de la base o del almacén donde se dejarán los recursos
             CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
-            float radius = resourceBuilding.GetRadious();
+            float radius = resourceBuilding.GetRadius();
             float alpha = Mathf.Atan2((currentMine.transform.position.z - resourceBuilding.transform.position.z),
                 (currentMine.transform.position.x - resourceBuilding.transform.position.x));
             lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radius);
@@ -587,7 +587,7 @@ public class UnitHarvester : UnitController
 
             // actualizar la posición de la base o del almacén donde se dejarán los recursos
             CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(destTransform.GetComponent<CResources>());
-            float radius = resourceBuilding.GetRadious();
+            float radius = resourceBuilding.GetRadius();
             float alpha = Mathf.Atan2((currentMine.transform.position.z - resourceBuilding.transform.position.z),
                 (currentMine.transform.position.x - resourceBuilding.transform.position.x));
             lastBasePos.x = resourceBuilding.transform.position.x + (Mathf.Cos(alpha) * radius);

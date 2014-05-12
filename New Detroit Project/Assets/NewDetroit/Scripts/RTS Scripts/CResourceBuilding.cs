@@ -6,7 +6,7 @@ public class CResourceBuilding : BuildingController
     // referencia al controlador del ejército
     public ArmyController armyController;
 
-    protected float radious;
+    protected float radius;
 
     public void IncreaseResources (int resources)
     {
@@ -23,9 +23,9 @@ public class CResourceBuilding : BuildingController
         return armyController.resources;
     }
 
-    public float GetRadious ()
+    public float GetRadius ()
     {
-        return radious;
+        return radius;
     }
 
 }
