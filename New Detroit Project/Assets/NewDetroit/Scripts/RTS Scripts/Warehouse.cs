@@ -34,14 +34,14 @@ public class Warehouse : CResourceBuilding
     {
         base.Start();
 
-        radious = warehouseRadius;
+        radius = warehouseRadius;
         myHit = new RaycastHit();
         // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
         // Bit shift the index of the layer (9) to get a bit mask
         layerMask = 1 << 9;
     }
 
-    public bool StartConstruct(Vector3 destiny, BaseController baseController)
+    public bool StartConstruct (Vector3 destiny, BaseController baseController)
     {
         if (canConstruct && baseController.GetResources() >= costResources)
         {
@@ -57,13 +57,21 @@ public class Warehouse : CResourceBuilding
             Vector3 center = transform.position;
             for (int i = 0; i < numEngineerPositions; i++)
             {
-                Vector3 pos = new Vector3
+                /*Vector3 pos = new Vector3
                 (
                     center.x +
                     (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
                     0,
                     center.z +
                     (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
+                );*/
+                Vector3 pos = new Vector3
+                (
+                    center.x +
+                    (radius + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
+                    0,
+                    center.z +
+                    (radius + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
                 );
                 engineerPositions[i] = pos;
                 engineerPosTaken[i] = false;
@@ -80,12 +88,12 @@ public class Warehouse : CResourceBuilding
         return false;
     }
 
-    public void SetActiveMaterial()
+    public void SetActiveMaterial ()
     {
         renderer.material = activeMaterial;
     }
 
-    public void SetBaseController(BaseController baseController)
+    public void SetBaseController (BaseController baseController)
     {
         this.baseController = baseController;
     }
@@ -123,21 +131,20 @@ public class Warehouse : CResourceBuilding
         }
     }
 
-    public void SetCanConstruct(bool b)
+    public void SetCanConstruct (bool b)
     {
         canConstruct = b;
     }
 
-    public void DestroyUnnecessaryGameobjects()
+    public void DestroyUnnecessaryGameobjects ()
     {
         // Remove unnecessary GameObjects
         Destroy(transform.FindChild("WarehouseBoxConstruct").gameObject);
         Destroy(transform.FindChild("Light").light);
-
     }
 
     // Construct is called by the engineers
-    public bool Construct(float sum)
+    public bool Construct (float sum)
     {
         // increasement of the towers life
         if (!constructed)

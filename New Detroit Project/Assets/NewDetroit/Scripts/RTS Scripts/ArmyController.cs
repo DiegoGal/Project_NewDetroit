@@ -210,7 +210,7 @@ public class ArmyController : MonoBehaviour
                 myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
                 {
-                    Debug.Log("he tocado: " + myHit.transform.name);
+                    //Debug.Log("he tocado: " + myHit.transform.name);
                     CSelectable objSel = (CSelectable)myHit.transform.GetComponent("CSelectable");
                     if (objSel != null)
                     {
@@ -1088,6 +1088,12 @@ public class ArmyController : MonoBehaviour
             {
                 newUnit.GetComponent<ControllableCharacter>().SetTeamNumber(this.teamNumber);
                 unitList.Add(newUnit);
+                // if the unit is an engineer, set the buildings references
+                UnitController unitCont = newUnit.GetComponent<UnitController>();
+                if (unitCont.GetUnitType() == 3)
+                {
+                    ((UnitEngineer)unitCont).SetBuildingPrefabsReferences(towerPrefab, warehousePrefab);
+                }
                 //DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
                 Minimap.InsertUnit(newUnit.GetComponent<UnitController>());
             }

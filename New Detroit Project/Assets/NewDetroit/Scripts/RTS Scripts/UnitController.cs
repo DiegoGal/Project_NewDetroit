@@ -362,10 +362,13 @@ public class UnitController : ControllableCharacter
         GUI.EndGroup();*/
 
         // rectángulo donde se dibujará la barra
-        Rect rect1 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f, 3.0f);
-        GUI.DrawTexture(rect1, progressBarEmpty);
-        Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (life.currentLife / life.maximunLife), 3.0f);
-        GUI.DrawTexture(rect2, progressBarFull);
+        if (currentState != State.AscendingToHeaven)
+        {
+            Rect rect1 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f, 3.0f);
+            GUI.DrawTexture(rect1, progressBarEmpty);
+            Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (life.currentLife / life.maximunLife), 3.0f);
+            GUI.DrawTexture(rect2, progressBarFull);
+        }
     }
 
     public void GoTo (Vector3 destiny)

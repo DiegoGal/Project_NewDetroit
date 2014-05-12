@@ -2,18 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BoxConstruct : MonoBehaviour {
+public class BoxConstruct : MonoBehaviour
+{
 
     private List<Collider> colliderList = new List<Collider>();
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    private TowerGoblin selfUnitTower;
+    private Warehouse selfUnitWarehouse;
+
+    public void Awake ()
+    {
+        selfUnitTower = transform.parent.GetComponent<TowerGoblin>();
+        selfUnitWarehouse = transform.parent.GetComponent<Warehouse>();
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -21,14 +22,12 @@ public class BoxConstruct : MonoBehaviour {
         {
             Debug.Log("No puedes construir");
             colliderList.Add(other);
-            TowerGoblin selfUnit = transform.parent.GetComponent<TowerGoblin>();
-            if (selfUnit != null && colliderList.Count == 1)
-                selfUnit.SetCanConstruct(false);
-            else
+            if (colliderList.Count == 1)
             {
-                Warehouse selfUnitWH = transform.parent.GetComponent<Warehouse>();
-                if (selfUnitWH != null && colliderList.Count == 1)
-                    selfUnitWH.SetCanConstruct(false);
+                if (selfUnitTower)
+                    selfUnitTower.SetCanConstruct(false);
+                else if (selfUnitWarehouse)
+                    selfUnitWarehouse.SetCanConstruct(false);
             }
         }
     }
@@ -39,21 +38,20 @@ public class BoxConstruct : MonoBehaviour {
         {
             Debug.Log("No puedes construir");
             colliderList.Remove(other);
-            TowerGoblin selfUnit = transform.parent.GetComponent<TowerGoblin>();
-            if (selfUnit != null && colliderList.Count == 0)
+            if (colliderList.Count == 0)
             {
-                selfUnit.SetCanConstruct(true);
-                Debug.Log("Puedes construir");
-            }
-            else
-            {
-                Warehouse selfUnitWH = transform.parent.GetComponent<Warehouse>();
-                if (selfUnitWH != null && colliderList.Count == 0)
+                if (selfUnitTower)
                 {
-                    selfUnitWH.SetCanConstruct(true);
+                    selfUnitTower.SetCanConstruct(true);
+                    Debug.Log("Puedes construir");
+                }
+                else if (selfUnitWarehouse)
+                {
+                    selfUnitWarehouse.SetCanConstruct(true);
                     Debug.Log("Puedes construir");
                 }
             }
         }
 	}
+
 }
