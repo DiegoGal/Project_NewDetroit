@@ -14,8 +14,6 @@ public class TowerGoblin : Tower
     public Material activeMaterial;
     public Material constructMaterial;
 
-	private Transform model;
-
     // enum for the four states of the tower
     private enum TowerState
     {
@@ -46,7 +44,6 @@ public class TowerGoblin : Tower
 
     public void Awake ()
 	{
-		model = transform.FindChild("GoblinTower");
         GetComponent<CSelectable>().enabled = false;
 	}
 
@@ -54,13 +51,14 @@ public class TowerGoblin : Tower
 	public override void Start () 
     {
 		base.Start();
+
         myHit = new RaycastHit();
         // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
         // Bit shift the index of the layer (9) to get a bit mask
         layerMask = 1 << 9;
 	}
 
-    public bool StartConstruct(Vector3 destiny, BaseController baseController)
+    public bool StartConstruct (Vector3 destiny, BaseController baseController)
     {
         if (canConstruct && baseController.GetResources() >= costResources)
         {
@@ -78,13 +76,13 @@ public class TowerGoblin : Tower
             for (int i = 0; i < numEngineerPositions; i++)
             {
                 Vector3 pos = new Vector3
-                    (
-                        center.x +
-                        (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
-                        0,
-                        center.z +
-                        (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
-                        );
+                (
+                    center.x +
+                    (visionSphereRadious + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
+                    0,
+                    center.z +
+                    (visionSphereRadious + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
+                );
                 engineerPositions[i] = pos;
                 engineerPosTaken[i] = false;
 
@@ -100,12 +98,12 @@ public class TowerGoblin : Tower
         return false;
     }
 
-    public void SetActiveMaterial()
+    public void SetActiveMaterial ()
     {
-        model.renderer.material = activeMaterial;
+        renderer.material = activeMaterial;
     }
 
-    public void SetBaseController(BaseController baseController)
+    public void SetBaseController (BaseController baseController)
     {
         this.baseController = baseController;
     }
@@ -127,12 +125,12 @@ public class TowerGoblin : Tower
             if (canConstruct)
             {
                 light.color = Color.green;
-                model.renderer.material.SetColor("_AlphaColor", Color.green);
+                renderer.material.SetColor("_AlphaColor", Color.green);
             }
             else
             {
                 light.color = Color.red;
-                model.renderer.material.SetColor("_AlphaColor", Color.red);
+                renderer.material.SetColor("_AlphaColor", Color.red);
             }
             myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))

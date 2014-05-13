@@ -11,9 +11,9 @@ public class CSelectable : MonoBehaviour
     private Color outlineColor;
 
     private Transform model;
+
     // 0 = Unit model, 1 = building with DiffuseColor, 2 = renderer.color, 3 = AlphaColor
     private int selectType;
-    
 
     // indicates the number of materials in its model
     private int numberOfMaterials;

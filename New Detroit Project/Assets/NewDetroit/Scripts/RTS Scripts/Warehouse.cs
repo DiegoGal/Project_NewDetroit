@@ -18,7 +18,7 @@ public class Warehouse : CResourceBuilding
     // Constant when the tower is constructed
     private const float finalCont = 100.0f;
     // The distance over the floor
-    private const int delta = 5;
+    private const float delta = 5.1f;
 
     private bool constructed = false;
     private bool canConstruct = true;
@@ -68,7 +68,6 @@ public class Warehouse : CResourceBuilding
             myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
             {
-                Debug.Break();
                 destiny = new Vector3(myHit.point.x, myHit.point.y + delta, myHit.point.z);
                 transform.position = destiny;
             }

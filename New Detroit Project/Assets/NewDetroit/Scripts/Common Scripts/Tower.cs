@@ -11,7 +11,7 @@ public class Tower : BuildingController
     protected float alertHitTimerAux = 0.0f;
 
     // the vision radious of the tower
-    protected float visionSphereRadious;
+    public float visionSphereRadious = 10.0f;
 
     // the attack cadence
     protected float attackCadenceAux = 0.0f;
@@ -28,20 +28,6 @@ public class Tower : BuildingController
 
     //the list of enemies inside the tower vision
     protected List<ControllableCharacter> enemiesInside = new List<ControllableCharacter>();
-
-	// Use this for initialization
-    public override void Start () 
-    {
-        base.Start();
-        visionSphereRadious = transform.FindChild("TowerVisionSphere").GetComponent<SphereCollider>().radius;
-	}
-	
-
-	// Update is called once per frame
-	public override void Update() 
-    {
-        base.Update();
-	}
 
     // EnemyEntersInVisionSphere is called by the visions spheres
     public void EnemyEntersInVisionSphere (ControllableCharacter enemy)

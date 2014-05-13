@@ -433,10 +433,8 @@ public class UnitEngineer : UnitController
                         currentEngineerState = EngineerState.None;
                         animation.Play("Idle01");
 
-                        // We destroy the Hammer
-                        Transform hammer1 = dummyHand.transform.FindChild("Hammer");
-                        if (hammer1 != null)
-                            GameObject.Destroy(hammer1.gameObject);
+                        // hide the hammer
+                        hammerInst.SetActive(false);
                     }
                     actualEngineerTime = 0;
                 }
@@ -455,10 +453,9 @@ public class UnitEngineer : UnitController
                         currentEngineerState = EngineerState.None;
                         animation.Play("Idle01");
                         Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
-                        // We destroy the Laptop
-                        Transform laptop1 = dummyLaptop.transform.FindChild("Laptop");
-                        if (laptop1 != null)
-                            GameObject.Destroy(laptop1.gameObject);
+                        
+                        // hide the laptop
+                        laptopInst.SetActive(false);
                     }
                     actualEngineerTime = 0;
                 }
@@ -480,10 +477,8 @@ public class UnitEngineer : UnitController
                             currentItem.GetComponent<TowerGoblin>().SetActiveMaterial();
                             animation.Play("Idle01");
 
-                            // We destroy the Hammer
-                            Transform hammer1 = dummyHand.transform.FindChild("Hammer");
-                            if (hammer1 != null)
-                                GameObject.Destroy(hammer1.gameObject);
+                            // hide the hammer
+                            hammerInst.SetActive(false);
                         }
                         actualEngineerTime = 0;
                     }
@@ -501,10 +496,8 @@ public class UnitEngineer : UnitController
                             currentItem.GetComponent<Warehouse>().SetActiveMaterial();
                             animation.Play("Idle01");
 
-                            // We destroy the Hammer
-                            Transform hammer1 = dummyHand.transform.FindChild("Hammer");
-                            if (hammer1 != null)
-                                GameObject.Destroy(hammer1.gameObject);
+                            // hide the hammer
+                            hammerInst.SetActive(false);
 
                             baseController.GetArmyController().AddWarehouse(currentItem.GetComponent<CResourceBuilding>());
                         }
@@ -616,16 +609,8 @@ public class UnitEngineer : UnitController
                     // when it have arrived to the repair position
                     currentEngineerState = EngineerState.Repairing;
 
-                    // We instanciate a Hammer
-                    GameObject newHammer = Instantiate
-                    (
-                        hammer,
-                        dummyHand.transform.position,
-                        new Quaternion()
-                    ) as GameObject;
-                    newHammer.transform.name = "Hammer";
-                    newHammer.transform.parent = dummyHand;
-                    newHammer.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
+                    // show the hammer
+                    hammerInst.SetActive(true);
                 }
                 break;
             case EngineerState.GoingToConquestPosition:
@@ -823,7 +808,7 @@ public class UnitEngineer : UnitController
                 GoTo(destiny);
             }
         }
-        else if (destTransform.name == "TowerBoxConstruct" || destTransform.name == "Tower Goblin")// If he has to go to a TowerGoblin
+        else if (destTransform.name == "TowerBoxConstruct" || destTransform.name == "Goblin Tower")// If he has to go to a TowerGoblin
         {
             attackCadenceAux = 2.5f;
             GameObject comp1 = null;
@@ -1031,7 +1016,7 @@ public class UnitEngineer : UnitController
                     transform.position,
                     new Quaternion(0, 0, 0, 0)
                 ) as GameObject;
-                towerGoblin.transform.Rotate(0.0f, 180.0f, 0.0f);
+                towerGoblin.transform.Rotate(270.0f, 0.0f, 0.0f);
                 towerGoblin.name = towerGoblin.name.Replace("(Clone)", "");
                 towerGoblin.GetComponent<TowerGoblin>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
                 towerGoblin.GetComponent<TowerGoblin>().SetBaseController(baseController);

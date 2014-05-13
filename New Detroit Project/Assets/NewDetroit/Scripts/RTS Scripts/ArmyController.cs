@@ -47,6 +47,10 @@ public class ArmyController : MonoBehaviour
     public GameObject armyBase;
     public List<CResourceBuilding> resourceBuildingList = new List<CResourceBuilding>();
 
+    // reference to the last tower selected
+    private Tower lastTowerSelected;
+    private Warehouse lastWarehouseSelected;
+
     //Double click
     private float doubleClickStart = -1.0f;
     private GameObject unitDoubleClick;
@@ -337,16 +341,18 @@ public class ArmyController : MonoBehaviour
                                 TowerGoblin tower = (TowerGoblin)myHit.transform.GetComponent("TowerGoblin");
                                 if (tower != null && tower.teamNumber == teamNumber)
                                 {
-                                    // seleccionamos la base
+                                    // select the tower
                                     tower.GetComponent<CSelectable>().SetSelected();
+                                    lastTowerSelected = tower;
                                 }
                                 else
                                 {
                                     Warehouse warehouse = (Warehouse)myHit.transform.GetComponent("Warehouse");
                                     if (warehouse != null && warehouse.teamNumber == teamNumber)
                                     {
-                                        // seleccionamos la base
+                                        // select the warehouse
                                         warehouse.GetComponent<CSelectable>().SetSelected();
+                                        lastWarehouseSelected = warehouse;
                                     }
                                 }
 
@@ -909,8 +915,14 @@ public class ArmyController : MonoBehaviour
         // vaciamos la lista de seleccionados previamente
         unitSelectedList.Clear();
 
-		//Deseleccionar la base
+		// deselect the army base
 		armyBase.GetComponent<CSelectable>().SetDeselect();
+
+        // deselect the last building selected
+        if (lastTowerSelected)
+            lastTowerSelected.GetComponent<CSelectable>().SetDeselect();
+        if (lastWarehouseSelected)
+            lastWarehouseSelected.GetComponent<CSelectable>().SetDeselect();
 	}
 
     private GameObject AddBox (Vector3 position, Color color)
