@@ -3,12 +3,14 @@ using System.Collections;
 
 public abstract class HeroeController : ControllableCharacter 
 {
+	// CONST
 	protected const int EXP_LEVEL_1_2 = 		200, 		EXP_LEVEL_2_3 = 	600, 	EXP_LEVEL_3_4 = 	1000;
 	protected const int COLDOWN_LEVEL_1 = 		20, 		COLDOWN_LEVEL_2 = 	30, 	COLDOWN_LEVEL_3 = 	40, 	COLDOWN_LEVEL_4 = 50;
-	protected const int EXPERIENCE_TO_GIVE = 	100;
-	
-	
+	protected const int EXPERIENCE_TO_GIVE = 	100;	
 	//------------------------------------------------------------------------------------------------------
+
+
+	// ENUMS
 	public enum StateHeroe // The state of the heroe
 	{
 		Recover,		// After dead, he must be recovered
@@ -30,13 +32,14 @@ public abstract class HeroeController : ControllableCharacter
 	
 	public enum TypeHeroe // The type of the heroe
 	{
-		Orc
+		Orc, 
+		Robot
 	}
-	
-
 	//---------------------------------------------------------------------------------------------
+
+
 	// CONTROL HERO
-	public bool isControllable = true;
+	private bool isControllable = true;
 	private Vector3 moveDirection = Vector3.zero; // The current move direction in x-z
 	private float moveSpeed = 0.0f; // The current x-z move speed
 	private float verticalSpeed = 0.0f; // The current vertical speed
@@ -55,16 +58,16 @@ public abstract class HeroeController : ControllableCharacter
 	private float walkSpeed = 6.0f; // The speed when walking
 	private float walkTimeStart = 0.0f; // When did the user start walking (Used for going into trot after a while)
 	private float inAirControlAcceleration = 3.0f;
-	public float gravity = 20.0f; // The gravity for the character
+	private float gravity = 20.0f; // The gravity for the character
 	private bool jumping = false; // Are we jumping? (Initiated with jump button and not grounded yet)
-	public float cooldown1, cooldown2, cooldown3, cooldown1total, cooldown2total, cooldown3total;
-	protected bool doingSecondaryAnim = false; // A flag to tell us if the orc is doing a secondary attack anim or not
 	//---------------------------------------------------------------------------------------------
+	// TEXTURES
 	public Texture2D 	textureLifePositive, textureLifeNegative,
 						textureAdrenPositive, textureAdrenNegative,
 						textureManaPositive, textureManaNegative,
 						textureBackground;
-	public int 		attackP, 
+	//---------------------------------------------------------------------------------------------
+	protected int 	attackP, 
 					attackM, 
 					defP, 
 					defM, 
@@ -75,22 +78,24 @@ public abstract class HeroeController : ControllableCharacter
 					experience, 
 					currentMana, 
 					currentAdren;
-	public double 	speedAtt;
-	public bool attackInstantiate;	// Activate the spheres of arms
-	public TypeHeroe type;	// Type of heroe
-	public StateHeroe state = StateHeroe.Idle; // The state of the heroe
-	public AttackSecond stateAttackSecond;	// The state of secondary attack
-	public bool ability1, 
-				ability2, 
-				ability3;
+	protected double 	speedAtt;
+	private bool attackInstantiate;	// Activate the spheres of arms
+	protected TypeHeroe type;	// Type of heroe
+	protected StateHeroe state = StateHeroe.Idle; // The state of the heroe
+	protected AttackSecond stateAttackSecond;	// The state of secondary attack
+	private bool 	ability1, 
+					ability2, 
+					ability3;
 	protected int manaSkill1, manaSkill2, manaSkill3, adrenSkill1, adrenSkill2, adrenSkill3; // mana and adrenalines for skills
 	protected bool hasNewLevel; // Tell us if the heroe has evolved  or not
 	protected Vector3 initialPosition; // The spawn position
 	// Time counters
 	private float timeCountMana = 0, timeCountAdren = 0;
-	public int counterAbility;
+	private int counterAbility;
     //This is for the particles that collides with the hero
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
+	protected float cooldown1, cooldown2, cooldown3, cooldown1total, cooldown2total, cooldown3total;
+	protected bool doingSecondaryAnim = false; // A flag to tell us if the orc is doing a secondary attack anim or not
 	// ------------------------------------------------------------------------------------------------------
 	// GUI
 	private Rect 	rectanglePositiveLife,
@@ -610,4 +615,42 @@ public abstract class HeroeController : ControllableCharacter
 			}
 		}
 	}
+	//---------------------------------------------------------------------------------------
+
+
+	//Getters
+	public StateHeroe getState() { return state; }
+	public AttackSecond getStateSecondAttack() { return stateAttackSecond; }
+	public TypeHeroe getTypeHero() { return type; }
+	public int getExperience() { return experience; }
+	public int getCurrentAdren() { return currentAdren; }
+	public int getAdren() { return adren; }
+	public int getCurrentMana() { return currentMana; }
+	public int getMana() { return mana; }
+	public int getCounterAbility() { return counterAbility; }
+	public bool getAbility1() { return ability1; }
+	public bool getAbility2() { return ability2; }
+	public bool getAbility3() { return ability3; }
+	public int getLevel() { return level; }
+	public int getAttackP() { return attackP; }
+	public int getAttackM() { return attackM; }
+	public int getDefP() { return defP; }
+	public int getDefM() { return defM; }
+	public int getSpeedMov() { return speedMov; }
+	public double getSpeedAtt() { return speedAtt; }
+	public float getCooldown1() { return cooldown1; }
+	public float getCooldown2() { return cooldown2; }
+	public float getCooldown3() { return cooldown3; }
+	public float getCooldownTotal1() { return cooldown1total; }
+	public float getCooldownTotal2() { return cooldown2total; }
+	public float getCooldownTotal3() { return cooldown3total; }
+	//---------------------------------------------------------------------------------------
+	//Setters
+	public void setState(StateHeroe state) { this.state = state; }
+	public void setStateSecondAttack(AttackSecond stateAttackSecond) { this.stateAttackSecond = stateAttackSecond; }
+	public void setExperience(int experience) { this.experience = experience; }
+	public void setAbility1(bool ability1) { this.ability1 = ability1; }
+	public void setAbility2(bool ability2) { this.ability2 = ability2; }
+	public void setAbility3(bool ability3) { this.ability3 = ability3; }
+	//---------------------------------------------------------------------------------------
 }

@@ -216,9 +216,9 @@ public class OrcController : HeroeController
 				{
 					animation.CrossFade("BullStrike");
 					//--------------------------------
-					transform.Translate(Vector3.down * 2);
+					//transform.Translate(Vector3.down * 2);
 					smokeInst = (GameObject)Instantiate(smoke, transform.localPosition, transform.rotation);
-					transform.Translate(Vector3.up * 2);
+					//transform.Translate(Vector3.up * 2);
 					Destroy(smokeInst, 5f);
 					smokeActivated = true;
 					//--------------------------------
@@ -290,7 +290,11 @@ public class OrcController : HeroeController
 		}
 		else
 		{
-			if (!animation.isPlaying) doingSecondaryAnim = false;
+			if (!animation.isPlaying) 
+			{
+				doingSecondaryAnim = false;
+				if (stateAttackSecond == AttackSecond.Attack3) GetComponent<OrcBullStrikeAttack>().DisableSphereCollider();
+			}
 		}
 	}
 

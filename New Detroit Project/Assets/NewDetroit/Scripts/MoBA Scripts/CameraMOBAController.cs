@@ -57,8 +57,8 @@ public class CameraMOBAController : MonoBehaviour
 		rectangleLabelLevel = new Rect(rectangleAttributes.x + 10, rectangleAttributes.y + 6*height,rectangleAttributes.width, height);
 		// Bars for life, adrenaline and mana
 		float 	positiveLife = (float) heroe.life.currentLife / heroe.life.maximunLife, // percentage of positive life
-				positiveAdren = (float) heroe.currentAdren / heroe.adren, // percentage of positive adrenaline
-				positiveMana = (float) heroe.currentMana / heroe.mana; // percentage of positive mana
+				positiveAdren = (float) heroe.getCurrentAdren() / heroe.getAdren(), // percentage of positive adrenaline
+				positiveMana = (float) heroe.getCurrentMana() / heroe.getMana (); // percentage of positive mana
 		y = rectangleLifeManaAdrenSkills.y + rectangleLifeManaAdrenSkills.height/2;
 		width = rectangleLifeManaAdrenSkills.width*positiveLife;
 		height = rectangleLifeManaAdrenSkills.height/6;
@@ -100,22 +100,22 @@ public class CameraMOBAController : MonoBehaviour
 	private void clickRects()
 	{
 		// Select new skill
-		if (heroe.counterAbility > 0)
+		if (heroe.getCounterAbility() > 0)
 		{
 			if (Input.GetMouseButtonUp(0))
 			{
 				Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-				if (!heroe.ability1 && rectangleSelectSkill1.Contains(mousePosition))
+				if (!heroe.getAbility1() && rectangleSelectSkill1.Contains(mousePosition))
 				{
-					heroe.ability1 = true;
+					heroe.setAbility1(true);
 				}
-				else if (!heroe.ability2 && rectangleSelectSkill2.Contains(mousePosition))
+				else if (!heroe.getAbility2() && rectangleSelectSkill2.Contains(mousePosition))
 				{
-					heroe.ability2 = true;
+					heroe.setAbility2(true);
 				}
-				else if (!heroe.ability3 && heroe.level == 4 && rectangleSelectSkill3.Contains(mousePosition))
+				else if (!heroe.getAbility3() && heroe.getLevel() == 4 && rectangleSelectSkill3.Contains(mousePosition))
 				{
-					heroe.ability3 = true;
+					heroe.setAbility3(true);
 				}
 			}
 		}
@@ -123,29 +123,29 @@ public class CameraMOBAController : MonoBehaviour
 		if (Input.GetMouseButtonUp(0))
 		{
 			Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-			if  (heroe.ability1 && rectangleButtonSkill1.Contains(mousePosition))
+			if  (heroe.getAbility1() && rectangleButtonSkill1.Contains(mousePosition))
 			{
 				heroe.UpdateState(true, false, false);
 				heroe.updateManaAdren();
-				if (heroe.type == HeroeController.TypeHeroe.Orc)
+				if (heroe.getTypeHero() == HeroeController.TypeHeroe.Orc)
 				{
 					((OrcController)heroe).UpdateAnimation();
 				}
 			}
-			else if (heroe.ability2 && rectangleButtonSkill2.Contains(mousePosition))
+			else if (heroe.getAbility2() && rectangleButtonSkill2.Contains(mousePosition))
 			{
 				heroe.UpdateState(false, true, false);
 				heroe.updateManaAdren();
-				if (heroe.type == HeroeController.TypeHeroe.Orc)
+				if (heroe.getTypeHero() == HeroeController.TypeHeroe.Orc)
 				{
 					((OrcController)heroe).UpdateAnimation();
 				}
 			}
-			else if (heroe.ability3 && rectangleButtonSkill3.Contains(mousePosition))
+			else if (heroe.getAbility3() && rectangleButtonSkill3.Contains(mousePosition))
 			{
 				heroe.UpdateState(false, false, true);
 				heroe.updateManaAdren();
-				if (heroe.type == HeroeController.TypeHeroe.Orc)
+				if (heroe.getTypeHero() == HeroeController.TypeHeroe.Orc)
 				{
 					((OrcController)heroe).UpdateAnimation();
 				}
@@ -181,13 +181,13 @@ public class CameraMOBAController : MonoBehaviour
 			// Label for attributes
 			TextAnchor ta = GUI.skin.label.alignment;
 			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-			GUI.Label (	rectangleLabelPAttack, "P. attack " + heroe.attackP);
-			GUI.Label (	rectangleLabelMAttack, "M. attack " + heroe.attackM);
-			GUI.Label (	rectangleLabelPDefense, "P. defense " + heroe.defP);
-			GUI.Label (	rectangleLabelMDefense, "M. defense " + heroe.defM);
-			GUI.Label (	rectangleLabelSAttack, "S. attack " + heroe.speedAtt);
-			GUI.Label (	rectangleLabelSMov, "S. move " + heroe.speedMov);
-			GUI.Label ( rectangleLabelLevel, "Level " + heroe.level);
+			GUI.Label (	rectangleLabelPAttack, "P. attack " + heroe.getAttackP());
+			GUI.Label (	rectangleLabelMAttack, "M. attack " + heroe.getAttackM());
+			GUI.Label (	rectangleLabelPDefense, "P. defense " + heroe.getDefP());
+			GUI.Label (	rectangleLabelMDefense, "M. defense " + heroe.getDefM());
+			GUI.Label (	rectangleLabelSAttack, "S. attack " + heroe.getSpeedAtt());
+			GUI.Label (	rectangleLabelSMov, "S. move " + heroe.getSpeedMov());
+			GUI.Label ( rectangleLabelLevel, "Level " + heroe.getLevel());
 			GUI.skin.label.alignment = ta;
 			// Life, Mana, Adrenaline
 			GUI.DrawTexture (rectangleLife, lifeTexture);
@@ -199,16 +199,16 @@ public class CameraMOBAController : MonoBehaviour
 			GUI.skin.label.fontStyle = FontStyle.Bold;
 			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 			GUI.Label (rectangleLabelLife, "" + heroe.life.currentLife + " / " + heroe.life.maximunLife);
-			GUI.Label (rectangleLabelAdren, "" + heroe.currentAdren + " / " + heroe.adren);
-			GUI.Label (rectangleLabelMana, "" + heroe.currentMana + " / " + heroe.mana);
+			GUI.Label (rectangleLabelAdren, "" + heroe.getCurrentAdren() + " / " + heroe.getAdren());
+			GUI.Label (rectangleLabelMana, "" + heroe.getCurrentMana() + " / " + heroe.getMana());
 			GUI.skin.label.fontStyle = fs;
 			GUI.skin.label.alignment = ta;
 			// Skills
-			GUI.enabled = heroe.ability1;
+			GUI.enabled = heroe.getAbility1();
 			GUI.Button(rectangleButtonSkill1, "Skill 1");
-			GUI.enabled = heroe.ability2;
+			GUI.enabled = heroe.getAbility2();
 			GUI.Button(rectangleButtonSkill2, "Skill 2");
-			GUI.enabled = heroe.ability3;
+			GUI.enabled = heroe.getAbility3();
 			GUI.Button(rectangleButtonSkill3, "Skill 3");
 			GUI.enabled = true;
 			// Cooldowns
@@ -216,25 +216,25 @@ public class CameraMOBAController : MonoBehaviour
 			style.fontSize = 20;
 			style.alignment = TextAnchor.MiddleCenter;
 			style.fontStyle = FontStyle.Bold;
-			if (heroe.cooldown1 < heroe.cooldown1total) {
+			if (heroe.getCooldown1() < heroe.getCooldownTotal1()) {
 				GUI.DrawTexture (rectangleButtonSkill1, backgroundHUDTexture);
-				GUI.Label(rectangleButtonSkill1, "" + (int) (heroe.cooldown1 + 1), style);
+				GUI.Label(rectangleButtonSkill1, "" + (int) (heroe.getCooldown1() + 1), style);
 			}
-			if (heroe.cooldown2 < heroe.cooldown2total) {
+			if (heroe.getCooldown2() < heroe.getCooldownTotal2()) {
 				GUI.DrawTexture (rectangleButtonSkill2, backgroundHUDTexture);
-				GUI.Label(rectangleButtonSkill2, "" + (int) (heroe.cooldown2 + 1), style);
+				GUI.Label(rectangleButtonSkill2, "" + (int) (heroe.getCooldown2() + 1), style);
 			}
-			if (heroe.cooldown3 < heroe.cooldown3total) {
+			if (heroe.getCooldown3() < heroe.getCooldownTotal3()) {
 				GUI.DrawTexture (rectangleButtonSkill3, backgroundHUDTexture);
-				GUI.Label(rectangleButtonSkill3, "" + (int) (heroe.cooldown3 + 1), style);
+				GUI.Label(rectangleButtonSkill3, "" + (int) (heroe.getCooldown3() + 1), style);
 			}
 			// Unlock abilities
-			if (heroe.counterAbility > 0)
+			if (heroe.getCounterAbility() > 0)
 			{
-				if (!heroe.ability1) GUI.Button(rectangleSelectSkill1, "Select Skill 1");
-				if (!heroe.ability2) GUI.Button(rectangleSelectSkill2, "Select Skill 2");
-				if (heroe.level == 4)
-					if (!heroe.ability3) GUI.Button(rectangleSelectSkill3, "Select Skill 3");
+				if (!heroe.getAbility1()) GUI.Button(rectangleSelectSkill1, "Select Skill 1");
+				if (!heroe.getAbility2()) GUI.Button(rectangleSelectSkill2, "Select Skill 2");
+				if (heroe.getLevel() == 4)
+					if (!heroe.getAbility3()) GUI.Button(rectangleSelectSkill3, "Select Skill 3");
 			}
 		}
 	}

@@ -83,7 +83,7 @@ public class OrcBasicAttack : MonoBehaviour {
 		if (this.owner != null && this.owner.GetComponent<HeroeController> ().isMine)
 		{
 			// If the orc is not in basic attack
-			if (this.owner.GetComponent<HeroeController> ().state != HeroeController.StateHeroe.AttackBasic)
+			if (this.owner.GetComponent<HeroeController> ().getState() != HeroeController.StateHeroe.AttackBasic)
 			{
 				this.collider.enabled = false; // The collider is activated
 			}
@@ -104,7 +104,7 @@ public class OrcBasicAttack : MonoBehaviour {
 		{
 			ControllableCharacter goControllableCharacter = go.GetComponent<ControllableCharacter> ();
 			if (goControllableCharacter == null) return;
-			if (goControllableCharacter.Damage (this.owner.GetComponent<HeroeController>().attackP,'P')) // Damage the enemy and check if it is dead
+			if (goControllableCharacter.Damage (this.owner.GetComponent<HeroeController>().getAttackP(),'P')) // Damage the enemy and check if it is dead
 			{
 				this.owner.GetComponent<HeroeController>().experienceUp(goControllableCharacter.experienceGived);
 			}

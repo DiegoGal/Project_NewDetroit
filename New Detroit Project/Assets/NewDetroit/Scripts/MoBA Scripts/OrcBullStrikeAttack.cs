@@ -22,6 +22,12 @@ public class OrcBullStrikeAttack : ParticleDamage
 		sphereCollider.enabled = true;
 	}
 
+	//Disable the sphere collider
+	public void DisableSphereCollider()
+	{
+		sphereCollider.enabled = false;
+		unitList.Clear ();
+	}
 
 	//--------------------------------------------------------------------------
 
@@ -72,7 +78,7 @@ public class OrcBullStrikeAttack : ParticleDamage
 					                                     dir.z * 2.0f),
 					                         ForceMode.Impulse);
 					otherUC.Fly();
-					//unitList.Add(other);
+					unitList.Add(other);
 				}
 			}
 		}

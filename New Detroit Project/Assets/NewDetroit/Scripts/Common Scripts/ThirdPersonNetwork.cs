@@ -8,7 +8,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 	//==========================
 
 	ThirdPersonCamera cameraScript;
-	ThirdPersonController controllerScript;
+//	ThirdPersonController controllerScript;
 	Animator animator;
 
 	private HeroeController heroeControlScript;
@@ -48,10 +48,10 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			//We own this player: send the others our data
 			stream.SendNext(transform.position);
 			stream.SendNext(transform.rotation);
-			stream.SendNext(heroeControlScript.state);
-			stream.SendNext(heroeControlScript.stateAttackSecond);
+			stream.SendNext(heroeControlScript.getState());
+			stream.SendNext(heroeControlScript.getStateSecondAttack());
 			// Life's orc
-			if (heroeControlScript.type == HeroeController.TypeHeroe.Orc)
+			if (heroeControlScript.getTypeHero() == HeroeController.TypeHeroe.Orc)
 			{
 				OrcController orcControlScript = this.GetComponent<OrcController>();
 				OrcBasicAttack	leftAttack = orcControlScript.leftArm.GetComponent<OrcBasicAttack>(),
@@ -82,7 +82,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			}
 
 			// Experience
-			stream.SendNext(heroeControlScript.experience);
+			stream.SendNext(heroeControlScript.getExperience());
 		}
 		// Is reading
 		else
@@ -124,12 +124,12 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			//Update remote player (smooth this, this looks good, at the cost of some accuracy)
 			transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
-            heroeControlScript.state = newState;
-            heroeControlScript.stateAttackSecond = newStateAttackSecond;
+			heroeControlScript.setState(newState);
+			heroeControlScript.setStateSecondAttack(newStateAttackSecond);
 
 			this.updateCollidedOrc();
 
-			heroeControlScript.experience = experience;
+			heroeControlScript.setExperience(experience);
 		}
 	}
 
