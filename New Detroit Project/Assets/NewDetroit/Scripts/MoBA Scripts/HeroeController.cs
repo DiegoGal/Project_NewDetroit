@@ -241,6 +241,8 @@ public abstract class HeroeController : ControllableCharacter
 
         base.Start();
 
+		transform.FindChild ("Pivot");
+		transform.FindChild ("Pivot").GetComponent<NavMeshObstacle> ();
         radius = transform.FindChild("Pivot").GetComponent<NavMeshObstacle>().radius * transform.localScale.x;
 
 		this.level = 1;
@@ -292,7 +294,7 @@ public abstract class HeroeController : ControllableCharacter
 	{
 		// Debug
 		Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
-		//GUI.Label(new Rect(pos.x + 20, Screen.height - pos.y, 200, 20), "State: " + state.ToString());
+		GUI.Label(new Rect(pos.x + 20, Screen.height - pos.y, 200, 20), "State: " + state.ToString());
 		//---------------------------------------------------------------
         GUI.DrawTexture(rectanglePositiveLife, textureLifePositive);
         GUI.DrawTexture(rectangleNegativeLife, textureLifeNegative);

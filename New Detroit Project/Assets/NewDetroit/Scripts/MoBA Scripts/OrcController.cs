@@ -12,22 +12,21 @@ public class OrcController : HeroeController
 							MANA_1 = 		175, 	MANA_2 = 		250, 	MANA_3 = 		350, 	MANA_4 = 		500,
 							ADREN_1 = 		150, 	ADREN_2 = 		250, 	ADREN_3 = 		350, 	ADREN_4 = 		450,
 							MOV_SPEED_1 = 	50, 	MOV_SPEED_2 = 	55, 	MOV_SPEED_3 = 	60, 	MOV_SPEED_4 = 	35;
-							
-							
-	//-----------------------------------------------------------------------------------------------------------------
+
+
 	protected const float 	COOLDOWN_SKILL_1 = 	5,	COOLDOWN_SKILL_2 = 	10,	COOLDOWN_SKILL_3 = 	20;
-	
-	
 	//-----------------------------------------------------------------------------------------------------------------
+
+
 	public GameObject leftArm, rightArm;
-	
-	
 	//-----------------------------------------------------------------------------------------------------------------
+
+
 	//Time counts
 	private float timeCountLife = 0;
-	
-	
 	//-----------------------------------------------------------------------------------------------------------------
+
+
 	// PARTICLES
 	// Snot particle
 	public GameObject snot; 
@@ -44,10 +43,10 @@ public class OrcController : HeroeController
 	private GameObject smokeInst; // Smoke instantiation
 	// BullStrike particle
 	private bool bullStrikeActivated = false;
-	
 	//-----------------------------------------------------------------------------------------------------------------
-	// PRIVATE
-    
+
+
+	// PRIVATE    
 	private void newLevel()
 	{
 		if (this.hasNewLevel) 
