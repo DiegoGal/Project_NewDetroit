@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BoxConstruct : MonoBehaviour
+public class ColliderConstruct : MonoBehaviour
 {
 
     public int collidersInside = 0;

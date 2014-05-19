@@ -42,6 +42,8 @@ public class TowerGoblin : Tower
     // Reference to the base
     public BaseController baseController;
 
+    public float TowerGoblinRadius = 3.5f;
+
     public void Awake ()
 	{
         GetComponent<CSelectable>().enabled = false;
@@ -51,6 +53,7 @@ public class TowerGoblin : Tower
 	public override void Start () 
     {
 		base.Start();
+        radius = TowerGoblinRadius;
 
         myHit = new RaycastHit();
         // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
@@ -64,24 +67,35 @@ public class TowerGoblin : Tower
         {
             this.baseController = baseController;
             baseController.DecreaseResources(costResources);
-            GetComponent<CSelectable>().enabled = true;
-            this.GetComponent<NavMeshObstacle>().enabled = true;
             Vector3 posN = transform.position;
             posN.y = 0;
             transform.position = posN;
+            Vector3 vecCOll = GetComponent<CapsuleCollider>().transform.position;
+            Vector3 vecnav = GetComponent<NavMeshObstacle>().transform.position;
+            GetComponent<CSelectable>().enabled = true;
+            this.GetComponent<NavMeshObstacle>().enabled = true;
             isActive = true;
 
             float twoPi = Mathf.PI * 2;
             Vector3 center = transform.position;
             for (int i = 0; i < numEngineerPositions; i++)
             {
+                /*
                 Vector3 pos = new Vector3
                 (
                     center.x +
-                    (visionSphereRadious + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
+                        (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
                     0,
                     center.z +
-                    (visionSphereRadious + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
+                        (transform.GetComponent<BoxCollider>().size.x + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
+                );*/
+                Vector3 pos = new Vector3
+                (
+                    center.x +
+                    (radius + despPosition) * Mathf.Sin(i * (twoPi / numEngineerPositions)),
+                    0,
+                    center.z +
+                    (radius + despPosition) * Mathf.Cos(i * (twoPi / numEngineerPositions))
                 );
                 engineerPositions[i] = pos;
                 engineerPosTaken[i] = false;
@@ -289,7 +303,7 @@ public class TowerGoblin : Tower
     public void DestroyUnnecessaryGameobjects ()
     {
         // Remove unnecessary GameObjects
-        Destroy(transform.FindChild("TowerBoxConstruct").gameObject);
+        Destroy(transform.FindChild("TowerSphereConstruct").gameObject);
         Destroy(transform.FindChild("Light").light);
     }
 

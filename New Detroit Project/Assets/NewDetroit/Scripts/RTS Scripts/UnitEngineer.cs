@@ -765,6 +765,169 @@ public class UnitEngineer : UnitController
         }
     }
 
+    public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
+    {
+        // hide the laptop
+        laptopInst.SetActive(false);
+        // hide the hammer
+        hammerInst.SetActive(false);
+
+        LeaveQueues();
+
+        // if he is constructing a towerGoblin
+        if (newTGConstruct)
+        {
+            // if he can construct it
+            if ( towerGoblin.transform.GetComponent<TowerGoblin>().StartConstruct(constructDestiny, baseController))
+            {
+                destiny = towerGoblin.transform.position;
+                Debug.Log("vamos a construir una Torreta copon!");
+                currentItem = destTransform;
+                currentEngineerState = EngineerState.GoingToConstructItem;
+                GoTo(new Vector3(destiny.x, 0, destiny.z));
+                constructDestiny = destiny;
+                currentItem = towerGoblin.transform;
+                newTGConstruct = newWConstruct = false;
+            }
+        }
+        // else if he is constructing a warehouse
+        else if (newWConstruct)
+        {
+            // if he can construct it
+            if (warehouse.transform.GetComponent<Warehouse>().StartConstruct(constructDestiny, baseController))
+            {
+                destiny = warehouse.transform.position;
+                Debug.Log("vamos a construir una warehouse copon!");
+                currentItem = destTransform;
+                currentEngineerState = EngineerState.GoingToConstructItem;
+                GoTo(new Vector3(destiny.x, 0, destiny.z));
+                constructDestiny = destiny;
+                currentItem = warehouse.transform;
+                newTGConstruct = newWConstruct = false;
+            }
+        }
+        // if he is not constructing
+        // if it is a TN
+        else if (destTransform.name == "Tower Neutral")
+        {
+            attackCadenceAux = 2.5f;
+            newTGConstruct = newWConstruct = false;
+            currentItem = destTransform;
+            if (currentItem.GetComponent<BuildingController>().GetTeamNumber() != teamNumber) // if it's not in the same team
+            {
+                if ((currentItem.GetComponent<Tower>() != null) && currentItem.GetComponent<Tower>().canBeConquered
+                    && currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral()) // If he has to conquest it
+                {
+                    // Se va a la torre
+                    Debug.Log("vamos a conquistar la TN copon!");
+                    currentEngineerState = EngineerState.GoingToConquerableItem;
+                    GoTo(destiny);
+                }
+            }
+            else // TN in the same team
+            {
+                // Se va a la torre
+                Debug.Log("vamos a arreglar la TN copon!");
+                currentEngineerState = EngineerState.GoingToRepairItem;
+                GoTo(destiny);
+            }
+        }
+        // if it is a TG
+        else if (destTransform.name == "Goblin Tower")
+        {
+            attackCadenceAux = 2.5f;
+            GameObject comp1 = null;
+            GameObject comp2 = null;
+            currentItem = destTransform;
+            if (destTransform.name == "TowerSphereConstruct")
+            {
+                comp1 = destTransform.GetComponent<ColliderConstruct>().gameObject;
+                comp2 = towerGoblin.transform.GetComponent<TowerGoblin>().transform.FindChild("TowerSphereConstruct").gameObject;
+            }
+            else if (newTGConstruct)
+            {
+                comp1 = destTransform.GetComponent<TowerGoblin>().gameObject;
+                comp2 = towerGoblin.transform.GetComponent<TowerGoblin>().gameObject;
+            }
+            if ((comp1 != comp2) || !newTGConstruct) // If it's not the same towerGoblin that is going To Construct
+            {
+                newTGConstruct = newWConstruct = false;
+                // if it's in the same team he has to reapir it
+                if (currentItem.GetComponent<BuildingController>().GetTeamNumber() == teamNumber)
+                {
+                    if (currentItem.GetComponent<TowerGoblin>().IsConstructed())
+                    {
+                        // Se va a la torre
+                        Debug.Log("vamos a arreglar la TowerGoblin copon!");
+                        currentEngineerState = EngineerState.GoingToRepairItem;
+                        GoTo(destiny);
+                    }
+                    else
+                    {
+                        // Se va a la torre
+                        Debug.Log("vamos a construir la TowerGoblin copon!");
+                        currentEngineerState = EngineerState.GoingToConstructItem;
+                        GoTo(destiny);
+                    }
+
+                }
+            }
+        }
+        // if it is a warehouse
+        else if (destTransform.name == "Goblin Warehouse")
+        {
+            attackCadenceAux = 2.5f;
+            currentItem = destTransform;
+            GameObject comp1 = null;
+            GameObject comp2 = null;
+            if (destTransform.name == "WarehouseBoxConstruct")
+            {
+                comp1 = destTransform.GetComponent<ColliderConstruct>().gameObject;
+                comp2 = warehouse.transform.GetComponent<Warehouse>().transform.FindChild("WarehouseBoxConstruct").gameObject;
+            }
+            else if (newWConstruct)
+            {
+                comp1 = destTransform.GetComponent<Warehouse>().gameObject;
+                comp2 = warehouse.transform.GetComponent<Warehouse>().gameObject;
+            }
+
+            if ((comp1 != comp2) || !newWConstruct) // If it's not the same towerGoblin that is going To Construct
+            {
+                newTGConstruct = newWConstruct = false;
+                // if it's in the same team he has to reapir it
+                if (currentItem.GetComponent<BuildingController>().GetTeamNumber() == teamNumber)
+                {
+                    if (currentItem.GetComponent<Warehouse>().IsConstructed())
+                    {
+                        // Se va a la Warehouse
+                        Debug.Log("vamos a arreglar la Warehouse copon!");
+                        currentEngineerState = EngineerState.GoingToRepairItem;
+                        GoTo(destiny);
+                    }
+                    else
+                    {
+                        // Se va a la Warehouse
+                        Debug.Log("vamos a construir la Warehouse copon!");
+                        currentEngineerState = EngineerState.GoingToConstructItem;
+                        GoTo(destiny);
+                    }
+
+                }
+            }
+        }
+        // if it is the floor/terrain
+        else if (destTransform.name == "WorldFloor" || destTransform.name == "Terrain")// If he has to go to another position of the worldfloor he goes
+        {
+            currentEngineerState = EngineerState.None;
+            attackCadenceAux = 2.5f;
+            base.RightClickOnSelected(destiny, destTransform);
+        }
+        else
+            base.RightClickOnSelected(destiny, destTransform);
+
+    }// RightClickOSelected
+
+    /*
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
         // hide the laptop
@@ -808,16 +971,16 @@ public class UnitEngineer : UnitController
                 GoTo(destiny);
             }
         }
-        else if (destTransform.name == "TowerBoxConstruct" || destTransform.name == "Goblin Tower")// If he has to go to a TowerGoblin
+        else if (destTransform.name == "TowerSphereConstruct" || destTransform.name == "Goblin Tower")// If he has to go to a TowerGoblin
         {
             attackCadenceAux = 2.5f;
             GameObject comp1 = null;
             GameObject comp2 = null;
             currentItem = destTransform;
-            if (destTransform.name == "TowerBoxConstruct")
+            if (destTransform.name == "TowerSphereConstruct")
             {
                 comp1 = destTransform.GetComponent<BoxConstruct>().gameObject;
-                comp2 = towerGoblin.transform.GetComponent<TowerGoblin>().transform.FindChild("TowerBoxConstruct").gameObject;
+                comp2 = towerGoblin.transform.GetComponent<TowerGoblin>().transform.FindChild("TowerSphereConstruct").gameObject;
             }
             else if (newTGConstruct)
             {
@@ -920,7 +1083,7 @@ public class UnitEngineer : UnitController
         else
             base.RightClickOnSelected(destiny, destTransform);
     }// RightClickOSelected
-
+    */
     public void SetBuildingPrefabsReferences (GameObject tower, GameObject warehouse)
     {
         towerGoblinPrefab = tower;

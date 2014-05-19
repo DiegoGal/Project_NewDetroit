@@ -29,6 +29,8 @@ public class Tower : BuildingController
     //the list of enemies inside the tower vision
     protected List<ControllableCharacter> enemiesInside = new List<ControllableCharacter>();
 
+    protected float radius;
+
     // EnemyEntersInVisionSphere is called by the visions spheres
     public void EnemyEntersInVisionSphere (ControllableCharacter enemy)
     {
@@ -76,4 +78,8 @@ public class Tower : BuildingController
         }
     }
 
+    public float GetRadius()
+    {
+        return radius;
+    }
 }
