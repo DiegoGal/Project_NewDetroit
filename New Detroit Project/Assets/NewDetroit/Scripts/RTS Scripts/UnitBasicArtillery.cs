@@ -24,31 +24,6 @@ public class UnitBasicArtillery : UnitArtillery
         primaryAttackCadence = attack1Cadence;
         secondaryAttackCadence = attack2Cadence;
 	}
-	
-	// Update is called once per frame
-    public override void Update ()
-	{
-		base.Update();
-
-        if (isSelected && Input.GetKeyDown(KeyCode.D))
-        {
-            //Debug.Break();
-            if (attack2Selected) // change to attack1
-            {
-                maxAttackDistance = visionSphereRadius;
-                attackCadence = attack1Cadence;
-
-                attack2Selected = true;
-            }
-            else // change to attack2
-            {
-                maxAttackDistance = maxAttackDistance2;
-                attackCadence = attack2Cadence;
-
-                attack2Selected = false;
-            }
-        }
-	}
 
     protected override void UpdateGoingToAnEnemy ()
     {
@@ -166,6 +141,24 @@ public class UnitBasicArtillery : UnitArtillery
             }
             else
                 attackCadenceAux -= Time.deltaTime;
+        }
+    }
+
+    public override void ChangeAttack ()
+    {
+        if (attack2Selected) // change to attack1 (fire)
+        {
+            maxAttackDistance = maxAttackDistance1;
+            attackCadence = attack1Cadence;
+
+            attack2Selected = false;
+        }
+        else // change to attack2 (bate)
+        {
+            maxAttackDistance = maxAttackDistance2;
+            attackCadence = attack2Cadence;
+
+            attack2Selected = true;
         }
     }
 

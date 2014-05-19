@@ -300,6 +300,11 @@ public class UnitHeavyArtillery : UnitArtillery
         }
     }
 
+    public override void ChangeAttack ()
+    {
+        
+    }
+
     public override void AttackMovement (Vector3 destiny)
     {
         if (currentDeployState == DeployState.Undeployed)
@@ -391,6 +396,8 @@ public class UnitHeavyArtillery : UnitArtillery
                 animation.CrossFade("Idle Wait Deployed");*/
             else if (animationName == "Attack2")
                 animation.CrossFade("Deployment-Shot");
+            else if (animationName == "Die")
+                animation.CrossFade("Deployment-Die");
         }
         else
             base.PlayAnimationCrossFade(animationName);

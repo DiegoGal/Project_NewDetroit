@@ -84,7 +84,7 @@ public class UnitArtillery : UnitController
         if (attack2Selected)
             maxAttackDistance = maxAttackDistance2;
         else
-            maxAttackDistance = visionSphereRadius;
+            maxAttackDistance = maxAttackDistance1;
     }
 
 	// Update is called once per frame
@@ -428,7 +428,7 @@ public class UnitArtillery : UnitController
 
     } // UpdateModeIdle*/
 
-    /*public override void OnGUI ()
+    public override void OnGUI ()
     {
         if (currentState != State.AscendingToHeaven)
         {
@@ -445,7 +445,7 @@ public class UnitArtillery : UnitController
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 75, 100, 50),
                 "Attack2 sel: " + attack2Selected);
         }
-    } // OnGUI*/
+    } // OnGUI
 
 	public override void EnemyEntersInVisionSphere (CTeam enemy)
     {
@@ -485,6 +485,9 @@ public class UnitArtillery : UnitController
 
                 currentArtilleryState = ArtilleryState.None;
                 alertHitTimerAux = 0.0f;
+
+                // send the unit to the last known position of the enemy
+                RightClickOnSelected(enemyCC.transform);
             }
         }
     }
@@ -572,37 +575,49 @@ public class UnitArtillery : UnitController
 
                     Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
                     fwd.Normalize();
-                    Vector3 aux = transform.position + eyesPosition + (fwd * maxAttackDistance);
+                    Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadius);
                     Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
                     RaycastHit myHit;
-                    if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, maxAttackDistance))
+                    if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, visionSphereRadius))
                     {
                         //Debug.Log(myHit.transform.name);
                         // the ray has hit something
                         ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                        if ((enemy != null) && (enemy == enemiesInside[i]))
+                        if ( enemy && (enemy == enemiesInside[i]) )
                         {
                             // this "something" is the enemy we are looking for...
+                            // the enemy is on sight!
                             //Debug.Log("LE HE DADO!!!");
-                            // rotate the unit in the enemy direction
-                            transform.LookAt(enemy.transform.position);
-                            lastEnemyAttacked = enemy;
-                            alertHitTimerAux = alertHitTimer;
-                            // the unit stops moving
-                            StopMoving();
-
-                            if (attack2Selected)
+                            float dist = Vector3.Distance(transform.position, enemy.transform.position);
+                            if (dist <= maxAttackDistance)
                             {
-                                PlayAnimationCrossFade("Attack2");
-                                //currentArtilleryState = ArtilleryState.Attacking2;
+                                // the enemy is in the attack radius
+
+                                // rotate the unit in the enemy direction
+                                transform.LookAt(enemy.transform.position);
+                                lastEnemyAttacked = enemy;
+                                alertHitTimerAux = alertHitTimer;
+                                // the unit stops moving
+                                StopMoving();
+
+                                if (attack2Selected)
+                                {
+                                    PlayAnimationCrossFade("Attack2");
+                                    //currentArtilleryState = ArtilleryState.Attacking2;
+                                }
+                                else
+                                {
+                                    PlayAnimationCrossFade("Attack1");
+                                    //currentArtilleryState = ArtilleryState.Attacking1;
+                                }
+                                enemySelected = enemy;
+                                currentState = State.Attacking;
                             }
                             else
                             {
-                                PlayAnimationCrossFade("Attack1");
-                                //currentArtilleryState = ArtilleryState.Attacking1;
+                                // the enemy is not in the attack radius but is on sight
+                                base.RightClickOnSelected(enemy.transform);
                             }
-                            enemySelected = enemy;
-                            currentState = State.Attacking;
                         }
                     }
                 }

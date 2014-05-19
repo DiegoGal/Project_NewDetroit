@@ -473,6 +473,13 @@ public class ArmyController : MonoBehaviour
             }
         }
 
+        // change the attack with D key
+        if ( Input.GetKeyDown(KeyCode.D) )
+        {
+            foreach (GameObject o in unitSelectedList)
+                o.GetComponent<UnitController>().ChangeAttack();
+        }
+
         // economy values
         timeToIncreaseEconomyAux -= Time.deltaTime;
         if (timeToIncreaseEconomyAux <= 0.0f)
@@ -495,7 +502,7 @@ public class ArmyController : MonoBehaviour
 
     void OnGUI ()
     {
-		/*GUI.skin.label.fontSize = 12;
+		GUI.skin.label.fontSize = 12;
 
         if (teamNumber == 0)
             GUI.Label(new Rect(5, 5, 150, 100), "Team_A\n\tTotal resources: " + resources +
@@ -504,7 +511,7 @@ public class ArmyController : MonoBehaviour
         else if (teamNumber == 1)
             GUI.Label(new Rect(Screen.width - 140, 5, 150, 100), "Team_B\n\tTotal resources: " + resources +
                 "\n\tEconomy: " + economy +
-                "\n\tTotal Units: " + unitList.Count);*/
+                "\n\tTotal Units: " + unitList.Count);
 
         // selecting rectangle
         if (selecting)

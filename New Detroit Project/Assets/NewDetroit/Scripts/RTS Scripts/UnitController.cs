@@ -373,11 +373,14 @@ public class UnitController : ControllableCharacter
 
     public void GoTo (Vector3 destiny)
     {
-        this.destiny = destiny;
-        GetComponent<NavMeshAgent>().SetDestination(destiny);
-        currentState = State.GoingTo;
+        if (currentState != State.Dying && currentState != State.AscendingToHeaven)
+        {
+            this.destiny = destiny;
+            GetComponent<NavMeshAgent>().SetDestination(destiny);
+            currentState = State.GoingTo;
 
-        PlayAnimationCrossFade("Walk");
+            PlayAnimationCrossFade("Walk");
+        }
     }
 
     protected void StopMoving ()
@@ -388,6 +391,11 @@ public class UnitController : ControllableCharacter
         currentState = State.Idle;
 
         PlayAnimationCrossFade("Idle01");
+    }
+
+    public virtual void RightClickOnSelected (Transform destTransform)
+    {
+        RightClickOnSelected(destTransform.position, destTransform);
     }
 
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
@@ -461,9 +469,9 @@ public class UnitController : ControllableCharacter
             model.renderer.material = dyingMaterial; 
     }
 
-    protected virtual void RemoveAssetsFromModel ()
-    {
-    }
+    protected virtual void RemoveAssetsFromModel () { }
+
+    public virtual void ChangeAttack () { }
 
     protected virtual void PlayAnimation (string animationName)
     {

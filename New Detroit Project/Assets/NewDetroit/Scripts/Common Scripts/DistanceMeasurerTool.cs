@@ -87,7 +87,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 		
     } // Update
 
-    /*public void OnGUI ()
+    public void OnGUI ()
     {
         GUI.skin.label.fontSize = 10;
 
@@ -105,7 +105,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                     GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), "---");
             }
         }
-    }*/
+    }
 
     private void SearchStep ()
     {
@@ -139,7 +139,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                                 unit1.transform.position
                             );
                             distancesMatrix[iAux][jAux] = newDist;
-                            
+
                             // si la nueva distancia está dentro del área de visión de alguna de
                             // las dos unidades y la distancia prévia fuera mayor al área de visión
                             // significa que una nueva unidad ha entrado en el área de visión
@@ -154,6 +154,10 @@ public class DistanceMeasurerTool : MonoBehaviour
                                 unit1.EnemyEntersInVisionSphere(unit0);
                             else if (prevDist < unit1.visionSphereRadius && newDist > unit1.visionSphereRadius)
                                 unit1.EnemyLeavesVisionSphere(unit0);
+                        }
+                        else
+                        {
+                            distancesMatrix[iAux][jAux] = float.MaxValue;
                         }
                     }
                     else
