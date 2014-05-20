@@ -154,7 +154,7 @@ public class BaseController : CResourceBuilding
                         if ((teamNumber % 2) == 0)
                             unit = "Goblin_Harvester_TeamA";
                         else
-                            unit = "Goblin_Harvester_TeamB";
+							unit = "Robot_Harvester_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -168,7 +168,7 @@ public class BaseController : CResourceBuilding
                         if ((teamNumber % 2) == 0)
                             unit = "Goblin_ArtilleryBasic_TeamA";
                         else
-                            unit = "Goblin_ArtilleryBasic_TeamB";
+							unit = "Robot_ArtilleryBasic_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -182,7 +182,7 @@ public class BaseController : CResourceBuilding
                         if ((teamNumber % 2) == 0)
                             unit = "Goblin_ArtilleryHeavy_TeamA";
                         else
-                            unit = "Goblin_ArtilleryHeavy_TeamB";
+							unit = "Robot_ArtilleryHeavy_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -210,7 +210,7 @@ public class BaseController : CResourceBuilding
                         if ((teamNumber % 2) == 0)
                             unit = "Goblin_Scout_TeamA";
                         else
-                            unit = "Goblin_Scout_TeamB";
+							unit = "Robot_Scout_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -297,20 +297,21 @@ public class BaseController : CResourceBuilding
     }
 
     // RPC function for manualy PhotonNetwork instantiation
-    /*[RPC]
-    void SpawnOnNetwork(Vector3 pos, Quaternion rot, int id1, PhotonPlayer np, GameObject prefab)
-    {
-        GameObject newUnit = Instantiate(prefab, pos, rot) as GameObject;
-
-        // We do this here because here has to go the instantiation of the unit
-        newUnit.GetComponent<UnitController>().SetArmyBase(this);
-        newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
-        newUnit.GetComponent<UnitController>().teamNumber = this.teamNumber;
-        newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
-
-        // Set player's PhotonView
-        PhotonView[] nViews = newUnit.transform.GetComponentsInChildren<PhotonView>();
-        nViews[0].viewID = id1;
-    }*/
+//    [RPC]
+//    void SpawnOnNetwork(Vector3 pos, Quaternion rot, int id1, PhotonPlayer np, GameObject prefab)
+//    {
+//        GameObject newUnit = Instantiate(prefab, pos, rot) as GameObject;
+//
+//        // We do this here because here has to go the instantiation of the unit
+//        newUnit.GetComponent<UnitController>().SetArmyBase(this);
+//        newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
+//        //newUnit.GetComponent<UnitController>().teamNumber = this.teamNumber;
+//		newUnit.GetComponent<CTeam>().teamNumber = GetComponent<CTeam>().teamNumber;
+//        newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);
+//
+//        // Set player's PhotonView
+//        PhotonView[] nViews = newUnit.transform.GetComponentsInChildren<PhotonView>();
+//        nViews[0].viewID = id1;
+//    }
 
 } // class BaseController
