@@ -30,6 +30,9 @@ public class TowerNeutral : Tower
 	private float conqueringTime = 4;
 	private float amountToSubstract = 1;
 
+    // to show the conquer cubes
+    public bool showCubes = true;
+
 	// Use this for initialization
 	public override void Start ()
     {
@@ -66,6 +69,8 @@ public class TowerNeutral : Tower
 			Destroy(cubes[i].GetComponent<BoxCollider>());
 			cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
 			cubes[i].transform.parent = this.transform;
+
+            cubes[i].active = showCubes;
 		}
 	}
 	
@@ -121,7 +126,7 @@ public class TowerNeutral : Tower
                         {
                             // the ray has hit something
                             ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                            if ((enemy != null) && (enemy == enemiesInside[i]))
+                            if ((enemy != null) && (enemy == enemiesInside[i].GetComponent<ControllableCharacter>()))
                             {
                                 // this "something" is the enemy we are looking for...
                                 //Debug.Log("LE HE DADO!!!");
@@ -154,9 +159,8 @@ public class TowerNeutral : Tower
                     // Attack!
                     Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
                     // emite some particles:
-                    Vector3 auxPos = new Vector3(transform.position.x, 10.0f + transform.position.y, transform.position.z);
                     GameObject particles = (GameObject)Instantiate(shotParticles,
-                                                                   auxPos,
+                                                                   shotDummy.position,
                                                                    transform.rotation);
                     Destroy(particles, 0.4f);
                     // first we check if the enemy is now alive
@@ -192,19 +196,27 @@ public class TowerNeutral : Tower
         }
 	}
 
-	// Repair is called by the engineers
-	public bool Conquest (float sum, int team)
+	// Conquest is called by the engineers
+	public bool Conquest (float sum, int teamNumber)
 	{
-        actualTimeConquering[team] = 0;
-        contConq[team] += sum;
-        if (contConq[team] >= finalCont)
+        actualTimeConquering[teamNumber] = 0;
+        contConq[teamNumber] += sum;
+        if (contConq[teamNumber] >= finalCont)
         {
             for (int i = 0; i < teamsPlaying; i++)
                 contConq[i] = 0;
             life.currentLife = 80.0f;
-            teamNumber = team;
+
+            // set the team values
+            team.teamNumber = teamNumber;
+
+            // insert the tower in the DistanceMeasurerTool
+            DistanceMeasurerTool.InsertUnit(team);
+
+            // change the state to Idle
             currentTowerState = TowerState.Iddle;
-            UpdateEnemiesInside(team);
+
+            UpdateEnemiesInside(teamNumber);
             RemoveEngineersInQueue();
             for (int i = 0; i < numEngineerPositions; i++)
                 cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);

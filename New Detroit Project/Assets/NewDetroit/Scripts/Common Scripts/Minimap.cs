@@ -294,7 +294,7 @@ public class Minimap : MonoBehaviour
         float posx = margin + (tower.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - tower.transform.position.z) * sizeProportion;
 
-        if (tower.teamNumber == teamNumber)
+        if (tower.team.teamNumber == teamNumber)
             myTowerList.Add(new Vector2(posx, posy));
         else
         {
@@ -310,7 +310,7 @@ public class Minimap : MonoBehaviour
         float posx = margin + (warehouse.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - warehouse.transform.position.z) * sizeProportion;
 
-        if (warehouse.teamNumber == teamNumber)
+        if (warehouse.team.teamNumber == teamNumber)
             myWarehouseList.Add(new Vector2(posx, posy));
         else
         {
@@ -327,7 +327,7 @@ public class Minimap : MonoBehaviour
         float posx = margin + (tower.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - tower.transform.position.z) * sizeProportion;
         
-        if (tower.teamNumber == teamNumber)
+        if (tower.team.teamNumber == teamNumber)
             myTowerNeutralList.Add(new Vector2(posx, posy));
         else
         {
@@ -338,12 +338,12 @@ public class Minimap : MonoBehaviour
         }   
     }
 
-    public static void SetBase(CResourceBuilding baseBuilding)
+    public static void SetBase (CResourceBuilding baseBuilding)
     {
         float posx = margin + (baseBuilding.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
         float posy = posHeight + ((sizeWorldFloor / 2) - baseBuilding.transform.position.z) * sizeProportion;
 
-        if (baseBuilding.teamNumber == 0)
+        if (baseBuilding.team.teamNumber == 0)
             myBase = new Vector2(posx, posy);
         else
         {

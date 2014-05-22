@@ -813,7 +813,7 @@ public class UnitEngineer : UnitController
             attackCadenceAux = 2.5f;
             newTGConstruct = newWConstruct = false;
             currentItem = destTransform;
-            if (currentItem.GetComponent<BuildingController>().GetTeamNumber() != teamNumber) // if it's not in the same team
+            if (currentItem.GetComponent<BuildingController>().team.teamNumber != teamNumber) // if it's not in the same team
             {
                 if ((currentItem.GetComponent<Tower>() != null) && currentItem.GetComponent<Tower>().canBeConquered
                     && currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral()) // If he has to conquest it
@@ -853,7 +853,7 @@ public class UnitEngineer : UnitController
             {
                 newTGConstruct = newWConstruct = false;
                 // if it's in the same team he has to reapir it
-                if (currentItem.GetComponent<BuildingController>().GetTeamNumber() == teamNumber)
+                if (currentItem.GetComponent<BuildingController>().team.teamNumber == teamNumber)
                 {
                     if (currentItem.GetComponent<TowerGoblin>().IsConstructed())
                     {
@@ -895,7 +895,7 @@ public class UnitEngineer : UnitController
             {
                 newTGConstruct = newWConstruct = false;
                 // if it's in the same team he has to reapir it
-                if (currentItem.GetComponent<BuildingController>().GetTeamNumber() == teamNumber)
+                if (currentItem.GetComponent<BuildingController>().team.teamNumber == teamNumber)
                 {
                     if (currentItem.GetComponent<Warehouse>().IsConstructed())
                     {

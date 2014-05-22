@@ -225,9 +225,8 @@ public class TowerGoblin : Tower
                         // Attack!
                         Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
                         // emite some particles:
-                        Vector3 auxPos = new Vector3(transform.position.x, 10.0f + transform.position.y, transform.position.z);
                         GameObject particles = (GameObject)Instantiate(shotParticles,
-                                                                       auxPos,
+                                                                       shotDummy.position,
                                                                        transform.rotation);
                         Destroy(particles, 0.4f);
                         // first we check if the enemy is now alive
@@ -322,7 +321,7 @@ public class TowerGoblin : Tower
             if (contConstr == finalCont)
             {
                 life.currentLife = 50.0f;
-                UpdateEnemiesInside(this.teamNumber);
+                UpdateEnemiesInside(team.teamNumber);
                 RemoveEngineersInQueue();
                 for (int i = 0; i < numEngineerPositions; i++)
                     cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
@@ -337,7 +336,7 @@ public class TowerGoblin : Tower
 
 	public bool HasATeam ()
 	{
-		return teamNumber != -1;
+		return team.teamNumber != -1;
 	}
 
 	public bool IsConstructed ()

@@ -5,14 +5,14 @@ using System.Collections.Generic;
 public class BuildingController : Photon.MonoBehaviour 
 {
 
-    // the team number
-    public int teamNumber = -1;
-
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
 
-    // reference to the Life component of the character
+    // reference to the Life component of the building
     public CLife life;
+
+    // reference to the Team component of the building
+    public CTeam team;
 
     // the damage particles for when the building has been hit
     public GameObject damageParticles;
@@ -39,6 +39,12 @@ public class BuildingController : Photon.MonoBehaviour
 
     //********************************************************************************
 
+    public virtual void Awake()
+    {
+        life = GetComponent<CLife>();
+        team = GetComponent<CTeam>();
+    }
+
 	// Use this for initialization
     public virtual void Start () 
     {
@@ -57,8 +63,6 @@ public class BuildingController : Photon.MonoBehaviour
         cubes = new GameObject[numEngineerPositions];
         // inicialization of the engineer queue
         engineerQueue = new List<UnitEngineer>();
-
-        life = GetComponent<CLife>();
 	}
 	
 	// Update is called once per frame
@@ -108,11 +112,6 @@ public class BuildingController : Photon.MonoBehaviour
         engineerQueue.Remove(unit);
     }
 
-    public int GetTeamNumber ()
-    {
-        return teamNumber;
-    }
-
     public void LeaveEngineerPositionRepair (int index)
     {
         engineerPosTaken[index] = false;
@@ -150,7 +149,7 @@ public class BuildingController : Photon.MonoBehaviour
 
     public void SetTeamNumber (int teamNumber, int teamColorIndex)
     {
-        this.teamNumber = teamNumber;
+        team.teamNumber = teamNumber;
 
         CTeam cteam = GetComponent<CTeam>();
         cteam.teamNumber = teamNumber;

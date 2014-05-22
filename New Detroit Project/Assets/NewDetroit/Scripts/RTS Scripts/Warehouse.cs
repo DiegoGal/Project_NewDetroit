@@ -173,7 +173,7 @@ public class Warehouse : CResourceBuilding
 
     public bool HasATeam()
     {
-        return teamNumber != -1;
+        return team.teamNumber != -1;
     }
 
     public bool IsConstructed()

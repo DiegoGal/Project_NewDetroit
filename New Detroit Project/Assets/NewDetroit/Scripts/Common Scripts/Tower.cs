@@ -29,12 +29,30 @@ public class Tower : BuildingController
     //the list of enemies inside the tower vision
     protected List<ControllableCharacter> enemiesInside = new List<ControllableCharacter>();
 
+    // reference to the dummy for the shot particles
+    protected Transform shotDummy;
+
     protected float radius;
 
-    // EnemyEntersInVisionSphere is called by the visions spheres
-    public void EnemyEntersInVisionSphere (ControllableCharacter enemy)
+    public override void Awake ()
     {
-        // Adition of the enemy in the array enemiesInside
+        base.Awake();
+
+        team.visionSphereRadius = visionSphereRadious;
+
+        shotDummy = transform.FindChild("shot dummy");
+    }
+
+    // EnemyEntersInVisionSphere is called by the visions spheres
+    public void EnemyEntersInVisionSphere (CTeam enemy)
+    {
+        ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
+        if (enemyCC)
+        {
+            enemiesInside.Add(enemyCC);
+        }
+
+        /*// Adition of the enemy in the array enemiesInside
         if (enemiesInside.Count == 0)
         {
             enemiesInside.Add(enemy);
@@ -47,14 +65,18 @@ public class Tower : BuildingController
                 //Debug.Log("New Enemy entered in TOWER");
             }
             //else
-                //Debug.Log("Enemy already entered in TOWER");
+                //Debug.Log("Enemy already entered in TOWER");*/
     }
 
     // EnemyEntersInVisionSphere is called by the visions spheres
-    public void EnemyExitsInVisionSphere (ControllableCharacter enemy)
+    public void EnemyExitsInVisionSphere(CTeam enemy)
     {
         // Removal of the enemy in the array enemiesInside
-        enemiesInside.Remove(enemy);
+        ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
+        if (enemyCC)
+        {
+            enemiesInside.Remove(enemyCC);
+        }
         //Debug.Log("Enemy exits the TOWER");
     }
 

@@ -15,12 +15,17 @@ public class UnitScoutRobot : UnitScout
     private GameObject explosionFireInst;
 	private GameObject explosionPiecesInst;
 
+    // referente to the normal fire particles
+    private GameObject fireParticles;
+
     public override void Awake()
     {
         base.Awake();
 
         if (!mount)
             mount = transform.FindChild("Mount").gameObject;
+
+        fireParticles = transform.FindChild("FireMower2").gameObject;
     }
 
     public override bool Damage (float damage, char type)
@@ -99,6 +104,14 @@ public class UnitScoutRobot : UnitScout
     protected override void PlayIdleWaitAnimation ()
     {
         
+    }
+
+    protected override void RemoveAssetsFromModel()
+    {
+        base.RemoveAssetsFromModel();
+
+        if (fireParticles)
+            Destroy(fireParticles);
     }
 
 }

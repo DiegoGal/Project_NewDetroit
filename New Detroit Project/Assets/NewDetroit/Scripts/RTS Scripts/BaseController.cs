@@ -151,7 +151,7 @@ public class BaseController : CResourceBuilding
                 case 0: // Harvester
                     if (resources >= harvesterUnitResourcesCost && economy >= harvesterUnitEconomyCost)
                     {
-                        if ((teamNumber % 2) == 0)
+                        if ((team.teamNumber % 2) == 0)
                             unit = "Goblin_Harvester_TeamA";
                         else
 							unit = "Robot_Harvester_TeamA";
@@ -165,10 +165,10 @@ public class BaseController : CResourceBuilding
                 case 1: // Basic Artillery
                     if (resources >= basicArtilleryUnitResourcesCost && economy >= basicArtilleryUnitEconomyCost)
                     {
-                        if ((teamNumber % 2) == 0)
-                            unit = "Goblin_ArtilleryBasic_TeamA";
+                        if ((team.teamNumber % 2) == 0)
+                            unit = "Goblin_ArtilleryBasic_TeamA_Network";
                         else
-							unit = "Robot_ArtilleryBasic_TeamA";
+                            unit = "Robot_ArtilleryBasic_TeamA_Network";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -179,10 +179,10 @@ public class BaseController : CResourceBuilding
                 case 2: // Heavy Artillery
                     if (resources >= heavyArtilleryUnitResourcesCost && economy >= heavyArtilleryUnitEconomyCost)
                     {
-                        if ((teamNumber % 2) == 0)
-                            unit = "Goblin_ArtilleryHeavy_TeamA";
+                        if ((team.teamNumber % 2) == 0)
+                            unit = "Goblin_ArtilleryHeavy_TeamA_Network";
                         else
-							unit = "Robot_ArtilleryHeavy_TeamA";
+                            unit = "Robot_ArtilleryHeavy_TeamA_Network";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -193,10 +193,10 @@ public class BaseController : CResourceBuilding
                 case 3: // Engineer
                     if (resources >= engineerUnitResourcesCost && economy >= engineerUnitEconomyCost)
                     {
-                        if ((teamNumber % 2) == 0)
-                            unit = "Goblin_Engineer_TeamA";
+                        if ((team.teamNumber % 2) == 0)
+                            unit = "Goblin_Engineer_TeamA_Network";
                         else
-                            unit = "Goblin_Engineer_TeamB";
+                            unit = "Goblin_Engineer_TeamB_Network";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -207,10 +207,10 @@ public class BaseController : CResourceBuilding
                 case 4: // Scout
                     if (resources >= scoutUnitResourcesCost && economy >= scoutUnitEconomyCost)
                     {
-                        if ((teamNumber % 2) == 0)
-                            unit = "Goblin_Scout_TeamA";
+                        if ((team.teamNumber % 2) == 0)
+                            unit = "Goblin_Scout_TeamA_Network";
                         else
-							unit = "Robot_Scout_TeamA";
+                            unit = "Robot_Scout_TeamA_Network";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -277,7 +277,7 @@ public class BaseController : CResourceBuilding
             newUnit.GetComponent<ControllableCharacter>().isMine = true;
             newUnit.GetComponent<UnitController>().SetArmyBase(this);
             newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
-            newUnit.GetComponent<CTeam>().teamNumber = this.teamNumber;
+            newUnit.GetComponent<CTeam>().teamNumber = this.team.teamNumber;
             newUnit.GetComponent<CTeam>().teamColorIndex = GetComponent<CTeam>().teamColorIndex;
             newUnit.GetComponent<CSelectable>().ResetTeamColor();
             newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);

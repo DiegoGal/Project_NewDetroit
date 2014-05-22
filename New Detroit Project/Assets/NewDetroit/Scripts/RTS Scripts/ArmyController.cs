@@ -331,7 +331,7 @@ public class ArmyController : MonoBehaviour
                             DeselectAll();
 
                             BaseController baseCont = (BaseController)myHit.transform.GetComponent("BaseController");
-                            if (baseCont != null && baseCont.teamNumber == teamNumber)
+                            if (baseCont != null && baseCont.team.teamNumber == teamNumber)
                             {
                                 // seleccionamos la base
                                 armyBase.GetComponent<CSelectable>().SetSelected();
@@ -339,7 +339,7 @@ public class ArmyController : MonoBehaviour
                             else
                             {
                                 TowerGoblin tower = (TowerGoblin)myHit.transform.GetComponent("TowerGoblin");
-                                if (tower != null && tower.teamNumber == teamNumber)
+                                if (tower != null && tower.team.teamNumber == teamNumber)
                                 {
                                     // select the tower
                                     tower.GetComponent<CSelectable>().SetSelected();
@@ -348,7 +348,7 @@ public class ArmyController : MonoBehaviour
                                 else
                                 {
                                     Warehouse warehouse = (Warehouse)myHit.transform.GetComponent("Warehouse");
-                                    if (warehouse != null && warehouse.teamNumber == teamNumber)
+                                    if (warehouse != null && warehouse.team.teamNumber == teamNumber)
                                     {
                                         // select the warehouse
                                         warehouse.GetComponent<CSelectable>().SetSelected();
