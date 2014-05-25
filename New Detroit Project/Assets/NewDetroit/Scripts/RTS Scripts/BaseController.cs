@@ -152,9 +152,9 @@ public class BaseController : CResourceBuilding
                     if (resources >= harvesterUnitResourcesCost && economy >= harvesterUnitEconomyCost)
                     {
                         if ((team.teamNumber % 2) == 0)
-                            unit = "Goblin_Harvester_TeamA";
+                            unit = "Goblin_Harvester_TeamA_Network";
                         else
-							unit = "Robot_Harvester_TeamA";
+                            unit = "Robot_Harvester_TeamA_Network";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources

@@ -160,7 +160,7 @@ public class UnitHarvesterRemote : ControllableCharacter
     }
 
     // esconde (o muestra) todos los objetos que componen el pack de minerales
-    private void ShowMineralPack(bool enable = true)
+    private void ShowMineralPack(bool enable)
     {
         Renderer[] renderers = actualMineralPack.GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers)

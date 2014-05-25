@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class CResources : MonoBehaviour
 {
     public int totalResources = 10000;
-    private int actualResources;
+    public int actualResources;
 
     public float distanceToWait = 2.0f;
 
@@ -102,6 +102,16 @@ public class CResources : MonoBehaviour
             actualResources = 0;
         }
         return cant;
+    }
+
+    public int GetActualResources()
+    {
+        return actualResources;
+    }
+
+    public void setActualResources(int cant)
+    {
+        actualResources = cant;
     }
 
     public bool GetHarvestPosition (ref Vector3 pos, ref int index, UnitHarvester unit)

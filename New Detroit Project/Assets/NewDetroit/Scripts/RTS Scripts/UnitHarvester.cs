@@ -578,7 +578,7 @@ public class UnitHarvester : UnitController
             nextHarvestState = HarvestState.None;
             currentHarvestState = HarvestState.None;
         }
-        else if ( (destTransform.name == "Resources Mine") || (destTransform.name == "Metro") )
+        else if ( (destTransform.name == "Resources Mine") || (destTransform.tag == "Metro") )
         {
             baseController.GetArmyController().UpdateMines(destTransform);
 
