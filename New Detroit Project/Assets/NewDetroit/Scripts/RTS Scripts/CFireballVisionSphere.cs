@@ -34,6 +34,10 @@ public class CFireballVisionSphere : MonoBehaviour {
             
             Destroy(transform.parent.gameObject, 0.5f);
             transform.parent.rigidbody.isKinematic = true;
+
+            //Destroy(gameObject, 0.5f);
+            //rigidbody.isKinematic = true;
+
             Destroy(newSplash, 1.2f);
             //transform.parent.gameObject.SetActive(false);
             thrown = true;

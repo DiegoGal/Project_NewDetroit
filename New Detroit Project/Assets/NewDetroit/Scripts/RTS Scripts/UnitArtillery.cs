@@ -37,7 +37,7 @@ public class UnitArtillery : UnitController
     protected float alertHitTimerAux = 0.0f;
 
     // position where the rays to search for enemies are launched
-    protected Vector3 eyesPosition = new Vector3(0.0f, 1.5f, 0.0f);
+    protected Vector3 eyesPosition = new Vector3(0.0f, 1.0f, 0.0f);
 
     // frecuencia (en segundos) de ataque primario
     public float primaryAttackCadence = 1.0f;
@@ -52,11 +52,6 @@ public class UnitArtillery : UnitController
 
     // this is use to save the final destiny when the unit is in MovingAttacking mode
     private Vector3 destinyCopy;
-
-    public override void Awake ()
-    {
-        base.Awake();
-    }
 
     public override void Start ()
     {
@@ -470,11 +465,11 @@ public class UnitArtillery : UnitController
         ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
         if (enemyCC)
         {
-            enemiesInside.Remove(enemyCC);
-            /*if (enemiesInside.Remove(enemy))
+            //enemiesInside.Remove(enemyCC);
+            if (enemiesInside.Remove(enemyCC))
                 Debug.Log("Enemy out");
             else
-                Debug.Log("Enemy NOT removed");*/
+                Debug.Log("Enemy NOT removed");
 
             if (enemiesInside.Count == 0)
             {
@@ -487,7 +482,7 @@ public class UnitArtillery : UnitController
                 alertHitTimerAux = 0.0f;
 
                 // send the unit to the last known position of the enemy
-                RightClickOnSelected(enemyCC.transform);
+                //RightClickOnSelected(enemyCC.transform);
             }
         }
     }
@@ -528,7 +523,8 @@ public class UnitArtillery : UnitController
     {
         Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.3f);
 
-        Vector3 fwd = enemySelected.transform.position - this.transform.position;
+        Vector3 fwd = enemySelected.transform.position - this.transform.position;// -
+            //new Vector3(0.0f, eyesPosition.y * 0.5f, 0.0f);
         fwd.Normalize();
         Vector3 aux = transform.position + eyesPosition + (fwd * maxAttackDistance);
         Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
@@ -573,7 +569,8 @@ public class UnitArtillery : UnitController
                 {
                     Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
 
-                    Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;
+                    Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;// -
+                        //new Vector3(0.0f, eyesPosition.y * 0.5f, 0.0f);
                     fwd.Normalize();
                     Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadius);
                     Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);

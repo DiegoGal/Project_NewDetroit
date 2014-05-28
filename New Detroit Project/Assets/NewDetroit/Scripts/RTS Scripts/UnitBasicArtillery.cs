@@ -74,9 +74,10 @@ public class UnitBasicArtillery : UnitArtillery
             else if (attackCadenceAux <= 0.0f)
             {
                 // check that the enemy is in sight
-                Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.3f);
+                Debug.DrawLine(transform.position, enemySelected.transform.position, Color.yellow, 0.2f);
 
-                Vector3 fwd = enemySelected.transform.position - this.transform.position;
+                Vector3 fwd = enemySelected.transform.position - this.transform.position; // -
+                    //new Vector3(0.0f, eyesPosition.y * 0.5f, 0.0f);
                 fwd.Normalize();
                 Vector3 aux = transform.position + eyesPosition + (fwd * maxAttackDistance);
                 Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
@@ -87,7 +88,7 @@ public class UnitBasicArtillery : UnitArtillery
                     if ((enemy != null) && (enemy == enemySelected))
                     {
                         // Attack!
-                        Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
+                        Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.3f);
                         transform.LookAt(lastEnemyAttacked.transform);
 
                         // emite some particles:

@@ -17,7 +17,7 @@ public class CTeamUnit : CTeam
         selfUnit.EnemyEntersInVisionSphere(unit);
     }
 
-    public override void EnemyLeavesVisionSphere(CTeam unit)
+    public override void EnemyLeavesVisionSphere (CTeam unit)
     {
         selfUnit.EnemyLeavesVisionSphere(unit);
     }
