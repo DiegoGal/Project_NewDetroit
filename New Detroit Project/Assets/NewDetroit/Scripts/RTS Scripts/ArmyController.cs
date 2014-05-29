@@ -338,7 +338,7 @@ public class ArmyController : MonoBehaviour
                             }
                             else
                             {
-                                TowerGoblin tower = (TowerGoblin)myHit.transform.GetComponent("TowerGoblin");
+                                TowerArmy tower = (TowerArmy)myHit.transform.GetComponent("TowerArmy");
                                 if (tower != null && tower.team.teamNumber == teamNumber)
                                 {
                                     // select the tower

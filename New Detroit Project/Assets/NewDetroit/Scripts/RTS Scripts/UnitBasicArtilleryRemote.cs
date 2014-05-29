@@ -57,30 +57,30 @@ public class UnitBasicArtilleryRemote : ControllableCharacter
     {
         base.Start();
 
-        network();
+        InsertToTheDistanceMeasurerTool();
         timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
     }
 
-    public void changeAttack()
+    public void changeAttack ()
     {
         attack2Selected = !attack2Selected;
     }
 
-    public void Update()
+    public void Update ()
     {
         switch (currentState)
         {
-            case UnitController.State.Idle:              UpdateIdle(); break;
-            case UnitController.State.GoingTo:           UpdateGoingTo(); break;
-            case UnitController.State.GoingToAnEnemy:    UpdateGoingToAnEnemy(); break;
-            case UnitController.State.Attacking:         UpdateAttacking(); break;
-            case UnitController.State.Flying:            UpdateFlying(); break;
-            case UnitController.State.Dying:             UpdateDying(); break;
+            case UnitController.State.Idle:              UpdateIdle();              break;
+            case UnitController.State.GoingTo:           UpdateGoingTo();           break;
+            case UnitController.State.GoingToAnEnemy:    UpdateGoingToAnEnemy();    break;
+            case UnitController.State.Attacking:         UpdateAttacking();         break;
+            case UnitController.State.Flying:            UpdateFlying();            break;
+            case UnitController.State.Dying:             UpdateDying();             break;
             case UnitController.State.AscendingToHeaven: UpdateAscendingToHeaven(); break;
         }
     }
 
-    private void UpdateIdle()
+    private void UpdateIdle ()
     {
         // plays the waiting idle animation
         timeToNextWaitAnimation -= Time.deltaTime;

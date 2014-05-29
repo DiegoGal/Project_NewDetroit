@@ -146,7 +146,7 @@ public class ControllableCharacter : MonoBehaviour
     }
 
     //DistanceMeasureTool - Network
-    protected void network()
+    protected void InsertToTheDistanceMeasurerTool ()
     {
         DistanceMeasurerTool.InsertUnit(GetComponent<CTeam>());
     }

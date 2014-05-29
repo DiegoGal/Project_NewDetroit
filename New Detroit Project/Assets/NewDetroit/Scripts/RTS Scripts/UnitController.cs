@@ -61,7 +61,6 @@ public class UnitController : ControllableCharacter
     private bool goingDown = false;
     private int contTrapped = 0;
 
-   
 
     public override void Awake ()
     {
@@ -94,7 +93,7 @@ public class UnitController : ControllableCharacter
         }
 
 		// DistanceMeasureTool - Network
-		network ();
+        InsertToTheDistanceMeasurerTool();
     }
 
     // Update is called once per frame

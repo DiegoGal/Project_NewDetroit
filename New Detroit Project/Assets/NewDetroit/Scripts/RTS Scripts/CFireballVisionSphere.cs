@@ -9,6 +9,7 @@ public class CFireballVisionSphere : MonoBehaviour {
     private float destroyTime;
     private float timer = 0.0f;
     private bool thrown = false;
+
 	// Use this for initialization
 	void Start () 
     {
@@ -21,26 +22,30 @@ public class CFireballVisionSphere : MonoBehaviour {
         if (!thrown && (Time.time - timer) >= destroyTime)
         {
             GameObject newSplash = Instantiate
-                (
-                    splash,
-                    transform.position,
-                    new Quaternion()
-                ) as GameObject;
+            (
+                splash,
+                transform.position,
+                new Quaternion()
+            ) as GameObject;
             newSplash.transform.name = "FireballSplash";
             newSplash.GetComponent<FireballAttack>().SetDamage(damage);
             newSplash.GetComponent<FireballAttack>().SetOwner(owner);
             newSplash.AddComponent<Rigidbody>();
             newSplash.GetComponent<Rigidbody>().useGravity = false;
-            
-            Destroy(transform.parent.gameObject, 0.5f);
-            transform.parent.rigidbody.isKinematic = true;
 
-            //Destroy(gameObject, 0.5f);
-            //rigidbody.isKinematic = true;
+            //Destroy(transform.parent.gameObject, 0.5f);
+            //transform.parent.rigidbody.isKinematic = true;
+
+            Destroy(gameObject, 0.5f);
+            rigidbody.isKinematic = true;
 
             Destroy(newSplash, 1.2f);
             //transform.parent.gameObject.SetActive(false);
             thrown = true;
+        }
+        else if (!thrown)
+        {
+            transform.Rotate(new Vector3 (8.0f, 15.0f, 3.0f));
         }
 	}
 

@@ -35,11 +35,11 @@ public class UnitEngineer : UnitController
 	private Vector3 lastEngineerPos;
 	private int lastEngineerIndex;
 
-    // To instanciate a towerGoblin and warehouse
-    public GameObject towerGoblinPrefab;
+    // To instanciate a towerArmy and warehouse
+    public GameObject towerArmyPrefab;
     public GameObject warehousePrefab;
-    // The items towerGoblin and warehouse
-    private GameObject towerGoblin;
+    // The items towerArmy and warehouse
+    private GameObject towerArmy;
     private GameObject warehouse;
 
     private bool newTGConstruct = false;
@@ -408,7 +408,7 @@ public class UnitEngineer : UnitController
            )
         {
             newTGConstruct = newWConstruct = false;
-            Destroy(towerGoblin);
+            Destroy(towerArmy);
             Destroy(warehouse);
         }
 
@@ -464,17 +464,17 @@ public class UnitEngineer : UnitController
                 animation.Play("Build");
                 actualEngineerTime += Time.deltaTime;
                 construct = false;
-                if (currentItem.GetComponent<TowerGoblin>() != null)
+                if (currentItem.GetComponent<TowerArmy>() != null)
                 {
                     if (actualEngineerTime >= engineerTime)
                     {
-                        construct = currentItem.GetComponent<TowerGoblin>().Construct(amountPerAction);
+                        construct = currentItem.GetComponent<TowerArmy>().Construct(amountPerAction);
                         // The item has been constructed
                         if (construct)
                         {
                             Debug.Log("Torre construida!");
                             currentEngineerState = EngineerState.None;
-                            currentItem.GetComponent<TowerGoblin>().SetActiveMaterial();
+                            currentItem.GetComponent<TowerArmy>().SetActiveMaterial();
                             animation.Play("Idle01");
 
                             // hide the hammer
@@ -522,7 +522,7 @@ public class UnitEngineer : UnitController
            )
         {
             newTGConstruct = newWConstruct = false;
-            Destroy(towerGoblin);
+            Destroy(towerArmy);
             Destroy(warehouse);
         }
 
@@ -631,7 +631,7 @@ public class UnitEngineer : UnitController
                         // when it have arrived to the construct position
                         currentEngineerState = EngineerState.Constructing;
                         if (newTGConstruct)
-                            Minimap.InsertTower(towerGoblin.GetComponent<Tower>());
+                            Minimap.InsertTower(towerArmy.GetComponent<Tower>());
                         else if (newWConstruct)
                             Minimap.InsertWarehouse(warehouse.GetComponent<Warehouse>());
                         newTGConstruct = newWConstruct = false;
@@ -696,8 +696,8 @@ public class UnitEngineer : UnitController
                     if (!newFireball)
                     {
                         // Instanciate a new Fireball
-                        Debug.Log("Dummy position: " + dummyHand.transform.position);
-                        Debug.Log("Engineer position: " + transform.position);
+                        //Debug.Log("Dummy position: " + dummyHand.transform.position);
+                        //Debug.Log("Engineer position: " + transform.position);
                         newFireball = Instantiate
                         (
                             fireball,
@@ -709,17 +709,24 @@ public class UnitEngineer : UnitController
                         newFireball.transform.name = "Fireball";
                         newFireball.transform.parent = dummyHand;
                         newFireball.transform.rotation = transform.rotation;
-                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
-                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
-                        newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
+                        //newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
+                        //newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
+                        //newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
+
+                        newFireball.transform.GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
+                        newFireball.transform.GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
+                        newFireball.transform.GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
                     }
 
                     attackCadenceAux = attackCadence;
                     Vector3 dir = enemySelected.transform.position - newFireball.transform.position;
                     dir = dir.normalized;
-                    fireballDir = new Vector3(dir.x * 8.0f * (enemyDist / maxAttackDistance),
-                                                                        7,
-                                                                dir.z * 8.0f * (enemyDist / maxAttackDistance));
+                    fireballDir = new Vector3
+                    (
+                        dir.x * 8.0f * (enemyDist / maxAttackDistance),
+                        7,
+                        dir.z * 8.0f * (enemyDist / maxAttackDistance)
+                    );
                     newFireball.transform.parent = null;
                     newFireball.rigidbody.AddForce(fireballDir, ForceMode.Impulse);
 
@@ -778,15 +785,15 @@ public class UnitEngineer : UnitController
         if (newTGConstruct)
         {
             // if he can construct it
-            if ( towerGoblin.transform.GetComponent<TowerGoblin>().StartConstruct(constructDestiny, baseController))
+            if (towerArmy.transform.GetComponent<TowerArmy>().StartConstruct(constructDestiny, baseController))
             {
-                destiny = towerGoblin.transform.position;
+                destiny = towerArmy.transform.position;
                 Debug.Log("vamos a construir una Torreta copon!");
                 currentItem = destTransform;
                 currentEngineerState = EngineerState.GoingToConstructItem;
                 GoTo(new Vector3(destiny.x, 0, destiny.z));
                 constructDestiny = destiny;
-                currentItem = towerGoblin.transform;
+                currentItem = towerArmy.transform;
                 newTGConstruct = newWConstruct = false;
             }
         }
@@ -842,30 +849,30 @@ public class UnitEngineer : UnitController
             if (destTransform.name == "TowerSphereConstruct")
             {
                 comp1 = destTransform.GetComponent<ColliderConstruct>().gameObject;
-                comp2 = towerGoblin.transform.GetComponent<TowerGoblin>().transform.FindChild("TowerSphereConstruct").gameObject;
+                comp2 = towerArmy.transform.GetComponent<TowerArmy>().transform.FindChild("TowerSphereConstruct").gameObject;
             }
             else if (newTGConstruct)
             {
-                comp1 = destTransform.GetComponent<TowerGoblin>().gameObject;
-                comp2 = towerGoblin.transform.GetComponent<TowerGoblin>().gameObject;
+                comp1 = destTransform.GetComponent<TowerArmy>().gameObject;
+                comp2 = towerArmy.transform.GetComponent<TowerArmy>().gameObject;
             }
-            if ((comp1 != comp2) || !newTGConstruct) // If it's not the same towerGoblin that is going To Construct
+            if ((comp1 != comp2) || !newTGConstruct) // If it's not the same towerArmy that is going To Construct
             {
                 newTGConstruct = newWConstruct = false;
                 // if it's in the same team he has to reapir it
                 if (currentItem.GetComponent<BuildingController>().team.teamNumber == teamNumber)
                 {
-                    if (currentItem.GetComponent<TowerGoblin>().IsConstructed())
+                    if (currentItem.GetComponent<TowerArmy>().IsConstructed())
                     {
                         // Se va a la torre
-                        Debug.Log("vamos a arreglar la TowerGoblin copon!");
+                        Debug.Log("vamos a arreglar la TowerArmy copon!");
                         currentEngineerState = EngineerState.GoingToRepairItem;
                         GoTo(destiny);
                     }
                     else
                     {
                         // Se va a la torre
-                        Debug.Log("vamos a construir la TowerGoblin copon!");
+                        Debug.Log("vamos a construir la TowerArmy copon!");
                         currentEngineerState = EngineerState.GoingToConstructItem;
                         GoTo(destiny);
                     }
@@ -891,7 +898,7 @@ public class UnitEngineer : UnitController
                 comp2 = warehouse.transform.GetComponent<Warehouse>().gameObject;
             }
 
-            if ((comp1 != comp2) || !newWConstruct) // If it's not the same towerGoblin that is going To Construct
+            if ((comp1 != comp2) || !newWConstruct) // If it's not the same towerArmy that is going To Construct
             {
                 newTGConstruct = newWConstruct = false;
                 // if it's in the same team he has to reapir it
@@ -938,7 +945,7 @@ public class UnitEngineer : UnitController
         LeaveQueues();
 
         // He has to go to another position if he has to
-        // destTransform.name == "TowerGoblin" || destTransform.name == "Goblin Warehouse" 
+        // destTransform.name == "TowerArmy" || destTransform.name == "Goblin Warehouse" 
         if ( destTransform.name == "WorldFloor" || destTransform.name == "Terrain" )// If he has to go to another position of the worldfloor he goes
         {
             newTGConstruct = newWConstruct = false;
@@ -1086,7 +1093,7 @@ public class UnitEngineer : UnitController
     */
     public void SetBuildingPrefabsReferences (GameObject tower, GameObject warehouse)
     {
-        towerGoblinPrefab = tower;
+        towerArmyPrefab = tower;
         warehousePrefab = warehouse;
     }
 
@@ -1112,8 +1119,8 @@ public class UnitEngineer : UnitController
         else if (currentEngineerState == EngineerState.GoingToConstructPosition ||
                     currentEngineerState == EngineerState.Constructing)
         {
-            if (currentItem.GetComponent<TowerGoblin>() != null)
-                currentItem.GetComponent<TowerGoblin>().LeaveEngineerPositionConstruct(lastEngineerIndex);
+            if (currentItem.GetComponent<TowerArmy>() != null)
+                currentItem.GetComponent<TowerArmy>().LeaveEngineerPositionConstruct(lastEngineerIndex);
             else if (currentItem.GetComponent<Warehouse>() != null)
                 currentItem.GetComponent<Warehouse>().LeaveEngineerPositionConstruct(lastEngineerIndex);
         }
@@ -1173,16 +1180,16 @@ public class UnitEngineer : UnitController
         switch (item)
         {
             case 0:
-                towerGoblin = Instantiate
+                towerArmy = Instantiate
                 (
-                    towerGoblinPrefab,
+                    towerArmyPrefab,
                     transform.position,
                     new Quaternion(0, 0, 0, 0)
                 ) as GameObject;
-                towerGoblin.transform.Rotate(270.0f, 0.0f, 0.0f);
-                towerGoblin.name = towerGoblin.name.Replace("(Clone)", "");
-                towerGoblin.GetComponent<TowerGoblin>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
-                towerGoblin.GetComponent<TowerGoblin>().SetBaseController(baseController);
+                towerArmy.transform.Rotate(270.0f, 0.0f, 0.0f);
+                towerArmy.name = towerArmy.name.Replace("(Clone)", "");
+                towerArmy.GetComponent<TowerArmy>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
+                towerArmy.GetComponent<TowerArmy>().SetBaseController(baseController);
                 newTGConstruct = true;
                 break;
             case 1:

@@ -5,11 +5,11 @@ public class CTeamTowerArmy : CTeam
 {
 
     // referent to the component of the Unit itself
-    private TowerGoblin selfUnit;
+    private TowerArmy selfUnit;
 
     public void Awake ()
     {
-        selfUnit = GetComponent<TowerGoblin>();
+        selfUnit = GetComponent<TowerArmy>();
     }
 
     public override void EnemyEntersInVisionSphere (CTeam unit)

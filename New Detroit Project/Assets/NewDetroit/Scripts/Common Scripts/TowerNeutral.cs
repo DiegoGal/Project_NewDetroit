@@ -15,7 +15,6 @@ public class TowerNeutral : Tower
 		Alert, // espera hasta que halla hueco en la mina
 		ShootingEnemies
 	}
-
 	// the state of the tower
 	private TowerState currentTowerState = TowerState.Neutral;
 	
@@ -233,12 +232,12 @@ public class TowerNeutral : Tower
 			contConq[team] -= amountToSubstract;
 	}
 
-    public bool IsCurrentStateNeutral()
+    public bool IsCurrentStateNeutral ()
     {
         return currentTowerState == TowerState.Neutral;
     }
 
-    public virtual void OnGUI()
+    public virtual void OnGUI ()
     {
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 

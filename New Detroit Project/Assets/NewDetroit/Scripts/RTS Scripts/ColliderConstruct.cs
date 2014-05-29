@@ -7,12 +7,12 @@ public class ColliderConstruct : MonoBehaviour
 
     public int collidersInside = 0;
 
-    private TowerGoblin selfUnitTower;
+    private TowerArmy selfUnitTower;
     private Warehouse selfUnitWarehouse;
 
     public void Awake ()
     {
-        selfUnitTower = transform.parent.GetComponent<TowerGoblin>();
+        selfUnitTower = transform.parent.GetComponent<TowerArmy>();
         selfUnitWarehouse = transform.parent.GetComponent<Warehouse>();
     }
 

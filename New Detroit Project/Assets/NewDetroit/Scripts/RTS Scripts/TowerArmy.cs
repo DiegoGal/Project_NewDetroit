@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TowerGoblin : Tower 
+public class TowerArmy : Tower 
 {
 
     private bool isActive = false;
