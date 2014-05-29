@@ -63,13 +63,18 @@ public class UnitBasicArtillery : UnitArtillery
                     lastEnemyAttacked = null;
                     // no more enemies, change the state
                     currentArtilleryState = ArtilleryState.None;
+                    cState.currentArtilleryState = currentArtilleryState;
                 }
                 else
+                {
                     currentArtilleryState = ArtilleryState.Alert;
+                    cState.currentArtilleryState = currentArtilleryState;
+                }
 
                 PlayAnimationCrossFade("Idle01");
 
                 currentState = State.Idle;
+                cState.currentState = currentState;
             }
             else if (attackCadenceAux <= 0.0f)
             {
@@ -118,24 +123,33 @@ public class UnitBasicArtillery : UnitArtillery
                             else
                                 currentArtilleryState = ArtilleryState.Alert;
 
+                            cState.currentArtilleryState = currentArtilleryState;
+
                             PlayAnimationCrossFade("Idle01");
                             currentState = State.Idle;
+                            cState.currentState = currentState;
                         }
                     }
                     else
                     {
                         // the enemy is NOT on sight
                         currentArtilleryState = ArtilleryState.Alert;
+                        cState.currentArtilleryState = currentArtilleryState;
+
                         PlayAnimationCrossFade("Idle01");
                         currentState = State.Idle;
+                        cState.currentState = currentState;
                     }
                 }
                 else
                 {
                     // the enemy is NOT on sight
                     currentArtilleryState = ArtilleryState.Alert;
+                    cState.currentArtilleryState = currentArtilleryState;
+
                     PlayAnimationCrossFade("Idle01");
                     currentState = State.Idle;
+                    cState.currentState = currentState;
                 }
                 // reset the timer
                 attackCadenceAux = primaryAttackCadence;
@@ -153,6 +167,7 @@ public class UnitBasicArtillery : UnitArtillery
             attackCadence = attack1Cadence;
 
             attack2Selected = false;
+            cState.attack2Selected = attack2Selected;
         }
         else // change to attack2 (bate)
         {
@@ -160,6 +175,7 @@ public class UnitBasicArtillery : UnitArtillery
             attackCadence = attack2Cadence;
 
             attack2Selected = true;
+            cState.attack2Selected = attack2Selected;
         }
     }
 

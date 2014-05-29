@@ -55,7 +55,7 @@ public class UnitHarvesterRemote : ControllableCharacter
 
     public void Start()
     {
-        network();
+        InsertToTheDistanceMeasurerTool();
         timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
         // instanciamos un casco o un cono encima de la cabeza (o nada)
         float rand = Random.value;

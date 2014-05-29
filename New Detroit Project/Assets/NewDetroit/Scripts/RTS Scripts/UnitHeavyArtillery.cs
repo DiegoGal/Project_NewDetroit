@@ -71,23 +71,31 @@ public class UnitHeavyArtillery : UnitArtillery
                     animation.CrossFade("Deployment-prepare");
                     StartCoroutine(WaitAndCallback(animation["Deployment-prepare"].length));
                     animation.CrossFadeQueued("Deployment-iddle");
+
                     currentDeployState = DeployState.Deploying;
+                    cState.currentDeployState = currentDeployState;
+
                     break;
+
                 case DeployState.Deploying:
                     /*animation.CrossFade("Deployment-Up");
                     StartCoroutine(WaitAndCallback(animation["Deployment-Up"].length));
                     animation.CrossFadeQueued("Idle01");
                     currentDeployState = DeployState.Undeploying;*/
                     break;
+
                 case DeployState.Deployed:
                     if (currentState != State.Attacking)
                     {
                         animation.CrossFade("Deployment-Up");
                         StartCoroutine(WaitAndCallback(animation["Deployment-Up"].length));
                         animation.CrossFadeQueued("Idle01");
+
                         currentDeployState = DeployState.Undeploying;
+                        cState.currentDeployState = currentDeployState;
                     }
                     break;
+
                 case DeployState.Undeploying:
                     /*animation.CrossFade("Deployment-prepare");
                     StartCoroutine(WaitAndCallback(animation["Deployment-prepare"].length));
@@ -173,11 +181,11 @@ public class UnitHeavyArtillery : UnitArtillery
                             dir = enemySelected.transform.position - newRocket.transform.position;
                         dir = dir.normalized;
                         rocketDir = new Vector3
-                            (
-                                dir.x * 8.0f * (enemyDist / maxAttackDistance),
-                                11,
-                                dir.z * 8.0f * (enemyDist / maxAttackDistance)
-                            );
+                        (
+                            dir.x * 8.0f * (enemyDist / maxAttackDistance),
+                            11,
+                            dir.z * 8.0f * (enemyDist / maxAttackDistance)
+                        );
                         //Vector3 dir1 = transform.forward.normalized;
                         newRocket.transform.parent = null;
                         newRocket.rigidbody.AddForce
@@ -190,7 +198,10 @@ public class UnitHeavyArtillery : UnitArtillery
                         {
                             // the enemy has die
                             enemySelected = null;
+
                             currentState = State.Idle;
+                            cState.currentState = currentState;
+
                             //PlayAnimationCrossFade("Idle01");
                             attackCadenceAux = 2f;
                         }
@@ -199,7 +210,10 @@ public class UnitHeavyArtillery : UnitArtillery
                 else
                 {
                     enemySelected = null;
+
                     currentState = State.Idle;
+                    cState.currentState = currentState;
+
                     attackCadenceAux = 2f;
                     launchRocket = false; 
                     //PlayAnimationCrossFade("Idle01");
@@ -208,7 +222,10 @@ public class UnitHeavyArtillery : UnitArtillery
             else // the enemy is no longer alive
             {
                 enemySelected = null;
+
                 currentState = State.Idle;
+                cState.currentState = currentState;
+
                 //PlayAnimationCrossFade("Idle01");
                 attackCadenceAux = 2f;
                 launchRocket = false; 
@@ -236,6 +253,7 @@ public class UnitHeavyArtillery : UnitArtillery
             alertHitTimerAux = alertHitTimer;
             // Change the state
             currentState = State.Attacking;
+            cState.currentState = currentState;
             
         }
         else if (currentDeployState == DeployState.Deployed) // if deployed
@@ -280,6 +298,7 @@ public class UnitHeavyArtillery : UnitArtillery
                                 alertHitTimerAux = alertHitTimer;
 
                                 currentState = State.Attacking;
+                                cState.currentState = currentState;
                             }
                         }
                     }
@@ -288,7 +307,10 @@ public class UnitHeavyArtillery : UnitArtillery
             else
             {
                 enemySelected = null;
+
                 currentState = State.Idle;
+                cState.currentState = currentState;
+
                 //PlayAnimationCrossFade("Idle01");
                 attackCadenceAux = 2f;
             }
@@ -323,7 +345,11 @@ public class UnitHeavyArtillery : UnitArtillery
         {
             case DeployState.Undeployed:
                 currentDeployState = DeployState.Deployed;
+                cState.currentDeployState = currentDeployState;
+
                 attack2Selected = true;
+                cState.attack2Selected = attack2Selected;
+
                 if (thereIsVisionSphere)
                     transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
                         visionSphereRadius + visionSphereRadiusExtended;
@@ -339,7 +365,11 @@ public class UnitHeavyArtillery : UnitArtillery
             case DeployState.Deploying:
 
                 currentDeployState = DeployState.Deployed;
+                cState.currentDeployState = currentDeployState;
+
                 attack2Selected = true;
+                cState.attack2Selected = attack2Selected;
+
                 if (thereIsVisionSphere)
                     transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
                         visionSphereRadius + visionSphereRadiusExtended;
@@ -355,7 +385,11 @@ public class UnitHeavyArtillery : UnitArtillery
             case DeployState.Deployed:
 
                 currentDeployState = DeployState.Undeployed;
+                cState.currentDeployState = currentDeployState;
+
                 attack2Selected = false;
+                cState.attack2Selected = attack2Selected;
+
                 if (thereIsVisionSphere)
                     transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
                         visionSphereRadius;
@@ -371,7 +405,11 @@ public class UnitHeavyArtillery : UnitArtillery
             case DeployState.Undeploying:
 
                 currentDeployState = DeployState.Undeployed;
+                cState.currentDeployState = currentDeployState;
+
                 attack2Selected = false;
+                cState.attack2Selected = attack2Selected;
+
                 if (thereIsVisionSphere)
                     transform.FindChild("VisionSphere").GetComponent<SphereCollider>().radius =
                         visionSphereRadius;

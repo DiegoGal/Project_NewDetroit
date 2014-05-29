@@ -61,10 +61,13 @@ public class UnitController : ControllableCharacter
     private bool goingDown = false;
     private int contTrapped = 0;
 
+    public CStateUnit cState;
 
     public override void Awake ()
     {
         base.Awake();
+
+        cState = GetComponent<CStateUnit>();
 
         model = transform.FindChild("Model");
 
@@ -89,6 +92,8 @@ public class UnitController : ControllableCharacter
         else
         {
             currentState = State.GoingTo;
+            cState.currentState = currentState;
+
             PlayAnimation("Walk");
         }
 
@@ -166,6 +171,7 @@ public class UnitController : ControllableCharacter
         if (direction.magnitude <= destinyThreshold)
         {
             currentState = State.Idle;
+            cState.currentState = currentState;
             PlayAnimationCrossFade("Idle01");
         }
         else 
@@ -185,6 +191,7 @@ public class UnitController : ControllableCharacter
             {
                 // change to Attack state
                 currentState = State.Attacking;
+                cState.currentState = currentState;
                 PlayAnimationCrossFade("Attack1");
                 GetComponent<NavMeshAgent>().Stop();
 
@@ -207,6 +214,7 @@ public class UnitController : ControllableCharacter
             // el enemigo ha sido eliminado
             //GoTo(destiny);
             currentState = State.GoingTo;
+            cState.currentState = currentState;
         }
 
     }
@@ -264,6 +272,7 @@ public class UnitController : ControllableCharacter
             PlayAnimationCrossFade("Idle01");
             attackCadenceAux = 0.5f;
         }
+        cState.currentState = currentState;
     }
 
     protected virtual void UpdateFlying ()
@@ -293,6 +302,7 @@ public class UnitController : ControllableCharacter
                     }
                     Destroy(this.rigidbody);
                     currentState = State.Idle;
+                    cState.currentState = currentState;
                     lastPosY = -1.0f;
                     goingDown = false;
                     contTrapped = 0;
@@ -324,6 +334,7 @@ public class UnitController : ControllableCharacter
             );
 
             currentState = State.AscendingToHeaven;
+            cState.currentState = currentState;
         }
     }
 
@@ -377,6 +388,7 @@ public class UnitController : ControllableCharacter
             this.destiny = destiny;
             GetComponent<NavMeshAgent>().SetDestination(destiny);
             currentState = State.GoingTo;
+            cState.currentState = currentState;
 
             PlayAnimationCrossFade("Walk");
         }
@@ -388,6 +400,7 @@ public class UnitController : ControllableCharacter
         //GetComponent<NavMeshAgent>().destination = destiny;
         GetComponent<NavMeshAgent>().Stop();
         currentState = State.Idle;
+        cState.currentState = currentState;
 
         PlayAnimationCrossFade("Idle01");
     }
@@ -411,6 +424,7 @@ public class UnitController : ControllableCharacter
                 GoTo(destiny);
                 enemySelected = unit;
                 currentState = State.GoingToAnEnemy;
+                cState.currentState = currentState;
             }
         }
         else
@@ -441,6 +455,7 @@ public class UnitController : ControllableCharacter
             {
                 //Debug.Log("MUEROOOOOOOOOO");
                 currentState = State.Dying;
+                cState.currentState = currentState;
                 // the unit DIES, set the special material
                 setDyingMaterial();
                 // play the dead animation             
@@ -527,6 +542,7 @@ public class UnitController : ControllableCharacter
         if (currentState != State.Dying)
         {
             currentState = State.Flying;
+            cState.currentState = currentState;
             if (posY == -1.0f)
             {
                 posY = transform.position.y;

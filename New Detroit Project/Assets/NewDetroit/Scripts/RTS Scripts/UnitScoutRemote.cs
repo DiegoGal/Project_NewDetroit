@@ -41,7 +41,7 @@ public class UnitScoutRemote : ControllableCharacter
     // Use this for initialization
     public void Start()
     {
-        network();
+        InsertToTheDistanceMeasurerTool();
         timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
     }
 

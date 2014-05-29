@@ -454,6 +454,7 @@ public class UnitArtillery : UnitController
                 if (currentArtilleryState == ArtilleryState.None)
                 {
                     currentArtilleryState = ArtilleryState.Alert;
+                    cState.currentArtilleryState = currentArtilleryState;
                     alertHitTimerAux = 0.0f;
                 }
             //}
@@ -479,6 +480,7 @@ public class UnitArtillery : UnitController
                     PlayAnimationCrossFade("Idle01");
 
                 currentArtilleryState = ArtilleryState.None;
+                cState.currentArtilleryState = currentArtilleryState;
                 alertHitTimerAux = 0.0f;
 
                 // send the unit to the last known position of the enemy
@@ -551,6 +553,7 @@ public class UnitArtillery : UnitController
                     animation.CrossFade("Attack1");
 
                 currentState = State.Attacking;
+                cState.currentState = currentState;
             }
         }
     }
@@ -570,7 +573,7 @@ public class UnitArtillery : UnitController
                     Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
 
                     Vector3 fwd = enemiesInside[i].transform.position - this.transform.position;// -
-                        //new Vector3(0.0f, eyesPosition.y * 0.5f, 0.0f);
+                    //new Vector3(0.0f, eyesPosition.y * 0.5f, 0.0f);
                     fwd.Normalize();
                     Vector3 aux = transform.position + eyesPosition + (fwd * visionSphereRadius);
                     Debug.DrawLine(transform.position + eyesPosition, aux, Color.blue, 0.2f);
@@ -580,7 +583,7 @@ public class UnitArtillery : UnitController
                         //Debug.Log(myHit.transform.name);
                         // the ray has hit something
                         ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                        if ( enemy && (enemy == enemiesInside[i]) )
+                        if (enemy && (enemy == enemiesInside[i]))
                         {
                             // this "something" is the enemy we are looking for...
                             // the enemy is on sight!
@@ -608,7 +611,9 @@ public class UnitArtillery : UnitController
                                     //currentArtilleryState = ArtilleryState.Attacking1;
                                 }
                                 enemySelected = enemy;
+
                                 currentState = State.Attacking;
+                                cState.currentState = currentState;
                             }
                             else
                             {
@@ -627,7 +632,10 @@ public class UnitArtillery : UnitController
             }
         }
         else
+        {
             currentArtilleryState = ArtilleryState.None;
+            cState.currentArtilleryState = currentArtilleryState;
+        }
     }
 
 } // class UnitArtillery
