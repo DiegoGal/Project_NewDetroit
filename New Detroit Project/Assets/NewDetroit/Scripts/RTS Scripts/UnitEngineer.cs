@@ -430,7 +430,10 @@ public class UnitEngineer : UnitController
                     if (repaired || currentItem.GetComponent<BuildingController>().HasTotalLife())
                     {
                         Debug.Log("Torre Reparada");
+
                         currentEngineerState = EngineerState.None;
+						cState.currentEngineerState = currentEngineerState;
+
                         animation.Play("Idle01");
 
                         // hide the hammer
@@ -450,7 +453,10 @@ public class UnitEngineer : UnitController
                     if (conquest || !currentItem.GetComponent<TowerNeutral>().IsCurrentStateNeutral())
                     {
                         Debug.Log("Torre Conquistada!");
+
                         currentEngineerState = EngineerState.None;
+						cState.currentEngineerState = currentEngineerState;
+
                         animation.Play("Idle01");
                         Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
                         
@@ -473,7 +479,10 @@ public class UnitEngineer : UnitController
                         if (construct)
                         {
                             Debug.Log("Torre construida!");
+
                             currentEngineerState = EngineerState.None;
+							cState.currentEngineerState = currentEngineerState;
+
                             currentItem.GetComponent<TowerArmy>().SetActiveMaterial();
                             animation.Play("Idle01");
 
@@ -492,7 +501,10 @@ public class UnitEngineer : UnitController
                         if (construct)
                         {
                             Debug.Log("Almacen construido!");
+
                             currentEngineerState = EngineerState.None;
+							cState.currentEngineerState = currentEngineerState;
+
                             currentItem.GetComponent<Warehouse>().SetActiveMaterial();
                             animation.Play("Idle01");
 
@@ -541,11 +553,15 @@ public class UnitEngineer : UnitController
                     {
                         // there is a gap and we have the position
                         currentEngineerState = EngineerState.GoingToRepairPosition;
+						cState.currentEngineerState = currentEngineerState;
+
                         base.GoTo(lastEngineerPos);
                     }
                     else
                     {
                         currentEngineerState = EngineerState.Waiting;
+						cState.currentEngineerState = currentEngineerState;
+
                         GetComponent<NavMeshAgent>().destination = transform.position;
                     }
                 }
@@ -563,11 +579,15 @@ public class UnitEngineer : UnitController
                     {
                         // there is a gap and we have the position
                         currentEngineerState = EngineerState.GoingToConquestPosition;
+						cState.currentEngineerState = currentEngineerState;
+
                         base.GoTo(lastEngineerPos);
                     }
                     else
                     {
                         currentEngineerState = EngineerState.Waiting;
+						cState.currentEngineerState = currentEngineerState;
+
                         GetComponent<NavMeshAgent>().destination = transform.position;
                     }
                 }
@@ -587,11 +607,15 @@ public class UnitEngineer : UnitController
                         {
                             // there is a gap and we have the position
                             currentEngineerState = EngineerState.GoingToConstructPosition;
+							cState.currentEngineerState = currentEngineerState;
+
                             base.GoTo(lastEngineerPos);
                         }
                         else
                         {
                             currentEngineerState = EngineerState.Waiting;
+							cState.currentEngineerState = currentEngineerState;
+
                             GetComponent<NavMeshAgent>().destination = transform.position;
                         }
                     }
@@ -599,6 +623,8 @@ public class UnitEngineer : UnitController
                 else
                 {
                     currentEngineerState = EngineerState.None;
+					cState.currentEngineerState = currentEngineerState;
+
                     animation.Play("Idle01");
                     newTGConstruct = newWConstruct = false;
                 }
@@ -608,6 +634,7 @@ public class UnitEngineer : UnitController
                 {
                     // when it have arrived to the repair position
                     currentEngineerState = EngineerState.Repairing;
+					cState.currentEngineerState = currentEngineerState;
 
                     // show the hammer
                     hammerInst.SetActive(true);
@@ -618,6 +645,7 @@ public class UnitEngineer : UnitController
                 {
                     // when it have arrived to the conquest position
                     currentEngineerState = EngineerState.Conquering;
+					cState.currentEngineerState = currentEngineerState;
 
                     // show the laptop
                     laptopInst.SetActive(true);
@@ -630,6 +658,8 @@ public class UnitEngineer : UnitController
                     {
                         // when it have arrived to the construct position
                         currentEngineerState = EngineerState.Constructing;
+						cState.currentEngineerState = currentEngineerState;
+
                         if (newTGConstruct)
                             Minimap.InsertTower(towerArmy.GetComponent<Tower>());
                         else if (newWConstruct)
@@ -643,6 +673,8 @@ public class UnitEngineer : UnitController
                 else
                 {
                     currentEngineerState = EngineerState.None;
+					cState.currentEngineerState = currentEngineerState;
+
                     animation.Play("Idle01");
                     newTGConstruct = newWConstruct = false;
                 }
@@ -658,6 +690,7 @@ public class UnitEngineer : UnitController
         {
             // change to Attack state
             currentState = State.Attacking;
+			cState.currentState = currentState;
             PlayAnimationCrossFade("Attack1");
             GetComponent<NavMeshAgent>().destination = transform.position;
 
@@ -738,6 +771,7 @@ public class UnitEngineer : UnitController
                         // the enemy has die
                         enemySelected = null;
                         currentState = State.Idle;
+						cState.currentState = currentState;
 
                         PlayAnimationCrossFade("Idle01");
                         attackCadenceAux = 2.5f;
@@ -747,6 +781,7 @@ public class UnitEngineer : UnitController
             else if (enemyDist <= visionSphereRadius)
             {
                 currentState = State.GoingToAnEnemy;
+				cState.currentState = currentState;
 
                 this.destiny = enemySelected.transform.position;
                 GetComponent<NavMeshAgent>().destination = destiny;
@@ -757,7 +792,10 @@ public class UnitEngineer : UnitController
             else
             {
                 enemySelected = null;
+
                 currentState = State.Idle;
+				cState.currentState = currentState;
+
                 attackCadenceAux = 2.5f;
                 PlayAnimationCrossFade("Idle01");
             }
@@ -766,6 +804,7 @@ public class UnitEngineer : UnitController
         {
             enemySelected = null;
             currentState = State.Idle;
+			cState.currentState = currentState;
 
             PlayAnimationCrossFade("Idle01");
             attackCadenceAux = 2.5f;
@@ -790,7 +829,10 @@ public class UnitEngineer : UnitController
                 destiny = towerArmy.transform.position;
                 Debug.Log("vamos a construir una Torreta copon!");
                 currentItem = destTransform;
+
                 currentEngineerState = EngineerState.GoingToConstructItem;
+				cState.currentEngineerState = currentEngineerState;
+
                 GoTo(new Vector3(destiny.x, 0, destiny.z));
                 constructDestiny = destiny;
                 currentItem = towerArmy.transform;
@@ -806,7 +848,10 @@ public class UnitEngineer : UnitController
                 destiny = warehouse.transform.position;
                 Debug.Log("vamos a construir una warehouse copon!");
                 currentItem = destTransform;
+
                 currentEngineerState = EngineerState.GoingToConstructItem;
+				cState.currentEngineerState = currentEngineerState;
+
                 GoTo(new Vector3(destiny.x, 0, destiny.z));
                 constructDestiny = destiny;
                 currentItem = warehouse.transform;
@@ -827,7 +872,10 @@ public class UnitEngineer : UnitController
                 {
                     // Se va a la torre
                     Debug.Log("vamos a conquistar la TN copon!");
+
                     currentEngineerState = EngineerState.GoingToConquerableItem;
+					cState.currentEngineerState = currentEngineerState;
+
                     GoTo(destiny);
                 }
             }
@@ -835,7 +883,10 @@ public class UnitEngineer : UnitController
             {
                 // Se va a la torre
                 Debug.Log("vamos a arreglar la TN copon!");
+
                 currentEngineerState = EngineerState.GoingToRepairItem;
+				cState.currentEngineerState = currentEngineerState;
+
                 GoTo(destiny);
             }
         }
@@ -866,14 +917,20 @@ public class UnitEngineer : UnitController
                     {
                         // Se va a la torre
                         Debug.Log("vamos a arreglar la TowerArmy copon!");
+
                         currentEngineerState = EngineerState.GoingToRepairItem;
+						cState.currentEngineerState = currentEngineerState;
+
                         GoTo(destiny);
                     }
                     else
                     {
                         // Se va a la torre
                         Debug.Log("vamos a construir la TowerArmy copon!");
+
                         currentEngineerState = EngineerState.GoingToConstructItem;
+						cState.currentEngineerState = currentEngineerState;
+
                         GoTo(destiny);
                     }
 
@@ -908,14 +965,20 @@ public class UnitEngineer : UnitController
                     {
                         // Se va a la Warehouse
                         Debug.Log("vamos a arreglar la Warehouse copon!");
+
                         currentEngineerState = EngineerState.GoingToRepairItem;
+						cState.currentEngineerState = currentEngineerState;
+
                         GoTo(destiny);
                     }
                     else
                     {
                         // Se va a la Warehouse
                         Debug.Log("vamos a construir la Warehouse copon!");
+
                         currentEngineerState = EngineerState.GoingToConstructItem;
+						cState.currentEngineerState = currentEngineerState;
+
                         GoTo(destiny);
                     }
 
@@ -926,6 +989,8 @@ public class UnitEngineer : UnitController
         else if (destTransform.name == "WorldFloor" || destTransform.name == "Terrain")// If he has to go to another position of the worldfloor he goes
         {
             currentEngineerState = EngineerState.None;
+			cState.currentEngineerState = currentEngineerState;
+
             attackCadenceAux = 2.5f;
             base.RightClickOnSelected(destiny, destTransform);
         }
@@ -1102,7 +1167,9 @@ public class UnitEngineer : UnitController
         if ( base.Damage(damage, type) )
         {
             LeaveQueues();
+
             currentEngineerState = EngineerState.None;
+			cState.currentEngineerState = currentEngineerState;
 
             return true;
         }
@@ -1132,7 +1199,10 @@ public class UnitEngineer : UnitController
     {
         lastEngineerPos = repairPosition;
         lastEngineerIndex = chopIndex;
+
         currentEngineerState = EngineerState.GoingToRepairPosition;
+		cState.currentEngineerState = currentEngineerState;
+
         base.GoTo(lastEngineerPos);
     }
 
@@ -1140,7 +1210,10 @@ public class UnitEngineer : UnitController
     {
         lastEngineerPos = conquestPosition;
         lastEngineerIndex = chopIndex;
+
         currentEngineerState = EngineerState.GoingToConquestPosition;
+		cState.currentEngineerState = currentEngineerState;
+
         base.GoTo(lastEngineerPos);
     }
 
@@ -1148,7 +1221,10 @@ public class UnitEngineer : UnitController
     {
         lastEngineerPos = constructPosition;
         lastEngineerIndex = chopIndex;
+
         currentEngineerState = EngineerState.GoingToConquestPosition;
+		cState.currentEngineerState = currentEngineerState;
+
         base.GoTo(lastEngineerPos);
     }
 
@@ -1157,7 +1233,9 @@ public class UnitEngineer : UnitController
         if (currentEngineerState == EngineerState.GoingToRepairItem)
         {
             Debug.Log("comenzando la reparacion...");
+
             currentEngineerState = EngineerState.Repairing;
+			cState.currentEngineerState = currentEngineerState;
         }
     }
 
@@ -1166,7 +1244,9 @@ public class UnitEngineer : UnitController
         if (currentEngineerState == EngineerState.GoingToConquerableItem)
         {
             Debug.Log("comenzando la conquista...");
+
             currentEngineerState = EngineerState.Conquering;
+			cState.currentEngineerState = currentEngineerState;
         }
 	}
 

@@ -76,13 +76,19 @@ public class UnitScout : UnitController
         if (positionList.Count == 1)
         {
             nextPositionIndex = 0;
+
             currentScoutState = ScoutState.None;
+			cState.currentScoutState = currentScoutState;
+
             GoTo(positionList[0]);
         }
         else if (positionList.Count > 1)
         {
             nextPositionIndex = 0;
+
             currentScoutState = ScoutState.Patrolling;
+			cState.currentScoutState = currentScoutState;
+
             patrolPositionsList = new List<Vector3>(positionList);
             Debug.Log("siguiente goto a: " + patrolPositionsList[0]);
             base.GoTo(patrolPositionsList[0]);
@@ -92,7 +98,10 @@ public class UnitScout : UnitController
 	public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
 	{
         if (destTransform.name == "WorldFloor" || destTransform.name == "Terrain")
+		{
 			currentScoutState = ScoutState.None;
+			cState.currentScoutState = currentScoutState;
+		}
 
         base.RightClickOnSelected(destiny, destTransform);
 	}
