@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Tower : BuildingController
+public abstract class Tower : BuildingController
 {
 
     public bool canBeConquered;

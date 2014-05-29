@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CResourceBuilding : BuildingController 
+public abstract class CResourceBuilding : BuildingController 
 {
     // referencia al controlador del ejército
     public ArmyController armyController;

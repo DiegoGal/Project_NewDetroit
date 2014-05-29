@@ -11,7 +11,7 @@ public class TowerNeutral : Tower
 	private enum TowerState
 	{
 		Neutral,
-		Iddle,
+		Idle,
 		Alert, // espera hasta que halla hueco en la mina
 		ShootingEnemies
 	}
@@ -94,7 +94,7 @@ public class TowerNeutral : Tower
                 }
                 break;
 
-            case TowerState.Iddle:
+            case TowerState.Idle:
 
                 // we change the state to neutral if the tower dies
                 if (life.currentLife <= 0.0f)
@@ -142,9 +142,9 @@ public class TowerNeutral : Tower
                 {
                     alertHitTimerAux -= Time.deltaTime;
                 }
-                // we change the state to Iddle if there aren't enemies inside vision
+                // we change the state to Idle if there aren't enemies inside vision
                 if (enemiesInside.Count == 0)
-                    currentTowerState = TowerState.Iddle;
+                    currentTowerState = TowerState.Idle;
                 // we change the state to neutral if the tower dies
                 if (life.currentLife <= 0.0f)
                     currentTowerState = TowerState.Neutral;
@@ -172,7 +172,7 @@ public class TowerNeutral : Tower
                         {
                             lastEnemyAttacked = null;
                             // no more enemies, change the state
-                            currentTowerState = TowerState.Iddle;
+                            currentTowerState = TowerState.Idle;
                         }
                         else
                         {
@@ -188,9 +188,9 @@ public class TowerNeutral : Tower
                 // we change the state to neutral if the tower dies
                 if (life.currentLife <= 0.0f)
                     currentTowerState = TowerState.Neutral;
-                // we change the state to Iddle if there aren't enemies inside vision
+                // we change the state to Idle if there aren't enemies inside vision
                 if (enemiesInside.Count == 0)
-                    currentTowerState = TowerState.Iddle;
+                    currentTowerState = TowerState.Idle;
                 break;
         }
 	}
@@ -213,7 +213,7 @@ public class TowerNeutral : Tower
             DistanceMeasurerTool.InsertUnit(team);
 
             // change the state to Idle
-            currentTowerState = TowerState.Iddle;
+            currentTowerState = TowerState.Idle;
 
             UpdateEnemiesInside(teamNumber);
             RemoveEngineersInQueue();

@@ -1188,7 +1188,7 @@ public class UnitEngineer : UnitController
                 ) as GameObject;
                 towerArmy.transform.Rotate(270.0f, 0.0f, 0.0f);
                 towerArmy.name = towerArmy.name.Replace("(Clone)", "");
-                towerArmy.GetComponent<TowerArmy>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
+                towerArmy.GetComponent<TowerArmy>().SetTeamNumber(this.teamNumber, team.teamColorIndex);
                 towerArmy.GetComponent<TowerArmy>().SetBaseController(baseController);
                 newTGConstruct = true;
                 break;
@@ -1201,7 +1201,7 @@ public class UnitEngineer : UnitController
                 ) as GameObject;
                 warehouse.transform.Rotate(0.0f, 180.0f, 0.0f);
                 warehouse.name = warehouse.name.Replace("(Clone)", "");
-                warehouse.GetComponent<Warehouse>().SetTeamNumber(this.teamNumber, GetComponent<CTeam>().teamColorIndex);
+                warehouse.GetComponent<Warehouse>().SetTeamNumber(this.teamNumber, team.teamColorIndex);
                 warehouse.GetComponent<Warehouse>().SetBaseController(baseController);
                 newWConstruct = true;
                 break;

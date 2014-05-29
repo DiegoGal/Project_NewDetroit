@@ -42,10 +42,11 @@ public class TowerArmy : Tower
     // Reference to the base
     public BaseController baseController;
 
-    public float TowerGoblinRadius = 3.5f;
+    public float TowerArmyRadius = 3.5f;
 
-    public void Awake ()
+    public override void Awake ()
 	{
+        base.Awake();
         GetComponent<CSelectable>().enabled = false;
 	}
 
@@ -53,7 +54,7 @@ public class TowerArmy : Tower
 	public override void Start () 
     {
 		base.Start();
-        radius = TowerGoblinRadius;
+        radius = TowerArmyRadius;
 
         myHit = new RaycastHit();
         // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
