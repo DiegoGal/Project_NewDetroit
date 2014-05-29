@@ -56,4 +56,13 @@ public class CLife : MonoBehaviour
             return false;
     }
 
+    public float getLife()
+    {
+        return currentLife;
+    }
+
+    public void setLife(float eLife)
+    {
+        currentLife = eLife;
+    }
 }
