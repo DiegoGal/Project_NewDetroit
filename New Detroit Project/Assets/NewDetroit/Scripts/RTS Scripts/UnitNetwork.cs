@@ -7,6 +7,7 @@ public class UnitNetwork : Photon.MonoBehaviour
 	CSelectable selectableScript;
     CStateUnit stateScript;           // contains the current states of the units and other flags
 	UnitController unitScript;
+    UnitAnimationsNetwork unitAnimationsNetwork;
 	FogOfWarUnit fogOfWarScript;
 	NavMeshAgent navMeshAgent;
 
@@ -20,29 +21,36 @@ public class UnitNetwork : Photon.MonoBehaviour
 	
 	void Awake ()
 	{
-		selectableScript   = GetComponent<CSelectable>();
-		unitScript         = GetComponent<UnitBasicArtillery>();
-		fogOfWarScript	   = GetComponent<FogOfWarUnit>();
-        navMeshAgent       = GetComponent<NavMeshAgent>();
-        stateScript        = GetComponent<CStateUnit>();
+		selectableScript      = GetComponent<CSelectable>();
+        unitScript            = GetComponent<UnitController>();
+		fogOfWarScript	      = GetComponent<FogOfWarUnit>();
+        unitAnimationsNetwork = GetComponent<UnitAnimationsNetwork>();
+        navMeshAgent          = GetComponent<NavMeshAgent>();
+        stateScript           = GetComponent<CStateUnit>();
 		
 		if (photonView.isMine)
 		{
 			//MINE: local player, simply enable the local scripts
-			selectableScript.enabled = true;
-            unitScript.enabled       = true;
-			fogOfWarScript.enabled   = true;
-			navMeshAgent.enabled     = true;
+			selectableScript.enabled      = true;
+            unitScript.enabled            = true;
+			fogOfWarScript.enabled        = true;
+            unitAnimationsNetwork.enabled = false;
+			navMeshAgent.enabled          = true;
+
+            Debug.Log("MINE");
 		}
 		else
 		{           
-			selectableScript.enabled = false;
-            unitScript.enabled       = false;
-			fogOfWarScript.enabled   = false;
-			navMeshAgent.enabled     = false;
+			selectableScript.enabled      = false;
+            unitScript.enabled            = false;
+			fogOfWarScript.enabled        = false;
+            unitAnimationsNetwork.enabled = true;
+			navMeshAgent.enabled          = false;
+
+            Debug.Log("not MINE");
 		}
 		
-		gameObject.name = gameObject.name + photonView.viewID;
+		gameObject.name = gameObject.name + "_" + photonView.viewID;
 	}
 	
 	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -92,6 +100,7 @@ public class UnitNetwork : Photon.MonoBehaviour
             if (lastState != stateScript.currentState)
             {
                 // cambiar animaciones
+                unitAnimationsNetwork.ChangeAnimation(stateScript.currentState);
             }
             lastState = stateScript.currentState;
 

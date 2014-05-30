@@ -69,6 +69,8 @@ public class CSelectable : MonoBehaviour
         unitReference = GetComponent<UnitController>();
 	}
 
+    void Start () { }
+
     public void ResetTeamColor ()
     {
         teamColor = outlineColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];

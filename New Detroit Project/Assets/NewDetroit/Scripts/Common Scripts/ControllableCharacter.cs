@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ControllableCharacter : MonoBehaviour
+public class ControllableCharacter : Photon.MonoBehaviour
 {
 	// --------------------------------------------------------------
 
