@@ -402,9 +402,9 @@ public class UnitEngineer : UnitController
         if (
              Input.anyKeyDown &&
              (newTGConstruct || newWConstruct) &&
-             Input.GetMouseButtonDown(0) &&
-             (currentEngineerState != EngineerState.GoingToConstructItem) &&
-             (currentEngineerState != EngineerState.GoingToConstructPosition)
+             Input.GetMouseButtonDown(0) 
+             /*(currentEngineerState != EngineerState.GoingToConstructItem) &&
+             (currentEngineerState != EngineerState.GoingToConstructPosition)*/
            )
         {
             newTGConstruct = newWConstruct = false;
@@ -528,9 +528,9 @@ public class UnitEngineer : UnitController
         if (
              Input.anyKeyDown &&
              (newTGConstruct || newWConstruct) &&
-             Input.GetMouseButtonDown(0) &&
-             (currentEngineerState != EngineerState.GoingToConstructItem) &&
-             (currentEngineerState != EngineerState.GoingToConstructPosition)
+             Input.GetMouseButtonDown(0) 
+             /*(currentEngineerState != EngineerState.GoingToConstructItem) &&
+             (currentEngineerState != EngineerState.GoingToConstructPosition)*/
            )
         {
             newTGConstruct = newWConstruct = false;
@@ -1263,7 +1263,7 @@ public class UnitEngineer : UnitController
                 towerArmy = Instantiate
                 (
                     towerArmyPrefab,
-                    transform.position,
+                    transform.position + new Vector3(30,-30,30),
                     new Quaternion(0, 0, 0, 0)
                 ) as GameObject;
                 towerArmy.transform.Rotate(270.0f, 0.0f, 0.0f);
@@ -1276,7 +1276,7 @@ public class UnitEngineer : UnitController
                 warehouse = Instantiate
                 (
                     warehousePrefab,
-                    transform.position,
+                    transform.position + new Vector3(30, -30, 30),
                     new Quaternion(0, 0, 0, 0)
                 ) as GameObject;
                 warehouse.transform.Rotate(0.0f, 180.0f, 0.0f);
