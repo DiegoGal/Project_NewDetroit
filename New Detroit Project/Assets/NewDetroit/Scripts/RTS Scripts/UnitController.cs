@@ -96,9 +96,6 @@ public class UnitController : ControllableCharacter
 
             PlayAnimation("Walk");
         }
-
-		// DistanceMeasureTool - Network
-        InsertToTheDistanceMeasurerTool();
     }
 
     // Update is called once per frame

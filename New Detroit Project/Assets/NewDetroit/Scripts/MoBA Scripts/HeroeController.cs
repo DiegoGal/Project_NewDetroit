@@ -211,15 +211,15 @@ public abstract class HeroeController : ControllableCharacter
 	// ------------------------------------------------------------------------------------------------------
 	// PUBLIC
     // if type == 'P' is phisical damage if type == 'M' is magical damage
-	public override bool Damage (float damage,char type)
-	{
-        if (type == 'P')
-		    life.currentLife -= damage - defP;
-        else
-            if (type == 'M')
-                life.currentLife -= damage - defM;
-        return (life.currentLife <= 0);
-	}
+    //public override bool Damage (float damage,char type)
+    //{
+    //    if (type == 'P')
+    //        life.currentLife -= damage - defP;
+    //    else
+    //        if (type == 'M')
+    //            life.currentLife -= damage - defM;
+    //    return (life.currentLife <= 0);
+    //}
 	
 	// Increment the experience
 	public void experienceUp(int experience)
