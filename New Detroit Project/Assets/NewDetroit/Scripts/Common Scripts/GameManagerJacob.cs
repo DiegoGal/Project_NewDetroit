@@ -12,18 +12,23 @@ public class GameManagerJacob : MonoBehaviour {
     public GameObject RobRender;
     public GameObject armyManager;
     public Camera cameraRTS;
+    private float propWidth, propHeight;
 
 	// Use this for initialization
 	void Start () {
         Camera.mainCamera.transform.position = cameraPositionInitial;
         //Camera.mainCamera.transform.rotation = transform.Rotate(cameraRotationInitial);
+
+        //1024 x 512
+        propWidth = (float)Screen.width / 1024;
+        propHeight = (float)Screen.height / 512;
 	}
 
     public void OnGUI()
     {
         if (onGUI)
         {
-            if (GUI.Button(new Rect(0, 40, 120, 40), "", GUIStyle.none))
+            if (GUI.Button(new Rect(propWidth * 35, propHeight * 70, propWidth * 250, propHeight * 60), "", GUIStyle.none))
             {
                 Destroy(menu);
                 GameObject instRob = (GameObject)Instantiate(RobRender, new Vector3(95f, 3f, -116f), Quaternion.identity);
@@ -40,7 +45,7 @@ public class GameManagerJacob : MonoBehaviour {
 
             //GUILayout.EndHorizontal();
 
-            if (GUI.Button(new Rect(0, 90, 120, 40), "", GUIStyle.none))
+            if (GUI.Button(new Rect(propWidth * 35, propHeight * 160, propWidth * 250, propHeight * 60), "", GUIStyle.none))
             {
                 Destroy(menu);
                 armyManager.active = true;
@@ -50,7 +55,7 @@ public class GameManagerJacob : MonoBehaviour {
                 onGUI = false;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 120, 180, 120, 40), "", GUIStyle.none))
+            if (GUI.Button(new Rect(propWidth * 735, propHeight * 325, propWidth * 250, propHeight * 60), "", GUIStyle.none))
             {
                 Application.Quit();
             }
