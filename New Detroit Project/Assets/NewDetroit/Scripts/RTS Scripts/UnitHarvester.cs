@@ -79,6 +79,8 @@ public class UnitHarvester : UnitController
     // capacidad total de vida curada por la unidad
     private int totalHealed = 0;
 
+    public GameObject mineralParticles;
+
     public override void Start ()
     {
         base.Start();
@@ -692,6 +694,9 @@ public class UnitHarvester : UnitController
         animation.CrossFade("Picar");
         currentHarvestState = HarvestState.Choping;
         nextHarvestState = HarvestState.ReturningToBase;
+
+        // se instanciarán unas partículas a mitad de la animación de Picar
+        StartCoroutine(WaitAndCallback(animation["Picar"].length * 0.5f));
     }
 
     public override void ArrivedToBase ()
@@ -725,11 +730,27 @@ public class UnitHarvester : UnitController
     }
 
     // esconde (o muestra) todos los objetos que componen el pack de minerales
-    protected void ShowMineralPack (bool enable=true)
+    protected void ShowMineralPack (bool enable = true)
     {
         Renderer[] renderers = actualMineralPack.GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers)
             r.enabled = enable;
+    }
+
+    private IEnumerator WaitAndCallback (float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        SpawnMineralParticles(waitTime);
+    }
+
+    private void SpawnMineralParticles(float waitTime)
+    {
+        GameObject particles = (GameObject)Instantiate(mineralParticles,
+                peak.transform.position, new Quaternion());
+        Destroy(particles, 0.4f);
+
+        if (currentHarvestState == HarvestState.Choping)
+            StartCoroutine(WaitAndCallback(animation["Picar"].length));
     }
 
     public override bool Damage (float damage, char type)
