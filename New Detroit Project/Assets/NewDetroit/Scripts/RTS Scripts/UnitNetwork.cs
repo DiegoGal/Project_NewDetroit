@@ -37,7 +37,7 @@ public class UnitNetwork : Photon.MonoBehaviour
             unitAnimationsNetwork.enabled = false;
 			navMeshAgent.enabled          = true;
 
-            Debug.Log("MINE");
+            //Debug.Log("MINE");
 		}
 		else
 		{           
@@ -47,7 +47,7 @@ public class UnitNetwork : Photon.MonoBehaviour
             unitAnimationsNetwork.enabled = true;
 			navMeshAgent.enabled          = false;
 
-            Debug.Log("not MINE");
+            //Debug.Log("not MINE");
 		}
 		
 		gameObject.name = gameObject.name + "_" + photonView.viewID;

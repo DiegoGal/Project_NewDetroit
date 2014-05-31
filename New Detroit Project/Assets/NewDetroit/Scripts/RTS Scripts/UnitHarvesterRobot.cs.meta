@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: a2535762394e3ea4e8de9cfb9edf8a88
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - baseController: {instanceID: 0}
+  - bloodParticles: {fileID: 100000, guid: 80cd87e5e66b84b35b29f75198eeda8b, type: 2}
+  - progressBarEmpty: {fileID: 2800000, guid: 8ff75535e1a07364ea0532d96f39336c, type: 3}
+  - progressBarFull: {fileID: 2800000, guid: 1b1d14c3f4fb8864e930e1cd88e3a906, type: 3}
+  - mineralPack: {fileID: 100008, guid: 96e12732dc7daee4cb86ebed0af1fa3d, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

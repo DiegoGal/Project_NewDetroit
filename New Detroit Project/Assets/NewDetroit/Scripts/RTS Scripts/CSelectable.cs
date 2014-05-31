@@ -36,9 +36,10 @@ public class CSelectable : MonoBehaviour
             outlineWidth = model.renderer.material.GetFloat("_OutlineWidth");
 
             for (int i = 0; i < numberOfMaterials; i++)
-                model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
+                //model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
+                model.renderer.materials[i].SetColor("_OutlineColor", Color.black);
 
-            model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
+            //model.renderer.material.SetFloat("_OutlineWidth", 0.0f);
 
             //teamColor = outlineColor = model.renderer.material.GetColor("_OutlineColor");
         }
@@ -69,7 +70,12 @@ public class CSelectable : MonoBehaviour
         unitReference = GetComponent<UnitController>();
 	}
 
-    void Start () { }
+    void Start ()
+    {
+        if (selectType == 0)
+            for (int i = 0; i < numberOfMaterials; i++)
+                model.renderer.materials[i].SetColor("_OutlineColor", Color.black);
+    }
 
     public void ResetTeamColor ()
     {
@@ -85,13 +91,14 @@ public class CSelectable : MonoBehaviour
         {
             case 0:
                 for (int i = 0; i < numberOfMaterials; i++)
-                    model.renderer.materials[i].SetFloat("_OutlineWidth", outlineWidth);
+                    //model.renderer.materials[i].SetFloat("_OutlineWidth", outlineWidth);
+                    model.renderer.materials[i].SetColor("_OutlineColor", teamColor);
                 break;
             case 1:
                 this.renderer.material.SetColor("_DiffuseColor", teamColor);
                 break;
             case 2:
-                this.renderer.material.color = teamColor;
+                this.renderer.material.color = new Color(teamColor.r + 0.4f, teamColor.g + 0.4f, teamColor.b + 0.4f);
                 break;
         }
 
@@ -106,7 +113,8 @@ public class CSelectable : MonoBehaviour
         {
             case 0:
                 for (int i = 0; i < numberOfMaterials; i++)
-                    model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
+                   // model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
+                    model.renderer.materials[i].SetColor("_OutlineColor", Color.black);
                 break;
             case 1:
                 this.renderer.material.SetColor("_DiffuseColor", origColor);

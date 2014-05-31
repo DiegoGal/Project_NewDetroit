@@ -382,10 +382,12 @@ public class UnitHarvester : UnitController
                     }
                     else
                     {
+                        // no hay hueco, hay que esperar
+                        StopMoving();
                         currentHarvestState = HarvestState.Waiting;
                         GetComponent<NavMeshAgent>().destination = transform.position;
                         //animation.CrossFade("Idle Wait");
-                        animation.CrossFadeQueued("Idle01");
+                        animation.CrossFade("Idle01");
                     }
                 }
                 break;
@@ -434,7 +436,7 @@ public class UnitHarvester : UnitController
 
     } // UpdateGoingTo
 
-    /*public override void OnGUI ()
+    public override void OnGUI ()
     {
         if (currentState != State.AscendingToHeaven)
         {
@@ -447,7 +449,7 @@ public class UnitHarvester : UnitController
                 currentHarvestState.ToString() + " -> " + nextHarvestState.ToString() + "\n" +
                 "resources: " + resourcesLoaded );
         }
-    }*/
+    }
 
     /*public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
