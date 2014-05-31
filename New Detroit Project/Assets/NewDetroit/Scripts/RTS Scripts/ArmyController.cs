@@ -1105,6 +1105,7 @@ public class ArmyController : MonoBehaviour
             GameObject newUnit = armyBase.GetComponent<BaseController>().SpawnUnit(unitId, ref resources, ref economy);
             if (newUnit)
             {
+                newUnit.name = newUnit.name.Replace("(Clone)", ""); 
                 newUnit.GetComponent<ControllableCharacter>().SetTeamNumber(this.teamNumber);
                 unitList.Add(newUnit);
                 // if the unit is an engineer, set the buildings references
