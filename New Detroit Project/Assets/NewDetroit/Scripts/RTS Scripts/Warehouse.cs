@@ -13,7 +13,7 @@ public class Warehouse : CResourceBuilding
     public Material constructMaterial;
 
     // Conts for Tower conquest
-    private float contConstr;
+    public float contConstr;
 
     // Constant when the tower is constructed
     private const float finalCont = 100.0f;

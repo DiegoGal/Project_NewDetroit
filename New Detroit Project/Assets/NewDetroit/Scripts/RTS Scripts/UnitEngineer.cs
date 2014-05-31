@@ -41,6 +41,8 @@ public class UnitEngineer : UnitController
     // The items towerArmy and warehouse
     protected GameObject towerArmy;
     protected GameObject warehouse;
+    protected GameObject lastTowerArmy;
+    protected GameObject lastWarehouse;
 
     protected bool newTGConstruct = false;
     protected bool newWConstruct = false;
@@ -788,6 +790,12 @@ public class UnitEngineer : UnitController
             // if he can construct it
             if (towerArmy.transform.GetComponent<TowerArmy>().StartConstruct(constructDestiny, baseController))
             {
+                if (lastTowerArmy != null && lastTowerArmy.GetComponent<TowerArmy>().contConstr == 0 &&
+                    !lastTowerArmy.GetComponent<TowerArmy>().IsConstructed())
+                    Destroy(lastTowerArmy);
+                if (lastWarehouse != null && lastWarehouse.GetComponent<Warehouse>().contConstr == 0 &&
+                        !lastWarehouse.GetComponent<Warehouse>().IsConstructed())
+                    Destroy(lastWarehouse);
                 destiny = towerArmy.transform.position;
                 Debug.Log("vamos a construir una Torreta copon!");
                 currentItem = destTransform;
@@ -807,6 +815,12 @@ public class UnitEngineer : UnitController
             // if he can construct it
             if (warehouse.transform.GetComponent<Warehouse>().StartConstruct(constructDestiny, baseController))
             {
+                if (lastTowerArmy != null && lastTowerArmy.GetComponent<TowerArmy>().contConstr == 0 &&
+                    !lastTowerArmy.GetComponent<TowerArmy>().IsConstructed())
+                    Destroy(lastTowerArmy);
+                if (lastWarehouse != null && lastWarehouse.GetComponent<Warehouse>().contConstr == 0 &&
+                        !lastWarehouse.GetComponent<Warehouse>().IsConstructed())
+                    Destroy(lastWarehouse);
                 destiny = warehouse.transform.position;
                 Debug.Log("vamos a construir una warehouse copon!");
                 currentItem = destTransform;
@@ -853,7 +867,7 @@ public class UnitEngineer : UnitController
             }
         }
         // if it is a TG
-        else if (destTransform.name == "Goblin Tower")
+        else if (destTransform.name == "Goblin Tower" || destTransform.name == "Robot Tower")
         {
             attackCadenceAux = 2.5f;
             GameObject comp1 = null;
@@ -900,7 +914,7 @@ public class UnitEngineer : UnitController
             }
         }
         // if it is a warehouse
-        else if (destTransform.name == "Goblin Warehouse")
+        else if (destTransform.name == "Goblin Warehouse" || destTransform.name == "Robot Warehouse")
         {
             attackCadenceAux = 2.5f;
             currentItem = destTransform;

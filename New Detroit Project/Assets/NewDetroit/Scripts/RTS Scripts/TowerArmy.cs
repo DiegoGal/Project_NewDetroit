@@ -27,7 +27,7 @@ public class TowerArmy : Tower
     private TowerState currentTowerState = TowerState.Idle;
 
 	// Conts for Tower conquest
-	private float contConstr;
+	public float contConstr;
 	
 	// Constant when the tower is conquered
 	private const float finalCont = 100.0f;
@@ -344,6 +344,17 @@ public class TowerArmy : Tower
 	{
 		return constructed;
 	}
+
+    public int NumEngineerPosTaken()
+    {
+        int cont = 0;
+        foreach(bool pos in engineerPosTaken)
+        {
+            if (pos)
+                cont++;
+        }
+        return cont;
+    }
 
     public void LeaveEngineerPositionConstruct (int index)
     {

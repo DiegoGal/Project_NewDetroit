@@ -47,6 +47,10 @@ public class UnitEngineerGoblin : UnitEngineer
         switch (item)
         {
             case 0:
+                if (towerArmy)
+                    lastTowerArmy = towerArmy;
+                if (warehouse)
+                    lastWarehouse = warehouse;
                 towerArmy = Instantiate
                 (
                     towerArmyPrefab,
@@ -60,6 +64,10 @@ public class UnitEngineerGoblin : UnitEngineer
                 newTGConstruct = true;
                 break;
             case 1:
+                if (towerArmy)
+                    lastTowerArmy = towerArmy;
+                if (warehouse)
+                    lastWarehouse = warehouse;
                 warehouse = Instantiate
                 (
                     warehousePrefab,
