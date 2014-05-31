@@ -9,6 +9,7 @@ public class GameManagerJacob : MonoBehaviour {
     public bool onGUI = true;
     public GameObject menu;
     public GameObject RobRender;
+    public GameObject armyManager;
 
 	// Use this for initialization
 	void Start () {
@@ -25,6 +26,7 @@ public class GameManagerJacob : MonoBehaviour {
             // Activar cosas de rob
             instRob.GetComponent<ThirdPersonCamera>().enabled = true;
             instRob.GetComponent<ThirdPersonNetwork>().enabled = false;
+            instRob.GetComponent<OrcController>().isMine = true;
         }
 
         //GUILayout.EndHorizontal();
@@ -32,6 +34,9 @@ public class GameManagerJacob : MonoBehaviour {
         if (GUI.Button(new Rect(0, 90, 120, 40), "", GUIStyle.none))
         {
             Destroy(menu);
+            armyManager.active = true;
+            Camera.mainCamera.transform.position = cameraPositionRTS;
+            Camera.mainCamera.transform.rotation = new Quaternion(45f, 0f, 0f, 180f);
         }
 
         if (GUI.Button(new Rect(Screen.width - 120, 180, 120, 40), "", GUIStyle.none))
