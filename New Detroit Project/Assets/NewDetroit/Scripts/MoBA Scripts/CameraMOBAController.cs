@@ -158,7 +158,7 @@ public class CameraMOBAController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		heroe = null;
+		//heroe = null;
 	}
 
 	// Update is called once per frame

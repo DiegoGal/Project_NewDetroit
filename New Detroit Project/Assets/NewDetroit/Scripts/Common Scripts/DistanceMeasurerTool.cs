@@ -13,7 +13,7 @@ public class DistanceMeasurerTool : MonoBehaviour
     // example distancesMatrix[2][3] is the distances between the units Army0[2] and Army1[3]
     public static List< List< float > > distancesMatrix = new List< List< float > >();
 
-    private static int maxCalculationsPerUpdate = 2; // ojo esto se eleva al cuadrado
+    private static int maxCalculationsPerUpdate = 4; // ojo esto se eleva al cuadrado
     private static int calculationsPerUpdate = 1;
     
     private enum SearchMode
@@ -87,7 +87,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 		
     } // Update
 
-    public void OnGUI ()
+    /*public void OnGUI ()
     {
         GUI.skin.label.fontSize = 10;
 
@@ -105,7 +105,7 @@ public class DistanceMeasurerTool : MonoBehaviour
                     GUI.Label(new Rect(100 + 50 * j, 100 + 20 * i, 50, 20), "---");
             }
         }
-    }
+    }*/
 
     private void SearchStep ()
     {

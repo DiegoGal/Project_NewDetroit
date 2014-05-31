@@ -44,6 +44,8 @@ public class TowerArmy : Tower
 
     public float TowerArmyRadius = 3.5f;
 
+    public bool createCubes = false;
+
     public override void Awake ()
 	{
         base.Awake();
@@ -106,6 +108,8 @@ public class TowerArmy : Tower
                 Destroy(cubes[i].GetComponent<BoxCollider>());
                 cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
                 cubes[i].transform.parent = this.transform;
+
+                cubes[i].SetActive(createCubes);
             }
             DestroyUnnecessaryGameobjects();
             return true;

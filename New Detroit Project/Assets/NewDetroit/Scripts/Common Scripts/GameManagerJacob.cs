@@ -5,43 +5,55 @@ public class GameManagerJacob : MonoBehaviour {
 
 
     public Vector3 cameraPositionRTS;
-    public Vector3 cameraRotationRTS;
+    public Vector3 cameraPositionInitial;
+
     public bool onGUI = true;
     public GameObject menu;
     public GameObject RobRender;
     public GameObject armyManager;
+    public Camera cameraRTS;
 
 	// Use this for initialization
 	void Start () {
-        Camera.mainCamera.transform.position = new Vector3(75.37802f, 10.55257f, -106.6093f);
-        Camera.mainCamera.transform.rotation = new Quaternion(27f, 0f, 0f,180f);
+        Camera.mainCamera.transform.position = cameraPositionInitial;
+        //Camera.mainCamera.transform.rotation = transform.Rotate(cameraRotationInitial);
 	}
 
     public void OnGUI()
     {
-        if (GUI.Button(new Rect(0, 40, 120, 40), "", GUIStyle.none))
+        if (onGUI)
         {
-            Destroy(menu);
-            GameObject instRob = (GameObject)Instantiate(RobRender, new Vector3(95f,3f,-116f),Quaternion.identity);
-            // Activar cosas de rob
-            instRob.GetComponent<ThirdPersonCamera>().enabled = true;
-            instRob.GetComponent<ThirdPersonNetwork>().enabled = false;
-            instRob.GetComponent<OrcController>().isMine = true;
-        }
+            if (GUI.Button(new Rect(0, 40, 120, 40), "", GUIStyle.none))
+            {
+                Destroy(menu);
+                GameObject instRob = (GameObject)Instantiate(RobRender, new Vector3(95f, 3f, -116f), Quaternion.identity);
+                // Activar cosas de rob
+                instRob.GetComponent<ThirdPersonCamera>().enabled = true;
+                instRob.GetComponent<ThirdPersonNetwork>().enabled = false;
+                instRob.GetComponent<OrcController>().isMine = true;
+                Camera.mainCamera.GetComponent<CameraRTSController>().enabled = false;
+                CameraMOBAController camera = Camera.mainCamera.GetComponent<CameraMOBAController>();
+                camera.enabled = true;
+                camera.heroe = instRob.GetComponent<HeroeController>();
+                onGUI = false;
+            }
 
-        //GUILayout.EndHorizontal();
+            //GUILayout.EndHorizontal();
 
-        if (GUI.Button(new Rect(0, 90, 120, 40), "", GUIStyle.none))
-        {
-            Destroy(menu);
-            armyManager.active = true;
-            Camera.mainCamera.transform.position = cameraPositionRTS;
-            Camera.mainCamera.transform.rotation = new Quaternion(45f, 0f, 0f, 180f);
-        }
+            if (GUI.Button(new Rect(0, 90, 120, 40), "", GUIStyle.none))
+            {
+                Destroy(menu);
+                armyManager.active = true;
+                cameraRTS.active = true;
+                Camera.mainCamera.active = false;
+                Camera.SetupCurrent(cameraRTS);
+                onGUI = false;
+            }
 
-        if (GUI.Button(new Rect(Screen.width - 120, 180, 120, 40), "", GUIStyle.none))
-        {
-            Application.Quit();
+            if (GUI.Button(new Rect(Screen.width - 120, 180, 120, 40), "", GUIStyle.none))
+            {
+                Application.Quit();
+            }
         }
     }
 

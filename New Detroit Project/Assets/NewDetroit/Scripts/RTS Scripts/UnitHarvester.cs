@@ -438,7 +438,7 @@ public class UnitHarvester : UnitController
 
     } // UpdateGoingTo
 
-    public override void OnGUI ()
+    /*public override void OnGUI ()
     {
         if (currentState != State.AscendingToHeaven)
         {
@@ -451,7 +451,7 @@ public class UnitHarvester : UnitController
                 currentHarvestState.ToString() + " -> " + nextHarvestState.ToString() + "\n" +
                 "resources: " + resourcesLoaded );
         }
-    }
+    }*/
 
     /*public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
