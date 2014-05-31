@@ -52,6 +52,9 @@ public class ControllableCharacter : Photon.MonoBehaviour
         screenPosition = Camera.main.WorldToScreenPoint(transform.position);
 
         team.visionSphereRadius = visionSphereRadius;
+
+        // DistanceMeasureTool - Network
+        InsertToTheDistanceMeasurerTool();
     }
 
     public virtual void Update ()

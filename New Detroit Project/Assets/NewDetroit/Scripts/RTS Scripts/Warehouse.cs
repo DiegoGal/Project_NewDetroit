@@ -50,7 +50,12 @@ public class Warehouse : CResourceBuilding
         {
             //TODO que ingenieros cambien de estado
             Destroy(gameObject);
-            baseController.IncreaseResources(costResources);
+            if (contConstr == 0.0f)
+                baseController.IncreaseResources(costResources);
+            else
+            {
+                baseController.GetArmyController().RemoveWarehouse(this);
+            }
         }
         else if (!isActive)
         {

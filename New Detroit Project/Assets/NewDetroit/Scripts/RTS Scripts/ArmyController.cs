@@ -1017,6 +1017,19 @@ public class ArmyController : MonoBehaviour
         else Debug.Log("Warehouse NO agregada");
     }
 
+    public void RemoveWarehouse (CResourceBuilding w)
+    {
+        if (resourceBuildingList.Contains(w))
+        {
+            resourceBuildingList.Remove(w);
+
+            foreach (CResources c in resourceMineList) // Foreach mines
+            {
+
+            }
+        }
+    }
+
     public void UpdateMines (Transform mineTransform)
     {
         CResources mine = mineTransform.GetComponent<CResources>();
