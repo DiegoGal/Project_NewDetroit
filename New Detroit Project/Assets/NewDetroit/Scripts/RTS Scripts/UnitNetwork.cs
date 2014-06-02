@@ -87,9 +87,7 @@ public class UnitNetwork : Photon.MonoBehaviour
 		}
 	}
 	
-
-	
-	void Update()
+	void Update ()
 	{
 		if (!photonView.isMine)
 		{

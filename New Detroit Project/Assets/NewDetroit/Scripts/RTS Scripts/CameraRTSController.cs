@@ -63,8 +63,8 @@ public class CameraRTSController : MonoBehaviour
         {
             if (
                  ( Input.GetKey(KeyCode.UpArrow) ||
-                   /*Input.GetKey(KeyCode.W) ||*/
-                   (Input.mousePosition.y >= Screen.height * (1 - scrollEdge))  )
+                   Input.GetKey(KeyCode.W) /*||
+                   (Input.mousePosition.y >= Screen.height * (1 - scrollEdge))*/  )
                  && (transform.position.z < zMinMax.y)
                 )
             {
@@ -72,8 +72,8 @@ public class CameraRTSController : MonoBehaviour
             }
             else if (
                  ( Input.GetKey(KeyCode.DownArrow) ||
-                   /*Input.GetKey(KeyCode.S) ||*/
-                   (Input.mousePosition.y <= Screen.height * scrollEdge) )
+                   Input.GetKey(KeyCode.S) /*||
+                   (Input.mousePosition.y <= Screen.height * scrollEdge)*/ )
                  && (transform.position.z > zMinMax.x)
                 )
             {
@@ -82,8 +82,8 @@ public class CameraRTSController : MonoBehaviour
 
             if (
                  ( Input.GetKey(KeyCode.RightArrow) ||
-                   /*Input.GetKey(KeyCode.D) ||*/
-                   (Input.mousePosition.x >= Screen.width * (1 - scrollEdge)) )
+                   Input.GetKey(KeyCode.D) /*||
+                   (Input.mousePosition.x >= Screen.width * (1 - scrollEdge))*/ )
                  && (transform.position.x < xMinMax.y)
                 )
             {
@@ -91,8 +91,8 @@ public class CameraRTSController : MonoBehaviour
             }
             else if (
                 ( Input.GetKey(KeyCode.LeftArrow) ||
-                  /*Input.GetKey(KeyCode.A) ||*/
-                  (Input.mousePosition.x <= Screen.width * scrollEdge) )
+                  Input.GetKey(KeyCode.A) /*||
+                  (Input.mousePosition.x <= Screen.width * scrollEdge) */)
                  && (transform.position.x > xMinMax.x)
                 )
             {

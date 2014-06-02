@@ -21,6 +21,7 @@ public class UnitAnimationsNetwork : MonoBehaviour
     void Update()
     {
     }
+
     public void ChangeAnimation (UnitController.State nextState)
     {
         switch (nextState)
@@ -32,7 +33,7 @@ public class UnitAnimationsNetwork : MonoBehaviour
             case UnitController.State.Dying:          animation.CrossFade("Die");     break;
             case UnitController.State.Flying: break;
             case UnitController.State.AscendingToHeaven:
-                // TDODO! cambiar el material de la unidad
+                // TODO! cambiar el material de la unidad
 
                 // update the Alpha Multiply Value of the material
                 float alphaValue = model.renderer.material.GetFloat("_AlphaMultiplyValue");
