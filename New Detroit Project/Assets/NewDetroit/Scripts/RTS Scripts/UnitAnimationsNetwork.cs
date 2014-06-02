@@ -14,11 +14,11 @@ public class UnitAnimationsNetwork : MonoBehaviour
         model = transform.FindChild("Model");
     }
 
-    void Start()
+    void Start ()
     {
     }
 
-    void Update()
+    void Update ()
     {
     }
 

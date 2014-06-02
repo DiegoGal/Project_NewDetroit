@@ -52,9 +52,6 @@ public class ControllableCharacter : Photon.MonoBehaviour
         screenPosition = Camera.main.WorldToScreenPoint(transform.position);
 
         team.visionSphereRadius = visionSphereRadius;
-
-        // DistanceMeasureTool - Network
-        InsertToTheDistanceMeasurerTool();
     }
 
     public virtual void Update ()
@@ -146,12 +143,6 @@ public class ControllableCharacter : Photon.MonoBehaviour
     public void SetTeamNumber (int teamNumber)
     {
         this.teamNumber = teamNumber;
-    }
-
-    //DistanceMeasureTool - Network
-    protected void InsertToTheDistanceMeasurerTool ()
-    {
-        DistanceMeasurerTool.InsertUnit(GetComponent<CTeam>());
     }
 
 } // class ControllableCharacter

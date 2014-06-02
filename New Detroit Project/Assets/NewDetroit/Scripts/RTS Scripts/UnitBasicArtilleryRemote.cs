@@ -57,7 +57,6 @@ public class UnitBasicArtilleryRemote : ControllableCharacter
     {
         base.Start();
 
-        InsertToTheDistanceMeasurerTool();
         timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
     }
 

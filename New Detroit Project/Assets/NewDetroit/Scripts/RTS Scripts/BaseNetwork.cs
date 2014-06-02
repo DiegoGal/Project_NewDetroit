@@ -4,13 +4,13 @@ using System.Collections;
 public class BaseNetwork : Photon.MonoBehaviour
 {
 
-    CSelectable selectableScript;
-    BaseController baseScript;
-    FogOfWarUnit fogOfWarScript;
-
+    private CSelectable selectableScript;
+    private BaseController baseScript;
+    private FogOfWarUnit fogOfWarScript;
+    
     void Awake()
     {
-        selectableScript = GetComponent<CSelectable>();
+        /*selectableScript = GetComponent<CSelectable>();
         baseScript = GetComponent<BaseController>();
         fogOfWarScript = GetComponent<FogOfWarUnit>();
 
@@ -26,9 +26,9 @@ public class BaseNetwork : Photon.MonoBehaviour
             selectableScript.enabled = false;
             baseScript.enabled       = false;
             fogOfWarScript.enabled   = false;
-        }
+        }*/
 
-        gameObject.name = gameObject.name + "_" + photonView.viewID;
+        //gameObject.name = gameObject.name + "_" + photonView.viewID;
     }
 
 	// Use this for initialization

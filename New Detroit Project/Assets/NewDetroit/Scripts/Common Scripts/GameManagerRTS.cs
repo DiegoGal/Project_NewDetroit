@@ -15,7 +15,7 @@ public class GameManagerRTS : Photon.MonoBehaviour {
 
     public static bool joinned = false;
 
-    public void Awake()
+    public void Awake ()
     {
         // in case we started this demo with the wrong scene being active, simply load the menu scene
         if (!PhotonNetwork.connected)

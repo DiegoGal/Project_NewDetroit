@@ -87,7 +87,6 @@ public class UnitEngineerRemote : ControllableCharacter
 
     public void Start()
     {
-        InsertToTheDistanceMeasurerTool();
         timeToNextWaitAnimation = Random.Range(5.0f, 15.0f);
     }
 

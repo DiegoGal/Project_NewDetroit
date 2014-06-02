@@ -152,9 +152,9 @@ public class BaseController : CResourceBuilding
                     if (resources >= harvesterUnitResourcesCost && economy >= harvesterUnitEconomyCost)
                     {
                         if ((team.teamNumber % 2) == 0)
-                            unit = "Goblin_Harvester_TeamA_Network";
+                            unit = "Goblin_Harvester_TeamA";
                         else
-                            unit = "Robot_Harvester_TeamA_Network";
+                            unit = "Robot_Harvester_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -166,9 +166,9 @@ public class BaseController : CResourceBuilding
                     if (resources >= basicArtilleryUnitResourcesCost && economy >= basicArtilleryUnitEconomyCost)
                     {
                         if ((team.teamNumber % 2) == 0)
-                            unit = "Goblin_ArtilleryBasic_TeamA_Network";
+                            unit = "Goblin_ArtilleryBasic_TeamA";
                         else
-                            unit = "Robot_ArtilleryBasic_TeamA_Network";
+                            unit = "Robot_ArtilleryBasic_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -180,9 +180,9 @@ public class BaseController : CResourceBuilding
                     if (resources >= heavyArtilleryUnitResourcesCost && economy >= heavyArtilleryUnitEconomyCost)
                     {
                         if ((team.teamNumber % 2) == 0)
-                            unit = "Goblin_ArtilleryHeavy_TeamA_Network";
+                            unit = "Goblin_ArtilleryHeavy_TeamA";
                         else
-                            unit = "Robot_ArtilleryHeavy_TeamA_Network";
+                            unit = "Robot_ArtilleryHeavy_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -194,9 +194,9 @@ public class BaseController : CResourceBuilding
                     if (resources >= engineerUnitResourcesCost && economy >= engineerUnitEconomyCost)
                     {
                         if ((team.teamNumber % 2) == 0)
-                            unit = "Goblin_Engineer_TeamA_Network";
+                            unit = "Goblin_Engineer_TeamA";
                         else
-                            unit = "Goblin_Engineer_TeamB_Network";
+                            unit = "Goblin_Engineer_TeamB";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
@@ -208,9 +208,9 @@ public class BaseController : CResourceBuilding
                     if (resources >= scoutUnitResourcesCost && economy >= scoutUnitEconomyCost)
                     {
                         if ((team.teamNumber % 2) == 0)
-                            unit = "Goblin_Scout_TeamA_Network";
+                            unit = "Goblin_Scout_TeamA";
                         else
-                            unit = "Robot_Scout_TeamA_Network";
+                            unit = "Robot_Scout_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources

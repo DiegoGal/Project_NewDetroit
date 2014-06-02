@@ -1108,6 +1108,11 @@ public class ArmyController : MonoBehaviour
         return FindResourceBuilding(mine);
     }
 
+    public void SetArmyBase (BaseController baseCont)
+    {
+        armyBase = baseCont.gameObject;
+    }
+
     // Call to the army base to spawn a new unit and create its reference
     // in the DistanceMeasurerTool
     private void SpawnUnit (int unitId)

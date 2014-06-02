@@ -61,6 +61,9 @@ public class UnitNetwork : Photon.MonoBehaviour
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
 
+            // TODO! ñapa de pm, hay que hacerlo bien
+            //stream.SendNext(GetComponent<CTeam>().teamNumber);
+
             stream.SendNext(stateScript.currentState);
 
             //UnitBasicArtillery script = this.GetComponent<UnitBasicArtillery>();
@@ -75,6 +78,9 @@ public class UnitNetwork : Photon.MonoBehaviour
 			//Network player, receive data
 			correctPlayerPos = (Vector3)stream.ReceiveNext();
 			correctPlayerRot = (Quaternion)stream.ReceiveNext();
+
+            // TODO! ñapa de pm, hay que hacerlo bien
+            //GetComponent<CTeam>().teamNumber = (int)stream.ReceiveNext();
 
             stateScript.currentState = (UnitController.State)stream.ReceiveNext();
             // comprobar el cambio
