@@ -59,6 +59,11 @@ public class CameraMOBAController : MonoBehaviour
 		float 	positiveLife = (float) heroe.life.currentLife / heroe.life.maximunLife, // percentage of positive life
 				positiveAdren = (float) heroe.getCurrentAdren() / heroe.getAdren(), // percentage of positive adrenaline
 				positiveMana = (float) heroe.getCurrentMana() / heroe.getMana (); // percentage of positive mana
+
+		Debug.Log (heroe.life.currentLife);
+		Debug.Log (heroe.getCurrentAdren());
+		Debug.Log (heroe.getCurrentMana());
+
 		y = rectangleLifeManaAdrenSkills.y + rectangleLifeManaAdrenSkills.height/2;
 		width = rectangleLifeManaAdrenSkills.width*positiveLife;
 		height = rectangleLifeManaAdrenSkills.height/6;
