@@ -241,9 +241,9 @@ public abstract class HeroeController : ControllableCharacter
 
         base.Start();
 
-		transform.FindChild ("Pivot");
+		/*transform.FindChild ("Pivot");
 		transform.FindChild ("Pivot").GetComponent<NavMeshObstacle> ();
-        radius = transform.FindChild("Pivot").GetComponent<NavMeshObstacle>().radius * transform.localScale.x;
+        radius = transform.FindChild("Pivot").GetComponent<NavMeshObstacle>().radius * transform.localScale.x;*/
 
 		this.level = 1;
 		this.experience = 0;

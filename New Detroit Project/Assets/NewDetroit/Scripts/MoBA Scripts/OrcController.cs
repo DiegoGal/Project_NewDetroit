@@ -33,6 +33,7 @@ public class OrcController : HeroeController
 	private bool snotActivated = false;
 	private float snotCD = 1.7f;
 	// Splash particle
+	public GameObject spl;
 	public GameObject splash; 
 	private bool splashActivated = false;
 	private float splashCD = 1.7f;
@@ -203,10 +204,10 @@ public class OrcController : HeroeController
 				{
 					animation.CrossFade("FloorHit");
 					//------------------------------
-					GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -2, 0), Quaternion.identity);
+					spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity);
                     spl.AddComponent<Rigidbody>();
                     spl.GetComponent<Rigidbody>().useGravity = false;
-					spl.GetComponent<ParticleDamage>().SetDamage(attackM + 40);
+					spl.GetComponent<OrcSplashAttack>().SetDamage(attackM + 40);
 					spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
 					Destroy(spl, 1.5f);
 					splashActivated = true;

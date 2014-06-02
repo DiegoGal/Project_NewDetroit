@@ -141,15 +141,15 @@ public class RobotController : HeroeController
 			{
 				if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
 				{
-//					animation.CrossFade("Burp");
+					animation.CrossFade("Attack1");
 				}
 				else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
 				{
-//					animation.CrossFade("FloorHit");
+					animation.CrossFade("Attack2");
 				}
 				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
 				{
-//					animation.CrossFade("BullStrike");
+					animation.CrossFade("Attack3");
 				}
 				doingSecondaryAnim= true;
 			}
