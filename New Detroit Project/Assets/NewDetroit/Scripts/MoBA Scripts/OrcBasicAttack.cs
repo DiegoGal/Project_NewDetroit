@@ -5,7 +5,7 @@ public class OrcBasicAttack : MonoBehaviour {
 	public Vector3 movement; // Movement
 	
 	//private int damage; // Damage
-	private GameObject owner; // Owner
+	public GameObject owner; // Owner
 	private bool hasCollided; // Tell us if the attack has collided with something
 	private string nameCollide; // Tell us the name of the collided object
 	private int lifeCollide; // Tell us the life of the collided object
@@ -69,28 +69,34 @@ public class OrcBasicAttack : MonoBehaviour {
 	// Use this for initialization
 	void Awake () 
 	{
-		this.collider.enabled = false;
+		this.collider.enabled = true;
 		this.hasCollided = false;
 		nameCollide = "";
 		lifeCollide = 0;
-		this.GetComponent<MeshRenderer> ().enabled = false;
+		//this.GetComponent<MeshRenderer> ().enabled = false;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		//move();
+		Debug.Log (collider.enabled);
+
 		if (this.owner != null && this.owner.GetComponent<HeroeController> ().isMine)
 		{
-			// If the orc is not in basic attack
-			if (this.owner.GetComponent<HeroeController> ().getState() != HeroeController.StateHeroe.AttackBasic)
+			if (owner.GetComponent<HeroeController>().getTypeHero() == HeroeController.TypeHeroe.Robot && owner.animation.IsPlaying("Attack3"))
 			{
-				this.collider.enabled = false; // The collider is activated
+				//this.collider.enabled = false;
+			}
+			// If the orc is not in basic attack11
+			else if (this.owner.GetComponent<HeroeController> ().getState() != HeroeController.StateHeroe.AttackBasic)
+			{
+				//this.collider.enabled = false; // The collider is activated
 			}
 			// Else if the orc is attacking
 			else
 			{
-				this.collider.enabled = true; // The collider is desactivated
+				//this.collider.enabled = true; // The collider is desactivated
 			}
 		}
 	}
