@@ -11,6 +11,14 @@ public class CTeam : MonoBehaviour
 
     public float visionSphereRadius;
 
+    // referente to the CLife of the object
+    private CLife life;
+
+    public void Awake ()
+    {
+        life = GetComponent<CLife>();
+    }
+
     public virtual void EnemyEntersInVisionSphere (CTeam unit)
     {
 
@@ -19,6 +27,11 @@ public class CTeam : MonoBehaviour
     public virtual void EnemyLeavesVisionSphere (CTeam unit)
     {
 
+    }
+
+    public bool Damage (float damage, char type = 'P')
+    {
+        return life.Damage(damage, type);
     }
 
 }

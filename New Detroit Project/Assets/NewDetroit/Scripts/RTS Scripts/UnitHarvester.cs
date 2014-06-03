@@ -753,21 +753,16 @@ public class UnitHarvester : UnitController
             StartCoroutine(WaitAndCallback(animation["Picar"].length));
     }
 
-    public override bool Damage (float damage, char type)
+    public override void UnitDiedMessage()
     {
-        if ( base.Damage(damage, type) )
-        {
-            // salir de las colas
-            if (currentHarvestState == HarvestState.GoingToChopPosition ||
-                currentHarvestState == HarvestState.Choping)
-                currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
-            else if (currentHarvestState == HarvestState.Waiting)
-                currentMine.GetComponent<CResources>().LeaveQueue(this);
+        base.UnitDiedMessage();
 
-            return true;
-        }
-        else
-            return false;
+        // salir de las colas
+        if (currentHarvestState == HarvestState.GoingToChopPosition ||
+            currentHarvestState == HarvestState.Choping)
+            currentMine.GetComponent<CResources>().LeaveHarvestPosition(lastHarvestIndex);
+        else if (currentHarvestState == HarvestState.Waiting)
+            currentMine.GetComponent<CResources>().LeaveQueue(this);
     }
 
     protected override void PlayAnimationCrossFade (string animationName)

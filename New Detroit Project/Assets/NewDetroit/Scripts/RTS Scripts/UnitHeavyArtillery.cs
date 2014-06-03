@@ -194,7 +194,7 @@ public class UnitHeavyArtillery : UnitArtillery
                             ForceMode.Impulse
                         );
 
-                        if (enemySelected && enemySelected.life.currentLife <= 0.0f)
+                        if (enemySelected && enemySelected.GetComponent<CLife>().currentLife <= 0.0f)
                         {
                             // the enemy has die
                             enemySelected = null;
@@ -259,7 +259,7 @@ public class UnitHeavyArtillery : UnitArtillery
         else if (currentDeployState == DeployState.Deployed) // if deployed
         {
             zoneAttackMode = false;
-            ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
+            CTeam unit = destTransform.transform.GetComponent<CTeam>();
             if (unit)
             {
                 // check if the unit is not attacking the selected enemy yet
@@ -287,8 +287,8 @@ public class UnitHeavyArtillery : UnitArtillery
                         {
                             //Debug.Log(myHit.transform.name);
                             // the ray has hit something
-                            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                            if ((enemy != null) && (enemy == enemySelected))
+                            CTeam enemy = myHit.transform.GetComponent<CTeam>();
+                            if ( enemy && (enemy == enemySelected) )
                             {
                                 // this "something" is the enemy we are looking for...
                                 //Debug.Log("LE HE DADO!!!");

@@ -82,10 +82,10 @@ public class ControllableCharacter : Photon.MonoBehaviour
     }
 
     // if type == 'P' is phisical damage if type == 'M' is magical damage
-    public virtual bool Damage (float damage, char type = 'P')
+    /*public virtual bool Damage (float damage, char type = 'P')
     {
         return life.Damage(damage, type);
-    }
+    }*/
 
     public virtual void Die ()
     {

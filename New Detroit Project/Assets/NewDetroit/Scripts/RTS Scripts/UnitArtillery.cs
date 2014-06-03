@@ -31,9 +31,9 @@ public class UnitArtillery : UnitController
 
     public GameObject shotParticles;
 
-    public List<ControllableCharacter> enemiesInside;
+    public List<CTeam> enemiesInside;
 
-    protected float alertHitTimer = 1.5f;
+    protected float alertHitTimer = 1.0f;
     protected float alertHitTimerAux = 0.0f;
 
     // position where the rays to search for enemies are launched
@@ -56,8 +56,8 @@ public class UnitArtillery : UnitController
     public override void Start ()
     {
         base.Start();
-        
-		enemiesInside = new List<ControllableCharacter>();
+
+        enemiesInside = new List<CTeam>();
 
         // if there is a VisionSphere attached to the unit we catch its radious here
         // if not, then we get it just from the prefab's attribute value.
@@ -423,7 +423,7 @@ public class UnitArtillery : UnitController
 
     } // UpdateModeIdle*/
 
-    /*public override void OnGUI ()
+    public override void OnGUI ()
     {
         if (currentState != State.AscendingToHeaven)
         {
@@ -440,52 +440,40 @@ public class UnitArtillery : UnitController
             GUI.Label(new Rect(screenPosition.x - 10, Screen.height - screenPosition.y - 75, 100, 50),
                 "Attack2 sel: " + attack2Selected);
         }
-    } // OnGUI*/
+    } // OnGUI
 
 	public override void EnemyEntersInVisionSphere (CTeam enemy)
     {
-        ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
-        if (enemyCC)
+        enemiesInside.Add(enemy);
+        if (currentArtilleryState == ArtilleryState.None)
         {
-            //if (!enemiesInside.Contains(enemy))
-            //{
-            //  Debug.Log("enemigo a la vista!");
-                enemiesInside.Add(enemyCC);
-                if (currentArtilleryState == ArtilleryState.None)
-                {
-                    currentArtilleryState = ArtilleryState.Alert;
-                    cState.currentArtilleryState = currentArtilleryState;
-                    alertHitTimerAux = 0.0f;
-                }
-            //}
+            currentArtilleryState = ArtilleryState.Alert;
+            cState.currentArtilleryState = currentArtilleryState;
+            alertHitTimerAux = 0.0f;
         }
     }
 
     public override void EnemyLeavesVisionSphere (CTeam enemy)
     {
-        ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
-        if (enemyCC)
+        enemiesInside.Remove(enemy);
+        /*if (enemiesInside.Remove(enemy))
+            Debug.Log("Enemy out");
+        else
+            Debug.Log("Enemy NOT removed");*/
+
+        if (enemiesInside.Count == 0)
         {
-            //enemiesInside.Remove(enemyCC);
-            if (enemiesInside.Remove(enemyCC))
-                Debug.Log("Enemy out");
-            else
-                Debug.Log("Enemy NOT removed");
+            //Debug.Log("all enemies out");
 
-            if (enemiesInside.Count == 0)
-            {
-                //Debug.Log("all enemies out");
+            if (currentArtilleryState == ArtilleryState.Attacking1)
+                PlayAnimationCrossFade("Idle01");
 
-                if (currentArtilleryState == ArtilleryState.Attacking1)
-                    PlayAnimationCrossFade("Idle01");
+            currentArtilleryState = ArtilleryState.None;
+            cState.currentArtilleryState = currentArtilleryState;
+            alertHitTimerAux = 0.0f;
 
-                currentArtilleryState = ArtilleryState.None;
-                cState.currentArtilleryState = currentArtilleryState;
-                alertHitTimerAux = 0.0f;
-
-                // send the unit to the last known position of the enemy
-                //RightClickOnSelected(enemyCC.transform);
-            }
+            // send the unit to the last known position of the enemy
+            //RightClickOnSelected(enemyCC.transform);
         }
     }
 
@@ -535,8 +523,8 @@ public class UnitArtillery : UnitController
         {
             //Debug.Log(myHit.transform.name);
             // the ray has hit something
-            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-            if ((enemy != null) && (enemy == enemySelected))
+            CTeam enemy = myHit.transform.GetComponent<CTeam>();
+            if ( enemy && (enemy == enemySelected) )
             {
                 // this "something" is the enemy we are looking for...
                 //Debug.Log("LE HE DADO!!!");
@@ -568,7 +556,7 @@ public class UnitArtillery : UnitController
             for (int i = 0; i < count; i++)
             {
                 // check if the enemy is still in the game and alive
-                if (enemiesInside[i] && enemiesInside[i].IsAlive())
+                if (enemiesInside[i] && enemiesInside[i].GetComponent<CLife>().IsAlive())
                 {
                     Debug.DrawLine(transform.position, enemiesInside[i].transform.position, Color.yellow, 0.3f);
 
@@ -582,7 +570,7 @@ public class UnitArtillery : UnitController
                     {
                         //Debug.Log(myHit.transform.name);
                         // the ray has hit something
-                        ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
+                        CTeam enemy = myHit.transform.GetComponent<CTeam>();
                         if (enemy && (enemy == enemiesInside[i]))
                         {
                             // this "something" is the enemy we are looking for...

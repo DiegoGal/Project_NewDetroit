@@ -7,9 +7,6 @@ public class UnitController : ControllableCharacter
     protected float basicAttackPower;
     protected float secondaryAttackPower;
 
-    // the blood particles for when the unit has been hit
-    public GameObject bloodParticles;
-
     public enum State
     {
         Idle,	// reposo
@@ -50,8 +47,8 @@ public class UnitController : ControllableCharacter
     private float ascendingAceleration = 1.055f;
 
     // atributes for the attack
-    protected ControllableCharacter lastEnemyAttacked;
-    protected ControllableCharacter enemySelected;
+    protected CTeam lastEnemyAttacked;
+    protected CTeam enemySelected;
 
     // Cool Down for detecting less time the collision with particles
     private float CDParticleCollision;
@@ -409,7 +406,7 @@ public class UnitController : ControllableCharacter
 
     public virtual void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
-        ControllableCharacter unit = destTransform.transform.GetComponent<ControllableCharacter>();
+        CTeam unit = destTransform.transform.GetComponent<CTeam>();
         if (unit && teamNumber != unit.teamNumber)
         {
             // check if the unit is not attacking the selected enemy yet
@@ -437,41 +434,23 @@ public class UnitController : ControllableCharacter
 
     }
 
-    public override bool Damage (float damage, char type)
+    // this method is called from the CLife component when the life is <= 0
+    public virtual void UnitDiedMessage ()
     {
-        if (currentState != State.Dying && currentState != State.AscendingToHeaven)
-        {
-            base.Damage(damage, type);
+        //Debug.Log("MUEROOOOOOOOOO");
+        currentState = State.Dying;
+        cState.currentState = currentState;
+        // the unit DIES, set the special material
+        setDyingMaterial();
+        // play the dead animation             
+        PlayAnimationCrossFade("Die");
+        // and comunicate it to the army manager              
+        baseController.armyController.UnitDied(this.gameObject);
 
-            // blood!
-            GameObject blood = (GameObject)Instantiate(bloodParticles,
-                transform.position + transform.forward, transform.rotation);
-            Destroy(blood, 0.4f);
+        // delete the Nave Mesh Agent for elevate the model
+        Destroy(GetComponent<NavMeshAgent>());
 
-            if (life.currentLife <= 0)
-            {
-                //Debug.Log("MUEROOOOOOOOOO");
-                currentState = State.Dying;
-                cState.currentState = currentState;
-                // the unit DIES, set the special material
-                setDyingMaterial();
-                // play the dead animation             
-                PlayAnimationCrossFade("Die");
-                // and comunicate it to the army manager              
-                baseController.armyController.UnitDied(this.gameObject);
-
-                // delete the Nave Mesh Agent for elevate the model
-                Destroy(GetComponent<NavMeshAgent>());
-
-                Minimap.DeleteUnit(this);
-
-                return true;
-            }
-            else
-                return false;
-        }
-        else
-            return true;
+        Minimap.DeleteUnit(this);
     }
 
     public void setDyingMaterial()
@@ -528,7 +507,7 @@ public class UnitController : ControllableCharacter
                 CDParticleCollision -= Time.deltaTime;
             else
             {
-                Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
+                life.Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
                 CDParticleCollision = 0.1f; // 5 deltatime aprox
             }
         }

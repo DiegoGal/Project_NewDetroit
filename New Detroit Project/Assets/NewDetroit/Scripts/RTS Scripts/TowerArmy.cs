@@ -196,7 +196,7 @@ public class TowerArmy : Tower
                             if (Physics.Raycast(pos, fwd, out myHit, aux.magnitude + 2))
                             {
                                 // the ray has hit something
-                                ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
+                                CTeam enemy = myHit.transform.GetComponent<CTeam>();
                                 if ((enemy != null) && (enemy == enemiesInside[i]))
                                 {
                                     // this "something" is the enemy we are looking for...

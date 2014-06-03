@@ -28,57 +28,54 @@ public class UnitScoutRobot : UnitScout
         fireParticles = transform.FindChild("FireMower2").gameObject;
     }
 
-    public override bool Damage (float damage, char type)
+    public void UnitDamageMessage()
     {
-        if (base.Damage(damage, type))
+        if (!afire && getLife() <= (GetMaximunLife() * startAfire))
         {
-			if (mount)
-                Destroy(mount);
-				
-            explosionFireInst = Instantiate
+            // la vida es muy baja, instanciar el fuego
+            fireMountInst = Instantiate
             (
-                particlesExplosionFire,
-                transform.position,
-                transform.rotation
+                fireMount,
+                mount.transform.position,
+                mount.transform.rotation
             ) as GameObject;
-				
-            explosionSmokeInst = Instantiate
-            (
-                particlesExplosionSmoke,
-                transform.position,
-                new Quaternion(0f,180f,180f, 0f)
-            ) as GameObject;
+            fireMountInst.transform.parent = mount.transform;
 
-            explosionPiecesInst = Instantiate
-            (
-                particlesExplosionPieces,
-                transform.position,
-                new Quaternion(0f, 180f, 180f, 0f)
-            ) as GameObject;
-
-            Destroy(explosionFireInst,   2.5f);
-            Destroy(explosionSmokeInst,  2.5f);
-            Destroy(explosionPiecesInst, 2.5f);
-			
-            return true;
+            afire = true;
         }
-        else
-        {
-            if ( !afire && getLife() <= (GetMaximunLife() * startAfire) )
-            {
-                // la vida es muy baja, instanciar el fuego
-                fireMountInst = Instantiate
-                (
-                    fireMount,
-                    mount.transform.position,
-                    mount.transform.rotation
-                ) as GameObject;
-                fireMountInst.transform.parent = mount.transform;
+    }
 
-                afire = true;
-            }
-            return false;
-        }
+    public override void UnitDiedMessage()
+    {
+        base.UnitDiedMessage();
+
+        if (mount)
+            Destroy(mount);
+
+        explosionFireInst = Instantiate
+        (
+            particlesExplosionFire,
+            transform.position,
+            transform.rotation
+        ) as GameObject;
+
+        explosionSmokeInst = Instantiate
+        (
+            particlesExplosionSmoke,
+            transform.position,
+            new Quaternion(0f, 180f, 180f, 0f)
+        ) as GameObject;
+
+        explosionPiecesInst = Instantiate
+        (
+            particlesExplosionPieces,
+            transform.position,
+            new Quaternion(0f, 180f, 180f, 0f)
+        ) as GameObject;
+
+        Destroy(explosionFireInst, 2.5f);
+        Destroy(explosionSmokeInst, 2.5f);
+        Destroy(explosionPiecesInst, 2.5f);
     }
 
     protected override void PlayAnimation (string animationName)

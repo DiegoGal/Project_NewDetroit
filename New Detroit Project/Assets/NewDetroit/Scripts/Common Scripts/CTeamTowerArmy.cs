@@ -9,6 +9,7 @@ public class CTeamTowerArmy : CTeam
 
     public void Awake ()
     {
+        base.Awake();
         selfUnit = GetComponent<TowerArmy>();
     }
 

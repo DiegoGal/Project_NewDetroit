@@ -11,6 +11,9 @@ public class CLife : MonoBehaviour
     // Indicates if the unit can receive damage or not
     public bool invincible = false;
 
+    // the blood particles for when the unit has been hit
+    public GameObject bloodParticles;
+
     public void Start ()
     {
         currentLife = maximunLife;
@@ -26,7 +29,17 @@ public class CLife : MonoBehaviour
     {
         //Debug.Log("damage");
         if (!invincible)
+        {
             currentLife -= damage;
+
+            // blood!
+            GameObject blood = (GameObject)Instantiate(bloodParticles,
+                transform.position + transform.forward, transform.rotation);
+            Destroy(blood, 0.4f);
+
+            SendMessage("UnitDamageMessage", null, SendMessageOptions.DontRequireReceiver);
+        }
+
         if (currentLife <= 0)
         {
             Die();
@@ -39,6 +52,10 @@ public class CLife : MonoBehaviour
     public void Die ()
     {
         currentLife = 0;
+
+        // este mensaje se recoge en la clase UnitController de las instancias
+        // propias, y en la clase UnitNetwork de las de otros
+        SendMessage("UnitDiedMessage");
     }
 
     public bool Heal (float amount)

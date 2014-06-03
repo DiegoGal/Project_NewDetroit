@@ -47,7 +47,7 @@ public class UnitBasicArtillery : UnitArtillery
 
     // The parent class only check for the distance between this and the unit that is attacked
     // this artillery units attack with a bate and with distance weapons, in the first case
-    // we call the base method, in the "distance-attack" case we have to check first if the 
+    // we call the base method, in the "distance-attack" becase we have to check first if the 
     // enemy is on sight launching rays
     protected override void UpdateAttacking ()
     {
@@ -89,10 +89,11 @@ public class UnitBasicArtillery : UnitArtillery
                 RaycastHit myHit;
                 if (Physics.Raycast(transform.position + eyesPosition, fwd, out myHit, maxAttackDistance))
                 {
-                    ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                    if ((enemy != null) && (enemy == enemySelected))
+                    CTeam enemy = myHit.transform.GetComponent<CTeam>();
+                    if ( enemy && (enemy == enemySelected) )
                     {
                         // Attack!
+                        lastEnemyAttacked = enemySelected;
                         Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.3f);
                         transform.LookAt(lastEnemyAttacked.transform);
 

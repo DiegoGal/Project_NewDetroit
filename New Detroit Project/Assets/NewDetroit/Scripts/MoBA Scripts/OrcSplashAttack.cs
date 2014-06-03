@@ -38,7 +38,7 @@ public class OrcSplashAttack : ParticleDamage
         {
             if (other.tag == "Player")
             {
-                HeroeController script = other.GetComponent<HeroeController>();
+                CLife script = other.GetComponent<CLife>();
                 script.Damage(GetDamage(),'M');
             }
             else if (other.tag == "Minion")
@@ -47,7 +47,7 @@ public class OrcSplashAttack : ParticleDamage
                 {
                     // For damage
                     UnitController otherUC = other.GetComponent<UnitController>();
-                    otherUC.Damage(GetDamage(), 'M');
+                    otherUC.GetComponent<CLife>().Damage(GetDamage(), 'M');
 
                     // For add a force to the minions so they can fly
                     other.gameObject.AddComponent<Rigidbody>();

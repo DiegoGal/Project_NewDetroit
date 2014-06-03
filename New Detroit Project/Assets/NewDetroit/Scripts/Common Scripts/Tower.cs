@@ -19,7 +19,7 @@ public abstract class Tower : BuildingController
     // frecuency (in secs) of the primary attack
     public float attackCadence = 1.0f;
 
-    protected ControllableCharacter lastEnemyAttacked;
+    protected CTeam lastEnemyAttacked;
 
     public GameObject shotParticles;
 
@@ -27,7 +27,7 @@ public abstract class Tower : BuildingController
     protected float attackPower = 10;
 
     //the list of enemies inside the tower vision
-    protected List<ControllableCharacter> enemiesInside = new List<ControllableCharacter>();
+    protected List<CTeam> enemiesInside = new List<CTeam>();
 
     // reference to the dummy for the shot particles
     protected Transform shotDummy;
@@ -46,11 +46,12 @@ public abstract class Tower : BuildingController
     // EnemyEntersInVisionSphere is called by the visions spheres
     public void EnemyEntersInVisionSphere (CTeam enemy)
     {
-        ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
+        /*ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
         if (enemyCC)
         {
             enemiesInside.Add(enemyCC);
-        }
+        }*/
+        enemiesInside.Add(enemy);
 
         /*// Adition of the enemy in the array enemiesInside
         if (enemiesInside.Count == 0)
@@ -72,11 +73,12 @@ public abstract class Tower : BuildingController
     public void EnemyExitsInVisionSphere(CTeam enemy)
     {
         // Removal of the enemy in the array enemiesInside
-        ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
+        /*ControllableCharacter enemyCC = enemy.GetComponent<ControllableCharacter>();
         if (enemyCC)
         {
             enemiesInside.Remove(enemyCC);
-        }
+        }*/
+        enemiesInside.Remove(enemy);
         //Debug.Log("Enemy exits the TOWER");
     }
 
@@ -88,11 +90,9 @@ public abstract class Tower : BuildingController
         int cont = 0;
         while (cont < max)
         {
-            ControllableCharacter unit = enemiesInside[i].transform.GetComponent<ControllableCharacter>();
-            int teamUnit = unit.GetTeamNumber();
-            if (teamUnit == team)
+            if (enemiesInside[i].teamNumber == team)
             {
-                enemiesInside.Remove(unit);
+                enemiesInside.Remove(enemiesInside[i]);
                 i--;
             }
             i++;

@@ -52,7 +52,7 @@ public class OrcBullStrikeAttack : ParticleDamage
 		{
 			if (other.tag == "Player")
 			{
-				HeroeController script = other.GetComponent<HeroeController>();
+                CLife script = other.GetComponent<CLife>();
 				script.Damage(GetDamage(),'P');
 			}
 			else if (other.tag == "Minion")
@@ -61,7 +61,7 @@ public class OrcBullStrikeAttack : ParticleDamage
 				{
 					// For damage
 					UnitController otherUC = other.GetComponent<UnitController>();
-					otherUC.Damage(GetDamage(), 'P');
+					otherUC.GetComponent<CLife>().Damage(GetDamage(), 'P');
 					
 					// For add a force to the minions so they can fly
 					other.gameObject.AddComponent<Rigidbody>();

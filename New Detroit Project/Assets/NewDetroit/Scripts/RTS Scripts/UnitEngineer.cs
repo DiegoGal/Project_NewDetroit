@@ -730,7 +730,7 @@ public class UnitEngineer : UnitController
                     //newFireball.GetComponent<SphereCollider>().isTrigger = true;
 
                     //newFireball.rigidbody.AddForce(fireball.transform.forward * 500);
-                    if (enemySelected.life.currentLife <= 0.0f)
+                    if (enemySelected.GetComponent<CLife>().currentLife <= 0.0f)
                     {
                         // the enemy has die
                         enemySelected = null;
@@ -1138,20 +1138,16 @@ public class UnitEngineer : UnitController
         warehousePrefab = warehouse;
     }
 
-    public override bool Damage (float damage, char type)
+    public override void UnitDiedMessage ()
     {
-        if ( base.Damage(damage, type) )
-        {
-            LeaveQueues();
+        base.UnitDiedMessage();
 
-            currentEngineerState = EngineerState.None;
-			cState.currentEngineerState = currentEngineerState;
+        LeaveQueues();
 
-            return true;
-        }
-        else
-            return false;
+        currentEngineerState = EngineerState.None;
+        cState.currentEngineerState = currentEngineerState;
     }
+
     private void LeaveQueues ()
     {
         // He has to leave the engineerPosition if he has to

@@ -124,8 +124,8 @@ public class TowerNeutral : Tower
                         if (Physics.Raycast(pos, fwd, out myHit, aux.magnitude + 2))
                         {
                             // the ray has hit something
-                            ControllableCharacter enemy = myHit.transform.GetComponent<ControllableCharacter>();
-                            if ((enemy != null) && (enemy == enemiesInside[i].GetComponent<ControllableCharacter>()))
+                            CTeam enemy = myHit.transform.GetComponent<CTeam>();
+                            if ( enemy && (enemy == enemiesInside[i]))
                             {
                                 // this "something" is the enemy we are looking for...
                                 //Debug.Log("LE HE DADO!!!");
@@ -158,9 +158,12 @@ public class TowerNeutral : Tower
                     // Attack!
                     Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
                     // emite some particles:
-                    GameObject particles = (GameObject)Instantiate(shotParticles,
-                                                                   shotDummy.position,
-                                                                   transform.rotation);
+                    GameObject particles = (GameObject)Instantiate
+                    (
+                        shotParticles,
+                        shotDummy.position,
+                        transform.rotation
+                    );
                     Destroy(particles, 0.4f);
                     // first we check if the enemy is now alive
                     //ControllableCharacter lastEnemyAtackedUC = (ControllableCharacter)lastEnemyAttacked;

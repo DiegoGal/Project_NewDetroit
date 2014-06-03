@@ -96,20 +96,23 @@ public class OrcBasicAttack : MonoBehaviour {
 	}
 	
 	//Detect all object that collide with this
-	void OnTriggerEnter(Collider collisionInfo)
+	void OnTriggerEnter (Collider collisionInfo)
 	{
 		GameObject go = collisionInfo.gameObject;
 		nameCollide = go.name;
 		if (nameCollide != this.owner.name)
 		{
-			ControllableCharacter goControllableCharacter = go.GetComponent<ControllableCharacter> ();
-			if (goControllableCharacter == null) return;
-			if (goControllableCharacter.Damage (this.owner.GetComponent<HeroeController>().getAttackP(),'P')) // Damage the enemy and check if it is dead
+            CLife goCLife = go.GetComponent<CLife>();
+            if (goCLife == null) return;
+            if (goCLife.Damage(this.owner.GetComponent<HeroeController>().getAttackP(), 'P')) // Damage the enemy and check if it is dead
 			{
-				this.owner.GetComponent<HeroeController>().experienceUp(goControllableCharacter.experienceGived);
+                ControllableCharacter cchar = goCLife.GetComponent<ControllableCharacter>();
+                // TODO! esto solo recibe la experiencia en offline
+                if (cchar)
+                    owner.GetComponent<HeroeController>().experienceUp(cchar.experienceGived);
 			}
 			hasCollided = true;
-			lifeCollide = (int)goControllableCharacter.getLife();
+            lifeCollide = (int)goCLife.getLife();
 		}
 		// Here we have to check if the collide object is a heroe or a unit from RTS game!!!!! <---------------
 	}

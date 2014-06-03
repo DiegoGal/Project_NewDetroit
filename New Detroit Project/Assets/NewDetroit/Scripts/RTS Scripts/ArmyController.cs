@@ -468,7 +468,7 @@ public class ArmyController : MonoBehaviour
         {
             for (int i = unitSelectedList.Count - 1; i >= 0; i--)
             {
-                ControllableCharacter unit = unitSelectedList[i].GetComponent<ControllableCharacter>();
+                CLife unit = unitSelectedList[i].GetComponent<CLife>();
                 unit.Damage(unit.getLife());
             }
         }

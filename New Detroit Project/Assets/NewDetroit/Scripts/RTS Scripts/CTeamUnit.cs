@@ -9,6 +9,7 @@ public class CTeamUnit : CTeam
 
     public void Awake ()
     {
+        base.Awake();
         selfUnit = GetComponent<ControllableCharacter>();
     }
 

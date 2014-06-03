@@ -38,7 +38,7 @@ public class RocketAttack : ParticleDamage
         {
             if (other.tag == "Player")
             {
-                HeroeController script = other.GetComponent<HeroeController>();
+                CLife script = other.GetComponent<CLife>();
                 script.Damage(GetDamage(), 'P');
             }
             else if (other.tag == "Minion")
@@ -48,7 +48,7 @@ public class RocketAttack : ParticleDamage
                     // For damage
                     UnitController otherUC = other.GetComponent<UnitController>();
                     float enemyDist = Vector3.Distance(transform.position, other.transform.position);
-                    otherUC.Damage(GetDamage() / enemyDist, 'P');
+                    otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
 
                     // For add a force to the minions so they can fly
                     if (!other.rigidbody)
