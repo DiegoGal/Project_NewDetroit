@@ -17,6 +17,9 @@ public class RobotController : HeroeController
 	//-----------------------------------------------------------------------------------------------------------------
 
 
+	//sphere sword
+	public GameObject sphereSword;
+
 	//Time counts
 	private float timeCountLife = 0;
 	//-----------------------------------------------------------------------------------------------------------------
@@ -102,6 +105,9 @@ public class RobotController : HeroeController
 		this.mana = MANA_1;
 		this.adren = ADREN_1;
 		this.speedMov = MOV_SPEED_1;
+
+		//set owner to sphere collider sword
+		this.sphereSword.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 		
 		//Set the type of heroe
 		this.type = TypeHeroe.Robot;
