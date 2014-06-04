@@ -21,10 +21,11 @@ public class OrcController : HeroeController
 	//public GameObject leftArm, rightArm;
 	public GameObject cubeColliderHand;
 	//-----------------------------------------------------------------------------------------------------------------
-
-
+	
 	//Time counts
 	private float timeCountLife = 0;
+	
+	public Transform head;
 	//-----------------------------------------------------------------------------------------------------------------
 
 
@@ -45,6 +46,10 @@ public class OrcController : HeroeController
 	private GameObject smokeInst; // Smoke instantiation
 	// BullStrike particle
 	private bool bullStrikeActivated = false;
+	// FireCircle Particle
+	public GameObject fireCircle;
+	private GameObject fireCircleInst;
+	private bool fireCircleActivated; 
 	//-----------------------------------------------------------------------------------------------------------------
 
 
@@ -158,6 +163,10 @@ public class OrcController : HeroeController
 		
 		//Initialize the animation
 		animation.Play ("Iddle01");
+
+		if (head == null)
+			head = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
+
 	}
 	
 	// Update is called once per frame
@@ -235,6 +244,10 @@ public class OrcController : HeroeController
 					//transform.Translate(Vector3.up * 2);
 					Destroy(smokeInst, 5f);
 					smokeActivated = true;
+
+					fireCircleInst = (GameObject)Instantiate(fireCircle, head.position, transform.rotation);
+					fireCircleInst.transform.parent = head;
+					Destroy(fireCircleInst, 1.7f);
 					//--------------------------------
 					GetComponent<OrcBullStrikeAttack>().EnableSphereCollider();
 					GetComponent<OrcBullStrikeAttack>().SetDamage(attackP + 100);

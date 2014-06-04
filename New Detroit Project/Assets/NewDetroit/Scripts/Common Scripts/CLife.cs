@@ -25,6 +25,7 @@ public class CLife : MonoBehaviour
     }
 
     // if type == 'P' is phisical damage if type == 'M' is magical damage
+    [RPC]
     public bool Damage (float damage, char type = 'P')
     {
         //Debug.Log("damage");

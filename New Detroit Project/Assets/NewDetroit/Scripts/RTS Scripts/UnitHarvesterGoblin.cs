@@ -26,9 +26,25 @@ public class UnitHarvesterGoblin : UnitHarvester
     {
         base.Start();
 
+        // instanciamos los accesorios del modelo
+        float[] randoms = { Random.value, Random.value, Random.value };
+        photonView.RPC("InstanciateAccesories", PhotonTargets.All, randoms[0], randoms[1], randoms[2]);
+
+        // capturamos la instancia del pico en la mano
+        if (dummyHand)
+            peak = dummyHand.FindChild("GoblinHarvesterBeak").gameObject;
+
+        // intanciamos un pack de minerales encima de la unidad
+        photonView.RPC("InstanciateMineralPack", PhotonTargets.All);
+        // se esconde:
+        photonView.RPC("ShowMineralPack", PhotonTargets.All, false);
+    }
+
+    [RPC]
+    public void InstanciateAccesories (float rand1, float rand2, float rand3)
+    {
         // instanciamos un casco o un cono encima de la cabeza (o nada)
-        float rand = Random.value;
-        if (rand <= 0.25f)
+        if (rand1 <= 0.25f)
         {
             helmet = (GameObject)Instantiate
             (
@@ -39,7 +55,7 @@ public class UnitHarvesterGoblin : UnitHarvester
             helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
             helmet.transform.parent = dummyHead;
         }
-        else if (rand <= 0.5f)
+        else if (rand1 <= 0.5f)
         {
             helmet = (GameObject)Instantiate
             (
@@ -50,7 +66,7 @@ public class UnitHarvesterGoblin : UnitHarvester
             helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
             helmet.transform.parent = dummyHead;
         }
-        else if (rand <= 0.75f)
+        else if (rand1 <= 0.75f)
         {
             helmet = (GameObject)Instantiate
             (
@@ -61,10 +77,9 @@ public class UnitHarvesterGoblin : UnitHarvester
             helmet.transform.Rotate(90.0f, 0.0f, 0.0f);
             helmet.transform.parent = dummyHead;
         }
-        
+
         // instanciamos aleatóriamente una mochila detrás (o nada)
-        rand = Random.value;
-        if (Random.value <= 0.33f)
+        if (rand2 <= 0.33f)
         {
             backpack = (GameObject)Instantiate
             (
@@ -74,7 +89,7 @@ public class UnitHarvesterGoblin : UnitHarvester
             );
             backpack.transform.parent = dummyBackPack;
         }
-        else if (rand <= 0.66f)
+        else if (rand2 <= 0.66f)
         {
             backpack = (GameObject)Instantiate
             (
@@ -86,8 +101,7 @@ public class UnitHarvesterGoblin : UnitHarvester
         }
 
         // instanciamos unas gafas (o nada)
-        rand = Random.value;
-        if (Random.value <= 0.33f)
+        if (rand3 <= 0.33f)
         {
             glasses = (GameObject)Instantiate
             (
@@ -99,7 +113,7 @@ public class UnitHarvesterGoblin : UnitHarvester
             glasses.transform.parent = dummyGlasses;
             glasses.transform.Rotate(new Vector3(0.0f, transform.rotation.y, 0.0f));
         }
-        else if (Random.value <= 0.66f)
+        else if (rand3 <= 0.66f)
         {
             glasses = (GameObject)Instantiate
             (
@@ -110,23 +124,6 @@ public class UnitHarvesterGoblin : UnitHarvester
             glasses.transform.parent = dummyGlasses;
             glasses.transform.Rotate(new Vector3(0.0f, transform.rotation.y, 0.0f));
         }
-
-        // capturamos la instancia del pico en la mano
-        if (dummyHand)
-            peak = dummyHand.FindChild("GoblinHarvesterBeak").gameObject;
-
-        // intanciamos un pack de minerales encima de la unidad
-        actualMineralPack = (GameObject)Instantiate
-        (
-            mineralPack,
-            dummyMineralPack.transform.position,
-            new Quaternion()
-        ) as GameObject;
-        actualMineralPack.transform.name = "MineralPack";
-        actualMineralPack.transform.parent = dummyMineralPack;
-        // se esconde:
-        ShowMineralPack(loaded);
-
     }
 
 } // class UnitHarvesterGoblin
