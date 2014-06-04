@@ -6,12 +6,11 @@ using System.Collections;
 public class UnitAnimationsNetwork : MonoBehaviour
 {
 
-    // modelo del asset (el que contiene las animaciones)
-    protected Transform model;
+    
 
     void Awake ()
     {
-        model = transform.FindChild("Model");
+        
     }
 
     void Start ()

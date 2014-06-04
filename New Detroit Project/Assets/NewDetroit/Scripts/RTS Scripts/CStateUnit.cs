@@ -13,6 +13,13 @@ public class CStateUnit : CState
 
     public bool attack2Selected;
 
+    public bool animationChanged = false;
+    public bool animationChangeQueued = false;
+
+    public string animationName, animationNameQueued;
+
+    public bool animationSend = false, animationSendQeued = false;
+
     public enum UnitType
     {
         Harvester,
@@ -22,5 +29,21 @@ public class CStateUnit : CState
         HeavyArtillery
     }
     public UnitType unitType;
+
+    public void Update ()
+    {
+        if (animationChanged)
+        {
+            animation.CrossFade(animationName);
+            animationChanged = false;
+            animationSend = true;
+        }
+        if (animationChangeQueued)
+        {
+            animation.CrossFadeQueued(animationNameQueued);
+            animationChangeQueued = false;
+            animationSendQeued = true;
+        }
+    }
 
 }

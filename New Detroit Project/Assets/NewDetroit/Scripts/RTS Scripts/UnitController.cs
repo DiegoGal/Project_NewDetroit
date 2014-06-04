@@ -228,7 +228,9 @@ public class UnitController : ControllableCharacter
 
                     attackCadenceAux = attackCadence;
 
-                    if (enemySelected.Damage(basicAttackPower))
+                    photonView.RPC("Kick", PhotonTargets.All);
+                    if (!enemySelected.GetComponent<CLife>().IsAlive())
+                    //if (enemySelected.Damage(basicAttackPower))
                     {
                         // the enemy has die
                         enemySelected = null;
@@ -399,6 +401,14 @@ public class UnitController : ControllableCharacter
         PlayAnimationCrossFade("Idle01");
     }
 
+    [RPC]
+    public bool Kick ()
+    {
+        // TODO! enemySelected es nulo en instancias online, Kick tendría que recibir
+        // el identificador Photon de la unidad a atacar
+        return enemySelected.Damage(basicAttackPower);
+    }
+
     public virtual void RightClickOnSelected (Transform destTransform)
     {
         RightClickOnSelected(destTransform.position, destTransform);
@@ -465,22 +475,30 @@ public class UnitController : ControllableCharacter
 
     protected virtual void PlayAnimation (string animationName)
     {
-        animation.Play(animationName);
+        //animation.Play(animationName);
+        cState.animationName  = animationName;
+        cState.animationChanged = true;
     }
 
     protected virtual void PlayAnimationQueued (string animationName)
     {
-        animation.PlayQueued(animationName);
+        //animation.PlayQueued(animationName);
+        cState.animationNameQueued = animationName;
+        cState.animationChangeQueued = true;
     }
 
     protected virtual void PlayAnimationCrossFade (string animationName)
     {
-        animation.CrossFade(animationName);
+        //animation.CrossFade(animationName);
+        cState.animationName = animationName;
+        cState.animationChanged = true;
     }
 
     protected virtual void PlayAnimationCrossFadeQueued (string animationName)
     {
-        animation.CrossFadeQueued(animationName);
+        //animation.CrossFadeQueued(animationName);
+        cState.animationNameQueued = animationName;
+        cState.animationChangeQueued = true;
     }
 
     protected virtual void PlayIdleWaitAnimation ()
