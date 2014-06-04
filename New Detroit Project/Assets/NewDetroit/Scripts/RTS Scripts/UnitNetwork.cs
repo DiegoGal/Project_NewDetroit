@@ -4,20 +4,23 @@ using System.Collections;
 public class UnitNetwork : Photon.MonoBehaviour
 {
 
-	CSelectable selectableScript;
-    CStateUnit stateScript;           // contains the current states of the units and other flags
-	UnitController unitScript;
-    UnitAnimationsNetwork unitAnimationsNetwork;
-	FogOfWarUnit fogOfWarScript;
-	NavMeshAgent navMeshAgent;
+	private CSelectable selectableScript;
+    protected CStateUnit stateScript; // contains the current states of the units and other flags
+	private UnitController unitScript;
+    private UnitAnimationsNetwork unitAnimationsNetwork;
+	private FogOfWarUnit fogOfWarScript;
+	private NavMeshAgent navMeshAgent;
 
     private Vector3 correctPlayerPos = Vector3.zero; // We lerp towards this
     private Quaternion correctPlayerRot = Quaternion.identity; // We lerp towards this
     //private UnitBasicArtillery.ArtilleryState state; // new State of the ArtilleryState
     //private UnitController.State unitState; // new State of Unit
-    private UnitController.State lastState; // last State of Unit
+    protected UnitController.State lastState = UnitController.State.Idle; // last State of Unit
     //private float currentLife; // for damage
     //private bool attack2Selected; // to see if the attack has changed
+
+    // modelo del asset (el que contiene las animaciones)
+    protected Transform model;
 	
 	void Awake ()
 	{
@@ -51,9 +54,12 @@ public class UnitNetwork : Photon.MonoBehaviour
 		}
 		
 		gameObject.name = gameObject.name + "_" + photonView.viewID;
+
+        // se captura la referencia al modelo
+        model = transform.FindChild("Model");
 	}
 	
-	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	public virtual void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
 	{
 		if (stream.isWriting)
 		{
@@ -65,6 +71,14 @@ public class UnitNetwork : Photon.MonoBehaviour
             //stream.SendNext(GetComponent<CTeam>().teamNumber);
 
             stream.SendNext(stateScript.currentState);
+
+            stream.SendNext(stateScript.animationSend);
+            stream.SendNext(stateScript.animationName);
+            stream.SendNext(stateScript.animationSendQeued);
+            stream.SendNext(stateScript.animationNameQueued);
+
+            stateScript.animationSend = false;
+            stateScript.animationSendQeued = false;
 
             //UnitBasicArtillery script = this.GetComponent<UnitBasicArtillery>();
             //stream.SendNext(script.currentArtilleryState);
@@ -83,6 +97,12 @@ public class UnitNetwork : Photon.MonoBehaviour
             //GetComponent<CTeam>().teamNumber = (int)stream.ReceiveNext();
 
             stateScript.currentState = (UnitController.State)stream.ReceiveNext();
+
+            stateScript.animationChanged = (bool)stream.ReceiveNext();
+            stateScript.animationName = (string)stream.ReceiveNext();
+            stateScript.animationChangeQueued = (bool)stream.ReceiveNext();
+            stateScript.animationNameQueued = (string)stream.ReceiveNext();
+
             // comprobar el cambio
 
             //state =            (UnitBasicArtillery.ArtilleryState)stream.ReceiveNext();
@@ -93,7 +113,7 @@ public class UnitNetwork : Photon.MonoBehaviour
 		}
 	}
 	
-	void Update ()
+	public virtual void Update ()
 	{
 		if (!photonView.isMine)
 		{
@@ -101,11 +121,23 @@ public class UnitNetwork : Photon.MonoBehaviour
 			transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 
-            if (lastState != stateScript.currentState)
+            /*if (lastState != stateScript.currentState)
             {
-                // cambiar animaciones
-                unitAnimationsNetwork.ChangeAnimation(stateScript.currentState);
-            }
+                switch (stateScript.currentState)
+                {
+                    case UnitController.State.Idle: animation.CrossFade("Idle01"); break;
+                    case UnitController.State.GoingTo: animation.CrossFade("Walk"); break;
+                    case UnitController.State.GoingToAnEnemy: animation.CrossFade("Walk"); break;
+                    case UnitController.State.Attacking: animation.CrossFade("Attack1"); break;
+                    //case UnitController.State.Dying:          animation.CrossFade("Die");     break;
+                    case UnitController.State.Flying: break;
+                    case UnitController.State.AscendingToHeaven:
+                        // TODO! cambiar el material de la unidad
+
+
+                        break;
+                }
+            }*/
             lastState = stateScript.currentState;
 
             //UnitBasicArtilleryRemote script = GetComponent<UnitBasicArtilleryRemote>();
@@ -116,4 +148,6 @@ public class UnitNetwork : Photon.MonoBehaviour
 		}
 	}
 	
+
+
 }

@@ -18,8 +18,8 @@ public class ColliderConstruct : MonoBehaviour
 
     void OnTriggerEnter (Collider other)
     {
-        //if (other.name != "VisionSphere" && other.name != "TowerVisionSphere" && other.name != "Plane" && other.name != "Terrain")
-        if (other.name != "WorldFloor")
+        if (other.name != "VisionSphere" && other.name != "TowerVisionSphere" && other.name != "Plane" && other.name != "Terrain")
+        //if (other.name != "WorldFloor")
         {
             //Debug.Log("No puedes construir");
             collidersInside++;
@@ -35,8 +35,8 @@ public class ColliderConstruct : MonoBehaviour
 
     void OnTriggerExit (Collider other)
 	{
-        //if (other.name != "VisionSphere" && other.name != "TowerVisionSphere" && other.name != "Plane" && other.name != "Terrain")
-        if (other.name != "WorldFloor")
+        if (other.name != "VisionSphere" && other.name != "TowerVisionSphere" && other.name != "Plane" && other.name != "Terrain")
+        //if (other.name != "WorldFloor")
         {
             collidersInside--;
             if (collidersInside <= 0)

@@ -88,6 +88,19 @@ public class UnitHarvester : UnitController
         basicAttackPower = secondaryAttackPower = attackPower;
 
     }
+
+    [RPC]
+    public void InstanciateMineralPack ()
+    {
+        actualMineralPack = (GameObject)Instantiate
+        (
+            mineralPack,
+            dummyMineralPack.transform.position,
+            new Quaternion()
+        ) as GameObject;
+        actualMineralPack.transform.name = "MineralPack";
+        actualMineralPack.transform.parent = dummyMineralPack;
+    }
     
     /*public override void Update ()
     {
@@ -272,7 +285,8 @@ public class UnitHarvester : UnitController
 
                         // se muestra el pack de minerales
                         loaded = true;
-                        ShowMineralPack(loaded);
+                        photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
+                        //ShowMineralPack(loaded);
 
                         CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
                         float radious = resourceBuilding.GetRadius();
@@ -389,7 +403,7 @@ public class UnitHarvester : UnitController
                         currentHarvestState = HarvestState.Waiting;
                         GetComponent<NavMeshAgent>().destination = transform.position;
                         //animation.CrossFade("Idle Wait");
-                        animation.CrossFade("Idle01");
+                        PlayAnimationCrossFade("Idle01");
                     }
                 }
                 break;
@@ -423,7 +437,8 @@ public class UnitHarvester : UnitController
                         // escondemos el pico
                         peak.renderer.enabled = false;
                         // se reproduce la animación de curar
-                        animation.CrossFade("Heal");
+                        //animation.CrossFade("Heal");
+                        PlayAnimationCrossFade("Heal");
                     }
                     else if (distItem <= visionSphereRadius)
                         GoTo(currentCharacterHealed.transform.position);
@@ -691,7 +706,8 @@ public class UnitHarvester : UnitController
     {
         // cuando llegue a la mina pasar el estado a Choping
         Debug.Log("comenzando cosecha...");
-        animation.CrossFade("Picar");
+        //animation.CrossFade("Picar");
+        PlayAnimationCrossFade("Picar");
         currentHarvestState = HarvestState.Choping;
         nextHarvestState = HarvestState.ReturningToBase;
 
@@ -710,7 +726,8 @@ public class UnitHarvester : UnitController
 
 			// escondemos el pack de minerales
             loaded = false;
-            ShowMineralPack(false);
+            //ShowMineralPack(false);
+            photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
 
             if (nextHarvestState == HarvestState.GoingToMine)
             {
@@ -730,7 +747,7 @@ public class UnitHarvester : UnitController
     }
 
     // esconde (o muestra) todos los objetos que componen el pack de minerales
-    protected void ShowMineralPack (bool enable = true)
+    [RPC] protected void ShowMineralPack (bool enable = true)
     {
         Renderer[] renderers = actualMineralPack.GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers)
@@ -743,7 +760,7 @@ public class UnitHarvester : UnitController
         SpawnMineralParticles(waitTime);
     }
 
-    private void SpawnMineralParticles(float waitTime)
+    private void SpawnMineralParticles (float waitTime)
     {
         GameObject particles = (GameObject)Instantiate(mineralParticles,
                 peak.transform.position, new Quaternion());
@@ -753,7 +770,7 @@ public class UnitHarvester : UnitController
             StartCoroutine(WaitAndCallback(animation["Picar"].length));
     }
 
-    public override void UnitDiedMessage()
+    public override void UnitDiedMessage ()
     {
         base.UnitDiedMessage();
 
@@ -771,11 +788,23 @@ public class UnitHarvester : UnitController
         if (loaded)
         {
             if (animationName == "Walk")
-                animation.CrossFade("Walk Loaded");
+            {
+                //animation.CrossFade("Walk Loaded");
+                cState.animationName = "Walk Loaded";
+                cState.animationChanged = true;
+            }
             else if (animationName == "Idle01")
-                animation.CrossFade("Idle Loaded");
+            {
+                //animation.CrossFade("Idle Loaded");
+                cState.animationName = "Idle Loaded";
+                cState.animationChanged = true;
+            }
             else if (animationName == "Idle Wait")
-                animation.CrossFade("Idle Loaded");
+            {
+                //animation.CrossFade("Idle Loaded");
+                cState.animationName = "Idle Loaded";
+                cState.animationChanged = true;
+            }
             else
                 base.PlayAnimationCrossFade(animationName);
         }
@@ -789,11 +818,23 @@ public class UnitHarvester : UnitController
         if (loaded)
         {
             if (animationName == "Walk")
-                animation.CrossFadeQueued("Walk Loaded");
+            {
+                //animation.CrossFadeQueued("Walk Loaded");
+                cState.animationNameQueued = "Walk Loaded";
+                cState.animationChangeQueued = true;
+            }
             else if (animationName == "Idle01")
-                animation.CrossFadeQueued("Idle Loaded");
+            {
+                //animation.CrossFadeQueued("Idle Loaded");
+                cState.animationNameQueued = "Idle Loaded";
+                cState.animationChangeQueued = true;
+            }
             else if (animationName == "Idle Wait")
-                animation.CrossFadeQueued("Idle Loaded");
+            {
+                //animation.CrossFadeQueued("Idle Loaded");
+                cState.animationNameQueued = "Idle Loaded";
+                cState.animationChangeQueued = true;
+            }
             else
                 base.PlayAnimationCrossFadeQueued(animationName);
         }
