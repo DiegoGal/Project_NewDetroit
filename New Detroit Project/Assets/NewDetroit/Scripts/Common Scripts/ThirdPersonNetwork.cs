@@ -53,7 +53,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 			// Life's orc
 			if (heroeControlScript.getTypeHero() == HeroeController.TypeHeroe.Orc)
 			{
-				OrcController orcControlScript = this.GetComponent<OrcController>();
+				/*OrcController orcControlScript = this.GetComponent<OrcController>();
 				OrcBasicAttack	leftAttack = orcControlScript.leftArm.GetComponent<OrcBasicAttack>(),
 								rightAttack = orcControlScript.rightArm.GetComponent<OrcBasicAttack>();
 
@@ -78,7 +78,7 @@ public class ThirdPersonNetwork : Photon.MonoBehaviour
 				{
 					stream.SendNext(null);
 					stream.SendNext(0);
-				}
+				}*/
 			}
 
 			// Experience

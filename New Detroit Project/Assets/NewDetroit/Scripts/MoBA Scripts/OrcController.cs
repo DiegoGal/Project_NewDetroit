@@ -18,7 +18,8 @@ public class OrcController : HeroeController
 	//-----------------------------------------------------------------------------------------------------------------
 
 
-	public GameObject leftArm, rightArm;
+	//public GameObject leftArm, rightArm;
+	public GameObject cubeColliderHand;
 	//-----------------------------------------------------------------------------------------------------------------
 
 
@@ -133,6 +134,19 @@ public class OrcController : HeroeController
 		//Set the owner in the basic attack
 		/*this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);*/
+
+		//Set the collider cubes in both hands
+		//Right hand
+		Transform hand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand");
+		GameObject cubeColliderInst = (GameObject) Instantiate(cubeColliderHand, hand.position + new Vector3(-0.25f, -0.5f, 0), hand.rotation);
+		cubeColliderInst.transform.parent = hand;
+		cubeColliderInst.GetComponent<OrcBasicAttack> ().owner = this.gameObject;
+
+		//Left hand
+		hand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 L Clavicle/Bip001 L UpperArm/Bip001 L Forearm/Bip001 L Hand");
+		cubeColliderInst = (GameObject) Instantiate(cubeColliderHand, hand.position + new Vector3(0.25f, -0.5f, 0), hand.rotation);
+		cubeColliderInst.transform.parent = hand;
+		cubeColliderInst.GetComponent<OrcBasicAttack> ().owner = this.gameObject;
 		
 		//Initializes the cooldowns of skills
 		cooldown1total = COOLDOWN_SKILL_1; cooldown2total = COOLDOWN_SKILL_2; cooldown3total = COOLDOWN_SKILL_3;

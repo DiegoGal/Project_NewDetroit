@@ -18,8 +18,7 @@ public class RobotController : HeroeController
 
 
 	//sphere sword
-	public GameObject sphereSword;
-
+	public GameObject cubeColliderSword;
 	public GameObject skelterShot;
 
 	//Time counts
@@ -112,6 +111,13 @@ public class RobotController : HeroeController
 
 		//set owner to sphere collider sword
 		//this.sphereSword.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
+
+		//Set the collider cubes in both hands
+		//Right hand
+		Transform sword = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Cylinder002/cuchilla");
+		GameObject cubeColliderInst = (GameObject) Instantiate(cubeColliderSword, sword.position + new Vector3(0.4f, 1, 0.1f), sword.rotation);
+		cubeColliderInst.transform.parent = sword;
+		cubeColliderInst.GetComponent<RobotBasicAttack> ().owner = this.gameObject;
 		
 		//Set the type of heroe
 		this.type = TypeHeroe.Robot;
