@@ -578,7 +578,7 @@ public abstract class HeroeController : ControllableCharacter
 				else 
 				{
 					useAdren = true;
-					currentAdren -= adrenSkill3;
+					//currentAdren -= adrenSkill3;
 				}
 			}
 		}

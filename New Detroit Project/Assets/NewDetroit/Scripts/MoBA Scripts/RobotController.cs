@@ -20,8 +20,12 @@ public class RobotController : HeroeController
 	//sphere sword
 	public GameObject sphereSword;
 
+	public GameObject skelterShot;
+
 	//Time counts
 	private float timeCountLife = 0;
+
+	public Transform gun;
 	//-----------------------------------------------------------------------------------------------------------------
 
 
@@ -107,7 +111,7 @@ public class RobotController : HeroeController
 		this.speedMov = MOV_SPEED_1;
 
 		//set owner to sphere collider sword
-		this.sphereSword.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
+		//this.sphereSword.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 		
 		//Set the type of heroe
 		this.type = TypeHeroe.Robot;
@@ -122,6 +126,9 @@ public class RobotController : HeroeController
 		
 		//Initialize the animation
 		animation.Play ("Idle01");
+
+		if (gun == null)
+			gun = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Cylinder002/cuchilla");
 	}
 	
 	// Update is called once per frame
@@ -156,8 +163,14 @@ public class RobotController : HeroeController
 				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
 				{
 					animation.CrossFade("Attack3");
+					GameObject fireShotInst;
+					skelterShot.GetComponent<MeshRenderer> ().enabled = false;
+					fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
+					fireShotInst.transform.parent = gun;
+					//transform.Translate(Vector3.up * 2);
+					Destroy(fireShotInst, 5f);
 				}
-				doingSecondaryAnim= true;
+				doingSecondaryAnim= true; 
 			}
 			// Basic attack
 			else if (state == StateHeroe.AttackBasic)

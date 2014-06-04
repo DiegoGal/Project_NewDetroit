@@ -131,8 +131,8 @@ public class OrcController : HeroeController
 		this.type = TypeHeroe.Orc;
 		
 		//Set the owner in the basic attack
-		this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
-		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
+		/*this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
+		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);*/
 		
 		//Initializes the cooldowns of skills
 		cooldown1total = COOLDOWN_SKILL_1; cooldown2total = COOLDOWN_SKILL_2; cooldown3total = COOLDOWN_SKILL_3;
