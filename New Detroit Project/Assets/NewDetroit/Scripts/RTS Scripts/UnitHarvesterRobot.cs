@@ -123,6 +123,7 @@ public class UnitHarvesterRobot : UnitHarvester
             ) as GameObject;
             peak.transform.parent = dummyHand;
         }
+        peak.active = false;
 
         // intanciamos un pack de minerales encima de la unidad
         actualMineralPack = (GameObject)Instantiate
