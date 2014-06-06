@@ -122,7 +122,7 @@ ModelImporter:
       name: Idle01
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 30
+      lastFrame: 60
       wrapMode: 2
       orientationOffsetY: 0
       level: 0
@@ -258,8 +258,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Idle Wait
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 30
+      firstFrame: 61
+      lastFrame: 121
       wrapMode: 1
       orientationOffsetY: 0
       level: 0
@@ -395,8 +395,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Walk
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 30
+      firstFrame: 122
+      lastFrame: 152
       wrapMode: 2
       orientationOffsetY: 0
       level: 0
@@ -532,8 +532,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Idle Loaded
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 30
+      firstFrame: 246
+      lastFrame: 295
       wrapMode: 2
       orientationOffsetY: 0
       level: 0
@@ -669,8 +669,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Walk Loaded
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 30
+      firstFrame: 298
+      lastFrame: 322
       wrapMode: 2
       orientationOffsetY: 0
       level: 0
@@ -806,8 +806,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Attack1
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 30
+      firstFrame: 153
+      lastFrame: 183
       wrapMode: 2
       orientationOffsetY: 0
       level: 0
@@ -943,8 +943,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Heal
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 30
+      firstFrame: 355
+      lastFrame: 385
       wrapMode: 2
       orientationOffsetY: 0
       level: 0
@@ -1080,8 +1080,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Picar
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 30
+      firstFrame: 324
+      lastFrame: 354
       wrapMode: 2
       orientationOffsetY: 0
       level: 0
@@ -1217,8 +1217,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Die
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 30
+      firstFrame: 184
+      lastFrame: 244
       wrapMode: 1
       orientationOffsetY: 0
       level: 0
