@@ -71,6 +71,11 @@ public class UnitEngineer : UnitController
     // To knows the direction of the fireball
     public Vector3 fireballDir;
 
+    // audio sfx
+    public AudioClip sfxBuildOrder;
+    public AudioClip sfxRepairOrder;
+    public AudioClip sfxConquerOrder;
+
     public override void Start ()
     {
         base.Start();
@@ -807,6 +812,9 @@ public class UnitEngineer : UnitController
                 constructDestiny = destiny;
                 currentItem = towerArmy.transform;
                 newTGConstruct = newWConstruct = false;
+
+                // sfx build
+                audio.PlayOneShot(sfxBuildOrder);
             }
         }
         // else if he is constructing a warehouse
@@ -832,6 +840,9 @@ public class UnitEngineer : UnitController
                 constructDestiny = destiny;
                 currentItem = warehouse.transform;
                 newTGConstruct = newWConstruct = false;
+
+                // sfx build
+                audio.PlayOneShot(sfxBuildOrder);
             }
         }
         // if he is not constructing
@@ -853,6 +864,9 @@ public class UnitEngineer : UnitController
 					cState.currentEngineerState = currentEngineerState;
 
                     GoTo(destiny);
+
+                    // sfx conquer
+                    audio.PlayOneShot(sfxConquerOrder);
                 }
             }
             else // TN in the same team
@@ -898,6 +912,9 @@ public class UnitEngineer : UnitController
 						cState.currentEngineerState = currentEngineerState;
 
                         GoTo(destiny);
+
+                        // sfx repair
+                        audio.PlayOneShot(sfxRepairOrder);
                     }
                     else
                     {
@@ -908,6 +925,9 @@ public class UnitEngineer : UnitController
 						cState.currentEngineerState = currentEngineerState;
 
                         GoTo(destiny);
+
+                        // sfx build
+                        audio.PlayOneShot(sfxBuildOrder);
                     }
 
                 }
@@ -946,6 +966,9 @@ public class UnitEngineer : UnitController
 						cState.currentEngineerState = currentEngineerState;
 
                         GoTo(destiny);
+
+                        // sfx repair
+                        audio.PlayOneShot(sfxRepairOrder);
                     }
                     else
                     {
@@ -956,6 +979,9 @@ public class UnitEngineer : UnitController
 						cState.currentEngineerState = currentEngineerState;
 
                         GoTo(destiny);
+
+                        // sfx build
+                        audio.PlayOneShot(sfxBuildOrder);
                     }
 
                 }

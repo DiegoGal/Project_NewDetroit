@@ -26,7 +26,7 @@ public class ControllableCharacter : Photon.MonoBehaviour
     //public bool invincible = false;
 
     // the screen position of the character
-    protected Vector3 screenPosition;
+    public Vector3 screenPosition;
 
     // the vision radious of the unit
     public float visionSphereRadius = 8.0f;

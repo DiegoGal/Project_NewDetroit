@@ -3,6 +3,7 @@ using System.Collections;
 
 public class UnitHarvester : UnitController
 {
+
     public int attackPower = 1;
 
     // capacidad de transporte por viaje que la unidad es capaz de cargar
@@ -79,7 +80,12 @@ public class UnitHarvester : UnitController
     // capacidad total de vida curada por la unidad
     private int totalHealed = 0;
 
+    // particles of mineral sparks
     public GameObject mineralParticles;
+
+    // audio sfx
+    public AudioClip sfxPeak;
+    public AudioClip sfxHeal;
 
     public override void Start ()
     {
@@ -334,6 +340,13 @@ public class UnitHarvester : UnitController
 
                                 // se vuelve a mostrar el pico
                                 peak.renderer.enabled = true;
+                            }
+
+                            // heal sfx
+                            if (!audio.isPlaying)
+                            {
+                                audio.clip = sfxHeal;
+                                audio.Play();
                             }
 
                             // se actualiza el contador de "curación" propio

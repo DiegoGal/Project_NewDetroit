@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class UnitController : ControllableCharacter
 {
     
@@ -58,7 +59,13 @@ public class UnitController : ControllableCharacter
     private bool goingDown = false;
     private int contTrapped = 0;
 
+    // Reference to the CStateUnit Component of the Unit
     public CStateUnit cState;
+
+    // Audio
+    public AudioClip sfxDead;
+    public AudioClip sfxOrder;
+    public AudioClip sfxAttack;
 
     public override void Awake ()
     {
@@ -433,6 +440,9 @@ public class UnitController : ControllableCharacter
         }
         else
         {
+            // play the order sfx
+            audio.PlayOneShot(sfxOrder);
+
             enemySelected = null;
             GoTo(destiny);
         }
@@ -456,6 +466,10 @@ public class UnitController : ControllableCharacter
         PlayAnimationCrossFade("Die");
         // and comunicate it to the army manager              
         baseController.armyController.UnitDied(this.gameObject);
+
+        // play the dead sfx
+        audio.Stop();
+        audio.PlayOneShot(sfxDead);
 
         // delete the Nave Mesh Agent for elevate the model
         Destroy(GetComponent<NavMeshAgent>());

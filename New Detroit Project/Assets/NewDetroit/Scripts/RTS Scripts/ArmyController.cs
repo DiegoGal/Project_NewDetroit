@@ -826,8 +826,8 @@ public class ArmyController : MonoBehaviour
     // doc: http://docs.unity3d.com/Documentation/ScriptReference/Camera.WorldToScreenPoint.html
     private void CreatingSquare2 ()
     {
-        if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
-            DeselectAll();
+        //if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+        //    DeselectAll();
 
         // se actualizan las posiciones de los vértices del cuadrado en pantalla:
         UpdateSelectionPointScreen();
@@ -837,7 +837,7 @@ public class ArmyController : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             // capture the screen position of the unit
-            unitScreenPos = Camera.main.WorldToScreenPoint(unitList[i].transform.position);
+            unitScreenPos = unitList[i].GetComponent<ControllableCharacter>().screenPosition;
             // check if the position if inside the square we are creating
             if (unitScreenPos.x >= squareSelectionPointsScreen[0].x &&
                 unitScreenPos.y <= squareSelectionPointsScreen[0].y &&
@@ -860,6 +860,8 @@ public class ArmyController : MonoBehaviour
                     // and mark it as deselected
                     unitList[i].GetComponent<CSelectable>().SetDeselect();
                 }
+                // and mark it a de-selected
+                unitList[i].GetComponent<CSelectable>().SetDeselect();
             }
         }
     } // CreatingSquare2 ()

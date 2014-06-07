@@ -22,6 +22,9 @@ public class CSelectable : MonoBehaviour
 
     private UnitController unitReference = null;
 
+    // Audio
+    public AudioClip sfxSelected;
+
 	// Use this for initialization
 	void Awake ()
     {
@@ -86,46 +89,59 @@ public class CSelectable : MonoBehaviour
 
 	public void SetSelected ()
 	{
-		selected = true;
-        switch (selectType)
+        // first we check if the object is not already selected
+        if (!selected)
         {
-            case 0:
-                for (int i = 0; i < numberOfMaterials; i++)
-                    //model.renderer.materials[i].SetFloat("_OutlineWidth", outlineWidth);
-                    model.renderer.materials[i].SetColor("_OutlineColor", teamColor);
-                break;
-            case 1:
-                this.renderer.material.SetColor("_DiffuseColor", teamColor);
-                break;
-            case 2:
-                this.renderer.material.color = new Color(teamColor.r + 0.4f, teamColor.g + 0.4f, teamColor.b + 0.4f);
-                break;
-        }
+            selected = true;
+            switch (selectType)
+            {
+                case 0:
+                    for (int i = 0; i < numberOfMaterials; i++)
+                        //model.renderer.materials[i].SetFloat("_OutlineWidth", outlineWidth);
+                        model.renderer.materials[i].SetColor("_OutlineColor", teamColor);
+                    break;
+                case 1:
+                    this.renderer.material.SetColor("_DiffuseColor", teamColor);
+                    break;
+                case 2:
+                    this.renderer.material.color = new Color(teamColor.r + 0.4f, teamColor.g + 0.4f, teamColor.b + 0.4f);
+                    break;
+            }
 
-        if (unitReference)
-            unitReference.isSelected = true;
+            if (unitReference)
+                unitReference.isSelected = true;
+
+            // sfx de selección
+            //if (audio && !audio.isPlaying)
+            //Invoke("audio.PlayOneShot(sfxSelected)", 1.0f);
+            audio.PlayOneShot(sfxSelected);
+        }
 	}
 	
 	public void SetDeselect ()
 	{
-		selected = false;
-        switch (selectType)
+        // first we check if the object is selected
+        if (selected)
         {
-            case 0:
-                for (int i = 0; i < numberOfMaterials; i++)
-                   // model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
-                    model.renderer.materials[i].SetColor("_OutlineColor", Color.black);
-                break;
-            case 1:
-                this.renderer.material.SetColor("_DiffuseColor", origColor);
-                break;
-            case 2:
-                this.renderer.material.color = origColor;
-                break;
-        }
+            selected = false;
+            switch (selectType)
+            {
+                case 0:
+                    for (int i = 0; i < numberOfMaterials; i++)
+                        // model.renderer.materials[i].SetFloat("_OutlineWidth", 0.0f);
+                        model.renderer.materials[i].SetColor("_OutlineColor", Color.black);
+                    break;
+                case 1:
+                    this.renderer.material.SetColor("_DiffuseColor", origColor);
+                    break;
+                case 2:
+                    this.renderer.material.color = origColor;
+                    break;
+            }
 
-        if (unitReference)
-            unitReference.isSelected = false;
+            if (unitReference)
+                unitReference.isSelected = false;
+        }
 	}
 	
 	public void SetSelected (bool selected)

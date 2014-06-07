@@ -34,6 +34,9 @@ public class UnitScout : UnitController
 	}
 	public ScoutState currentScoutState = ScoutState.None;
 
+    // audio sfx
+    public AudioClip sfxIdleMower;
+    public AudioClip sfxPatrolOrder;
 
 	// Use this for initialization
 	public override void Start ()
@@ -41,6 +44,9 @@ public class UnitScout : UnitController
 		base.Start();
 
 		basicAttackPower = secondaryAttackPower = attackPower;
+
+        audio.clip = sfxIdleMower;
+        audio.Play();
 	}
 	
 	// Update is called once per frame
@@ -80,6 +86,8 @@ public class UnitScout : UnitController
             currentScoutState = ScoutState.None;
 			cState.currentScoutState = currentScoutState;
 
+            audio.PlayOneShot(sfxOrder);
+
             GoTo(positionList[0]);
         }
         else if (positionList.Count > 1)
@@ -88,6 +96,8 @@ public class UnitScout : UnitController
 
             currentScoutState = ScoutState.Patrolling;
 			cState.currentScoutState = currentScoutState;
+
+            audio.PlayOneShot(sfxPatrolOrder);
 
             patrolPositionsList = new List<Vector3>(positionList);
             Debug.Log("siguiente goto a: " + patrolPositionsList[0]);
