@@ -126,16 +126,20 @@ public class UnitHarvesterRobot : UnitHarvester
         peak.active = false;
 
         // intanciamos un pack de minerales encima de la unidad
-        actualMineralPack = (GameObject)Instantiate
-        (
-            mineralPack,
-            dummyMineralPack.transform.position,
-            new Quaternion()
-        ) as GameObject;
-        actualMineralPack.transform.name = "MineralPack";
-        actualMineralPack.transform.parent = dummyMineralPack;
+//        actualMineralPack = (GameObject)Instantiate
+//        (
+//            mineralPack,
+//            dummyMineralPack.transform.position,
+//            new Quaternion()
+//        ) as GameObject;
+//        actualMineralPack.transform.name = "MineralPack";
+//        actualMineralPack.transform.parent = dummyMineralPack;
+        
+		// intanciamos un pack de minerales encima de la unidad
+		photonView.RPC("InstanciateMineralPack", PhotonTargets.All);
         // se esconde:
-        ShowMineralPack(loaded);
+        //ShowMineralPack(loaded);
+		photonView.RPC("ShowMineralPack", PhotonTargets.All, false);
         
     }
 

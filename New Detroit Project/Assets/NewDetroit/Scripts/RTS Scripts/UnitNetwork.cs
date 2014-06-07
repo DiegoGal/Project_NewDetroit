@@ -77,8 +77,8 @@ public class UnitNetwork : Photon.MonoBehaviour
             stream.SendNext(stateScript.animationSendQeued);
             stream.SendNext(stateScript.animationNameQueued);
 
-            stateScript.animationSend = false;
-            stateScript.animationSendQeued = false;
+			if (stateScript.animationSend) stateScript.animationSend = false;
+			if (stateScript.animationSendQeued) stateScript.animationSendQeued = false;
 
             //UnitBasicArtillery script = this.GetComponent<UnitBasicArtillery>();
             //stream.SendNext(script.currentArtilleryState);

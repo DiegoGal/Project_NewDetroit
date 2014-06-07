@@ -183,7 +183,11 @@ public class UnitBasicArtillery : UnitArtillery
     protected override void PlayAnimationCrossFade (string animationName)
     {
         if ( (animationName == "Attack1") && attack2Selected )
-            animation.CrossFade("Attack2");
+        {
+            //animation.CrossFade("Attack2");
+			cState.animationName = "Attack2";
+			cState.animationChanged = true;
+        }
         else
             base.PlayAnimationCrossFade(animationName);
     }

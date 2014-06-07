@@ -68,9 +68,13 @@ public class UnitHeavyArtillery : UnitArtillery
             {
                 case DeployState.Undeployed:
                     StopMoving();
-                    animation.CrossFade("Deployment-prepare");
-                    StartCoroutine(WaitAndCallback(animation["Deployment-prepare"].length));
-                    animation.CrossFadeQueued("Deployment-iddle");
+                    //animation.CrossFade("Deployment-prepare");
+					StartCoroutine(WaitAndCallback(animation["Deployment-prepare"].length));
+                    //animation.CrossFadeQueued("Deployment-iddle");
+					cState.animationName = "Deployment-prepare";
+					cState.animationNameQueued = "Deployment-iddle";
+					cState.animationChanged = true;
+					cState.animationChangeQueued = true;
 
                     currentDeployState = DeployState.Deploying;
                     cState.currentDeployState = currentDeployState;
@@ -87,9 +91,13 @@ public class UnitHeavyArtillery : UnitArtillery
                 case DeployState.Deployed:
                     if (currentState != State.Attacking)
                     {
-                        animation.CrossFade("Deployment-Up");
+                        //animation.CrossFade("Deployment-Up");
                         StartCoroutine(WaitAndCallback(animation["Deployment-Up"].length));
-                        animation.CrossFadeQueued("Idle01");
+                        //animation.CrossFadeQueued("Idle01");
+						cState.animationName = "Deployment-Up";
+						cState.animationNameQueued = "Idle01";
+						cState.animationChanged = true;
+						cState.animationChangeQueued = true;
 
                         currentDeployState = DeployState.Undeploying;
                         cState.currentDeployState = currentDeployState;
@@ -429,13 +437,26 @@ public class UnitHeavyArtillery : UnitArtillery
         if (currentDeployState != DeployState.Undeployed)
         {
             if (animationName == "Idle01")
-                animation.CrossFade("Deployment-iddle");
+            {
+                //animation.CrossFade("Deployment-iddle");
+				cState.animationName = "Deployment-iddle";
+				cState.animationChanged = true;
+            }
             /*else if (animationName == "Idle Wait")
                 animation.CrossFade("Idle Wait Deployed");*/
             else if (animationName == "Attack2")
-                animation.CrossFade("Deployment-Shot");
+            {
+            	Debug.Log("Ataque secundario");
+                //animation.CrossFade("Deployment-Shot");
+				cState.animationName = "Deployment-Shot";
+				cState.animationChanged = true;
+            }
             else if (animationName == "Die")
-                animation.CrossFade("Deployment-Die");
+            {
+                //animation.CrossFade("Deployment-Die");
+				cState.animationName = "Deployment-Die";
+				cState.animationChanged = true;
+            }
         }
         else
             base.PlayAnimationCrossFade(animationName);
@@ -446,11 +467,19 @@ public class UnitHeavyArtillery : UnitArtillery
         if (currentDeployState != DeployState.Undeployed)
         {
             if (animationName == "Idle01")
-                animation.CrossFadeQueued("Deployment-iddle");
+            {
+                //animation.CrossFadeQueued("Deployment-iddle");
+				cState.animationNameQueued = "Deployment-iddle";
+				cState.animationChangeQueued = true;
+            }
             /*else if (animationName == "Idle Wait")
                 animation.CrossFade("Idle Wait Deployed");*/
             else if (animationName == "Die")
-                animation.CrossFadeQueued("Deployment-Die");
+            {
+                //animation.CrossFadeQueued("Deployment-Die");
+				cState.animationNameQueued = "Deployment-Die";
+				cState.animationChangeQueued = true;
+            }
         }
         else
             base.PlayAnimationCrossFadeQueued(animationName);

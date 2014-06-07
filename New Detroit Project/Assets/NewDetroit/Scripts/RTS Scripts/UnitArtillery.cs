@@ -536,9 +536,17 @@ public class UnitArtillery : UnitController
                 StopMoving();
 
                 if (attack2Selected)
-                    animation.CrossFade("Attack2");
+                {
+                    //animation.CrossFade("Attack2");
+					cState.animationName = "Attack2";
+					cState.animationChanged = true;
+                }
                 else
-                    animation.CrossFade("Attack1");
+                {
+                    //animation.CrossFade("Attack1");
+					cState.animationName = "Attack1";
+					cState.animationChanged = true;
+                }
 
                 currentState = State.Attacking;
                 cState.currentState = currentState;
