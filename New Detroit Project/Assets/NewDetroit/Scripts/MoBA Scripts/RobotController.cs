@@ -21,11 +21,8 @@ public class RobotController : HeroeController
 	public GameObject cubeColliderSword;
 	public GameObject skelterShot;
 	private GameObject fireShotInst;
-	private bool timeToShoot;
-	private float timeToShootCD=1.7f;
 	private bool shotActivated;
 	private float shotActivatedCD=5f;
-	private bool thirdBasicAttack=false;
 	//Time counts
 	private float timeCountLife = 0;
 
@@ -117,8 +114,7 @@ public class RobotController : HeroeController
 		//set owner to sphere collider sword
 		//this.sphereSword.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 
-		//Set the collider cubes in both hands
-		//Right hand
+		//Set the collider cubes in the sword
 		Transform sword = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Cylinder002/cuchilla");
 		GameObject cubeColliderInst = (GameObject) Instantiate(cubeColliderSword, sword.position + new Vector3(0.4f, 1, 0.1f), sword.rotation);
 		cubeColliderInst.transform.parent = sword;
@@ -126,7 +122,6 @@ public class RobotController : HeroeController
 		
 		//Set the type of heroe
 		this.type = TypeHeroe.Robot;
-		timeToShoot = false;
 		shotActivated = false;
 
 		//Initializes the cooldowns of skills
@@ -175,23 +170,18 @@ public class RobotController : HeroeController
 				}
 				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
 				{
-					if (fireShotInst != null)
-					{
-						Destroy(fireShotInst);
-						timeToShoot = false;
-						fireShotInst = null;
-						timeToShootCD = 1.7f;
-					}
 					animation.CrossFade("Attack3");
+					//----------------------------
+					if (fireShotInst != null)
+						Destroy(fireShotInst);
 					skelterShot.GetComponent<MeshRenderer> ().enabled = false;
 					fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
-					fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
 					fireShotInst.GetComponent<RobotShot>().SetDamage(75);
-					if (!timeToShoot)
-					{
-						fireShotInst.transform.parent = gun;
-						timeToShoot = true;
-					}
+					fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
+					fireShotInst.GetComponent<RobotShot>().setSpeed(2);
+					fireShotInst.GetComponent<RobotShot>().setDirection(transform.forward);
+					fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
+					fireShotInst.transform.parent = gun;
 					Destroy(fireShotInst, 2.5f);
 				}
 				doingSecondaryAnim= true; 
@@ -213,22 +203,18 @@ public class RobotController : HeroeController
 					}
 				}
 
-				if (animation.IsPlaying("Attack3") && !thirdBasicAttack)
+				if (animation.IsPlaying("Attack3") && fireShotInst == null)
 				{
 					skelterShot.GetComponent<MeshRenderer> ().enabled = false;
 					fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
-					fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
 					fireShotInst.GetComponent<RobotShot>().SetDamage(75);
-					if (!timeToShoot)
-					{
-						fireShotInst.transform.parent = gun;
-						timeToShoot = true;
-					}
+					fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
+					fireShotInst.GetComponent<RobotShot>().setSpeed(2);
+					fireShotInst.GetComponent<RobotShot>().setDirection(transform.forward);
+					fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
+					fireShotInst.transform.parent = gun;
 					Destroy(fireShotInst, 2.5f);
-					thirdBasicAttack = true;
 				}
-				else if (!animation.IsPlaying("Attack3"))
-				         thirdBasicAttack = false;
 			}
 			// Movement
 			else if (state == StateHeroe.Run)
@@ -279,31 +265,31 @@ public class RobotController : HeroeController
 			}
 		}
 
-		if (timeToShoot)
-		{
-			if (timeToShootCD <= 0)
-			{
-				timeToShootCD = 1.7f;
-				timeToShoot = false;
-
-				//fireShotInst.transform.position += Vector3.forward*5;
-				//fireShotInst.AddComponent<Rigidbody>();
-				//fireShotInst.rigidbody.AddForce(Vector3.forward*15, ForceMode.Impulse);
-			}
-			else timeToShootCD -= Time.deltaTime;
-		}
-
-		if (!timeToShoot)
-		{
-			if (fireShotInst != null)
-			{
-				fireShotInst.transform.parent = null;
-//				fireShotInst.rigidbody.AddForce(transform.forward*4, ForceMode.Impulse);
-				fireShotInst.transform.position += transform.forward*2;
-//				transform.forward
-//				fireShotInst.rigidbody.AddForce(this.transform.position, ForceMode.Impulse);
-			}
-		}
+//		if (timeToShoot)
+//		{
+//			if (timeToShootCD <= 0)
+//			{
+//				timeToShootCD = 1.7f;
+//				timeToShoot = false;
+//
+//				//fireShotInst.transform.position += Vector3.forward*5;
+//				//fireShotInst.AddComponent<Rigidbody>();
+//				//fireShotInst.rigidbody.AddForce(Vector3.forward*15, ForceMode.Impulse);
+//			}
+//			else timeToShootCD -= Time.deltaTime;
+//		}
+//
+//		if (!timeToShoot)
+//		{
+//			if (fireShotInst != null)
+//			{
+//				fireShotInst.transform.parent = null;
+////				fireShotInst.rigidbody.AddForce(transform.forward*4, ForceMode.Impulse);
+//				fireShotInst.transform.position += transform.forward*2;
+////				transform.forward
+////				fireShotInst.rigidbody.AddForce(this.transform.position, ForceMode.Impulse);
+//			}
+//		}
 	}
 }
 

@@ -4,29 +4,34 @@ using System.Collections;
 public class RobotShot : ParticleDamage {
 
 	private GameObject owner;
+	private System.Collections.Generic.List<Collider> unitList;
+	private float speed, timeToShot;
+	private Vector3 direction;
 
-	public System.Collections.Generic.List<Collider> unitList = new System.Collections.Generic.List<Collider>();
+
+	//----------------------------------------------------------------------------------
 
 	// Use this for initialization
 	void Start () {
-	
+		unitList = new System.Collections.Generic.List<Collider>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
-
-	// Update the owner
-	public void setOwner(GameObject owner)
+	void Update () 
 	{
-		this.owner = owner;
+		if (timeToShot <= 0) 
+		{
+			if (transform.parent != null)
+				transform.parent = null;
+			transform.position += direction * speed;
+		}
+		else
+			timeToShot -= Time.deltaTime;
 	}
 
 	void OnTriggerEnter(Collider other)
 	{
-		Debug.Log(other.tag);
-		if (other.gameObject.name != owner.name)
+		if (owner != null && other.gameObject.name != owner.name)
 		{
 			if (other.tag == "Player")
 			{
@@ -61,4 +66,13 @@ public class RobotShot : ParticleDamage {
 			}
 		}
 	}
+
+
+	//--------------------------------------------------------------------------------
+
+
+	public void setOwner(GameObject owner) { this.owner = owner; }
+	public void setSpeed(float speed) { this.speed = speed; }
+	public void setTimeToShot(float timeToShot) { this.timeToShot = timeToShot; }
+	public void setDirection(Vector3 direction) { this.direction = direction; }
 }
