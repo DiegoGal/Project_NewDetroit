@@ -160,7 +160,9 @@ public class UnitHeavyArtillery : UnitArtillery
                     if (attackCadenceAux <= 0)
                     {
                         launchRocket = true;
-                        animation.Play("Deployment-Shot");
+                        //animation.Play("Deployment-Shot");
+						cState.animationName = "Deployment-Shot";
+						cState.animationChanged = true;
                         if (enemySelected)
                             transform.LookAt(enemySelected.transform);
 
@@ -446,7 +448,6 @@ public class UnitHeavyArtillery : UnitArtillery
                 animation.CrossFade("Idle Wait Deployed");*/
             else if (animationName == "Attack2")
             {
-            	Debug.Log("Ataque secundario");
                 //animation.CrossFade("Deployment-Shot");
 				cState.animationName = "Deployment-Shot";
 				cState.animationChanged = true;
