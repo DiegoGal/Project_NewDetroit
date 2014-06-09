@@ -537,7 +537,7 @@ public class ArmyController : MonoBehaviour
 		Vector3 origDestiny = destiny;
 		//Esquina superior izquierda
 		int squareNum = (truncateRadious * truncateRadious);
-		int alpha = 2;
+		int alpha = 3;
 		float beta = 0.5f;
 		int cont = 0;
 		int row = 0;
