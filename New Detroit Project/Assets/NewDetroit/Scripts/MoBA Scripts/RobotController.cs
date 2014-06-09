@@ -21,8 +21,9 @@ public class RobotController : HeroeController
 	public GameObject cubeColliderSword;
 	public GameObject skelterShot;
 	private GameObject fireShotInst;
-	private bool shotActivated;
-	private float shotActivatedCD=5f;
+	//second skill
+	public GameObject skelterTurn;
+	private GameObject turnInst;
 	//Time counts
 	private float timeCountLife = 0;
 
@@ -122,7 +123,6 @@ public class RobotController : HeroeController
 		
 		//Set the type of heroe
 		this.type = TypeHeroe.Robot;
-		shotActivated = false;
 
 		//Initializes the cooldowns of skills
 		cooldown1total = COOLDOWN_SKILL_1; cooldown2total = COOLDOWN_SKILL_2; cooldown3total = COOLDOWN_SKILL_3;
@@ -167,6 +167,14 @@ public class RobotController : HeroeController
 				else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
 				{
 					animation.CrossFade("Attack2");
+					//----------------------------
+					turnInst = (GameObject)Instantiate(skelterTurn, transform.position + Vector3.up, transform.rotation);
+
+					turnInst.GetComponent<RobotTurn>().SetDamage(75);
+					turnInst.GetComponent<RobotTurn>().setOwner(gameObject);
+					turnInst.GetComponent<RobotTurn>().setTimeToTurn(1f);
+
+					Destroy(turnInst, 5f);
 				}
 				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
 				{
@@ -264,32 +272,6 @@ public class RobotController : HeroeController
 				doingSecondaryAnim = false;
 			}
 		}
-
-//		if (timeToShoot)
-//		{
-//			if (timeToShootCD <= 0)
-//			{
-//				timeToShootCD = 1.7f;
-//				timeToShoot = false;
-//
-//				//fireShotInst.transform.position += Vector3.forward*5;
-//				//fireShotInst.AddComponent<Rigidbody>();
-//				//fireShotInst.rigidbody.AddForce(Vector3.forward*15, ForceMode.Impulse);
-//			}
-//			else timeToShootCD -= Time.deltaTime;
-//		}
-//
-//		if (!timeToShoot)
-//		{
-//			if (fireShotInst != null)
-//			{
-//				fireShotInst.transform.parent = null;
-////				fireShotInst.rigidbody.AddForce(transform.forward*4, ForceMode.Impulse);
-//				fireShotInst.transform.position += transform.forward*2;
-////				transform.forward
-////				fireShotInst.rigidbody.AddForce(this.transform.position, ForceMode.Impulse);
-//			}
-//		}
 	}
 }
 
