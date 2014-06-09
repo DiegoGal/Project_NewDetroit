@@ -43,7 +43,7 @@ public class FireballAttack : ParticleDamage
             }
             else if (other.tag == "Minion")
             {
-                if (!unitList.Contains(other))
+                if (!unitList.Contains(other) && owner.GetComponent<CTeam>().teamNumber != other.GetComponent<CTeam>().teamNumber)
                 {
                     // For damage
                     UnitController otherUC = other.GetComponent<UnitController>();

@@ -76,11 +76,13 @@ public class UnitEngineer : UnitController
     public AudioClip sfxRepairOrder;
     public AudioClip sfxConquerOrder;
 
+    private static float attackCadAuxEngineer = 2.5f;
+
     public override void Start ()
     {
         base.Start();
         basicAttackPower = secondaryAttackPower = attackPower;
-        attackCadenceAux = 2.5f;
+        attackCadenceAux = attackCadAuxEngineer;
         attackCadence = 3.2f;
         construct = conquest = false;
     }
@@ -107,11 +109,16 @@ public class UnitEngineer : UnitController
         {
             
             case EngineerState.Waiting:
-                animation.Play("Idle Wait");
+                //animation.Play("Idle Wait");
+                cState.animationName = "Idle Wait";
+			    cState.animationChanged = true;
 
                 break;
             case EngineerState.Repairing:
-                animation.Play("Build");
+                //animation.Play("Build");
+                cState.animationName = "Build";
+			    cState.animationChanged = true;
+                
                 actualEngineerTime += Time.deltaTime;
                 bool repaired = false;
                 if (actualEngineerTime >= engineerTime)
@@ -125,7 +132,9 @@ public class UnitEngineer : UnitController
                         currentEngineerState = EngineerState.None;
 						cState.currentEngineerState = currentEngineerState;
 
-                        animation.Play("Idle01");
+                        //animation.Play("Idle01");
+                        cState.animationName = "Idle";
+                        cState.animationChanged = true;
 
                         // hide the hammer
                         hammerInst.SetActive(false);
@@ -134,7 +143,10 @@ public class UnitEngineer : UnitController
                 }
                 break;
             case EngineerState.Conquering:
-                animation.Play("Capture");
+                //animation.Play("Capture");
+                cState.animationName = "Capture";
+                cState.animationChanged = true;
+
                 actualEngineerTime += Time.deltaTime;
                 conquest = false;
                 if (actualEngineerTime >= engineerTime)
@@ -148,7 +160,10 @@ public class UnitEngineer : UnitController
                         currentEngineerState = EngineerState.None;
 						cState.currentEngineerState = currentEngineerState;
 
-                        animation.Play("Idle01");
+                        //animation.Play("Idle01");
+                        cState.animationName = "Idle";
+                        cState.animationChanged = true;
+
                         Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
                         
                         // hide the laptop
@@ -158,7 +173,10 @@ public class UnitEngineer : UnitController
                 }
                 break;
             case EngineerState.Constructing:
-                animation.Play("Build");
+                //animation.Play("Build");
+                cState.animationName = "Build";
+                cState.animationChanged = true;
+
                 actualEngineerTime += Time.deltaTime;
                 construct = false;
                 if (currentItem.GetComponent<TowerArmy>() != null)
@@ -175,7 +193,9 @@ public class UnitEngineer : UnitController
 							cState.currentEngineerState = currentEngineerState;
 
                             currentItem.GetComponent<TowerArmy>().SetActiveMaterial();
-                            animation.Play("Idle01");
+                            //animation.Play("Idle01");
+                            cState.animationName = "Idle";
+                            cState.animationChanged = true;
 
                             // hide the hammer
                             hammerInst.SetActive(false);
@@ -197,7 +217,9 @@ public class UnitEngineer : UnitController
 							cState.currentEngineerState = currentEngineerState;
 
                             currentItem.GetComponent<Warehouse>().SetActiveMaterial();
-                            animation.Play("Idle01");
+                            //animation.Play("Idle01");
+                            cState.animationName = "Idle";
+                            cState.animationChanged = true;
 
                             // hide the hammer
                             hammerInst.SetActive(false);
@@ -316,7 +338,10 @@ public class UnitEngineer : UnitController
                     currentEngineerState = EngineerState.None;
 					cState.currentEngineerState = currentEngineerState;
 
-                    animation.Play("Idle01");
+                    //animation.Play("Idle01");
+                    cState.animationName = "Idle";
+                    cState.animationChanged = true;
+
                     newTGConstruct = newWConstruct = false;
                 }
                 break;
@@ -366,7 +391,10 @@ public class UnitEngineer : UnitController
                     currentEngineerState = EngineerState.None;
 					cState.currentEngineerState = currentEngineerState;
 
-                    animation.Play("Idle01");
+                    //animation.Play("Idle01");
+                    cState.animationName = "Idle";
+                    cState.animationChanged = true;
+
                     newTGConstruct = newWConstruct = false;
                 }
                 break;
@@ -386,7 +414,7 @@ public class UnitEngineer : UnitController
             GetComponent<NavMeshAgent>().destination = transform.position;
 
             transform.LookAt(enemySelected.transform);
-
+            attackCadenceAux = attackCadAuxEngineer;
 
             /* if (newFireball)
                  Destroy(newFireball.gameObject);*/
@@ -407,7 +435,7 @@ public class UnitEngineer : UnitController
     protected override void UpdateAttacking ()
     {
         attackCadenceAux -= Time.deltaTime;
-
+        float timero = animation[cState.animationName].time;
         float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
         if (enemySelected)
         {
@@ -465,7 +493,7 @@ public class UnitEngineer : UnitController
 						cState.currentState = currentState;
 
                         PlayAnimationCrossFade("Idle01");
-                        attackCadenceAux = 2.5f;
+                        attackCadenceAux = attackCadAuxEngineer;
                     }
                 }
             }
@@ -478,7 +506,7 @@ public class UnitEngineer : UnitController
                 GetComponent<NavMeshAgent>().destination = destiny;
 
                 PlayAnimationCrossFade("Walk");
-                attackCadenceAux = 2.5f;
+                attackCadenceAux = attackCadAuxEngineer;
             }
             else
             {
@@ -487,7 +515,7 @@ public class UnitEngineer : UnitController
                 currentState = State.Idle;
 				cState.currentState = currentState;
 
-                attackCadenceAux = 2.5f;
+                attackCadenceAux = attackCadAuxEngineer;
                 PlayAnimationCrossFade("Idle01");
             }
         }
@@ -498,7 +526,7 @@ public class UnitEngineer : UnitController
 			cState.currentState = currentState;
 
             PlayAnimationCrossFade("Idle01");
-            attackCadenceAux = 2.5f;
+            attackCadenceAux = attackCadAuxEngineer;
         }
     }
 
@@ -573,7 +601,7 @@ public class UnitEngineer : UnitController
         // if it is a TN
         else if (destTransform.name == "Tower Neutral")
         {
-            attackCadenceAux = 2.5f;
+            attackCadenceAux = attackCadAuxEngineer;
             newTGConstruct = newWConstruct = false;
 
             if (destTransform.GetComponent<BuildingController>().team.teamNumber != teamNumber) // if it's not in the same team
@@ -613,7 +641,7 @@ public class UnitEngineer : UnitController
         {
             LeaveQueues ();
 
-            attackCadenceAux = 2.5f;
+            attackCadenceAux = attackCadAuxEngineer;
             GameObject comp1 = null;
             GameObject comp2 = null;
             currentItem = destTransform;
@@ -668,7 +696,7 @@ public class UnitEngineer : UnitController
         {
             LeaveQueues();
 
-            attackCadenceAux = 2.5f;
+            attackCadenceAux = attackCadAuxEngineer;
             currentItem = destTransform;
             GameObject comp1 = null;
             GameObject comp2 = null;
@@ -727,7 +755,7 @@ public class UnitEngineer : UnitController
             currentEngineerState = EngineerState.None;
             cState.currentEngineerState = currentEngineerState;
 
-            attackCadenceAux = 2.5f;
+            attackCadenceAux = attackCadAuxEngineer;
             base.RightClickOnSelected(destiny, destTransform);
         }
         else
