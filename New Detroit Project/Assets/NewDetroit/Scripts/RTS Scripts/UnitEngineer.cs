@@ -77,6 +77,7 @@ public class UnitEngineer : UnitController
     public AudioClip sfxConquerOrder;
 
     private static float attackCadAuxEngineer = 2.5f;
+    private IEnumerator coroutineID;
 
     public override void Start ()
     {
@@ -400,7 +401,7 @@ public class UnitEngineer : UnitController
                 break;
         }
     }
-
+    
     protected override void UpdateGoingToAnEnemy ()
     {
         // 1- comprobamos si el enemigo está "a mano" y se le puede atacar
@@ -432,7 +433,111 @@ public class UnitEngineer : UnitController
         }
     }
 
+    private IEnumerator WaitAndCallback(float waitTime, float enemyDist)
+    {
+        yield return new WaitForSeconds(waitTime);
+
+        if (enemySelected)
+        {
+            transform.LookAt(enemySelected.transform);
+
+            if (!newFireball)
+            {
+                // Instanciate a new Fireball
+                newFireball = Instantiate
+                (
+                    fireball,
+                    dummyHand.transform.position,
+                    //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
+                    new Quaternion()
+                ) as GameObject;
+                newFireball.rigidbody.isKinematic = false;
+                newFireball.transform.name = "Fireball";
+                newFireball.transform.parent = dummyHand;
+                newFireball.transform.rotation = transform.rotation;
+
+                newFireball.transform.GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
+                newFireball.transform.GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
+                newFireball.transform.GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
+
+
+                attackCadenceAux = attackCadence;
+                Vector3 dir = enemySelected.transform.position - newFireball.transform.position;
+                dir = dir.normalized;
+                fireballDir = new Vector3
+                (
+                    dir.x * 8.0f * (enemyDist / maxAttackDistance),
+                    7,
+                    dir.z * 8.0f * (enemyDist / maxAttackDistance)
+                );
+                newFireball.transform.parent = null;
+                newFireball.rigidbody.AddForce(fireballDir, ForceMode.Impulse);
+            }
+
+            if (enemySelected.GetComponent<CLife>().currentLife <= 0.0f)
+            {
+                // the enemy has die
+                enemySelected = null;
+                currentState = State.Idle;
+                cState.currentState = currentState;
+
+                PlayAnimationCrossFade("Idle01");
+                attackCadenceAux = attackCadAuxEngineer;
+            }
+        }
+        else
+        {
+            transform.LookAt(new Vector3());
+        }
+    }
+    
     protected override void UpdateAttacking ()
+    {
+        if (enemySelected)
+        {
+            float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
+
+            if (enemyDist <= maxAttackDistance)
+            {
+                float timero = animation[cState.animationName].time % animation[cState.animationName].length;
+                if (timero <= 0.02f)
+                    StartCoroutine(coroutineID = WaitAndCallback(animation[cState.animationName].length * 0.78125f - timero, enemyDist));
+                
+            }
+            else if (enemyDist <= visionSphereRadius)
+            {
+                currentState = State.GoingToAnEnemy;
+                cState.currentState = currentState;
+
+                this.destiny = enemySelected.transform.position;
+                GetComponent<NavMeshAgent>().destination = destiny;
+
+                PlayAnimationCrossFade("Walk");
+                this.StopAllCoroutines();
+            }
+            else
+            {
+                enemySelected = null;
+                currentState = State.Idle;
+                cState.currentState = currentState;
+                PlayAnimationCrossFade("Idle01");
+                this.StopAllCoroutines();
+            }
+        }
+        else // the enemy is no longer alive
+        {
+            enemySelected = null;
+            currentState = State.Idle;
+            cState.currentState = currentState;
+
+            PlayAnimationCrossFade("Idle01");
+            attackCadenceAux = attackCadAuxEngineer;
+            this.StopAllCoroutines();
+        }
+
+    }
+
+    /*protected override void UpdateAttacking ()
     {
         attackCadenceAux -= Time.deltaTime;
         float timero = animation[cState.animationName].time;
@@ -528,7 +633,7 @@ public class UnitEngineer : UnitController
             PlayAnimationCrossFade("Idle01");
             attackCadenceAux = attackCadAuxEngineer;
         }
-    }
+    }*/
 
     public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
     {
