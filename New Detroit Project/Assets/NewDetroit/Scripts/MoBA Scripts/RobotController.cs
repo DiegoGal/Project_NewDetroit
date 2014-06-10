@@ -28,6 +28,10 @@ public class RobotController : HeroeController
 	private float timeCountLife = 0;
 
 	public Transform gun;
+	public GameObject fireBall;
+	private float timeCircleCD = 5f;
+	private bool timeCircle=false;
+
 	//-----------------------------------------------------------------------------------------------------------------
 
 
@@ -116,6 +120,7 @@ public class RobotController : HeroeController
 		//this.sphereSword.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
 
 		//Set the collider cubes in the sword
+
 		Transform sword = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Cylinder002/cuchilla");
 		GameObject cubeColliderInst = (GameObject) Instantiate(cubeColliderSword, sword.position + new Vector3(0.4f, 1, 0.1f), sword.rotation);
 		cubeColliderInst.transform.parent = sword;
@@ -163,6 +168,12 @@ public class RobotController : HeroeController
 				if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
 				{
 					animation.CrossFade("Attack1");
+					//----------------------------
+					Transform head = transform.FindChild ("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
+					GameObject fireCircleInst = (GameObject)Instantiate(fireBall, head.position+Vector3.down*0.5f, transform.rotation);
+					fireCircleInst.transform.parent = head;
+					timeCircle = true;
+					Destroy(fireCircleInst, 1.7f);
 				}
 				else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
 				{
@@ -272,7 +283,29 @@ public class RobotController : HeroeController
 				doingSecondaryAnim = false;
 			}
 		}
-	}
+
+		if (timeCircle)
+		{
+			if (timeCircleCD <= 0) 
+			{
+				timeCircleCD = 5f;
+				timeCircle = false;
+			}
+			else
+				timeCircleCD -= Time.deltaTime;
+		}
+
+		if (timeCircle)
+		{
+			this.defP = this.defP*3;
+			this.defM = this.defM*3;
+		}
+		else
+		{
+			this.defP = this.defP;
+			this.defM = this.defM;
+		}
+
 }
 
 
