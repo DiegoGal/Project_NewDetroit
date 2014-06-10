@@ -158,154 +158,154 @@ public class RobotController : HeroeController
 	//--------------------------------------------------------------------------------------------
 	//Animation
 	// Only can do an action if hero don't do a secondary attack
-	public void UpdateAnimation()
-	{
-		if (!doingSecondaryAnim)
-		{
-			// Secondary attack
-			if (state == StateHeroe.AttackSecond)
-			{
-				if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
-				{
-					animation.CrossFade("Attack1");
-					//----------------------------
-					Transform head = transform.FindChild ("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
-					GameObject fireCircleInst = (GameObject)Instantiate(fireBall, head.position+Vector3.down*0.5f, transform.rotation);
-					fireCircleInst.transform.parent = head;
-					timeCircle = true;
-					Destroy(fireCircleInst, 1.7f);
-				}
-				else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
-				{
-					animation.CrossFade("Attack2");
-					//----------------------------
-					turnInst = (GameObject)Instantiate(skelterTurn, transform.position + Vector3.up, transform.rotation);
+    public void UpdateAnimation()
+    {
+        if (!doingSecondaryAnim)
+        {
+            // Secondary attack
+            if (state == StateHeroe.AttackSecond)
+            {
+                if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
+                {
+                    animation.CrossFade("Attack1");
+                    //----------------------------
+                    Transform head = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
+                    GameObject fireCircleInst = (GameObject)Instantiate(fireBall, head.position + Vector3.down * 0.5f, transform.rotation);
+                    fireCircleInst.transform.parent = head;
+                    timeCircle = true;
+                    Destroy(fireCircleInst, 1.7f);
+                }
+                else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
+                {
+                    animation.CrossFade("Attack2");
+                    //----------------------------
+                    turnInst = (GameObject)Instantiate(skelterTurn, transform.position + Vector3.up, transform.rotation);
 
-					turnInst.GetComponent<RobotTurn>().SetDamage(75);
-					turnInst.GetComponent<RobotTurn>().setOwner(gameObject);
-					turnInst.GetComponent<RobotTurn>().setTimeToTurn(1f);
+                    turnInst.GetComponent<RobotTurn>().SetDamage(75);
+                    turnInst.GetComponent<RobotTurn>().setOwner(gameObject);
+                    turnInst.GetComponent<RobotTurn>().setTimeToTurn(1f);
 
-					Destroy(turnInst, 5f);
-				}
-				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
-				{
-					animation.CrossFade("Attack3");
-					//----------------------------
-					if (fireShotInst != null)
-						Destroy(fireShotInst);
-					skelterShot.GetComponent<MeshRenderer> ().enabled = false;
-					fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
-					fireShotInst.GetComponent<RobotShot>().SetDamage(75);
-					fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
-					fireShotInst.GetComponent<RobotShot>().setSpeed(2);
-					fireShotInst.GetComponent<RobotShot>().setDirection(transform.forward);
-					fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
-					fireShotInst.transform.parent = gun;
-					Destroy(fireShotInst, 2.5f);
-				}
-				doingSecondaryAnim= true; 
-			}
-			// Basic attack
-			else if (state == StateHeroe.AttackBasic)
-			{
-				if (!animation.IsPlaying("Attack1") && !animation.IsPlaying("Attack2") && !animation.IsPlaying("Attack3"))
-				{
-					animation.CrossFade("Attack1");
-					animation["Attack1"].speed =1.2f;
-					animation.CrossFadeQueued("Attack2").speed = 1.2f;
-					animation.CrossFadeQueued("Attack3").speed = 1.2f;
-					for (int i = 0; i < 20; i ++)
-					{
-						animation.CrossFadeQueued("Attack1").speed = 1.2f;
-						animation.CrossFadeQueued("Attack2").speed = 1.2f;
-						animation.CrossFadeQueued("Attack3").speed = 1.2f;
-					}
-				}
+                    Destroy(turnInst, 5f);
+                }
+                else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
+                {
+                    animation.CrossFade("Attack3");
+                    //----------------------------
+                    if (fireShotInst != null)
+                        Destroy(fireShotInst);
+                    skelterShot.GetComponent<MeshRenderer>().enabled = false;
+                    fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
+                    fireShotInst.GetComponent<RobotShot>().SetDamage(75);
+                    fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
+                    fireShotInst.GetComponent<RobotShot>().setSpeed(2);
+                    fireShotInst.GetComponent<RobotShot>().setDirection(transform.forward);
+                    fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
+                    fireShotInst.transform.parent = gun;
+                    Destroy(fireShotInst, 2.5f);
+                }
+                doingSecondaryAnim = true;
+            }
+            // Basic attack
+            else if (state == StateHeroe.AttackBasic)
+            {
+                if (!animation.IsPlaying("Attack1") && !animation.IsPlaying("Attack2") && !animation.IsPlaying("Attack3"))
+                {
+                    animation.CrossFade("Attack1");
+                    animation["Attack1"].speed = 1.2f;
+                    animation.CrossFadeQueued("Attack2").speed = 1.2f;
+                    animation.CrossFadeQueued("Attack3").speed = 1.2f;
+                    for (int i = 0; i < 20; i++)
+                    {
+                        animation.CrossFadeQueued("Attack1").speed = 1.2f;
+                        animation.CrossFadeQueued("Attack2").speed = 1.2f;
+                        animation.CrossFadeQueued("Attack3").speed = 1.2f;
+                    }
+                }
 
-				if (animation.IsPlaying("Attack3") && fireShotInst == null)
-				{
-					skelterShot.GetComponent<MeshRenderer> ().enabled = false;
-					fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
-					fireShotInst.GetComponent<RobotShot>().SetDamage(75);
-					fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
-					fireShotInst.GetComponent<RobotShot>().setSpeed(2);
-					fireShotInst.GetComponent<RobotShot>().setDirection(transform.forward);
-					fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
-					fireShotInst.transform.parent = gun;
-					Destroy(fireShotInst, 2.5f);
-				}
-			}
-			// Movement
-			else if (state == StateHeroe.Run)
-			{
-				animation.CrossFade("Run");
-			}
-			else if (state == StateHeroe.Walk)
-			{
-				animation.CrossFade("Walk");
-			}
-			else if (state == StateHeroe.Dead)
-			{
-				animation.CrossFade("Die");
-				this.life.currentLife = 0;
-				this.transform.position = this.initialPosition;
-				isMine = false;
-				//this.GetComponent<ThirdPersonController>().enabled = false;
-			}
-			else if (this.state == StateHeroe.Recover)
-			{
-				if (this.timeCountLife < 1) this.timeCountLife += Time.deltaTime;
-				else
-				{
-					this.timeCountLife = 0;
-					this.life.currentLife += 20;
-					if (this.life.currentLife >= this.life.maximunLife)
-					{
-						this.life.currentLife = this.life.maximunLife;
-						this.state = StateHeroe.Idle;
-						isMine = true;
-					}
-				}
-			}
-			// Idle
-			else
-			{
-				if (!animation.IsPlaying("Idle01"))
-				{
-					animation.CrossFade("Idle01");
-				}
-			}
-		}
-		else
-		{
-			if (!animation.isPlaying) 
-			{
-				doingSecondaryAnim = false;
-			}
-		}
+                if (animation.IsPlaying("Attack3") && fireShotInst == null)
+                {
+                    skelterShot.GetComponent<MeshRenderer>().enabled = false;
+                    fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
+                    fireShotInst.GetComponent<RobotShot>().SetDamage(75);
+                    fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
+                    fireShotInst.GetComponent<RobotShot>().setSpeed(2);
+                    fireShotInst.GetComponent<RobotShot>().setDirection(transform.forward);
+                    fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
+                    fireShotInst.transform.parent = gun;
+                    Destroy(fireShotInst, 2.5f);
+                }
+            }
+            // Movement
+            else if (state == StateHeroe.Run)
+            {
+                animation.CrossFade("Run");
+            }
+            else if (state == StateHeroe.Walk)
+            {
+                animation.CrossFade("Walk");
+            }
+            else if (state == StateHeroe.Dead)
+            {
+                animation.CrossFade("Die");
+                this.life.currentLife = 0;
+                this.transform.position = this.initialPosition;
+                isMine = false;
+                //this.GetComponent<ThirdPersonController>().enabled = false;
+            }
+            else if (this.state == StateHeroe.Recover)
+            {
+                if (this.timeCountLife < 1) this.timeCountLife += Time.deltaTime;
+                else
+                {
+                    this.timeCountLife = 0;
+                    this.life.currentLife += 20;
+                    if (this.life.currentLife >= this.life.maximunLife)
+                    {
+                        this.life.currentLife = this.life.maximunLife;
+                        this.state = StateHeroe.Idle;
+                        isMine = true;
+                    }
+                }
+            }
+            // Idle
+            else
+            {
+                if (!animation.IsPlaying("Idle01"))
+                {
+                    animation.CrossFade("Idle01");
+                }
+            }
+        }
+        else
+        {
+            if (!animation.isPlaying)
+            {
+                doingSecondaryAnim = false;
+            }
+        }
 
-		if (timeCircle)
-		{
-			if (timeCircleCD <= 0) 
-			{
-				timeCircleCD = 5f;
-				timeCircle = false;
-			}
-			else
-				timeCircleCD -= Time.deltaTime;
-		}
+        if (timeCircle)
+        {
+            if (timeCircleCD <= 0)
+            {
+                timeCircleCD = 5f;
+                timeCircle = false;
+            }
+            else
+                timeCircleCD -= Time.deltaTime;
+        }
 
-		if (timeCircle)
-		{
-			this.defP = this.defP*3;
-			this.defM = this.defM*3;
-		}
-		else
-		{
-			this.defP = this.defP;
-			this.defM = this.defM;
-		}
-
+        if (timeCircle)
+        {
+            this.defP = this.defP * 3;
+            this.defM = this.defM * 3;
+        }
+        else
+        {
+            this.defP = this.defP;
+            this.defM = this.defM;
+        }
+    }
 }
 
 
