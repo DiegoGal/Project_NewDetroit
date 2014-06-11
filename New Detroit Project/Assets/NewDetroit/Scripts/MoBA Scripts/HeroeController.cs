@@ -105,7 +105,13 @@ public abstract class HeroeController : ControllableCharacter
 					rectanglePositiveMana,
 					rectangleNegativeMana,
 					rectangleLevel;
-	
+	//-------------------------------------------------------------------------------------------------------
+	// FLAGS
+	protected bool 	canRotate = false,	//Flag to turn
+					canMove = false, 	//Flag to move with WASD
+					extraSpeed = false;	//Flag to apply extra speed
+
+
 	// ------------------------------------------------------------------------------------------------------
 	// PRIVATE	
 	// Increment the level
@@ -386,12 +392,16 @@ public abstract class HeroeController : ControllableCharacter
 			// We store speed and direction seperately,
 			// so that when the character stands still we still have a valid forward direction
 			// moveDirection is always normalized, and we only update it if there is user input.
-			bool isOrcUsingAbility = state == HeroeController.StateHeroe.AttackSecond;
-            if (targetDirection != Vector3.zero && !isOrcUsingAbility)
+//			bool isOrcUsingAbility = state == HeroeController.StateHeroe.AttackSecond;
+//            if (targetDirection != Vector3.zero && !isOrcUsingAbility)
+			if (canRotate)
 			{
-				moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
-				//moveDirection = targetDirection;
-				moveDirection = moveDirection.normalized;
+				if (targetDirection != Vector3.zero)
+				{
+					moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+//					moveDirection = targetDirection;
+					moveDirection = moveDirection.normalized;
+				}
 			}
 			
 			// Smooth the speed based on the current target direction
@@ -402,14 +412,29 @@ public abstract class HeroeController : ControllableCharacter
 			float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);
 			
 			// Pick speed modifier
-			if (animation.IsPlaying("BullStrike")) targetSpeed = extraRunSpeed;
-            else if (!animation.IsPlaying("FloorHit") && !animation.IsPlaying("Burp") && state != StateHeroe.AttackBasic &&
-            			(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W)))
+//			if (animation.IsPlaying("BullStrike")) targetSpeed = extraRunSpeed;
+//            else if (!animation.IsPlaying("FloorHit") && !animation.IsPlaying("Burp") && state != StateHeroe.AttackBasic &&
+//            			(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W)))
+//			{
+//				if (Input.GetKey(KeyCode.LeftShift)) targetSpeed = runSpeed;
+//				else targetSpeed = walkSpeed;
+//			}
+//			else targetSpeed = 0;
+
+			if (extraSpeed)  
+				targetSpeed = extraRunSpeed;
+			else if (canMove)
 			{
-				if (Input.GetKey(KeyCode.LeftShift)) targetSpeed = runSpeed;
-				else targetSpeed = walkSpeed;
+				if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
+				{
+					if (Input.GetKey(KeyCode.LeftShift)) 
+						targetSpeed = runSpeed;
+					else 
+						targetSpeed = walkSpeed;
+				}
 			}
-			else targetSpeed = 0;
+			else 
+				targetSpeed = 0;
 			
 			moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
 			

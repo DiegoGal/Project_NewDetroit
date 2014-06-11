@@ -27,8 +27,9 @@ public class RobotController : HeroeController
 	//Time counts
 	private float timeCountLife = 0;
 
-	public Transform gun;
+	private Transform gun;
 	public GameObject fireBall;
+	private GameObject fireCircleInst;
 	private float timeCircleCD = 5f;
 	private bool timeCircle=false;
 
@@ -167,25 +168,31 @@ public class RobotController : HeroeController
             {
                 if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
                 {
-                    animation.CrossFade("Attack1");
+                    //animation.CrossFade("Attack1");
                     //----------------------------
                     Transform head = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
-                    GameObject fireCircleInst = (GameObject)Instantiate(fireBall, head.position + Vector3.down * 0.5f, transform.rotation);
+                    fireCircleInst = (GameObject)Instantiate(fireBall, head.position + Vector3.down * 0.5f, transform.rotation);
                     fireCircleInst.transform.parent = head;
                     timeCircle = true;
                     Destroy(fireCircleInst, 1.7f);
+					//------------------------------------
+					canRotate = true;
+					canMove = true;
+					doingSecondaryAnim = false;
                 }
                 else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
                 {
                     animation.CrossFade("Attack2");
                     //----------------------------
                     turnInst = (GameObject)Instantiate(skelterTurn, transform.position + Vector3.up, transform.rotation);
-
                     turnInst.GetComponent<RobotTurn>().SetDamage(75);
                     turnInst.GetComponent<RobotTurn>().setOwner(gameObject);
                     turnInst.GetComponent<RobotTurn>().setTimeToTurn(1f);
-
                     Destroy(turnInst, 5f);
+					//------------------------------------
+					canRotate = false;
+					canMove = false;
+					doingSecondaryAnim = true;
                 }
                 else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
                 {
@@ -202,8 +209,13 @@ public class RobotController : HeroeController
                     fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
                     fireShotInst.transform.parent = gun;
                     Destroy(fireShotInst, 2.5f);
+					//------------------------------------
+					canRotate = false;
+					canMove = false;
+					doingSecondaryAnim = true;
                 }
-                doingSecondaryAnim = true;
+				//------------------------------------
+				extraSpeed = false;
             }
             // Basic attack
             else if (state == StateHeroe.AttackBasic)
@@ -234,15 +246,27 @@ public class RobotController : HeroeController
                     fireShotInst.transform.parent = gun;
                     Destroy(fireShotInst, 2.5f);
                 }
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
             }
             // Movement
             else if (state == StateHeroe.Run)
             {
                 animation.CrossFade("Run");
+				//------------------------------------
+				canRotate = true;
+				canMove = true;
+				extraSpeed = false;
             }
             else if (state == StateHeroe.Walk)
             {
                 animation.CrossFade("Walk");
+				//------------------------------------
+				canRotate = true;
+				canMove = true;
+				extraSpeed = false;
             }
             else if (state == StateHeroe.Dead)
             {
@@ -251,6 +275,10 @@ public class RobotController : HeroeController
                 this.transform.position = this.initialPosition;
                 isMine = false;
                 //this.GetComponent<ThirdPersonController>().enabled = false;
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
             }
             else if (this.state == StateHeroe.Recover)
             {
@@ -266,6 +294,10 @@ public class RobotController : HeroeController
                         isMine = true;
                     }
                 }
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
             }
             // Idle
             else
@@ -274,11 +306,15 @@ public class RobotController : HeroeController
                 {
                     animation.CrossFade("Idle01");
                 }
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
             }
         }
         else
         {
-            if (!animation.isPlaying)
+			if (!animation.isPlaying)
             {
                 doingSecondaryAnim = false;
             }

@@ -222,6 +222,8 @@ public class OrcController : HeroeController
 					transform.Translate(Vector3.back * 2 + Vector3.down);
 					Destroy(snt, 5f);
 					snotActivated = true;
+					//--------------------------
+					extraSpeed = false;
 				}
 				else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
 				{
@@ -234,14 +236,16 @@ public class OrcController : HeroeController
 					spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
 					Destroy(spl, 1.5f);
 					splashActivated = true;
+					//--------------------------
+					extraSpeed = false;
 				}
 				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
 				{
 					animation.CrossFade("BullStrike");
 					//--------------------------------
-					//transform.Translate(Vector3.down * 2);
+//					transform.Translate(Vector3.down * 2);
 					smokeInst = (GameObject)Instantiate(smoke, transform.localPosition, transform.rotation);
-					//transform.Translate(Vector3.up * 2);
+//					transform.Translate(Vector3.up * 2);
 					Destroy(smokeInst, 5f);
 					smokeActivated = true;
 
@@ -252,9 +256,12 @@ public class OrcController : HeroeController
 					GetComponent<OrcBullStrikeAttack>().EnableSphereCollider();
 					GetComponent<OrcBullStrikeAttack>().SetDamage(attackP + 100);
 					this.gameObject.AddComponent<Rigidbody>();
-
-					//Debug.Break();
+					//--------------------------
+					extraSpeed = true;
 				}
+				//-----------------------------------
+				canMove = false;
+				canRotate = false;
 				doingSecondaryAnim= true;
 			}
 			// Basic attack
@@ -273,15 +280,27 @@ public class OrcController : HeroeController
 						animation.CrossFadeQueued("Attack03").speed = 1.2f;
 					}
 				}
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
 			}
 			// Movement
 			else if (state == StateHeroe.Run)
 			{
 				animation.CrossFade("Run");
+				//------------------------------------
+				canRotate = true;
+				canMove = true;
+				extraSpeed = false;
 			}
 			else if (state == StateHeroe.Walk)
 			{
 				animation.CrossFade("Walk");
+				//------------------------------------
+				canRotate = true;
+				canMove = true;
+				extraSpeed = false;
 			}
 			else if (state == StateHeroe.Dead)
 			{
@@ -289,6 +308,10 @@ public class OrcController : HeroeController
 				this.transform.position = this.initialPosition;
 				isMine = false;
 				//this.GetComponent<ThirdPersonController>().enabled = false;
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
 			}
 			else if (this.state == StateHeroe.Recover)
 			{
@@ -304,6 +327,10 @@ public class OrcController : HeroeController
 						isMine = true;
 					}
 				}
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
 			}
 			// Idle
 			else
@@ -313,6 +340,10 @@ public class OrcController : HeroeController
 					animation.CrossFade("Iddle01");
 					animation.CrossFadeQueued("Iddle02");
 				}
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
 			}
 		}
 		else
