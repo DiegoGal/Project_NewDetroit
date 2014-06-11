@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CFireballVisionSphere : MonoBehaviour {
+public class CGrenadeVisionSphere : MonoBehaviour {
 
     private GameObject owner;
     private int damage;
@@ -27,9 +27,9 @@ public class CFireballVisionSphere : MonoBehaviour {
                 transform.position,
                 new Quaternion()
             ) as GameObject;
-            newSplash.transform.name = "FireballSplash";
-            newSplash.GetComponent<FireballAttack>().SetDamage(damage);
-            newSplash.GetComponent<FireballAttack>().SetOwner(owner);
+            newSplash.transform.name = "GrenadeSplash";
+            newSplash.GetComponent<GrenadeAttack>().SetDamage(damage);
+            newSplash.GetComponent<GrenadeAttack>().SetOwner(owner);
             newSplash.AddComponent<Rigidbody>();
             newSplash.GetComponent<Rigidbody>().useGravity = false;
 

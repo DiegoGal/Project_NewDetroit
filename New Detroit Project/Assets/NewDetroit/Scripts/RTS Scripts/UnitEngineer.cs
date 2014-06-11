@@ -61,15 +61,15 @@ public class UnitEngineer : UnitController
     protected GameObject hammerInst;
 
     //For attacking1
-    public GameObject fireball;
-    private GameObject newFireball;
+    public GameObject grenade;
+    private GameObject newGrenade;
 
     // To knows if we done the job
     public bool construct;
     public bool conquest;
 
-    // To knows the direction of the fireball
-    public Vector3 fireballDir;
+    // To knows the direction of the grenade
+    public Vector3 grenadeDir;
 
     // audio sfx
     public AudioClip sfxBuildOrder;
@@ -78,6 +78,8 @@ public class UnitEngineer : UnitController
 
     private static float attackCadAuxEngineer = 2.5f;
     private IEnumerator coroutineID;
+
+    private bool attacked = false;
 
     public override void Start ()
     {
@@ -441,37 +443,37 @@ public class UnitEngineer : UnitController
         {
             transform.LookAt(enemySelected.transform);
 
-            if (!newFireball)
+            if (!newGrenade)
             {
-                // Instanciate a new Fireball
-                newFireball = Instantiate
+                // Instanciate a new grenade
+                newGrenade = Instantiate
                 (
-                    fireball,
+                    grenade,
                     dummyHand.transform.position,
                     //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
                     new Quaternion()
                 ) as GameObject;
-                newFireball.rigidbody.isKinematic = false;
-                newFireball.transform.name = "Fireball";
-                newFireball.transform.parent = dummyHand;
-                newFireball.transform.rotation = transform.rotation;
+                newGrenade.rigidbody.isKinematic = false;
+                newGrenade.transform.name = "Grenade";
+                newGrenade.transform.parent = dummyHand;
+                newGrenade.transform.rotation = transform.rotation;
 
-                newFireball.transform.GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
-                newFireball.transform.GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
-                newFireball.transform.GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
+                newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetOwner(this.gameObject);
+                newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetDamage((int)attackPower);
+                newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetDestroyTime(2.5f);
 
 
                 attackCadenceAux = attackCadence;
-                Vector3 dir = enemySelected.transform.position - newFireball.transform.position;
+                Vector3 dir = enemySelected.transform.position - newGrenade.transform.position;
                 dir = dir.normalized;
-                fireballDir = new Vector3
+                grenadeDir = new Vector3
                 (
                     dir.x * 8.0f * (enemyDist / maxAttackDistance),
                     7,
                     dir.z * 8.0f * (enemyDist / maxAttackDistance)
                 );
-                newFireball.transform.parent = null;
-                newFireball.rigidbody.AddForce(fireballDir, ForceMode.Impulse);
+                newGrenade.transform.parent = null;
+                newGrenade.rigidbody.AddForce(grenadeDir, ForceMode.Impulse);
             }
 
             if (enemySelected.GetComponent<CLife>().currentLife <= 0.0f)
@@ -489,6 +491,7 @@ public class UnitEngineer : UnitController
         {
             transform.LookAt(new Vector3());
         }
+        attacked = false;
     }
     
     protected override void UpdateAttacking ()
@@ -500,9 +503,11 @@ public class UnitEngineer : UnitController
             if (enemyDist <= maxAttackDistance)
             {
                 float timero = animation[cState.animationName].time % animation[cState.animationName].length;
-                if (timero <= 0.02f)
+                if ((!attacked))//(timero <= 0.3f) && 
+                {
                     StartCoroutine(coroutineID = WaitAndCallback(animation[cState.animationName].length * 0.78125f - timero, enemyDist));
-                
+                    attacked = true;
+                }
             }
             else if (enemyDist <= visionSphereRadius)
             {
@@ -514,6 +519,7 @@ public class UnitEngineer : UnitController
 
                 PlayAnimationCrossFade("Walk");
                 this.StopAllCoroutines();
+                attacked = false;
             }
             else
             {
@@ -522,6 +528,7 @@ public class UnitEngineer : UnitController
                 cState.currentState = currentState;
                 PlayAnimationCrossFade("Idle01");
                 this.StopAllCoroutines();
+                attacked = false;
             }
         }
         else // the enemy is no longer alive
@@ -533,6 +540,7 @@ public class UnitEngineer : UnitController
             PlayAnimationCrossFade("Idle01");
             attackCadenceAux = attackCadAuxEngineer;
             this.StopAllCoroutines();
+            attacked = false;
         }
 
     }

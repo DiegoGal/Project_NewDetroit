@@ -20,8 +20,8 @@ public class UnitEngineerRemote : ControllableCharacter
     public GameObject hammer;
 
     //For attacking1
-    public GameObject fireball;
-    private GameObject newFireball;
+    public GameObject grenade;
+    private GameObject newGrenade;
 
     GameObject newHammer; //instantiation of the hammer
     GameObject newLaptop; //instantiation of the laptop
@@ -33,8 +33,8 @@ public class UnitEngineerRemote : ControllableCharacter
 
     private float timeToNextWaitAnimation;
 
-    // To knows the direction of the fireball
-    public Vector3 fireballDir;
+    // To knows the direction of the grenade
+    public Vector3 grenadeDir;
 
     public void Awake()
     {
@@ -200,26 +200,26 @@ public class UnitEngineerRemote : ControllableCharacter
         {
             attackCadenceAux = 2.5f;
             animation.CrossFade("Attack1");
-            if (!newFireball)
+            if (!newGrenade)
             {
-                // Instanciate a new Fireball
-                newFireball = Instantiate
+                // Instanciate a new grenade
+                newGrenade = Instantiate
                 (
-                    fireball,
+                    grenade,
                     dummyHand.transform.position,
                     //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
                     new Quaternion()
                 ) as GameObject;
-                newFireball.rigidbody.isKinematic = false;
-                newFireball.transform.name = "Fireball";
-                newFireball.transform.parent = dummyHand;
-                newFireball.transform.rotation = transform.rotation;
-                newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
-                newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDamage(1);
-                newFireball.transform.FindChild("FireballVisionSphere").GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
+                newGrenade.rigidbody.isKinematic = false;
+                newGrenade.transform.name = "Grenade";
+                newGrenade.transform.parent = dummyHand;
+                newGrenade.transform.rotation = transform.rotation;
+                newGrenade.transform.FindChild("FireballVisionSphere").GetComponent<CGrenadeVisionSphere>().SetOwner(this.gameObject);
+                newGrenade.transform.FindChild("FireballVisionSphere").GetComponent<CGrenadeVisionSphere>().SetDamage(1);
+                newGrenade.transform.FindChild("FireballVisionSphere").GetComponent<CGrenadeVisionSphere>().SetDestroyTime(2.5f);
             }
 
-            newFireball.rigidbody.AddForce(fireballDir, ForceMode.Impulse);
+            newGrenade.rigidbody.AddForce(grenadeDir, ForceMode.Impulse);
 
         }
         else
