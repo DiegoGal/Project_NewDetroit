@@ -61,15 +61,15 @@ public class UnitEngineer : UnitController
     protected GameObject hammerInst;
 
     //For attacking1
-    public GameObject fireball;
-    private GameObject newFireball;
+    public GameObject grenade;
+    private GameObject newGrenade;
 
     // To knows if we done the job
     public bool construct;
     public bool conquest;
 
-    // To knows the direction of the fireball
-    public Vector3 fireballDir;
+    // To knows the direction of the grenade
+    public Vector3 grenadeDir;
 
     // audio sfx
     public AudioClip sfxBuildOrder;
@@ -443,37 +443,37 @@ public class UnitEngineer : UnitController
         {
             transform.LookAt(enemySelected.transform);
 
-            if (!newFireball)
+            if (!newGrenade)
             {
-                // Instanciate a new Fireball
-                newFireball = Instantiate
+                // Instanciate a new grenade
+                newGrenade = Instantiate
                 (
-                    fireball,
+                    grenade,
                     dummyHand.transform.position,
                     //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
                     new Quaternion()
                 ) as GameObject;
-                newFireball.rigidbody.isKinematic = false;
-                newFireball.transform.name = "Fireball";
-                newFireball.transform.parent = dummyHand;
-                newFireball.transform.rotation = transform.rotation;
+                newGrenade.rigidbody.isKinematic = false;
+                newGrenade.transform.name = "Grenade";
+                newGrenade.transform.parent = dummyHand;
+                newGrenade.transform.rotation = transform.rotation;
 
-                newFireball.transform.GetComponent<CFireballVisionSphere>().SetOwner(this.gameObject);
-                newFireball.transform.GetComponent<CFireballVisionSphere>().SetDamage((int)attackPower);
-                newFireball.transform.GetComponent<CFireballVisionSphere>().SetDestroyTime(2.5f);
+                newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetOwner(this.gameObject);
+                newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetDamage((int)attackPower);
+                newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetDestroyTime(2.5f);
 
 
                 attackCadenceAux = attackCadence;
-                Vector3 dir = enemySelected.transform.position - newFireball.transform.position;
+                Vector3 dir = enemySelected.transform.position - newGrenade.transform.position;
                 dir = dir.normalized;
-                fireballDir = new Vector3
+                grenadeDir = new Vector3
                 (
                     dir.x * 8.0f * (enemyDist / maxAttackDistance),
                     7,
                     dir.z * 8.0f * (enemyDist / maxAttackDistance)
                 );
-                newFireball.transform.parent = null;
-                newFireball.rigidbody.AddForce(fireballDir, ForceMode.Impulse);
+                newGrenade.transform.parent = null;
+                newGrenade.rigidbody.AddForce(grenadeDir, ForceMode.Impulse);
             }
 
             if (enemySelected.GetComponent<CLife>().currentLife <= 0.0f)

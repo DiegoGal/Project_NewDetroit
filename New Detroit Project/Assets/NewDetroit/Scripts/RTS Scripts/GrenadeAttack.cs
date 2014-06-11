@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class FireballAttack : ParticleDamage
+public class GrenadeAttack : ParticleDamage
 {
     public GameObject owner;
     SphereCollider sphereCollider;
