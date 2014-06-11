@@ -79,6 +79,8 @@ public class UnitEngineer : UnitController
     private static float attackCadAuxEngineer = 2.5f;
     private IEnumerator coroutineID;
 
+    private bool attacked = false;
+
     public override void Start ()
     {
         base.Start();
@@ -489,6 +491,7 @@ public class UnitEngineer : UnitController
         {
             transform.LookAt(new Vector3());
         }
+        attacked = false;
     }
     
     protected override void UpdateAttacking ()
@@ -500,9 +503,11 @@ public class UnitEngineer : UnitController
             if (enemyDist <= maxAttackDistance)
             {
                 float timero = animation[cState.animationName].time % animation[cState.animationName].length;
-                if (timero <= 0.02f)
+                if ((!attacked))//(timero <= 0.3f) && 
+                {
                     StartCoroutine(coroutineID = WaitAndCallback(animation[cState.animationName].length * 0.78125f - timero, enemyDist));
-                
+                    attacked = true;
+                }
             }
             else if (enemyDist <= visionSphereRadius)
             {
@@ -514,6 +519,7 @@ public class UnitEngineer : UnitController
 
                 PlayAnimationCrossFade("Walk");
                 this.StopAllCoroutines();
+                attacked = false;
             }
             else
             {
@@ -522,6 +528,7 @@ public class UnitEngineer : UnitController
                 cState.currentState = currentState;
                 PlayAnimationCrossFade("Idle01");
                 this.StopAllCoroutines();
+                attacked = false;
             }
         }
         else // the enemy is no longer alive
@@ -533,6 +540,7 @@ public class UnitEngineer : UnitController
             PlayAnimationCrossFade("Idle01");
             attackCadenceAux = attackCadAuxEngineer;
             this.StopAllCoroutines();
+            attacked = false;
         }
 
     }

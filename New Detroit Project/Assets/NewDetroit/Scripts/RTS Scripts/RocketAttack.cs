@@ -43,7 +43,7 @@ public class RocketAttack : ParticleDamage
             }
             else if (other.tag == "Minion")
             {
-                if (!unitList.Contains(other))
+                if (!unitList.Contains(other) && owner.GetComponent<CTeam>().teamNumber != other.GetComponent<CTeam>().teamNumber)
                 {
                     // For damage
                     UnitController otherUC = other.GetComponent<UnitController>();
@@ -56,7 +56,7 @@ public class RocketAttack : ParticleDamage
                     other.rigidbody.isKinematic = false;
                     other.rigidbody.useGravity = true;
 
-                    if (other.GetComponent<NavMeshAgent>())
+                    if (other.GetComponent<NavMeshAgent>() && other.GetComponent<NavMeshAgent>().enabled)
                         other.GetComponent<NavMeshAgent>().Stop(true);
                     //Vector3 dir = new Vector3(1.0f, 1.0f, 1.0f);
                     Vector3 dir = other.transform.position - transform.position;

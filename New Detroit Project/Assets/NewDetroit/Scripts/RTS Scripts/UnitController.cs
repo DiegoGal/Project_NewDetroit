@@ -306,7 +306,7 @@ public class UnitController : ControllableCharacter
                     Destroy(this.rigidbody);
                     //currentState = State.Idle;
 
-                    if (currentState == State.GoingTo)
+                    if (lastState == State.GoingTo)
                         GoTo(destiny);
                     else
                     {
