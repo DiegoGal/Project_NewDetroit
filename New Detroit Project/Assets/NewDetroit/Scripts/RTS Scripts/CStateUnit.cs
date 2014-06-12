@@ -5,11 +5,14 @@ public class CStateUnit : CState
 {
 
     public UnitController.State currentState;
+    public UnitController.State lastState;
     public UnitHarvester.HarvestState currentHarvestState;
     public UnitEngineer.EngineerState currentEngineerState;
     public UnitScout.ScoutState currentScoutState;
     public UnitArtillery.ArtilleryState currentArtilleryState;
     public UnitHeavyArtillery.DeployState currentDeployState;
+
+    public Vector3 destiny = new Vector3();
 
     public bool attack2Selected;
 

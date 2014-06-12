@@ -160,7 +160,7 @@ public class UnitArtillery : UnitController
                 base.UpdateIdle();
                 if (movingAttacking)
                 {
-                    if (destiny != destinyCopy)
+                    if (cState.destiny != destinyCopy)
                         GoTo(destinyCopy);
                     else
                         movingAttacking = false;

@@ -425,11 +425,11 @@ public class UnitEngineer : UnitController
         // 2- comprobamos si el enemigo esta "a vista"
         else if (distToEnemy <= visionSphereRadius)
         {
-            this.destiny = enemySelected.transform.position;
-            GetComponent<NavMeshAgent>().destination = destiny;
+            this.cState.destiny = enemySelected.transform.position;
+            GetComponent<NavMeshAgent>().destination = cState.destiny;
         }
         // 3- se ha llegado al destino y se ha perdido de vista al enemigo
-        else if (Vector3.Distance(transform.position, destiny) <= destinyThreshold)
+        else if (Vector3.Distance(transform.position, cState.destiny) <= destinyThreshold)
         {
             StopMoving();
         }
@@ -514,8 +514,8 @@ public class UnitEngineer : UnitController
                 currentState = State.GoingToAnEnemy;
                 cState.currentState = currentState;
 
-                this.destiny = enemySelected.transform.position;
-                GetComponent<NavMeshAgent>().destination = destiny;
+                this.cState.destiny = enemySelected.transform.position;
+                GetComponent<NavMeshAgent>().destination = cState.destiny;
 
                 PlayAnimationCrossFade("Walk");
                 this.StopAllCoroutines();
