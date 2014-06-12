@@ -10,6 +10,8 @@ public class GrenadeAttack : ParticleDamage
     public bool thrown = false;
     public List<Collider> unitList = new List<Collider>();
 
+    private float destroyTimeAcumSplash = 0;
+
     // Use this for initialization
     void Awake()
     {
@@ -24,6 +26,10 @@ public class GrenadeAttack : ParticleDamage
             if (sphereCollider.radius < 4.0f) 
                 sphereCollider.radius += Time.deltaTime * 10;
         }
+
+        destroyTimeAcumSplash += Time.deltaTime;
+        if (destroyTimeAcumSplash >= 1.2f)
+            PhotonNetwork.Destroy(this.gameObject);
     }
 
     public void SetOwner(GameObject owner)
@@ -32,31 +38,34 @@ public class GrenadeAttack : ParticleDamage
     }
 
     [RPC]
-    public void AddForce(string otherName)
+    public void AddNewUnitForce(string otherName)
     {
         GameObject other = GameObject.Find(otherName);
-        // For damage
-        UnitController otherUC = other.GetComponent<UnitController>();
-        float enemyDist = Vector3.Distance(transform.position, other.transform.position);
-        // TODO
-        //otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
-        
-        // For add a force to the minions so they can fly
-        if (!other.rigidbody)
-            other.gameObject.AddComponent<Rigidbody>();
-        other.rigidbody.isKinematic = false;
-        other.rigidbody.useGravity = true;
+        if (other.GetComponent<PhotonView>().isMine)
+        {
+            // For damage
+            UnitController otherUC = other.GetComponent<UnitController>();
+            float enemyDist = Vector3.Distance(transform.position, other.transform.position);
+            // TODO
+            //otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
 
-        if (other.GetComponent<NavMeshAgent>() && other.GetComponent<NavMeshAgent>().enabled)
-            other.GetComponent<NavMeshAgent>().Stop(true);
-        Vector3 dir = other.transform.position - transform.position;
-        dir = dir.normalized;
+            // For add a force to the minions so they can fly
+            if (!other.rigidbody)
+                other.gameObject.AddComponent<Rigidbody>();
+            other.rigidbody.isKinematic = false;
+            other.rigidbody.useGravity = true;
 
-        other.rigidbody.AddForce(new Vector3(dir.x * 0.7f,
-                                              3.5f,
-                                              dir.z * 0.7f),
-                                              ForceMode.Impulse);
-        otherUC.Fly();
+            if (other.GetComponent<NavMeshAgent>() && other.GetComponent<NavMeshAgent>().enabled)
+                other.GetComponent<NavMeshAgent>().Stop(true);
+            Vector3 dir = other.transform.position - transform.position;
+            dir = dir.normalized;
+
+            other.rigidbody.AddForce(new Vector3(dir.x * 0.7f,
+                                                  3.5f,
+                                                  dir.z * 0.7f),
+                                                  ForceMode.Impulse);
+            otherUC.Fly();
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -73,7 +82,7 @@ public class GrenadeAttack : ParticleDamage
                 if (!unitList.Contains(other) && owner.GetComponent<CTeam>().teamNumber != other.GetComponent<CTeam>().teamNumber)
                 {
                     string name = other.name;
-                    photonView.RPC("AddForce", PhotonTargets.All, name);
+                    photonView.RPC("AddNewUnitForce", PhotonTargets.All, name);
                     unitList.Add(other);
                 }
             }

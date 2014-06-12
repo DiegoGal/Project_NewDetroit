@@ -19,15 +19,17 @@ public class CGrenadeVisionSphere : Photon.MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
+        GameObject newSplash = null;
         if (!thrown && (Time.time - timer) >= destroyTime)
         {
-            GameObject newSplash = Instantiate
+            newSplash = PhotonNetwork.Instantiate
             (
-                splash,
+                "ShockwaveEngineer",
                 transform.position,
-                new Quaternion()
+                new Quaternion(),
+                0
             ) as GameObject;
-            newSplash.transform.name = "GrenadeSplash";
+            newSplash.transform.name = "ShockwaveEngineer";
             newSplash.GetComponent<GrenadeAttack>().SetDamage(damage);
             newSplash.GetComponent<GrenadeAttack>().SetOwner(owner);
             newSplash.AddComponent<Rigidbody>();
@@ -39,7 +41,7 @@ public class CGrenadeVisionSphere : Photon.MonoBehaviour {
             //Destroy(gameObject, 0.5f);
             rigidbody.isKinematic = true;
 
-            Destroy(newSplash, 1.2f);
+            //Destroy(newSplash, 1.2f);
             //transform.parent.gameObject.SetActive(false);
             thrown = true;
         }
@@ -49,7 +51,8 @@ public class CGrenadeVisionSphere : Photon.MonoBehaviour {
         }
         
         destroyTimeAcum += Time.deltaTime;
-        if (destroyTimeAcum >= destroyTime) PhotonNetwork.Destroy(gameObject);
+        if (destroyTimeAcum >= destroyTime) 
+            PhotonNetwork.Destroy(gameObject);
 	}
 
     public void SetOwner(GameObject owner)

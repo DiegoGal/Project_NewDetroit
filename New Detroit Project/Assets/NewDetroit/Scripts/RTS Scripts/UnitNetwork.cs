@@ -54,6 +54,7 @@ public class UnitNetwork : Photon.MonoBehaviour
 		}
 		
 		gameObject.name = gameObject.name + "_" + photonView.viewID;
+        gameObject.name = gameObject.name.Replace("(Clone)", ""); 
 
         // se captura la referencia al modelo
         model = transform.FindChild("Model");
