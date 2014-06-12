@@ -31,6 +31,33 @@ public class GrenadeAttack : ParticleDamage
         this.owner = owner;
     }
 
+    [RPC]
+    public void AddForce(string otherName)
+    {
+        GameObject other = GameObject.Find(otherName);
+        // For damage
+        UnitController otherUC = other.GetComponent<UnitController>();
+        float enemyDist = Vector3.Distance(transform.position, other.transform.position);
+        // TODO
+        //otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
+        
+        // For add a force to the minions so they can fly
+        if (!other.rigidbody)
+            other.gameObject.AddComponent<Rigidbody>();
+        other.rigidbody.isKinematic = false;
+        other.rigidbody.useGravity = true;
+
+        if (other.GetComponent<NavMeshAgent>() && other.GetComponent<NavMeshAgent>().enabled)
+            other.GetComponent<NavMeshAgent>().Stop(true);
+        Vector3 dir = other.transform.position - transform.position;
+        dir = dir.normalized;
+
+        other.rigidbody.AddForce(new Vector3(dir.x * 0.7f,
+                                              3.5f,
+                                              dir.z * 0.7f),
+                                              ForceMode.Impulse);
+        otherUC.Fly();
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -45,27 +72,8 @@ public class GrenadeAttack : ParticleDamage
             {
                 if (!unitList.Contains(other) && owner.GetComponent<CTeam>().teamNumber != other.GetComponent<CTeam>().teamNumber)
                 {
-                    // For damage
-                    UnitController otherUC = other.GetComponent<UnitController>();
-                    float enemyDist = Vector3.Distance(transform.position, other.transform.position);
-                    otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
-
-                    // For add a force to the minions so they can fly
-                    if (!other.rigidbody)
-                        other.gameObject.AddComponent<Rigidbody>();
-                    other.rigidbody.isKinematic = false;
-                    other.rigidbody.useGravity = true;
-
-                    if (other.GetComponent<NavMeshAgent>())
-                        other.GetComponent<NavMeshAgent>().Stop(true);
-                    Vector3 dir = other.transform.position - transform.position;
-                    dir = dir.normalized;
-
-                    other.rigidbody.AddForce(new Vector3(dir.x * 0.7f,
-                                                          3.5f,
-                                                          dir.z * 0.7f),
-                                                          ForceMode.Impulse);
-                    otherUC.Fly();
+                    string name = other.name;
+                    photonView.RPC("AddForce", PhotonTargets.All, name);
                     unitList.Add(other);
                 }
             }
