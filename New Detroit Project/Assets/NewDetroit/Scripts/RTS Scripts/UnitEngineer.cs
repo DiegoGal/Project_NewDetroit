@@ -445,14 +445,23 @@ public class UnitEngineer : UnitController
 
             if (!newGrenade)
             {
-                // Instanciate a new grenade
-                newGrenade = Instantiate
-                (
-                    grenade,
-                    dummyHand.transform.position,
-                    //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
-                    new Quaternion()
-                ) as GameObject;
+//                // Instanciate a new grenade
+//                newGrenade = Instantiate
+//                (
+//                    grenade,
+//                    dummyHand.transform.position,
+//                    //new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
+//                    new Quaternion()
+//                ) as GameObject;
+
+				//photonView.RPC("createGrenade", PhotonTargets.All);
+				newGrenade = PhotonNetwork.Instantiate(
+					"Goblin Grenade",
+					dummyHand.transform.position,
+					new Quaternion(),
+					0
+				);
+				
                 newGrenade.rigidbody.isKinematic = false;
                 newGrenade.transform.name = "Grenade";
                 newGrenade.transform.parent = dummyHand;
@@ -1150,4 +1159,16 @@ public class UnitEngineer : UnitController
             Destroy(laptopInst);
     }
 
+	[RPC]
+	public void createGrenade()
+	{
+		// Instanciate a new grenade
+		newGrenade = Instantiate
+		(
+			grenade,
+			dummyHand.transform.position,
+			//new Vector3(transform.position.x + 3.0f, 1.0f, transform.position.z),
+			new Quaternion()
+		) as GameObject;
+	}
 }

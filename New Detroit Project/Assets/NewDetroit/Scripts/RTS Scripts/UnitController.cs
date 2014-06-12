@@ -363,7 +363,8 @@ public class UnitController : ControllableCharacter
         alphaValue -= 0.006f;
         model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
         if (alphaValue <= 0.0f)
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
+            PhotonNetwork.Destroy(gameObject);
     }
 
     public virtual void OnGUI ()

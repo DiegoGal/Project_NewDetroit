@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CGrenadeVisionSphere : MonoBehaviour {
+public class CGrenadeVisionSphere : Photon.MonoBehaviour {
 
     private GameObject owner;
     private int damage;
     public GameObject splash;
-    private float destroyTime;
+    private float destroyTime, destroyTimeAcum = 0;
     private float timer = 0.0f;
     private bool thrown = false;
 
@@ -36,7 +36,7 @@ public class CGrenadeVisionSphere : MonoBehaviour {
             //Destroy(transform.parent.gameObject, 0.5f);
             //transform.parent.rigidbody.isKinematic = true;
 
-            Destroy(gameObject, 0.5f);
+            //Destroy(gameObject, 0.5f);
             rigidbody.isKinematic = true;
 
             Destroy(newSplash, 1.2f);
@@ -47,6 +47,9 @@ public class CGrenadeVisionSphere : MonoBehaviour {
         {
             transform.Rotate(new Vector3 (8.0f, 15.0f, 3.0f));
         }
+        
+        destroyTimeAcum += Time.deltaTime;
+        if (destroyTimeAcum >= destroyTime) PhotonNetwork.Destroy(gameObject);
 	}
 
     public void SetOwner(GameObject owner)
