@@ -34,32 +34,32 @@ public class GameManagerJacob : MonoBehaviour {
                 Destroy(menu);
 
 				//Orc
-//                GameObject instRob = (GameObject)Instantiate(RobRender, new Vector3(95f, 3f, -116f), Quaternion.identity);
-//                // Activar cosas de rob
-//                instRob.GetComponent<ThirdPersonCamera>().enabled = true;
-//                instRob.GetComponent<ThirdPersonNetwork>().enabled = false;
-//                instRob.GetComponent<OrcController>().isMine = true;
-//
-//				Camera.mainCamera.GetComponent<CameraRTSController>().enabled = false;
-//				CameraMOBAController camera = Camera.mainCamera.GetComponent<CameraMOBAController>();
-//				camera.enabled = true;
-//				camera.heroe = instRob.GetComponent<HeroeController>();
-//				onGUI = false;
+                GameObject instRob = (GameObject)Instantiate(RobRender, new Vector3(95f, 3f, -116f), Quaternion.identity);
+                // Activar cosas de rob
+                instRob.GetComponent<ThirdPersonCamera>().enabled = true;
+                instRob.GetComponent<ThirdPersonNetwork>().enabled = false;
+                instRob.GetComponent<OrcController>().isMine = true;
+
+				Camera.mainCamera.GetComponent<CameraRTSController>().enabled = false;
+				CameraMOBAController camera = Camera.mainCamera.GetComponent<CameraMOBAController>();
+				camera.enabled = true;
+				camera.heroe = instRob.GetComponent<HeroeController>();
+				onGUI = false;
 
 				//-----------------------------------------------------------------
 
 				//Robot
-				GameObject skelterBot = (GameObject)Instantiate(SkelterBot, new Vector3(95f, 3f, -116f), Quaternion.identity);
-				// Activar cosas de rob
-				skelterBot.GetComponent<ThirdPersonCamera>().enabled = true;
-				skelterBot.GetComponent<ThirdPersonNetwork>().enabled = false;
-				skelterBot.GetComponent<RobotController>().isMine = true;
-				
-				Camera.mainCamera.GetComponent<CameraRTSController>().enabled = false;
-                CameraMOBAController camera = Camera.mainCamera.GetComponent<CameraMOBAController>();
-                camera.enabled = true;
-				camera.heroe = skelterBot.GetComponent<HeroeController>();
-                onGUI = false;
+//				GameObject skelterBot = (GameObject)Instantiate(SkelterBot, new Vector3(95f, 3f, -116f), Quaternion.identity);
+//				// Activar cosas de rob
+//				skelterBot.GetComponent<ThirdPersonCamera>().enabled = true;
+//				skelterBot.GetComponent<ThirdPersonNetwork>().enabled = false;
+//				skelterBot.GetComponent<RobotController>().isMine = true;
+//				
+//				Camera.mainCamera.GetComponent<CameraRTSController>().enabled = false;
+//                CameraMOBAController camera = Camera.mainCamera.GetComponent<CameraMOBAController>();
+//                camera.enabled = true;
+//				camera.heroe = skelterBot.GetComponent<HeroeController>();
+//                onGUI = false;
             }
 
             //GUILayout.EndHorizontal();

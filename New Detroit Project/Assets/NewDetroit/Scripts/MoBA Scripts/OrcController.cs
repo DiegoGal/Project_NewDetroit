@@ -25,7 +25,7 @@ public class OrcController : HeroeController
 	//Time counts
 	private float timeCountLife = 0;
 	
-	public Transform head;
+	private Transform head;
 	//-----------------------------------------------------------------------------------------------------------------
 
 
@@ -35,7 +35,7 @@ public class OrcController : HeroeController
 	private bool snotActivated = false;
 	private float snotCD = 1.7f;
 	// Splash particle
-	public GameObject spl;
+	private GameObject spl;
 	public GameObject splash; 
 	private bool splashActivated = false;
 	private float splashCD = 1.7f;
@@ -135,10 +135,6 @@ public class OrcController : HeroeController
 		
 		//Set the type of heroe
 		this.type = TypeHeroe.Orc;
-		
-		//Set the owner in the basic attack
-		/*this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
-		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);*/
 
 		//Set the collider cubes in both hands
 		//Right hand
@@ -214,7 +210,8 @@ public class OrcController : HeroeController
 			{
 				if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
 				{
-					animation.CrossFade("Burp");
+					cState.animationName = "Burp";
+					cState.animationChanged = true;
 					//--------------------------
 					transform.Translate(Vector3.forward * 2 + Vector3.up);
 					GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
@@ -227,25 +224,19 @@ public class OrcController : HeroeController
 				}
 				else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
 				{
-					animation.CrossFade("FloorHit");
+					cState.animationName = "FloorHit";
+					cState.animationChanged = true;
 					//------------------------------
-					spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity);
-                    spl.AddComponent<Rigidbody>();
-                    spl.GetComponent<Rigidbody>().useGravity = false;
-					spl.GetComponent<OrcSplashAttack>().SetDamage(attackM + 40);
-					spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
-					Destroy(spl, 1.5f);
-					splashActivated = true;
+					StartCoroutine(SecondSkilll(animation["FloorHit"].length * 0.25f));
 					//--------------------------
 					extraSpeed = false;
 				}
 				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
 				{
-					animation.CrossFade("BullStrike");
+					cState.animationName = "BullStrike";
+					cState.animationChanged = true;
 					//--------------------------------
-//					transform.Translate(Vector3.down * 2);
 					smokeInst = (GameObject)Instantiate(smoke, transform.localPosition, transform.rotation);
-//					transform.Translate(Vector3.up * 2);
 					Destroy(smokeInst, 5f);
 					smokeActivated = true;
 
@@ -269,16 +260,10 @@ public class OrcController : HeroeController
 			{
 				if (!animation.IsPlaying("Attack01") && !animation.IsPlaying("Attack02") && !animation.IsPlaying("Attack03"))
 				{
-					animation.CrossFade("Attack01");
-					animation["Attack01"].speed =1.2f;
-					animation.CrossFadeQueued("Attack02").speed = 1.2f;
-					animation.CrossFadeQueued("Attack03").speed = 1.2f;
-					for (int i = 0; i < 20; i ++)
-					{
-						animation.CrossFadeQueued("Attack01").speed = 1.2f;
-						animation.CrossFadeQueued("Attack02").speed = 1.2f;
-						animation.CrossFadeQueued("Attack03").speed = 1.2f;
-					}
+					cState.animationName = "Attack01";
+					cState.animationNameQueued = "Attack02";
+					cState.animationNameQueued2 = "Attack03";
+					cState.animationChanged = cState.animationChangeQueued = cState.animationChangeQueued2 = true;
 				}
 				//------------------------------------
 				canRotate = false;
@@ -288,7 +273,8 @@ public class OrcController : HeroeController
 			// Movement
 			else if (state == StateHeroe.Run)
 			{
-				animation.CrossFade("Run");
+				cState.animationName = "Run";
+				cState.animationChanged = true;
 				//------------------------------------
 				canRotate = true;
 				canMove = true;
@@ -296,7 +282,8 @@ public class OrcController : HeroeController
 			}
 			else if (state == StateHeroe.Walk)
 			{
-				animation.CrossFade("Walk");
+				cState.animationName = "Walk";
+				cState.animationChanged = true;
 				//------------------------------------
 				canRotate = true;
 				canMove = true;
@@ -307,7 +294,6 @@ public class OrcController : HeroeController
                 this.life.currentLife = 0;
 				this.transform.position = this.initialPosition;
 				isMine = false;
-				//this.GetComponent<ThirdPersonController>().enabled = false;
 				//------------------------------------
 				canRotate = false;
 				canMove = false;
@@ -337,8 +323,9 @@ public class OrcController : HeroeController
 			{
 				if (!animation.IsPlaying("Iddle01") && !animation.IsPlaying("Iddle02"))
 				{
-					animation.CrossFade("Iddle01");
-					animation.CrossFadeQueued("Iddle02");
+					cState.animationName = "Iddle01";
+					cState.animationNameQueued = "Iddle02";
+					cState.animationChanged = cState.animationChangeQueued = true;
 				}
 				//------------------------------------
 				canRotate = false;
@@ -400,6 +387,20 @@ public class OrcController : HeroeController
 		{
 
 		}
+	}
+
+	//Corrutines
+	private IEnumerator SecondSkilll(float time)
+	{
+		yield return new WaitForSeconds(time);
+
+		spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity);
+    	spl.AddComponent<Rigidbody>();
+    	spl.GetComponent<Rigidbody>().useGravity = false;
+		spl.GetComponent<OrcSplashAttack>().SetDamage(attackM + 40);
+		spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
+		Destroy(spl, 1.5f);
+		splashActivated = true;
 	}
 }
 

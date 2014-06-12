@@ -15,10 +15,11 @@ public class CStateUnit : CState
 
     public bool animationChanged = false;
     public bool animationChangeQueued = false;
+	public bool animationChangeQueued2 = false;
 
-    public string animationName, animationNameQueued;
+    public string animationName, animationNameQueued, animationNameQueued2;
 
-    public bool animationSend = false, animationSendQeued = false;
+    public bool animationSend = false, animationSendQeued = false, animationSendQueued2 = false;
 
     public enum UnitType
     {
@@ -44,6 +45,13 @@ public class CStateUnit : CState
             animationChangeQueued = false;
             animationSendQeued = true;
         }
+		//It's used to the third basic attack of heroes
+		if (animationChangeQueued2)
+		{
+			animation.CrossFadeQueued(animationNameQueued2);
+			animationChangeQueued2 = false;
+			animationSendQueued2 = true;
+		}
     }
 
 }

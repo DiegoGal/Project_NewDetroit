@@ -17,21 +17,25 @@ public class RobotController : HeroeController
 	//-----------------------------------------------------------------------------------------------------------------
 
 
-	//sphere sword
-	public GameObject cubeColliderSword;
-	public GameObject skelterShot;
-	private GameObject fireShotInst;
-	//second skill
-	public GameObject skelterTurn;
-	private GameObject turnInst;
-	//Time counts
-	private float timeCountLife = 0;
+	//Particles
+	public GameObject fireBall;		//Skill 1
+	public GameObject skelterTurn;	//Skill 2
+	public GameObject skelterShot;	//Skill 3
 
-	private Transform gun;
-	public GameObject fireBall;
-	private GameObject fireCircleInst;
-	private float timeCircleCD = 5f;
-	private bool timeCircle=false;
+	//Instances
+	private GameObject fireCircleInst;	//Skill 1
+	private GameObject turnInst;		//Skill 2
+	private GameObject fireShotInst;	//Skill 3
+
+	//Colliders
+	public GameObject cubeColliderSword;	//Sword
+
+	//Transforms
+	private Transform gun;	//Gun
+
+	//Time CD
+	private float timeCountLife = 0;	//State recover
+
 
 	//-----------------------------------------------------------------------------------------------------------------
 
@@ -117,11 +121,7 @@ public class RobotController : HeroeController
 		this.adren = ADREN_1;
 		this.speedMov = MOV_SPEED_1;
 
-		//set owner to sphere collider sword
-		//this.sphereSword.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
-
 		//Set the collider cubes in the sword
-
 		Transform sword = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Cylinder002/cuchilla");
 		GameObject cubeColliderInst = (GameObject) Instantiate(cubeColliderSword, sword.position + new Vector3(0.4f, 1, 0.1f), sword.rotation);
 		cubeColliderInst.transform.parent = sword;
@@ -151,15 +151,15 @@ public class RobotController : HeroeController
 		base.Update ();
 		updateManaAdren();
 		UpdateAnimation();
-//		UpdateParticles (); // Update particles
+		UpdateParticles();
 		Counter();
-		this.newLevel ();
+		this.newLevel();
 	}
 
 	//--------------------------------------------------------------------------------------------
 	//Animation
 	// Only can do an action if hero don't do a secondary attack
-    public void UpdateAnimation()
+    private void UpdateAnimation()
     {
         if (!doingSecondaryAnim)
         {
@@ -168,12 +168,9 @@ public class RobotController : HeroeController
             {
                 if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
                 {
-                    //animation.CrossFade("Attack1");
-                    //----------------------------
                     Transform head = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
                     fireCircleInst = (GameObject)Instantiate(fireBall, head.position + Vector3.down * 0.5f, transform.rotation);
                     fireCircleInst.transform.parent = head;
-                    timeCircle = true;
                     Destroy(fireCircleInst, 1.7f);
 					//------------------------------------
 					canRotate = true;
@@ -182,12 +179,14 @@ public class RobotController : HeroeController
                 }
                 else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
                 {
-                    animation.CrossFade("Attack2");
+					cState.animationName = "Attack2";
+					cState.animationChanged = true;
                     //----------------------------
                     turnInst = (GameObject)Instantiate(skelterTurn, transform.position + Vector3.up, transform.rotation);
-                    turnInst.GetComponent<RobotTurn>().SetDamage(75);
-                    turnInst.GetComponent<RobotTurn>().setOwner(gameObject);
-                    turnInst.GetComponent<RobotTurn>().setTimeToTurn(1f);
+					RobotTurn rt = turnInst.GetComponent<RobotTurn>();
+					rt.SetDamage(75);
+					rt.setOwner(gameObject);
+					rt.setTimeToTurn(1f);
                     Destroy(turnInst, 5f);
 					//------------------------------------
 					canRotate = false;
@@ -196,17 +195,19 @@ public class RobotController : HeroeController
                 }
                 else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
                 {
-                    animation.CrossFade("Attack3");
+					cState.animationName = "Attack3";
+					cState.animationChanged = true;
                     //----------------------------
                     if (fireShotInst != null)
                         Destroy(fireShotInst);
                     skelterShot.GetComponent<MeshRenderer>().enabled = false;
                     fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
-                    fireShotInst.GetComponent<RobotShot>().SetDamage(75);
-                    fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
-                    fireShotInst.GetComponent<RobotShot>().setSpeed(2);
-                    fireShotInst.GetComponent<RobotShot>().setDirection(transform.forward);
-                    fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
+					RobotShot rs = fireShotInst.GetComponent<RobotShot>();
+					rs.SetDamage(75);
+					rs.setOwner(gameObject);
+					rs.setSpeed(2);
+					rs.setDirection(transform.forward);
+					rs.setTimeToShot(1.7f);
                     fireShotInst.transform.parent = gun;
                     Destroy(fireShotInst, 2.5f);
 					//------------------------------------
@@ -220,31 +221,27 @@ public class RobotController : HeroeController
             // Basic attack
             else if (state == StateHeroe.AttackBasic)
             {
+				// Do the animation
                 if (!animation.IsPlaying("Attack1") && !animation.IsPlaying("Attack2") && !animation.IsPlaying("Attack3"))
                 {
-                    animation.CrossFade("Attack1");
-                    animation["Attack1"].speed = 1.2f;
-                    animation.CrossFadeQueued("Attack2").speed = 1.2f;
-                    animation.CrossFadeQueued("Attack3").speed = 1.2f;
-                    for (int i = 0; i < 20; i++)
-                    {
-                        animation.CrossFadeQueued("Attack1").speed = 1.2f;
-                        animation.CrossFadeQueued("Attack2").speed = 1.2f;
-                        animation.CrossFadeQueued("Attack3").speed = 1.2f;
-                    }
+					cState.animationName = "Attack1";
+					cState.animationNameQueued = "Attack2";
+					cState.animationNameQueued2 = "Attack3";
+					cState.animationChanged = cState.animationChangeQueued = cState.animationChangeQueued2 = true;
                 }
-
+				// Instantiate the shot
                 if (animation.IsPlaying("Attack3") && fireShotInst == null)
                 {
                     skelterShot.GetComponent<MeshRenderer>().enabled = false;
                     fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
-                    fireShotInst.GetComponent<RobotShot>().SetDamage(75);
-                    fireShotInst.GetComponent<RobotShot>().setOwner(gameObject);
-                    fireShotInst.GetComponent<RobotShot>().setSpeed(2);
-                    fireShotInst.GetComponent<RobotShot>().setDirection(transform.forward);
-                    fireShotInst.GetComponent<RobotShot>().setTimeToShot(1.7f);
+					RobotShot rs = fireShotInst.GetComponent<RobotShot>();
+					rs.SetDamage(75);
+					rs.setOwner(gameObject);
+					rs.setSpeed(2);
+					rs.setDirection(transform.forward);
+					rs.setTimeToShot(1.7f);
                     fireShotInst.transform.parent = gun;
-                    Destroy(fireShotInst, 2.5f);
+                    Destroy(fireShotInst, animation["Attack3"].length);
                 }
 				//------------------------------------
 				canRotate = false;
@@ -254,7 +251,8 @@ public class RobotController : HeroeController
             // Movement
             else if (state == StateHeroe.Run)
             {
-                animation.CrossFade("Run");
+				cState.animationName = "Run";
+				cState.animationChanged = true;
 				//------------------------------------
 				canRotate = true;
 				canMove = true;
@@ -262,7 +260,8 @@ public class RobotController : HeroeController
             }
             else if (state == StateHeroe.Walk)
             {
-                animation.CrossFade("Walk");
+				cState.animationName = "Walk";
+				cState.animationChanged = true;
 				//------------------------------------
 				canRotate = true;
 				canMove = true;
@@ -270,11 +269,12 @@ public class RobotController : HeroeController
             }
             else if (state == StateHeroe.Dead)
             {
-                animation.CrossFade("Die");
+				cState.animationName = "Die";
+				cState.animationChanged = true;
+				//------------------------------------
                 this.life.currentLife = 0;
                 this.transform.position = this.initialPosition;
                 isMine = false;
-                //this.GetComponent<ThirdPersonController>().enabled = false;
 				//------------------------------------
 				canRotate = false;
 				canMove = false;
@@ -304,7 +304,8 @@ public class RobotController : HeroeController
             {
                 if (!animation.IsPlaying("Idle01"))
                 {
-                    animation.CrossFade("Idle01");
+					cState.animationName = "Idle01";
+					cState.animationChanged = true;
                 }
 				//------------------------------------
 				canRotate = false;
@@ -312,6 +313,7 @@ public class RobotController : HeroeController
 				extraSpeed = false;
             }
         }
+		//not secondary attack
         else
         {
 			if (!animation.isPlaying)
@@ -319,29 +321,22 @@ public class RobotController : HeroeController
                 doingSecondaryAnim = false;
             }
         }
+    }//UpdateAnimation
 
-        if (timeCircle)
-        {
-            if (timeCircleCD <= 0)
-            {
-                timeCircleCD = 5f;
-                timeCircle = false;
-            }
-            else
-                timeCircleCD -= Time.deltaTime;
-        }
-
-        if (timeCircle)
-        {
-            this.defP = this.defP * 3;
-            this.defM = this.defM * 3;
-        }
-        else
-        {
-            this.defP = this.defP;
-            this.defM = this.defM;
-        }
-    }
+	private void UpdateParticles()
+	{
+		//Modified the defense attributes with the first skill
+		if (fireCircleInst != null)
+		{
+			this.defP = DEF_P_1 + 50;
+			this.defM = DEF_M_1 + 50;
+		}
+		else
+		{
+			this.defP = DEF_P_1;
+			this.defM = DEF_M_1;
+		}
+	}
 }
 
 

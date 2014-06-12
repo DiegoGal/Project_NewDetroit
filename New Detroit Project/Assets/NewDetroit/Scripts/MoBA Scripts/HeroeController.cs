@@ -111,6 +111,9 @@ public abstract class HeroeController : ControllableCharacter
 					canMove = false, 	//Flag to move with WASD
 					extraSpeed = false;	//Flag to apply extra speed
 
+	//States
+	protected CStateUnit cState;
+
 
 	// ------------------------------------------------------------------------------------------------------
 	// PRIVATE	
@@ -263,6 +266,9 @@ public abstract class HeroeController : ControllableCharacter
 		// Initialize the animation
 		state = StateHeroe.Idle;				// Set the initial state of the hero
 		stateAttackSecond = AttackSecond.None;		// Set the initial state of secondary attack of hero
+
+		cState = GetComponent<CStateUnit>();
+		cState.animationChanged = cState.animationChangeQueued = cState.animationChangeQueued2 = false;
 	}//Start
 	
 	// Update is called once per frame
@@ -392,8 +398,6 @@ public abstract class HeroeController : ControllableCharacter
 			// We store speed and direction seperately,
 			// so that when the character stands still we still have a valid forward direction
 			// moveDirection is always normalized, and we only update it if there is user input.
-//			bool isOrcUsingAbility = state == HeroeController.StateHeroe.AttackSecond;
-//            if (targetDirection != Vector3.zero && !isOrcUsingAbility)
 			if (canRotate)
 			{
 				if (targetDirection != Vector3.zero)
@@ -412,15 +416,6 @@ public abstract class HeroeController : ControllableCharacter
 			float targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);
 			
 			// Pick speed modifier
-//			if (animation.IsPlaying("BullStrike")) targetSpeed = extraRunSpeed;
-//            else if (!animation.IsPlaying("FloorHit") && !animation.IsPlaying("Burp") && state != StateHeroe.AttackBasic &&
-//            			(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W)))
-//			{
-//				if (Input.GetKey(KeyCode.LeftShift)) targetSpeed = runSpeed;
-//				else targetSpeed = walkSpeed;
-//			}
-//			else targetSpeed = 0;
-
 			if (extraSpeed)  
 				targetSpeed = extraRunSpeed;
 			else if (canMove)
@@ -554,9 +549,9 @@ public abstract class HeroeController : ControllableCharacter
 		// Secondary attack
 		if (cooldown1 < cooldown1total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack1) cooldown1 -= Time.deltaTime;
 		if (cooldown1 <= 0) cooldown1 = cooldown1total;
-		if (cooldown2 < cooldown2total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
+//		if (cooldown2 < cooldown2total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
 		if (cooldown2 <= 0) cooldown2 = cooldown2total;
-		//if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
+		if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
 		if (cooldown3 <= 0) cooldown3 = cooldown3total;
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------------
@@ -590,7 +585,7 @@ public abstract class HeroeController : ControllableCharacter
 				else 
 				{
 					useAdren = true;
-					currentAdren -= adrenSkill2;
+//					currentAdren -= adrenSkill2;
 				}
 			}
 			else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
@@ -603,7 +598,7 @@ public abstract class HeroeController : ControllableCharacter
 				else 
 				{
 					useAdren = true;
-					//currentAdren -= adrenSkill3;
+					currentAdren -= adrenSkill3;
 				}
 			}
 		}
