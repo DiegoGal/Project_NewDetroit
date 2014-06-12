@@ -12,7 +12,7 @@ public class MenuDetroitMapa : MonoBehaviour
 
     public static readonly string SceneNameMenu = "MenuDetroitMapa";
 
-    public static readonly string SceneNameGame = "RTS_Units_Test_Maxi_Online";
+    public static readonly string SceneNameGame = Application.loadedLevelName; // "RTS_Units_Test_Maxi_Online";
 
     public void Awake()
     {
