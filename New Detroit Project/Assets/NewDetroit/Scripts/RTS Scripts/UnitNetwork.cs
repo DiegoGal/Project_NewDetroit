@@ -79,7 +79,6 @@ public class UnitNetwork : Photon.MonoBehaviour
 
 			if (stateScript.animationSend) stateScript.animationSend = false;
 			if (stateScript.animationSendQeued) stateScript.animationSendQeued = false;
-            stream.SendNext(unitScript.cState.destiny);
 
             //UnitBasicArtillery script = this.GetComponent<UnitBasicArtillery>();
             //stream.SendNext(script.currentArtilleryState);
@@ -103,7 +102,6 @@ public class UnitNetwork : Photon.MonoBehaviour
             stateScript.animationName = (string)stream.ReceiveNext();
             stateScript.animationChangeQueued = (bool)stream.ReceiveNext();
             stateScript.animationNameQueued = (string)stream.ReceiveNext();
-            stateScript.destiny = (Vector3)stream.ReceiveNext();
 
             // comprobar el cambio
 
@@ -117,7 +115,7 @@ public class UnitNetwork : Photon.MonoBehaviour
 	
 	public virtual void Update ()
 	{
-        if (!photonView.isMine)
+		if (!photonView.isMine)
 		{
 			//Update remote player (smooth this, this looks good, at the cost of some accuracy)
 			transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);

@@ -56,7 +56,7 @@ public class GrenadeAttack : ParticleDamage
                     other.rigidbody.isKinematic = false;
                     other.rigidbody.useGravity = true;
 
-                    if (other.GetComponent<NavMeshAgent>() && other.GetComponent<NavMeshAgent>().enabled)
+                    if (other.GetComponent<NavMeshAgent>())
                         other.GetComponent<NavMeshAgent>().Stop(true);
                     Vector3 dir = other.transform.position - transform.position;
                     dir = dir.normalized;
@@ -65,12 +65,7 @@ public class GrenadeAttack : ParticleDamage
                                                           3.5f,
                                                           dir.z * 0.7f),
                                                           ForceMode.Impulse);
-                    //otherUC.Fly();
-                    CStateUnit cs = other.GetComponent<CStateUnit>();
-                    cs.lastState = cs.currentState;
-                    UnitController.State currentState = UnitController.State.Flying;
-                    cs.currentState = currentState;
-                    Flying.InsertToList(cs, other.rigidbody, other.GetComponent<NavMeshAgent>(), other.transform);
+                    otherUC.Fly();
                     unitList.Add(other);
                 }
             }

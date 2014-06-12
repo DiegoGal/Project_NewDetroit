@@ -22,7 +22,7 @@ public class UnitController : ControllableCharacter
     public State lastState = State.Idle;
 	
     public float velocity = 3.5f;
-    //public Vector3 destiny = new Vector3();
+    protected Vector3 destiny = new Vector3();
     protected float destinyThreshold = 0.6f;
     
     // health bar
@@ -88,9 +88,9 @@ public class UnitController : ControllableCharacter
         GetComponent<NavMeshAgent>().speed = velocity;
         GetComponent<NavMeshAgent>().stoppingDistance = destinyThreshold;
 
-        if (cState.destiny == Vector3.zero)
+        if (destiny == Vector3.zero)
         {
-            cState.destiny = transform.position;
+            destiny = transform.position;
             PlayAnimation("Idle01");
         }
         else
@@ -161,7 +161,7 @@ public class UnitController : ControllableCharacter
         if (agent.pathStatus == NavMeshPathStatus.PathComplete &&
             agent.remainingDistance <= destinyThreshold)*/
 
-        Vector3 direction = cState.destiny - transform.position;
+        Vector3 direction = destiny - transform.position;
         /*Vector3 direction = new Vector3
         (
             destiny.x - transform.position.x,
@@ -201,11 +201,11 @@ public class UnitController : ControllableCharacter
             // 2- comprobamos si el enemigo esta "a vista"
             else if (distToEnemy <= visionSphereRadius)
             {
-                this.cState.destiny = enemySelected.transform.position;
-                GetComponent<NavMeshAgent>().SetDestination(cState.destiny);
+                this.destiny = enemySelected.transform.position;
+                GetComponent<NavMeshAgent>().SetDestination(destiny);
             }
             // 3- se ha llegado al destino y se ha perdido de vista al enemigo
-            else if (Vector3.Distance(transform.position, cState.destiny) <= destinyThreshold)
+            else if (Vector3.Distance(transform.position, destiny) <= destinyThreshold)
             {
                 StopMoving();
             }
@@ -252,9 +252,9 @@ public class UnitController : ControllableCharacter
             {
                 currentState = State.GoingToAnEnemy;
 
-                this.cState.destiny = enemySelected.transform.position;
+                this.destiny = enemySelected.transform.position;
                 if (GetComponent<NavMeshAgent>() != null)
-                    GetComponent<NavMeshAgent>().SetDestination(cState.destiny);
+                    GetComponent<NavMeshAgent>().SetDestination(destiny);
 
                 PlayAnimationCrossFade("Walk");
                 attackCadenceAux = 0.5f;
@@ -280,7 +280,7 @@ public class UnitController : ControllableCharacter
 
     protected virtual void UpdateFlying ()
     {
-        /*if (currentState != State.Dying)
+        if (currentState != State.Dying)
         {
             int maxTrapped = 25;
             if (!goingDown)
@@ -324,7 +324,7 @@ public class UnitController : ControllableCharacter
             }
             else
                 lastPosY = transform.position.y;
-        }*/
+        }
     }
 
     private void UpdateDying ()
@@ -395,7 +395,7 @@ public class UnitController : ControllableCharacter
     {
         if (currentState != State.Dying && currentState != State.AscendingToHeaven)
         {
-            this.cState.destiny = destiny;
+            this.destiny = destiny;
             GetComponent<NavMeshAgent>().SetDestination(destiny);
             currentState = State.GoingTo;
             cState.currentState = currentState;
@@ -406,7 +406,7 @@ public class UnitController : ControllableCharacter
 
     protected void StopMoving ()
     {
-        cState.destiny = transform.position;
+        destiny = transform.position;
         //GetComponent<NavMeshAgent>().destination = destiny;
         GetComponent<NavMeshAgent>().Stop();
         currentState = State.Idle;
