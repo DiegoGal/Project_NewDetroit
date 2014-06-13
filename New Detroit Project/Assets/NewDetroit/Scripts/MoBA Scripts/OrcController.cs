@@ -114,6 +114,14 @@ public class OrcController : HeroeController
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// MAIN
+	public virtual void Awake()
+	{
+		base.Awake ();
+
+		//Set the type of heroe
+		this.type = TypeHeroe.Orc;
+	}
+
 	// Use this for initialization
 	public override void Start ()
 	{
@@ -132,9 +140,6 @@ public class OrcController : HeroeController
 		this.mana = MANA_1;
 		this.adren = ADREN_1;
 		this.speedMov = MOV_SPEED_1;
-		
-		//Set the type of heroe
-		this.type = TypeHeroe.Orc;
 
 		//Set the collider cubes in both hands
 		//Right hand

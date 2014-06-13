@@ -101,6 +101,14 @@ public class RobotController : HeroeController
 	//================================
 	//=====     Main methods     =====
 	//================================
+
+	public virtual void Awake()
+	{
+		base.Awake();
+
+		//Set the type of heroe
+		this.type = TypeHeroe.Robot;
+	}
 	
 	// Use this for initialization
 	public override void Start ()
@@ -126,9 +134,6 @@ public class RobotController : HeroeController
 		GameObject cubeColliderInst = (GameObject) Instantiate(cubeColliderSword, sword.position + new Vector3(0.4f, 1, 0.1f), sword.rotation);
 		cubeColliderInst.transform.parent = sword;
 		cubeColliderInst.GetComponent<RobotBasicAttack> ().owner = this.gameObject;
-		
-		//Set the type of heroe
-		this.type = TypeHeroe.Robot;
 
 		//Initializes the cooldowns of skills
 		cooldown1total = COOLDOWN_SKILL_1; cooldown2total = COOLDOWN_SKILL_2; cooldown3total = COOLDOWN_SKILL_3;
