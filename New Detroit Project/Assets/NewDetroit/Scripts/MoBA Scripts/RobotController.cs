@@ -17,25 +17,28 @@ public class RobotController : HeroeController
 	//-----------------------------------------------------------------------------------------------------------------
 
 
-	//Particles
-	public GameObject fireBall;		//Skill 1
-	public GameObject skelterTurn;	//Skill 2
-	public GameObject skelterShot;	//Skill 3
+	// Particles
+	public GameObject fireBall;		// Skill 1
+	public GameObject skelterTurn;	// Skill 2
+	public GameObject skelterShot;	// Skill 3
 
-	//Instances
-	private GameObject fireCircleInst;	//Skill 1
-	private GameObject turnInst;		//Skill 2
-	private GameObject fireShotInst;	//Skill 3
+	// Instances
+	private GameObject fireCircleInst;	// Skill 1
+	private GameObject turnInst;		// Skill 2
+	private GameObject fireShotInst;	// Skill 3
 
-	//Colliders
-	public GameObject cubeColliderSword;	//Sword
+	// Colliders
+	public GameObject cubeColliderSword;	// Sword
 
-	//Transforms
+	// Transforms
 	private Transform gun;	// Gun
 	private Transform head;	// Head
 
-	//Time CD
+	// Time CD
 	private float timeCountLife = 0;	//State recover
+
+	// Flags
+	private bool isShot = false;	// Skill 3
 
 
 	//-----------------------------------------------------------------------------------------------------------------
@@ -217,8 +220,9 @@ public class RobotController : HeroeController
 					cState.animationChanged = cState.animationChangeQueued = cState.animationChangeQueued2 = true;
                 }
 				// Instantiate the shot
-                if (animation.IsPlaying("Attack3") && fireShotInst == null)
+				if (animation.IsPlaying("Attack3") && !isShot)
                 {
+					isShot = true;
 					StartCoroutine(ThirdBasicAttack(0));
                 }
 				//------------------------------------
@@ -322,21 +326,27 @@ public class RobotController : HeroeController
 	{
 		yield return new WaitForSeconds(time);
 
-		fireCircleInst = (GameObject)Instantiate(fireBall, head.position + Vector3.down * 0.5f, transform.rotation);
+		fireCircleInst = (GameObject)PhotonNetwork.Instantiate(fireBall.name, head.position + Vector3.down * 0.5f, transform.rotation, 0);
 		fireCircleInst.transform.parent = head;
-		Destroy(fireCircleInst, 1.7f);
+
+		yield return new WaitForSeconds(1.7f);
+
+		PhotonNetwork.Destroy(fireCircleInst);
 	}
 
 	private IEnumerator SecondSkill(float time)
 	{
 		yield return new WaitForSeconds(time);
 		
-		turnInst = (GameObject)Instantiate(skelterTurn, transform.position + Vector3.up, transform.rotation);
+		turnInst = (GameObject)PhotonNetwork.Instantiate(skelterTurn.name, transform.position + Vector3.up, transform.rotation, 0);
 		RobotTurn rt = turnInst.GetComponent<RobotTurn>();
 		rt.SetDamage(75);
 		rt.setOwner(gameObject);
 		rt.setTimeToTurn(1f);
-		Destroy(turnInst, 5f);
+
+		yield return new WaitForSeconds(5f);
+
+		PhotonNetwork.Destroy(turnInst);
 	}
 
 	private IEnumerator ThirdSkill(float time)
@@ -344,9 +354,9 @@ public class RobotController : HeroeController
 		yield return new WaitForSeconds(time);
 		
 		if (fireShotInst != null)
-			Destroy(fireShotInst);
+			PhotonNetwork.Destroy(fireShotInst);
 		skelterShot.GetComponent<MeshRenderer>().enabled = false;
-		fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
+		fireShotInst = (GameObject)PhotonNetwork.Instantiate(skelterShot.name, gun.position, transform.rotation, 0);
 		RobotShot rs = fireShotInst.GetComponent<RobotShot>();
 		rs.SetDamage(75);
 		rs.setOwner(gameObject);
@@ -354,15 +364,20 @@ public class RobotController : HeroeController
 		rs.setDirection(transform.forward);
 		rs.setTimeToShot(1.7f);
 		fireShotInst.transform.parent = gun;
-		Destroy(fireShotInst, 2.5f);
+
+		yield return new WaitForSeconds(2.5f);
+		
+		PhotonNetwork.Destroy(fireShotInst);
 	}
 
 	private IEnumerator ThirdBasicAttack(float time)
 	{
 		yield return new WaitForSeconds(time);
-		
+
+		if (fireShotInst != null)
+			PhotonNetwork.Destroy(fireShotInst);
 		skelterShot.GetComponent<MeshRenderer>().enabled = false;
-		fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
+		fireShotInst = (GameObject)PhotonNetwork.Instantiate(skelterShot.name, gun.position, transform.rotation, 0);
 		RobotShot rs = fireShotInst.GetComponent<RobotShot>();
 		rs.SetDamage(75);
 		rs.setOwner(gameObject);
@@ -370,7 +385,12 @@ public class RobotController : HeroeController
 		rs.setDirection(transform.forward);
 		rs.setTimeToShot(1.7f);
 		fireShotInst.transform.parent = gun;
-		Destroy(fireShotInst, animation["Attack3"].length);
+
+		yield return new WaitForSeconds(animation["Attack3"].length);
+
+		PhotonNetwork.Destroy(fireShotInst);
+
+		isShot = false;
 	}
 }
 

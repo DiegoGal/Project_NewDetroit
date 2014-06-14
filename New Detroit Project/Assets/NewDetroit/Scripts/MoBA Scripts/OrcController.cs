@@ -34,9 +34,6 @@ public class OrcController : HeroeController
 	public GameObject sphereThirdSkill;	// Skill 3
 	public GameObject smoke;			// Smoke
 
-	// Instances
-	private GameObject smokeInst; // Smoke
-
 
 	//-----------------------------------------------------------------------------------------------------------------
 	// PRIVATE    
@@ -166,26 +163,26 @@ public class OrcController : HeroeController
 		this.newLevel ();
 	}
 	
-	// Cool Down for detecting less time the collision with particles
-	private float CDParticleCollision; 
-	//This is for the particles that collides with the orc
-	void OnParticleCollision(GameObject other)
-	{
-		// get the particle system
-		ParticleSystem particleSystem;
-		particleSystem = other.GetComponent<ParticleSystem>();
-		//If the particle is a Moco    
-		if (particleSystem.tag == "Moco")
-		{
-			if (CDParticleCollision > 0)
-				CDParticleCollision -= Time.deltaTime;
-			else
-			{
-				life.Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
-				CDParticleCollision = 0.1f; // 5 deltatime aprox
-			}
-		}
-	}
+//	// Cool Down for detecting less time the collision with particles
+//	private float CDParticleCollision; 
+//	//This is for the particles that collides with the orc
+//	void OnParticleCollision(GameObject other)
+//	{
+//		// get the particle system
+//		ParticleSystem particleSystem;
+//		particleSystem = other.GetComponent<ParticleSystem>();
+//		//If the particle is a Moco    
+//		if (particleSystem.tag == "Moco")
+//		{
+//			if (CDParticleCollision > 0)
+//				CDParticleCollision -= Time.deltaTime;
+//			else
+//			{
+//				life.Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
+//				CDParticleCollision = 0.1f; // 5 deltatime aprox
+//			}
+//		}
+//	}
 	
 
 	//--------------------------------------------------------------------------------------------
@@ -327,43 +324,55 @@ public class OrcController : HeroeController
 	private IEnumerator FirstSkill(float time)
 	{
 		yield return new WaitForSeconds(time);
-		
-		GameObject snt = (GameObject)Instantiate(snot, transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation);
+
+		GameObject snt = (GameObject) PhotonNetwork.Instantiate("SnotPrefab", transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation, 0);
 		snt.GetComponent<ParticleDamage>().SetDamage(attackM);
-		Destroy(snt, 3f);
+
+		yield return new WaitForSeconds(3f);
+
+		PhotonNetwork.Destroy(snt);
 	}
 
 	private IEnumerator SecondSkill(float time)
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity);
+		GameObject spl = (GameObject) PhotonNetwork.Instantiate("Shockwave", transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity, 0);
     	spl.AddComponent<Rigidbody>();
     	spl.GetComponent<Rigidbody>().useGravity = false;
 		spl.GetComponent<OrcSplashAttack>().SetDamage(attackM + 40);
 		spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
-		Destroy(spl, 1.5f);
+
+		yield return new WaitForSeconds(1.5f);
+		
+		PhotonNetwork.Destroy(spl);
 	}
 
 	private IEnumerator ThirdSkill(float time)
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject sphereThirdSkillInst = (GameObject)Instantiate(sphereThirdSkill, head.position, transform.rotation);
+		GameObject sphereThirdSkillInst = (GameObject) PhotonNetwork.Instantiate("SphereThirdSkill", head.position, transform.rotation, 0);
 		OrcBullStrikeAttack obsa = sphereThirdSkillInst.GetComponent<OrcBullStrikeAttack>();
 		obsa.setOwner(gameObject);
 		obsa.SetDamage(attackP + 100);
 		sphereThirdSkillInst.transform.parent = pelvis;
-		Destroy(sphereThirdSkillInst, animation["BullStrike"].length * 0.8f);
+
+		yield return new WaitForSeconds(animation["BullStrike"].length * 0.8f);
+
+		PhotonNetwork.Destroy(sphereThirdSkillInst);
 	}
 
 	private IEnumerator SmokeParticles(float time)
 	{
 		yield return new WaitForSeconds(time);
 
-		smokeInst = (GameObject)Instantiate(smoke, transform.localPosition + Vector3.down*2, transform.rotation);
+		GameObject smokeInst = (GameObject)PhotonNetwork.Instantiate("SmokeParticles", transform.localPosition + Vector3.down*2, transform.rotation, 0);
 		smokeInst.transform.parent = pelvis;
-		Destroy(smokeInst, 5f);
+
+		yield return new WaitForSeconds(5f);
+		
+		PhotonNetwork.Destroy(smokeInst);
 	}
 }
 
