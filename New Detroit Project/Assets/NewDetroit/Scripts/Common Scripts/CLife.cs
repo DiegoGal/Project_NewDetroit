@@ -14,7 +14,7 @@ public class CLife : MonoBehaviour
     // the blood particles for when the unit has been hit
     public GameObject bloodParticles;
 
-    public void Start ()
+    public virtual void Start ()
     {
         currentLife = maximunLife;
     }

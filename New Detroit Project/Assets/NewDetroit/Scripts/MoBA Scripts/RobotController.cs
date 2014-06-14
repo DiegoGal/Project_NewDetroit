@@ -31,7 +31,8 @@ public class RobotController : HeroeController
 	public GameObject cubeColliderSword;	//Sword
 
 	//Transforms
-	private Transform gun;	//Gun
+	private Transform gun;	// Gun
+	private Transform head;	// Head
 
 	//Time CD
 	private float timeCountLife = 0;	//State recover
@@ -46,9 +47,9 @@ public class RobotController : HeroeController
 		if (this.hasNewLevel) 
 		{
 			int maxLife = (int)life.maximunLife,
-			maxAdren = adren,
-			maxMana = mana;
-			switch (level)
+			maxAdren = cBasicAttributes.getMaximunAdren(),
+			maxMana = cBasicAttributes.getMaximunMana();
+			switch (cBasicAttributes.getLevel())
 			{
 			case 2:
 				this.life.maximunLife = LIFE_2;
@@ -57,8 +58,8 @@ public class RobotController : HeroeController
 				this.speedAtt = ATT_SPEED_2;
 				this.defP = DEF_P_2;
 				this.defM = DEF_M_2;
-				this.mana = MANA_2;
-				this.adren = ADREN_2;
+				cBasicAttributes.setMaximunMana(MANA_2);
+				cBasicAttributes.setMaximunAdren(ADREN_2);
 				this.speedMov = MOV_SPEED_2;
 				break;
 			case 3:
@@ -68,8 +69,8 @@ public class RobotController : HeroeController
 				this.speedAtt = ATT_SPEED_3;
 				this.defP = DEF_P_3;
 				this.defM = DEF_M_3;
-				this.mana = MANA_3;
-				this.adren = ADREN_3;
+				cBasicAttributes.setMaximunMana(MANA_3);
+				cBasicAttributes.setMaximunAdren(ADREN_3);
 				this.speedMov = MOV_SPEED_3;
 				break;
 			case 4:
@@ -79,8 +80,8 @@ public class RobotController : HeroeController
 				this.speedAtt = ATT_SPEED_4;
 				this.defP = DEF_P_4;
 				this.defM = DEF_M_4;
-				this.mana = MANA_4;
-				this.adren = ADREN_4;
+				cBasicAttributes.setMaximunMana(MANA_4);
+				cBasicAttributes.setMaximunAdren(ADREN_4);
 				this.speedMov = MOV_SPEED_4;
 				break;
 			}//end switch (level)
@@ -88,11 +89,11 @@ public class RobotController : HeroeController
 			float percentage = (float)(life.maximunLife - maxLife) / maxLife;
 			life.currentLife = (1 + percentage) * life.currentLife;
 			
-			percentage = (float)(adren - maxAdren) / maxAdren;
-			currentAdren = (int) ((1 + percentage) * currentAdren);
+			percentage = (float)(cBasicAttributes.getMaximunAdren() - maxAdren) / maxAdren;
+			cBasicAttributes.setCurrentAdren((int) ((1 + percentage) * cBasicAttributes.getCurrentAdren()));
 			
-			percentage = (float)(mana - maxMana) / maxMana;
-			currentMana = (int) ((1 + percentage) * currentMana);
+			percentage = (float)(cBasicAttributes.getMaximunMana() - maxMana) / maxMana;
+			cBasicAttributes.setCurrentMana((int) ((1 + percentage) * cBasicAttributes.getCurrentMana()));
 			
 			hasNewLevel = false;
 		}
@@ -116,8 +117,8 @@ public class RobotController : HeroeController
 		base.Start ();
 		
 		this.life.currentLife = LIFE_1;
-		this.currentMana = MANA_1;
-		this.currentAdren = ADREN_1;
+		cBasicAttributes.setCurrentMana(MANA_1);
+		cBasicAttributes.setCurrentAdren(ADREN_1);
 		
 		this.life.maximunLife = LIFE_1;
 		this.attackP = ATT_P_1;
@@ -125,8 +126,8 @@ public class RobotController : HeroeController
 		this.speedAtt = ATT_SPEED_1;
 		this.defP = DEF_P_1;
 		this.defM = DEF_M_1;
-		this.mana = MANA_1;
-		this.adren = ADREN_1;
+		cBasicAttributes.setMaximunMana(MANA_1);
+		cBasicAttributes.setMaximunAdren(ADREN_1);
 		this.speedMov = MOV_SPEED_1;
 
 		//Set the collider cubes in the sword
@@ -146,8 +147,8 @@ public class RobotController : HeroeController
 		//Initialize the animation
 		animation.Play ("Idle01");
 
-		if (gun == null)
-			gun = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Cylinder002/cuchilla");
+		gun = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Cylinder002/cuchilla");
+		head = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
 	}
 	
 	// Update is called once per frame
@@ -173,10 +174,7 @@ public class RobotController : HeroeController
             {
                 if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
                 {
-                    Transform head = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
-                    fireCircleInst = (GameObject)Instantiate(fireBall, head.position + Vector3.down * 0.5f, transform.rotation);
-                    fireCircleInst.transform.parent = head;
-                    Destroy(fireCircleInst, 1.7f);
+					StartCoroutine(FirstSkill(0));
 					//------------------------------------
 					canRotate = true;
 					canMove = true;
@@ -187,12 +185,7 @@ public class RobotController : HeroeController
 					cState.animationName = "Attack2";
 					cState.animationChanged = true;
                     //----------------------------
-                    turnInst = (GameObject)Instantiate(skelterTurn, transform.position + Vector3.up, transform.rotation);
-					RobotTurn rt = turnInst.GetComponent<RobotTurn>();
-					rt.SetDamage(75);
-					rt.setOwner(gameObject);
-					rt.setTimeToTurn(1f);
-                    Destroy(turnInst, 5f);
+					StartCoroutine(SecondSkill(0));
 					//------------------------------------
 					canRotate = false;
 					canMove = false;
@@ -203,18 +196,7 @@ public class RobotController : HeroeController
 					cState.animationName = "Attack3";
 					cState.animationChanged = true;
                     //----------------------------
-                    if (fireShotInst != null)
-                        Destroy(fireShotInst);
-                    skelterShot.GetComponent<MeshRenderer>().enabled = false;
-                    fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
-					RobotShot rs = fireShotInst.GetComponent<RobotShot>();
-					rs.SetDamage(75);
-					rs.setOwner(gameObject);
-					rs.setSpeed(2);
-					rs.setDirection(transform.forward);
-					rs.setTimeToShot(1.7f);
-                    fireShotInst.transform.parent = gun;
-                    Destroy(fireShotInst, 2.5f);
+					StartCoroutine(ThirdSkill(0));
 					//------------------------------------
 					canRotate = false;
 					canMove = false;
@@ -237,16 +219,7 @@ public class RobotController : HeroeController
 				// Instantiate the shot
                 if (animation.IsPlaying("Attack3") && fireShotInst == null)
                 {
-                    skelterShot.GetComponent<MeshRenderer>().enabled = false;
-                    fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
-					RobotShot rs = fireShotInst.GetComponent<RobotShot>();
-					rs.SetDamage(75);
-					rs.setOwner(gameObject);
-					rs.setSpeed(2);
-					rs.setDirection(transform.forward);
-					rs.setTimeToShot(1.7f);
-                    fireShotInst.transform.parent = gun;
-                    Destroy(fireShotInst, animation["Attack3"].length);
+					StartCoroutine(ThirdBasicAttack(0));
                 }
 				//------------------------------------
 				canRotate = false;
@@ -341,6 +314,63 @@ public class RobotController : HeroeController
 			this.defP = DEF_P_1;
 			this.defM = DEF_M_1;
 		}
+	}
+
+	//-----------------------------------------------------------------------
+	// Corutines
+	private IEnumerator FirstSkill(float time)
+	{
+		yield return new WaitForSeconds(time);
+
+		fireCircleInst = (GameObject)Instantiate(fireBall, head.position + Vector3.down * 0.5f, transform.rotation);
+		fireCircleInst.transform.parent = head;
+		Destroy(fireCircleInst, 1.7f);
+	}
+
+	private IEnumerator SecondSkill(float time)
+	{
+		yield return new WaitForSeconds(time);
+		
+		turnInst = (GameObject)Instantiate(skelterTurn, transform.position + Vector3.up, transform.rotation);
+		RobotTurn rt = turnInst.GetComponent<RobotTurn>();
+		rt.SetDamage(75);
+		rt.setOwner(gameObject);
+		rt.setTimeToTurn(1f);
+		Destroy(turnInst, 5f);
+	}
+
+	private IEnumerator ThirdSkill(float time)
+	{
+		yield return new WaitForSeconds(time);
+		
+		if (fireShotInst != null)
+			Destroy(fireShotInst);
+		skelterShot.GetComponent<MeshRenderer>().enabled = false;
+		fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
+		RobotShot rs = fireShotInst.GetComponent<RobotShot>();
+		rs.SetDamage(75);
+		rs.setOwner(gameObject);
+		rs.setSpeed(2);
+		rs.setDirection(transform.forward);
+		rs.setTimeToShot(1.7f);
+		fireShotInst.transform.parent = gun;
+		Destroy(fireShotInst, 2.5f);
+	}
+
+	private IEnumerator ThirdBasicAttack(float time)
+	{
+		yield return new WaitForSeconds(time);
+		
+		skelterShot.GetComponent<MeshRenderer>().enabled = false;
+		fireShotInst = (GameObject)Instantiate(skelterShot, gun.position, transform.rotation);
+		RobotShot rs = fireShotInst.GetComponent<RobotShot>();
+		rs.SetDamage(75);
+		rs.setOwner(gameObject);
+		rs.setSpeed(2);
+		rs.setDirection(transform.forward);
+		rs.setTimeToShot(1.7f);
+		fireShotInst.transform.parent = gun;
+		Destroy(fireShotInst, animation["Attack3"].length);
 	}
 }
 

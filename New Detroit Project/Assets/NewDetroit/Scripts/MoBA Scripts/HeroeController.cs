@@ -35,9 +35,9 @@ public abstract class HeroeController : ControllableCharacter
 		Orc, 
 		Robot
 	}
+
+
 	//---------------------------------------------------------------------------------------------
-
-
 	// CONTROL HERO
 	private bool isControllable = true;
 	private Vector3 moveDirection = Vector3.zero; // The current move direction in x-z
@@ -62,22 +62,19 @@ public abstract class HeroeController : ControllableCharacter
 	private bool jumping = false; // Are we jumping? (Initiated with jump button and not grounded yet)
 	//---------------------------------------------------------------------------------------------
 	// TEXTURES
-	public Texture2D 	textureLifePositive, textureLifeNegative,
-						textureAdrenPositive, textureAdrenNegative,
-						textureManaPositive, textureManaNegative,
-						textureBackground;
+//	public Texture2D 	textureLifePositive, textureLifeNegative,
+//						textureAdrenPositive, textureAdrenNegative,
+//						textureManaPositive, textureManaNegative,
+//						textureBackground;
 	//---------------------------------------------------------------------------------------------
 	protected int 	attackP, 
 					attackM, 
 					defP, 
 					defM, 
-					mana, 
-					adren, 
 					speedMov, 
-					level, 
-					experience, 
-					currentMana, 
-					currentAdren;
+//					level, 
+					experience;
+	protected CBasicAttributesHero cBasicAttributes;
 	protected double 	speedAtt;
 	private bool attackInstantiate;	// Activate the spheres of arms
 	protected TypeHeroe type;	// Type of heroe
@@ -98,13 +95,13 @@ public abstract class HeroeController : ControllableCharacter
 	protected bool doingSecondaryAnim = false; // A flag to tell us if the orc is doing a secondary attack anim or not
 	// ------------------------------------------------------------------------------------------------------
 	// GUI
-	private Rect 	rectanglePositiveLife,
-					rectangleNegativeLife,
-					rectanglePositiveAdren,
-					rectangleNegativeAdren,
-					rectanglePositiveMana,
-					rectangleNegativeMana,
-					rectangleLevel;
+//	private Rect 	rectanglePositiveLife,
+//					rectangleNegativeLife,
+//					rectanglePositiveAdren,
+//					rectangleNegativeAdren,
+//					rectanglePositiveMana,
+//					rectangleNegativeMana,
+//					rectangleLevel;
 	//-------------------------------------------------------------------------------------------------------
 	// FLAGS
 	protected bool 	canRotate = false,	//Flag to turn
@@ -120,7 +117,7 @@ public abstract class HeroeController : ControllableCharacter
 	// Increment the level
 	protected void levelUp() 
 	{
-		level ++;
+		cBasicAttributes.levelUp();
 		hasNewLevel = true;
 		counterAbility ++;
 	}
@@ -130,7 +127,7 @@ public abstract class HeroeController : ControllableCharacter
 	{
 		if (counterAbility > 0)
 		{
-			if (!ability3 && level == 4)
+			if (!ability3 && cBasicAttributes.getLevel() == 4)
 			{
 				ability3 = true;
 				counterAbility --;
@@ -149,72 +146,72 @@ public abstract class HeroeController : ControllableCharacter
 	}
 	// ------------------------------------------------------------------------------------------------------
 	// GUI
-	private void GUIRects()
-	{
-		float 	distance = Vector3.Distance (transform.position, Camera.main.transform.position), // real distance from camera
-				lengthLifeAdrenMana = this.GetComponent<ThirdPersonCamera> ().distance / distance, // percentage of the distance
-				widthAll = Screen.width / 10,
-				widthHalf = widthAll / 2,
-				positiveLife = (float) this.life.currentLife / this.life.maximunLife, // percentage of positive life
-				positiveAdren = (float) this.currentAdren / this.adren, // percentage of positive adrenaline
-				positiveMana = (float) this.currentMana / this.mana; // percentage of positive mana
-		// Life
-		Vector3 posScene = new Vector3 (transform.position.x, transform.position.y + 2f, transform.position.z),
-				posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.8f, transform.position.z),
-				pos = Camera.main.WorldToScreenPoint (posScene),
-				posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
-
-		float 	x = pos.x - widthHalf * lengthLifeAdrenMana,
-				y = Screen.height - pos.y,
-				width = widthAll * positiveLife * lengthLifeAdrenMana,
-				height = (pos.y - posEnd.y) * lengthLifeAdrenMana;	
-		rectanglePositiveLife = new Rect (x, y, width, height);
-
-		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveLife * lengthLifeAdrenMana;
-		width = widthAll * (1 - positiveLife) * lengthLifeAdrenMana;
-		rectangleNegativeLife = new Rect (x, y, width, height);
-		// Adrenaline
-		posScene = new Vector3 (transform.position.x, transform.position.y + 1.78f, transform.position.z);
-		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.68f, transform.position.z);
-		pos = Camera.main.WorldToScreenPoint (posScene);
-		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
-
-		x = pos.x - widthHalf * lengthLifeAdrenMana;
-		y = Screen.height - pos.y;
-		width = widthAll * positiveAdren * lengthLifeAdrenMana;
-		height = (pos.y - posEnd.y) * lengthLifeAdrenMana;
-		rectanglePositiveAdren = new Rect (x, y, width, height);
-
-		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveAdren * lengthLifeAdrenMana;
-		width = widthAll * (1 - positiveAdren) * lengthLifeAdrenMana;
-		rectangleNegativeAdren = new Rect (x, y, width, height);
-		// Mana
-		posScene = new Vector3 (transform.position.x, transform.position.y + 1.66f, transform.position.z);
-		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.56f, transform.position.z);
-		pos = Camera.main.WorldToScreenPoint (posScene);
-		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
-
-		x = pos.x - widthHalf * lengthLifeAdrenMana;
-		y = Screen.height - pos.y;
-		width = widthAll * positiveMana * lengthLifeAdrenMana;
-		height = (pos.y - posEnd.y) * lengthLifeAdrenMana;
-		rectanglePositiveMana = new Rect (x, y, width, height);
-
-		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveMana * lengthLifeAdrenMana;
-		width = widthAll * (1 - positiveMana) * lengthLifeAdrenMana;
-		rectangleNegativeMana = new Rect (x, y, width, height);
-		// Level
-		posScene = new Vector3 (transform.position.x, transform.position.y + 2f, transform.position.z);
-		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.56f, transform.position.z);
-		pos = Camera.main.WorldToScreenPoint (posScene);
-		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
-
-		x = pos.x - (widthHalf + 22) * lengthLifeAdrenMana;
-		y = rectanglePositiveLife.y;
-		width = 20 * lengthLifeAdrenMana;
-		height = (rectanglePositiveMana.y - rectanglePositiveLife.y) + rectanglePositiveMana.height;
-		rectangleLevel = new Rect (x, y, width, height);
-	}
+//	private void GUIRects()
+//	{
+//		float 	distance = Vector3.Distance (transform.position, Camera.main.transform.position), // real distance from camera
+//				lengthLifeAdrenMana = this.GetComponent<ThirdPersonCamera> ().distance / distance, // percentage of the distance
+//				widthAll = Screen.width / 10,
+//				widthHalf = widthAll / 2,
+//				positiveLife = (float) this.life.currentLife / this.life.maximunLife, // percentage of positive life
+//				positiveAdren = (float) cBasicAttributes.getCurrentAdren() / cBasicAttributes.getMaximunAdren(), // percentage of positive adrenaline
+//				positiveMana = (float) cBasicAttributes.getCurrentMana() / cBasicAttributes.getMaximunMana(); // percentage of positive mana
+//		// Life
+//		Vector3 posScene = new Vector3 (transform.position.x, transform.position.y + 2f, transform.position.z),
+//				posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.8f, transform.position.z),
+//				pos = Camera.main.WorldToScreenPoint (posScene),
+//				posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
+//
+//		float 	x = pos.x - widthHalf * lengthLifeAdrenMana,
+//				y = Screen.height - pos.y,
+//				width = widthAll * positiveLife * lengthLifeAdrenMana,
+//				height = (pos.y - posEnd.y) * lengthLifeAdrenMana;	
+//		rectanglePositiveLife = new Rect (x, y, width, height);
+//
+//		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveLife * lengthLifeAdrenMana;
+//		width = widthAll * (1 - positiveLife) * lengthLifeAdrenMana;
+//		rectangleNegativeLife = new Rect (x, y, width, height);
+//		// Adrenaline
+//		posScene = new Vector3 (transform.position.x, transform.position.y + 1.78f, transform.position.z);
+//		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.68f, transform.position.z);
+//		pos = Camera.main.WorldToScreenPoint (posScene);
+//		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
+//
+//		x = pos.x - widthHalf * lengthLifeAdrenMana;
+//		y = Screen.height - pos.y;
+//		width = widthAll * positiveAdren * lengthLifeAdrenMana;
+//		height = (pos.y - posEnd.y) * lengthLifeAdrenMana;
+//		rectanglePositiveAdren = new Rect (x, y, width, height);
+//
+//		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveAdren * lengthLifeAdrenMana;
+//		width = widthAll * (1 - positiveAdren) * lengthLifeAdrenMana;
+//		rectangleNegativeAdren = new Rect (x, y, width, height);
+//		// Mana
+//		posScene = new Vector3 (transform.position.x, transform.position.y + 1.66f, transform.position.z);
+//		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.56f, transform.position.z);
+//		pos = Camera.main.WorldToScreenPoint (posScene);
+//		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
+//
+//		x = pos.x - widthHalf * lengthLifeAdrenMana;
+//		y = Screen.height - pos.y;
+//		width = widthAll * positiveMana * lengthLifeAdrenMana;
+//		height = (pos.y - posEnd.y) * lengthLifeAdrenMana;
+//		rectanglePositiveMana = new Rect (x, y, width, height);
+//
+//		x = pos.x - widthHalf * lengthLifeAdrenMana + widthAll * positiveMana * lengthLifeAdrenMana;
+//		width = widthAll * (1 - positiveMana) * lengthLifeAdrenMana;
+//		rectangleNegativeMana = new Rect (x, y, width, height);
+//		// Level
+//		posScene = new Vector3 (transform.position.x, transform.position.y + 2f, transform.position.z);
+//		posSceneEnd = new Vector3 (transform.position.x, transform.position.y + 1.56f, transform.position.z);
+//		pos = Camera.main.WorldToScreenPoint (posScene);
+//		posEnd = Camera.main.WorldToScreenPoint (posSceneEnd);
+//
+//		x = pos.x - (widthHalf + 22) * lengthLifeAdrenMana;
+//		y = rectanglePositiveLife.y;
+//		width = 20 * lengthLifeAdrenMana;
+//		height = (rectanglePositiveMana.y - rectanglePositiveLife.y) + rectanglePositiveMana.height;
+//		rectangleLevel = new Rect (x, y, width, height);
+//	}
 
 
 	// ------------------------------------------------------------------------------------------------------
@@ -236,9 +233,9 @@ public abstract class HeroeController : ControllableCharacter
 		this.experience += experience;
 		Mathf.Min (this.experience, EXP_LEVEL_3_4);
 		
-		if (this.level == 1 && this.experience >= EXP_LEVEL_1_2) this.levelUp ();
-		else if (this.level == 2 && this.experience >= EXP_LEVEL_2_3) this.levelUp ();
-		else if (this.level == 3 && this.experience >= EXP_LEVEL_3_4) this.levelUp ();
+		if (cBasicAttributes.getLevel() == 1 && this.experience >= EXP_LEVEL_1_2) this.levelUp ();
+		else if (cBasicAttributes.getLevel() == 2 && this.experience >= EXP_LEVEL_2_3) this.levelUp ();
+		else if (cBasicAttributes.getLevel() == 3 && this.experience >= EXP_LEVEL_3_4) this.levelUp ();
 	}
 	
 	
@@ -253,8 +250,7 @@ public abstract class HeroeController : ControllableCharacter
 		/*transform.FindChild ("Pivot");
 		transform.FindChild ("Pivot").GetComponent<NavMeshObstacle> ();
         radius = transform.FindChild("Pivot").GetComponent<NavMeshObstacle>().radius * transform.localScale.x;*/
-
-		this.level = 1;
+		
 		this.experience = 0;
 		this.hasNewLevel = false;
 		this.attackInstantiate = true;
@@ -269,6 +265,9 @@ public abstract class HeroeController : ControllableCharacter
 
 		cState = GetComponent<CStateUnit>();
 		cState.animationChanged = cState.animationChangeQueued = cState.animationChangeQueued2 = false;
+
+		cBasicAttributes = GetComponent<CBasicAttributesHero>();
+		cBasicAttributes.setLevel(1);
 	}//Start
 	
 	// Update is called once per frame
@@ -279,7 +278,7 @@ public abstract class HeroeController : ControllableCharacter
 		// Unlock abilities
 		if (counterAbility > 0)
 		{
-			if (!ability3 && level == 4)
+			if (!ability3 && cBasicAttributes.getLevel() == 4)
 			{
 				ability3 = true;
 				counterAbility --;
@@ -299,7 +298,7 @@ public abstract class HeroeController : ControllableCharacter
 		UpdateControl (); // Update control
 		UpdateState (false, false, false); // Update state
 		// GUI
-		GUIRects();
+//		GUIRects();
 	}//Update
 
     void OnGUI ()
@@ -308,21 +307,21 @@ public abstract class HeroeController : ControllableCharacter
 		Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
 		GUI.Label(new Rect(pos.x + 20, Screen.height - pos.y, 200, 20), "State: " + state.ToString());
 		//---------------------------------------------------------------
-        GUI.DrawTexture(rectanglePositiveLife, textureLifePositive);
-        GUI.DrawTexture(rectangleNegativeLife, textureLifeNegative);
-        GUI.DrawTexture(rectanglePositiveAdren, textureAdrenPositive);
-        GUI.DrawTexture(rectangleNegativeAdren, textureAdrenNegative);
-        GUI.DrawTexture(rectanglePositiveMana, textureManaPositive);
-        GUI.DrawTexture(rectangleNegativeMana, textureManaNegative);
-        GUI.DrawTexture(rectangleLevel, textureBackground);
-
-        FontStyle fs = GUI.skin.label.fontStyle;
-        TextAnchor ta = GUI.skin.label.alignment;
-        GUI.skin.label.fontStyle = FontStyle.Bold;
-        GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-        GUI.Label(rectangleLevel, "" + level);
-        GUI.skin.label.fontStyle = fs;
-        GUI.skin.label.alignment = ta;
+//        GUI.DrawTexture(rectanglePositiveLife, textureLifePositive);
+//        GUI.DrawTexture(rectangleNegativeLife, textureLifeNegative);
+//        GUI.DrawTexture(rectanglePositiveAdren, textureAdrenPositive);
+//        GUI.DrawTexture(rectangleNegativeAdren, textureAdrenNegative);
+//        GUI.DrawTexture(rectanglePositiveMana, textureManaPositive);
+//        GUI.DrawTexture(rectangleNegativeMana, textureManaNegative);
+//        GUI.DrawTexture(rectangleLevel, textureBackground);
+//
+//        FontStyle fs = GUI.skin.label.fontStyle;
+//        TextAnchor ta = GUI.skin.label.alignment;
+//        GUI.skin.label.fontStyle = FontStyle.Bold;
+//        GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+//		GUI.Label(rectangleLevel, "" + cBasicAttributes.getLevel());
+//        GUI.skin.label.fontStyle = fs;
+//        GUI.skin.label.alignment = ta;
 	}
 
 
@@ -481,7 +480,7 @@ public abstract class HeroeController : ControllableCharacter
                 // Secondary attack
                 if (
 					(Input.GetKey(KeyCode.Alpha1) || useSkill1) && ability1 && cooldown1 == cooldown1total &&
-				    ((manaSkill1 != -1 && currentMana >= manaSkill1) || (adrenSkill1 != -1 && currentAdren >= adrenSkill1))
+					((manaSkill1 != -1 && cBasicAttributes.consumeMana(manaSkill1)) || (adrenSkill1 != -1 && cBasicAttributes.consumeAdren(adrenSkill1)))
 				    )
                 {
                     state = StateHeroe.AttackSecond;
@@ -489,7 +488,7 @@ public abstract class HeroeController : ControllableCharacter
                 }
                 else if (
 					(Input.GetKey(KeyCode.Alpha2) || useSkill2) && ability2 && cooldown2 == cooldown2total &&
-					((manaSkill2 != -1 && currentMana >= manaSkill2) || (adrenSkill2 != -1 && currentAdren >= adrenSkill2))
+					((manaSkill2 != -1 && cBasicAttributes.consumeMana(manaSkill2)) || (adrenSkill2 != -1 && cBasicAttributes.consumeAdren(adrenSkill2)))
 					)
                 {
                     state = StateHeroe.AttackSecond;
@@ -497,7 +496,7 @@ public abstract class HeroeController : ControllableCharacter
                 }
                 else if (
 					(Input.GetKey(KeyCode.Alpha3) || useSkill3) && ability3 && cooldown3 == cooldown3total &&
-					((manaSkill3 != -1 && currentMana >= manaSkill3) || (adrenSkill3 != -1 && currentAdren >= adrenSkill3))
+					((manaSkill3 != -1 && cBasicAttributes.consumeMana(manaSkill3)) || (adrenSkill3 != -1 && cBasicAttributes.consumeAdren(adrenSkill3)))
 					)
                 {
                     state = StateHeroe.AttackSecond;
@@ -547,11 +546,11 @@ public abstract class HeroeController : ControllableCharacter
 	protected void Counter()
 	{
 		// Secondary attack
-		if (cooldown1 < cooldown1total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack1) cooldown1 -= Time.deltaTime;
+//		if (cooldown1 < cooldown1total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack1) cooldown1 -= Time.deltaTime;
 		if (cooldown1 <= 0) cooldown1 = cooldown1total;
 //		if (cooldown2 < cooldown2total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
 		if (cooldown2 <= 0) cooldown2 = cooldown2total;
-		if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
+//		if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
 		if (cooldown3 <= 0) cooldown3 = cooldown3total;
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------------
@@ -567,12 +566,10 @@ public abstract class HeroeController : ControllableCharacter
 				if (manaSkill1 != -1) 
 				{
 					useMana = true;
-					currentMana -= manaSkill1;
 				}
 				else 
 				{
 					useAdren = true;
-					currentAdren -= adrenSkill1;
 				}
 			}
 			else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total) 
@@ -580,12 +577,10 @@ public abstract class HeroeController : ControllableCharacter
 				if (manaSkill2 != -1) 
 				{
 					useMana = true;
-					currentMana -= manaSkill2;
 				}
 				else 
 				{
 					useAdren = true;
-//					currentAdren -= adrenSkill2;
 				}
 			}
 			else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
@@ -593,48 +588,32 @@ public abstract class HeroeController : ControllableCharacter
 				if (manaSkill3 != -1) 
 				{
 					useMana = true;
-					currentMana -= manaSkill3;
 				}
 				else 
 				{
 					useAdren = true;
-					currentAdren -= adrenSkill3;
 				}
 			}
 		}
 		// If we did not use an adren skill
-		if (!useMana && currentMana != mana)
+		if (!useMana && timeCountMana >= 1)
 		{
-			if (currentMana < mana)
-			{
-				if (timeCountMana >= 1)
-				{
-					timeCountMana = 0;
-					currentMana += 5;
-				}
-				else timeCountMana += Time.deltaTime;
-			}
-			else
-			{
-				currentMana = mana;
-			}
+			timeCountMana = 0;
+			cBasicAttributes.recoverMana(5);
+		}
+		else if (!useMana)
+		{
+			timeCountMana += Time.deltaTime;
 		}
 		// If we did not use a mana skill
-		if (!useAdren && currentAdren != adren)
+		if (!useAdren && timeCountAdren >= 1)
 		{
-			if (currentAdren < adren)
-			{
-				if (timeCountAdren >= 1)
-				{
-					timeCountAdren = 0;
-					currentAdren += 5;
-				}
-				else timeCountAdren += Time.deltaTime;
-			}
-			else
-			{
-				currentAdren = adren;
-			}
+			timeCountAdren = 0;
+			cBasicAttributes.recoverAdren(5);
+		}
+		else if (!useMana)
+		{
+			timeCountAdren += Time.deltaTime;
 		}
 	}
 	//---------------------------------------------------------------------------------------
@@ -645,15 +624,15 @@ public abstract class HeroeController : ControllableCharacter
 	public AttackSecond getStateSecondAttack() { return stateAttackSecond; }
 	public TypeHeroe getTypeHero() { return type; }
 	public int getExperience() { return experience; }
-	public int getCurrentAdren() { return currentAdren; }
-	public int getAdren() { return adren; }
-	public int getCurrentMana() { return currentMana; }
-	public int getMana() { return mana; }
+	public int getCurrentAdren() { return (int) cBasicAttributes.getCurrentAdren(); }
+	public int getAdren() { return (int) cBasicAttributes.getMaximunAdren(); }
+	public int getCurrentMana() { return (int) cBasicAttributes.getCurrentMana(); }
+	public int getMana() { return (int) cBasicAttributes.getMaximunMana(); }
 	public int getCounterAbility() { return counterAbility; }
 	public bool getAbility1() { return ability1; }
 	public bool getAbility2() { return ability2; }
 	public bool getAbility3() { return ability3; }
-	public int getLevel() { return level; }
+	public int getLevel() { return cBasicAttributes.getLevel(); }
 	public int getAttackP() { return attackP; }
 	public int getAttackM() { return attackM; }
 	public int getDefP() { return defP; }
