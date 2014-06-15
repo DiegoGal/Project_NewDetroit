@@ -9,9 +9,9 @@ public class NetworkController : Photon.MonoBehaviour {
 
     private bool connectFailed = false;
 
-    public static readonly string SceneNameMenu = "Menu";
+    public static readonly string SceneNameMenu = "MainMenu";
 
-    public static readonly string SceneNameGame = "NewDetroit";
+    public static readonly string SceneNameGame = "NewDetroit01";
 
     // Input of the names
     public GameObject labelRoomName;
@@ -23,7 +23,9 @@ public class NetworkController : Photon.MonoBehaviour {
     public GameObject originalButton;
     private ArrayList layerButons;
     private short selected;
+    private string roomName;
     public UILabel info;
+    public UIWidgetContainer wgContainer;
 
     public void Start()
     {
@@ -37,6 +39,7 @@ public class NetworkController : Photon.MonoBehaviour {
         selected = -1;
         info.text = "";
         originalButton.SetActive(false);
+        roomName = "";
     }
 
     public void Awake()
@@ -79,17 +82,26 @@ public class NetworkController : Photon.MonoBehaviour {
 
     public void JoinRoom()
     {
- 
+        if (selected == -1)
+        {
+            info.text = "Select one room first";
+        }
+        else
+        {
+            RoomInfo[] roomsInfo = PhotonNetwork.GetRoomList();
+            
+            if (roomsInfo[selected].playerCount == roomsInfo[selected].maxPlayers)
+            {
+                info.text = "This room is full";
+            }
+            else
+                PhotonNetwork.JoinRoom(roomName);
+        }
     }
 
     public void ExitGame()
     {
         Application.Quit();
-    }
-
-    public void PlayButton()
-    {
-        //rooms = PhotonNetwork.GetRoomList();
     }
 
     public void UpdateRooms()
@@ -101,6 +113,7 @@ public class NetworkController : Photon.MonoBehaviour {
         UILabel playerScript = labelPlayers.GetComponent<UILabel>();
         roomScript.text = playerScript .text = "";
         originalButton.SetActive(true);
+        originalButton.transform.GetChild(0).gameObject.SetActive(true);
         for (int i = 0; i < layerButons.Count; i++)
         {
             Destroy((Object)layerButons[i]);
@@ -121,7 +134,7 @@ public class NetworkController : Photon.MonoBehaviour {
             playerScript.text = playerScript.text + roomsInfo[i].playerCount + "/" + roomsInfo[i].maxPlayers + "\n";
         }
         originalButton.SetActive(false);
-        
+        originalButton.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public void RoomSelected(GameObject s)
@@ -129,146 +142,29 @@ public class NetworkController : Photon.MonoBehaviour {
         short sel = short.Parse(s.name.Substring(s.name.Length - 1));
         for (int i = 0; i < layerButons.Count; i++)
         {
-            UIButton aux = ((GameObject)layerButons[i]).GetComponent<UIButton>();
-            aux.defaultColor = new Color(aux.defaultColor.r, aux.defaultColor.g, aux.defaultColor.b, 0.0f);
-            
+            GameObject buttonAux = ((GameObject)layerButons[i]);
+            if (buttonAux != s)
+            {
+                UIButton aux = buttonAux.GetComponent<UIButton>();
+                aux.defaultColor = new Color(aux.defaultColor.r, aux.defaultColor.g, aux.defaultColor.b, 0.0f);
+                buttonAux.SendMessage("OnDisable", true);
+            }
         }
         UIButton button = s.GetComponent<UIButton>();
         if (selected == sel)
         {
             selected = -1;
             button.defaultColor = new Color(button.defaultColor.r, button.defaultColor.g, button.defaultColor.b, 0.0f);
+            roomName = "";
         }
         else
         {
-            selected = sel;
+            selected = sel;            
+            RoomInfo[] roomsInfo = PhotonNetwork.GetRoomList();
+            roomName = roomsInfo[sel].name;
             button.defaultColor = new Color(button.defaultColor.r, button.defaultColor.g, button.defaultColor.b, 0.5f);
         }
         info.text = selected + " selected";
-    }
-
-    public void OnGUI() 
-    {
-        /*
-        if (!PhotonNetwork.connected)
-        {
-            if (PhotonNetwork.connectionState == ConnectionState.Connecting)
-            {
-                GUILayout.Label("Connecting " + PhotonNetwork.ServerAddress);
-                GUILayout.Label(Time.time.ToString());
-            }
-            else
-            {
-                GUILayout.Label("Not connected. Check console output.");
-            }
-
-            if (this.connectFailed)
-            {
-                GUILayout.Label("Connection failed. Check setup and use Setup Wizard to fix configuration.");
-                GUILayout.Label(String.Format("Server: {0}:{1}", new object[] {PhotonNetwork.ServerAddress, PhotonNetwork.PhotonServerSettings.ServerPort}));
-                GUILayout.Label("AppId: " + PhotonNetwork.PhotonServerSettings.AppID);
-                
-                if (GUILayout.Button("Try Again", GUILayout.Width(100)))
-                {
-                    this.connectFailed = false;
-                    PhotonNetwork.ConnectUsingSettings("1.0");
-                }
-            }
-
-            return;
-        }
-	        
-            GUI.skin.box.fontStyle = FontStyle.Bold;
-	        GUI.Box(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300), "Join or Create a Room");
-	        GUILayout.BeginArea(new Rect((Screen.width - 400) / 2, (Screen.height - 350) / 2, 400, 300));
-
-	        GUILayout.Space(25);
-
-	        // Player name
-	        GUILayout.BeginHorizontal();
-	        GUILayout.Label("Player name:", GUILayout.Width(100));
-	        PhotonNetwork.playerName = GUILayout.TextField(PhotonNetwork.playerName);
-	        GUILayout.Space(105);
-	        if (GUI.changed)
-	        {
-	            // Save name
-	            PlayerPrefs.SetString("playerName", PhotonNetwork.playerName);
-	        }
-	        GUILayout.EndHorizontal();
-
-	        GUILayout.Space(15);
-
-	        // Join room by title
-	        GUILayout.BeginHorizontal();
-	        GUILayout.Label("Roomname:", GUILayout.Width(100));
-	        this.roomName = GUILayout.TextField(this.roomName);
-	        
-	        if (GUILayout.Button("Create Room", GUILayout.Width(100)))
-	        {
-				PhotonNetwork.CreateRoom(this.roomName, true, true, 4);
-	        }
-
-	        GUILayout.EndHorizontal();
-
-	        // Create a room (fails if exist!)
-	        GUILayout.BeginHorizontal();
-	        GUILayout.FlexibleSpace();
-	        //this.roomName = GUILayout.TextField(this.roomName);
-	        if (GUILayout.Button("Join Room", GUILayout.Width(100)))
-	        {
-				PhotonNetwork.JoinRoom(this.roomName);
-	        }
-
-	        GUILayout.EndHorizontal();
-
-
-	        GUILayout.Space(15);
-
-	        // Join random room
-	        GUILayout.BeginHorizontal();
-
-	        GUILayout.Label(PhotonNetwork.countOfPlayers + " users are online in " + PhotonNetwork.countOfRooms + " rooms.");
-	        GUILayout.FlexibleSpace();
-	        
-			
-			if (GUILayout.Button("Join Random", GUILayout.Width(100)))
-	        {
-	            PhotonNetwork.JoinRandomRoom();
-	        }
-			
-	        
-
-	        GUILayout.EndHorizontal();
-
-	        GUILayout.Space(15);
-	        if (PhotonNetwork.GetRoomList().Length == 0)
-	        {
-	            GUILayout.Label("Currently no games are available.");
-	            GUILayout.Label("Rooms will be listed here, when they become available.");
-	        }
-	        else
-	        {
-	            GUILayout.Label(PhotonNetwork.GetRoomList() + " currently available. Join either:");
-
-	            // Room listing: simply call GetRoomList: no need to fetch/poll whatever!
-	            this.scrollPos = GUILayout.BeginScrollView(this.scrollPos);
-	            foreach (RoomInfo roomInfo in PhotonNetwork.GetRoomList())
-	            {
-	                GUILayout.BeginHorizontal();
-	                GUILayout.Label(roomInfo.name + " " + roomInfo.playerCount + "/" + roomInfo.maxPlayers);
-	                if (GUILayout.Button("Join"))
-	                {
-	                    PhotonNetwork.JoinRoom(roomInfo.name);
-	                }
-
-	                GUILayout.EndHorizontal();
-	            }
-
-	            GUILayout.EndScrollView();
-	        }
-
-	        GUILayout.EndArea();
-         */
     }
 
     // We have two options here: we either joined(by title, list or random) or created a room.
@@ -280,7 +176,7 @@ public class NetworkController : Photon.MonoBehaviour {
     public void OnCreatedRoom()
     {
         Debug.Log("OnCreatedRoom");
-        //PhotonNetwork.LoadLevel(SceneNameGame);
+        PhotonNetwork.LoadLevel(SceneNameGame);
     }
 
 

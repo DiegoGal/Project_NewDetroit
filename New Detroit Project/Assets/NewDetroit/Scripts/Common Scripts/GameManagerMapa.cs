@@ -18,13 +18,19 @@ public class GameManagerMapa : Photon.MonoBehaviour {
     public void Awake()
     {
         // in case we started this demo with the wrong scene being active, simply load the menu scene
+        
         if (!PhotonNetwork.connected)
         {
-            Application.LoadLevel(MenuDetroitMapa.SceneNameMenu);
+            Application.LoadLevel(NetworkController.SceneNameMenu);
             return;
         }
         else
         {
+            PhotonPlayer[] players = PhotonNetwork.otherPlayers;
+            if (players != null)
+            {
+ 
+            }
             GetComponent<AudioSource>().Play();
             Camera.main.GetComponent<CameraMOBAController>().enabled = false;
             if (!joinned)
