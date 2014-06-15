@@ -3,7 +3,7 @@ using System.Collections;
 
 public class NetworkController : Photon.MonoBehaviour {
 
-	private string roomName = "myRoom";
+	//private string roomName = "myRoom";
 
     private Vector2 scrollPos = Vector2.zero;
 
@@ -13,7 +13,31 @@ public class NetworkController : Photon.MonoBehaviour {
 
     public static readonly string SceneNameGame = "NewDetroit";
 
-    public RoomInfo[] rooms;
+    // Input of the names
+    public GameObject labelRoomName;
+    public GameObject labelPlayerName;
+    // Output of the rooms
+    public GameObject labelRooms;
+    public GameObject labelPlayers;
+    // Auxiliar variables
+    public GameObject originalButton;
+    private ArrayList layerButons;
+    private short selected;
+    public UILabel info;
+
+    public void Start()
+    {
+        UILabel scriptRoom = labelRooms.GetComponent<UILabel>();
+        UILabel scriptPlayer = labelPlayers.GetComponent<UILabel>();
+        scriptRoom.text = "";
+        scriptRoom.UpdateNGUIText();
+        scriptPlayer.text = "";
+        scriptPlayer.UpdateNGUIText();
+        layerButons = new ArrayList();
+        selected = -1;
+        info.text = "";
+        originalButton.SetActive(false);
+    }
 
     public void Awake()
     {
@@ -39,7 +63,23 @@ public class NetworkController : Photon.MonoBehaviour {
 
     public void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(this.roomName, true, true, 4);
+        UILabel roomName = labelRoomName.GetComponent<UILabel>();
+        if (roomName.text.Equals(""))
+        {
+            PhotonNetwork.CreateRoom("Room" + Random.Range(1,9999), true, true, 4);
+            info.text = "Room created.";
+        }
+        else
+        {
+            PhotonNetwork.CreateRoom(roomName.text, true, true, 4);
+            info.text = "Room " + roomName.text + " created.";
+        }
+        
+    }
+
+    public void JoinRoom()
+    {
+ 
     }
 
     public void ExitGame()
@@ -49,10 +89,65 @@ public class NetworkController : Photon.MonoBehaviour {
 
     public void PlayButton()
     {
-        rooms = PhotonNetwork.GetRoomList();
+        //rooms = PhotonNetwork.GetRoomList();
     }
 
-    public void OnGUI()
+    public void UpdateRooms()
+    {
+        RoomInfo[] roomsInfo = PhotonNetwork.GetRoomList();
+        Debug.Log(roomsInfo.Length);
+        info.text = roomsInfo.Length + " rooms";
+        UILabel roomScript = labelRooms.GetComponent<UILabel>();
+        UILabel playerScript = labelPlayers.GetComponent<UILabel>();
+        roomScript.text = playerScript .text = "";
+        originalButton.SetActive(true);
+        for (int i = 0; i < layerButons.Count; i++)
+        {
+            Destroy((Object)layerButons[i]);
+            layerButons.RemoveAt(i);
+        }
+        for (int i = 0; i < roomsInfo.Length; i++)
+        {
+            GameObject button = (GameObject)Instantiate(originalButton);
+            button.name = "labelButton" + i;
+            button.transform.parent = labelRooms.transform;
+            button.transform.position = originalButton.transform.position;
+            button.transform.localScale = originalButton.transform.localScale;
+
+            button.transform.localPosition += new Vector3(0,-12*i,0); 
+            layerButons.Add(button);
+
+            roomScript.text =roomScript.text +  roomsInfo[i].name + "\n";
+            playerScript.text = playerScript.text + roomsInfo[i].playerCount + "/" + roomsInfo[i].maxPlayers + "\n";
+        }
+        originalButton.SetActive(false);
+        
+    }
+
+    public void RoomSelected(GameObject s)
+    {
+        short sel = short.Parse(s.name.Substring(s.name.Length - 1));
+        for (int i = 0; i < layerButons.Count; i++)
+        {
+            UIButton aux = ((GameObject)layerButons[i]).GetComponent<UIButton>();
+            aux.defaultColor = new Color(aux.defaultColor.r, aux.defaultColor.g, aux.defaultColor.b, 0.0f);
+            
+        }
+        UIButton button = s.GetComponent<UIButton>();
+        if (selected == sel)
+        {
+            selected = -1;
+            button.defaultColor = new Color(button.defaultColor.r, button.defaultColor.g, button.defaultColor.b, 0.0f);
+        }
+        else
+        {
+            selected = sel;
+            button.defaultColor = new Color(button.defaultColor.r, button.defaultColor.g, button.defaultColor.b, 0.5f);
+        }
+        info.text = selected + " selected";
+    }
+
+    public void OnGUI() 
     {
         /*
         if (!PhotonNetwork.connected)
@@ -185,7 +280,7 @@ public class NetworkController : Photon.MonoBehaviour {
     public void OnCreatedRoom()
     {
         Debug.Log("OnCreatedRoom");
-        PhotonNetwork.LoadLevel(SceneNameGame);
+        //PhotonNetwork.LoadLevel(SceneNameGame);
     }
 
 
