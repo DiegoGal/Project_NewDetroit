@@ -282,7 +282,7 @@ public class UnitController : ControllableCharacter
     {
         if (currentState != State.Dying)
         {
-            int maxTrapped = 35;
+            int maxTrapped = 25;
             if (!goingDown)
             {
                 rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -304,8 +304,15 @@ public class UnitController : ControllableCharacter
                         GetComponent<NavMeshAgent>().ResetPath();
                     }
                     Destroy(this.rigidbody);
-                    currentState = State.Idle;
-                    cState.currentState = currentState;
+                    //currentState = State.Idle;
+
+                    if (lastState == State.GoingTo)
+                        GoTo(destiny);
+                    else
+                    {
+                        currentState = lastState;
+                        cState.currentState = currentState;
+                    }
                     lastPosY = -1.0f;
                     goingDown = false;
                     contTrapped = 0;
@@ -356,7 +363,8 @@ public class UnitController : ControllableCharacter
         alphaValue -= 0.006f;
         model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
         if (alphaValue <= 0.0f)
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
+            PhotonNetwork.Destroy(gameObject);
     }
 
     public virtual void OnGUI ()
@@ -547,8 +555,10 @@ public class UnitController : ControllableCharacter
 
     public void Fly ()
     {
-        if (currentState != State.Dying)
+        if (currentState != State.Dying && currentState != State.Flying)
         {
+            goingDown = false;
+            lastState = currentState;
             currentState = State.Flying;
             cState.currentState = currentState;
             if (posY == -1.0f)

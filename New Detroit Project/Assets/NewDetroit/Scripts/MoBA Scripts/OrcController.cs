@@ -18,50 +18,33 @@ public class OrcController : HeroeController
 	//-----------------------------------------------------------------------------------------------------------------
 
 
-	//public GameObject leftArm, rightArm;
-	public GameObject cubeColliderHand;
-	//-----------------------------------------------------------------------------------------------------------------
+	//Colliders
+	public GameObject cubeColliderHand;	// Hand
 	
 	//Time counts
-	private float timeCountLife = 0;
-	
-	public Transform head;
+	private float timeCountLife = 0;	// State recover
+
+	// Transforms
+	private Transform head;		// Head
+	private Transform pelvis;	// Pelvis
+
+	// Particles
+	public GameObject snot;				// Skill 1
+	public GameObject splash;			// Skill 2
+	public GameObject sphereThirdSkill;	// Skill 3
+	public GameObject smoke;			// Smoke
+
+
 	//-----------------------------------------------------------------------------------------------------------------
-
-
-	// PARTICLES
-	// Snot particle
-	public GameObject snot; 
-	private bool snotActivated = false;
-	private float snotCD = 1.7f;
-	// Splash particle
-	public GameObject spl;
-	public GameObject splash; 
-	private bool splashActivated = false;
-	private float splashCD = 1.7f;
-	// Smoke particle
-	public GameObject smoke; 
-	private bool smokeActivated = false;
-	private float smokeCD = 1.7f;
-	private GameObject smokeInst; // Smoke instantiation
-	// BullStrike particle
-	private bool bullStrikeActivated = false;
-	// FireCircle Particle
-	public GameObject fireCircle;
-	private GameObject fireCircleInst;
-	private bool fireCircleActivated; 
-	//-----------------------------------------------------------------------------------------------------------------
-
-
 	// PRIVATE    
 	private void newLevel()
 	{
 		if (this.hasNewLevel) 
 		{
             int maxLife = (int)life.maximunLife,
-				maxAdren = adren,
-				maxMana = mana;
-			switch (level)
+				maxAdren = cBasicAttributes.getMaximunAdren(),
+				maxMana =cBasicAttributes.getMaximunMana();
+			switch (cBasicAttributes.getLevel())
 			{
 			case 2:
 				this.life.maximunLife = LIFE_2;
@@ -70,8 +53,8 @@ public class OrcController : HeroeController
 				this.speedAtt = ATT_SPEED_2;
 				this.defP = DEF_P_2;
 				this.defM = DEF_M_2;
-				this.mana = MANA_2;
-				this.adren = ADREN_2;
+				cBasicAttributes.setMaximunMana(MANA_2);
+				cBasicAttributes.setMaximunAdren(ADREN_2);
 				this.speedMov = MOV_SPEED_2;
 				break;
 			case 3:
@@ -81,8 +64,8 @@ public class OrcController : HeroeController
 				this.speedAtt = ATT_SPEED_3;
 				this.defP = DEF_P_3;
 				this.defM = DEF_M_3;
-				this.mana = MANA_3;
-				this.adren = ADREN_3;
+				cBasicAttributes.setMaximunMana(MANA_3);
+				cBasicAttributes.setMaximunAdren(ADREN_3);
 				this.speedMov = MOV_SPEED_3;
 				break;
 			case 4:
@@ -92,8 +75,8 @@ public class OrcController : HeroeController
 				this.speedAtt = ATT_SPEED_4;
 				this.defP = DEF_P_4;
 				this.defM = DEF_M_4;
-				this.mana = MANA_4;
-				this.adren = ADREN_4;
+				cBasicAttributes.setMaximunMana(MANA_4);
+				cBasicAttributes.setMaximunAdren(ADREN_4);
 				this.speedMov = MOV_SPEED_4;
 				break;
 			}//end switch (level)
@@ -101,11 +84,11 @@ public class OrcController : HeroeController
             float percentage = (float)(life.maximunLife - maxLife) / maxLife;
             life.currentLife = (1 + percentage) * life.currentLife;
 			
-			percentage = (float)(adren - maxAdren) / maxAdren;
-			currentAdren = (int) ((1 + percentage) * currentAdren);
+			percentage = (float)(cBasicAttributes.getMaximunAdren() - maxAdren) / maxAdren;
+			cBasicAttributes.setCurrentAdren((int) ((1 + percentage) * cBasicAttributes.getCurrentAdren()));
 			
-			percentage = (float)(mana - maxMana) / maxMana;
-			currentMana = (int) ((1 + percentage) * currentMana);
+			percentage = (float)(cBasicAttributes.getMaximunMana() - maxMana) / maxMana;
+			cBasicAttributes.setCurrentMana((int) ((1 + percentage) * cBasicAttributes.getCurrentMana()));
 			
 			hasNewLevel = false;
 		}
@@ -114,14 +97,22 @@ public class OrcController : HeroeController
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// MAIN
+	public virtual void Awake()
+	{
+		base.Awake ();
+
+		//Set the type of heroe
+		this.type = TypeHeroe.Orc;
+	}
+
 	// Use this for initialization
 	public override void Start ()
 	{
 		base.Start ();
 
         this.life.currentLife = LIFE_1;
-		this.currentMana = MANA_1;
-		this.currentAdren = ADREN_1;
+		cBasicAttributes.setCurrentMana(MANA_1);
+		cBasicAttributes.setCurrentAdren(ADREN_1);
 
         this.life.maximunLife = LIFE_1;
 		this.attackP = ATT_P_1;
@@ -129,16 +120,9 @@ public class OrcController : HeroeController
 		this.speedAtt = ATT_SPEED_1;
 		this.defP = DEF_P_1;
 		this.defM = DEF_M_1;
-		this.mana = MANA_1;
-		this.adren = ADREN_1;
+		cBasicAttributes.setMaximunMana(MANA_1);
+		cBasicAttributes.setMaximunAdren(ADREN_1);
 		this.speedMov = MOV_SPEED_1;
-		
-		//Set the type of heroe
-		this.type = TypeHeroe.Orc;
-		
-		//Set the owner in the basic attack
-		/*this.rightArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);
-		this.leftArm.GetComponent<OrcBasicAttack> ().setOwner (this.gameObject);*/
 
 		//Set the collider cubes in both hands
 		//Right hand
@@ -164,8 +148,8 @@ public class OrcController : HeroeController
 		//Initialize the animation
 		animation.Play ("Iddle01");
 
-		if (head == null)
-			head = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
+		head = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head");
+		pelvis = transform.FindChild("Bip001/Bip001 Pelvis");
 
 	}
 	
@@ -175,31 +159,30 @@ public class OrcController : HeroeController
 		base.Update ();
 		updateManaAdren();
 		UpdateAnimation();
-		UpdateParticles (); // Update particles
 		Counter();
 		this.newLevel ();
 	}
 	
-	// Cool Down for detecting less time the collision with particles
-	private float CDParticleCollision; 
-	//This is for the particles that collides with the orc
-	void OnParticleCollision(GameObject other)
-	{
-		// get the particle system
-		ParticleSystem particleSystem;
-		particleSystem = other.GetComponent<ParticleSystem>();
-		//If the particle is a Moco    
-		if (particleSystem.tag == "Moco")
-		{
-			if (CDParticleCollision > 0)
-				CDParticleCollision -= Time.deltaTime;
-			else
-			{
-				life.Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
-				CDParticleCollision = 0.1f; // 5 deltatime aprox
-			}
-		}
-	}
+//	// Cool Down for detecting less time the collision with particles
+//	private float CDParticleCollision; 
+//	//This is for the particles that collides with the orc
+//	void OnParticleCollision(GameObject other)
+//	{
+//		// get the particle system
+//		ParticleSystem particleSystem;
+//		particleSystem = other.GetComponent<ParticleSystem>();
+//		//If the particle is a Moco    
+//		if (particleSystem.tag == "Moco")
+//		{
+//			if (CDParticleCollision > 0)
+//				CDParticleCollision -= Time.deltaTime;
+//			else
+//			{
+//				life.Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
+//				CDParticleCollision = 0.1f; // 5 deltatime aprox
+//			}
+//		}
+//	}
 	
 
 	//--------------------------------------------------------------------------------------------
@@ -214,47 +197,38 @@ public class OrcController : HeroeController
 			{
 				if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
 				{
-					animation.CrossFade("Burp");
+					cState.animationName = "Burp";
+					cState.animationChanged = true;
 					//--------------------------
-					transform.Translate(Vector3.forward * 2 + Vector3.up);
-					GameObject snt = (GameObject)Instantiate(snot, transform.localPosition, transform.rotation);
-					snt.GetComponent<ParticleDamage>().SetDamage(attackM);
-					transform.Translate(Vector3.back * 2 + Vector3.down);
-					Destroy(snt, 5f);
-					snotActivated = true;
+					StartCoroutine(FirstSkill(animation["Burp"].length * 0.1f));
+					//--------------------------
+					extraSpeed = false;
 				}
 				else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
 				{
-					animation.CrossFade("FloorHit");
+					cState.animationName = "FloorHit";
+					cState.animationChanged = true;
 					//------------------------------
-					spl = (GameObject)Instantiate(splash, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity);
-                    spl.AddComponent<Rigidbody>();
-                    spl.GetComponent<Rigidbody>().useGravity = false;
-					spl.GetComponent<OrcSplashAttack>().SetDamage(attackM + 40);
-					spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
-					Destroy(spl, 1.5f);
-					splashActivated = true;
+					StartCoroutine(SecondSkill(animation["FloorHit"].length * 0.25f));
+					//--------------------------
+					extraSpeed = false;
 				}
 				else if (stateAttackSecond == AttackSecond.Attack3 && cooldown3 == cooldown3total)
 				{
-					animation.CrossFade("BullStrike");
+					cState.animationName = "BullStrike";
+					cState.animationChanged = true;
 					//--------------------------------
-					//transform.Translate(Vector3.down * 2);
-					smokeInst = (GameObject)Instantiate(smoke, transform.localPosition, transform.rotation);
-					//transform.Translate(Vector3.up * 2);
-					Destroy(smokeInst, 5f);
-					smokeActivated = true;
-
-					fireCircleInst = (GameObject)Instantiate(fireCircle, head.position, transform.rotation);
-					fireCircleInst.transform.parent = head;
-					Destroy(fireCircleInst, 1.7f);
+					//Smoke
+					StartCoroutine(SmokeParticles(0));
 					//--------------------------------
-					GetComponent<OrcBullStrikeAttack>().EnableSphereCollider();
-					GetComponent<OrcBullStrikeAttack>().SetDamage(attackP + 100);
-					this.gameObject.AddComponent<Rigidbody>();
-
-					//Debug.Break();
+					//Shpere
+					StartCoroutine(ThirdSkill(animation["BullStrike"].length * 0.2f));
+					//--------------------------
+					extraSpeed = true;
 				}
+				//-----------------------------------
+				canMove = false;
+				canRotate = false;
 				doingSecondaryAnim= true;
 			}
 			// Basic attack
@@ -262,33 +236,44 @@ public class OrcController : HeroeController
 			{
 				if (!animation.IsPlaying("Attack01") && !animation.IsPlaying("Attack02") && !animation.IsPlaying("Attack03"))
 				{
-					animation.CrossFade("Attack01");
-					animation["Attack01"].speed =1.2f;
-					animation.CrossFadeQueued("Attack02").speed = 1.2f;
-					animation.CrossFadeQueued("Attack03").speed = 1.2f;
-					for (int i = 0; i < 20; i ++)
-					{
-						animation.CrossFadeQueued("Attack01").speed = 1.2f;
-						animation.CrossFadeQueued("Attack02").speed = 1.2f;
-						animation.CrossFadeQueued("Attack03").speed = 1.2f;
-					}
+					cState.animationName = "Attack01";
+					cState.animationNameQueued = "Attack02";
+					cState.animationNameQueued2 = "Attack03";
+					cState.animationChanged = cState.animationChangeQueued = cState.animationChangeQueued2 = true;
 				}
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
 			}
 			// Movement
 			else if (state == StateHeroe.Run)
 			{
-				animation.CrossFade("Run");
+				cState.animationName = "Run";
+				cState.animationChanged = true;
+				//------------------------------------
+				canRotate = true;
+				canMove = true;
+				extraSpeed = false;
 			}
 			else if (state == StateHeroe.Walk)
 			{
-				animation.CrossFade("Walk");
+				cState.animationName = "Walk";
+				cState.animationChanged = true;
+				//------------------------------------
+				canRotate = true;
+				canMove = true;
+				extraSpeed = false;
 			}
 			else if (state == StateHeroe.Dead)
 			{
                 this.life.currentLife = 0;
 				this.transform.position = this.initialPosition;
 				isMine = false;
-				//this.GetComponent<ThirdPersonController>().enabled = false;
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
 			}
 			else if (this.state == StateHeroe.Recover)
 			{
@@ -304,15 +289,24 @@ public class OrcController : HeroeController
 						isMine = true;
 					}
 				}
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
 			}
 			// Idle
 			else
 			{
 				if (!animation.IsPlaying("Iddle01") && !animation.IsPlaying("Iddle02"))
 				{
-					animation.CrossFade("Iddle01");
-					animation.CrossFadeQueued("Iddle02");
+					cState.animationName = "Iddle01";
+					cState.animationNameQueued = "Iddle02";
+					cState.animationChanged = cState.animationChangeQueued = true;
 				}
+				//------------------------------------
+				canRotate = false;
+				canMove = false;
+				extraSpeed = false;
 			}
 		}
 		else
@@ -320,55 +314,65 @@ public class OrcController : HeroeController
 			if (!animation.isPlaying) 
 			{
 				doingSecondaryAnim = false;
-				if (stateAttackSecond == AttackSecond.Attack3) GetComponent<OrcBullStrikeAttack>().DisableSphereCollider();
 			}
 		}
 	}
 
 	
 	//--------------------------------------------------------------------------------------------
-	//Particles
-	private void UpdateParticles()
+	//Corrutines
+	private IEnumerator FirstSkill(float time)
 	{
-		if (snotActivated)
-		{
-			if (snotCD <= 0)
-			{
-				snotCD = 1.7f;
-				snotActivated = false;
-			}
-			else snotCD -= Time.deltaTime;
-		}
-		
-		if (splashActivated)
-		{
-			if (splashCD <= 0)
-			{
-				splashCD = 1.7f;
-				splashActivated = false;
-			}
-			else splashCD -= Time.deltaTime;
-		}	
-		
-		if (smokeActivated)
-		{
-			if (smokeInst!=null)
-			{
-				smokeInst.transform.position= transform.position;
-				smokeInst.transform.Translate(Vector3.down*2);
-			}
-			if (smokeCD <= 0)
-			{
-				smokeCD = 1.7f;
-				smokeActivated = false;
-			}
-			else smokeCD -= Time.deltaTime;
-		}
+		yield return new WaitForSeconds(time);
 
-		if (bullStrikeActivated)
-		{
+		GameObject snt = (GameObject) PhotonNetwork.Instantiate("SnotPrefab", transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation, 0);
+		snt.GetComponent<ParticleDamage>().SetDamage(attackM);
 
-		}
+		yield return new WaitForSeconds(3f);
+
+		PhotonNetwork.Destroy(snt);
+	}
+
+	private IEnumerator SecondSkill(float time)
+	{
+		yield return new WaitForSeconds(time);
+
+		GameObject spl = (GameObject) PhotonNetwork.Instantiate("Shockwave", transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity, 0);
+    	spl.AddComponent<Rigidbody>();
+    	spl.GetComponent<Rigidbody>().useGravity = false;
+		spl.GetComponent<OrcSplashAttack>().SetDamage(attackM + 40);
+		spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
+
+		yield return new WaitForSeconds(1.5f);
+		
+		PhotonNetwork.Destroy(spl);
+	}
+
+	private IEnumerator ThirdSkill(float time)
+	{
+		yield return new WaitForSeconds(time);
+
+		GameObject sphereThirdSkillInst = (GameObject) PhotonNetwork.Instantiate("SphereThirdSkill", head.position, transform.rotation, 0);
+		OrcBullStrikeAttack obsa = sphereThirdSkillInst.GetComponent<OrcBullStrikeAttack>();
+		obsa.setOwner(gameObject);
+		obsa.SetDamage(attackP + 100);
+		sphereThirdSkillInst.transform.parent = pelvis;
+
+		yield return new WaitForSeconds(animation["BullStrike"].length * 0.8f);
+
+		PhotonNetwork.Destroy(sphereThirdSkillInst);
+	}
+
+	private IEnumerator SmokeParticles(float time)
+	{
+		yield return new WaitForSeconds(time);
+
+		GameObject smokeInst = (GameObject)PhotonNetwork.Instantiate("SmokeParticles", transform.localPosition + Vector3.down*2, transform.rotation, 0);
+		smokeInst.transform.parent = pelvis;
+
+		yield return new WaitForSeconds(5f);
+		
+		PhotonNetwork.Destroy(smokeInst);
 	}
 }
 

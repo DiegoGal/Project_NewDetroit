@@ -21,7 +21,7 @@ public class Warehouse : CResourceBuilding
     private const float delta = 5.1f;
 
     private bool constructed = false;
-    private bool canConstruct = true;
+    public bool canConstruct = true;
 
     private int costResources = 8;
     // Reference to the base
@@ -85,6 +85,7 @@ public class Warehouse : CResourceBuilding
     {
         if (canConstruct && baseController.GetResources() >= costResources)
         {
+            canConstruct = false;
             this.baseController = baseController;
             baseController.DecreaseResources(costResources);
             this.GetComponent<NavMeshObstacle>().enabled = true;

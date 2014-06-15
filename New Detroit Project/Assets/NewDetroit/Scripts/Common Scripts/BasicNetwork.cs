@@ -4,12 +4,12 @@ using System.Collections;
 public class BasicNetwork : Photon.MonoBehaviour
 {
 
-    void Awake()
+    public virtual void Awake()
     {
 
         if (photonView.isMine)
         {
-            //MINE: local player, simply enable the local scripts
+            
         }
         else
         {
@@ -17,9 +17,10 @@ public class BasicNetwork : Photon.MonoBehaviour
         }
 
         gameObject.name = gameObject.name + photonView.viewID;
+        gameObject.name = gameObject.name.Replace("(Clone)", ""); 
     }
 
-    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)
         {
@@ -35,12 +36,12 @@ public class BasicNetwork : Photon.MonoBehaviour
         }
     }
 
-    private Vector3 correctPlayerPos = Vector3.zero; //We lerp towards this
+    private Vector3 correctPlayerPos = new Vector3(0, -10, 0); //We lerp towards this
     private Quaternion correctPlayerRot = Quaternion.identity; //We lerp towards this
 
-    void Update()
+    public virtual void Update()
     {
-        if (!photonView.isMine)
+        if (!photonView.isMine && correctPlayerPos.y != -10)
         {
             //Update remote player (smooth this, this looks good, at the cost of some accuracy)
             transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);

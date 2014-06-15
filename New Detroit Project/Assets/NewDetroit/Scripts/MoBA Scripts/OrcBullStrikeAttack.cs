@@ -3,52 +3,21 @@ using System.Collections;
 
 public class OrcBullStrikeAttack : ParticleDamage
 {
-	private SphereCollider sphereCollider;
-	//private GameObject owner;
+	private GameObject owner;
 	private System.Collections.Generic.List<Collider> unitList = new System.Collections.Generic.List<Collider>();
 
-	//--------------------------------------------------------------------------
-
-
-	// Update the owner
-	/*public void setOwner(GameObject owner)
-	{
-		this.owner = owner;
-	}*/
-
-	//Enable the sphere collider
-	public void EnableSphereCollider()
-	{
-		sphereCollider.enabled = true;
-	}
-
-	//Disable the sphere collider
-	public void DisableSphereCollider()
-	{
-		sphereCollider.enabled = false;
-		unitList.Clear ();
-	}
 
 	//--------------------------------------------------------------------------
-
-
-	// Use this for initialization
-	void Awake () 
-	{
-		sphereCollider = GetComponent<SphereCollider>();
-		sphereCollider.enabled = false;
-		sphereCollider.radius = 1f;
-	}
 
 	// Update is called once per frame
 	void Update () 
 	{
+
 	}
 
 	void OnTriggerEnter(Collider other)
 	{
-		//if (other.gameObject.name != owner.name)
-		if (other.gameObject.name != name)
+		if (other.gameObject.name != owner.name)
 		{
 			if (other.tag == "Player")
 			{
@@ -82,6 +51,16 @@ public class OrcBullStrikeAttack : ParticleDamage
 				}
 			}
 		}
+	}
+
+
+	//--------------------------------------------------------------------------------------
+
+
+	// Update the owner
+	public void setOwner(GameObject owner)
+	{
+		this.owner = owner;
 	}
 }
 

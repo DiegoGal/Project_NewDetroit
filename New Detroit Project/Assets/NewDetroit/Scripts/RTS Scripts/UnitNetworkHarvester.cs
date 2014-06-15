@@ -37,7 +37,7 @@ public class UnitNetworkHarvester : UnitNetwork
 
                 }
             }
-            lastState = stateScript.currentState;
+//            lastState = stateScript.currentState;
 
             //UnitBasicArtilleryRemote script = GetComponent<UnitBasicArtilleryRemote>();
             //script.currentArtilleryState = state;

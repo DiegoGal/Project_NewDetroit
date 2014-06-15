@@ -36,7 +36,7 @@ public class TowerArmy : Tower
 	private const int delta = 7;
 
 	private bool constructed = false;
-    private bool canConstruct = true;
+    public bool canConstruct = true;
 
     private int costResources = 10;
     // Reference to the base
@@ -68,6 +68,7 @@ public class TowerArmy : Tower
     {
         if (canConstruct && baseController.GetResources() >= costResources)
         {
+            canConstruct = false;
             this.baseController = baseController;
             baseController.DecreaseResources(costResources);
             Vector3 posN = transform.position;

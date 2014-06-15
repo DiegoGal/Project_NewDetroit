@@ -49,7 +49,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
             stream.SendNext(script.currentEngineerState);
             stream.SendNext(script.currentState);
             stream.SendNext(script.getLife());
-            stream.SendNext(script.fireballDir);
+            stream.SendNext(script.grenadeDir);
 		}
 		else
 		{
@@ -59,7 +59,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
             state = (UnitEngineer.EngineerState)stream.ReceiveNext();
             unitState = (UnitController.State)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
-            fireballDir = (Vector3)stream.ReceiveNext();
+            grenadeDir = (Vector3)stream.ReceiveNext();
 		}
 	}
 	
@@ -68,7 +68,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
     private UnitEngineer.EngineerState state; // new State of the HarvesterUnit
     private UnitHarvester.State unitState; // new State of Unit
     private float currentLife; // for damage
-    private Vector3 fireballDir; // direction of the fireball
+    private Vector3 grenadeDir; // direction of the grenade
 
 	void Update()
 	{
@@ -80,7 +80,7 @@ public class UnitEngineerNetwork : Photon.MonoBehaviour {
             UnitEngineerRemote script = GetComponent<UnitEngineerRemote>();
             script.currentEngineerState = state;
             script.currentState = unitState;
-            script.fireballDir = fireballDir;
+            script.grenadeDir = grenadeDir;
 		}
 	}
 	
