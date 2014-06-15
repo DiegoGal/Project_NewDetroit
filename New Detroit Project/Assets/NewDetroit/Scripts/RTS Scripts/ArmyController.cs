@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ArmyController : MonoBehaviour
 {
-	public int teamNumber;
+    public int teamNumber;
     public int teamColorIndex;
 
     public List<GameObject> unitList = new List<GameObject>();
@@ -32,7 +32,7 @@ public class ArmyController : MonoBehaviour
 
     private float lastCrowdAngle; // último ángulo de desplazamiento del enjambre
 
-	private int layerMask; // para obviar la capa de la niebla
+    private int layerMask; // para obviar la capa de la niebla
 
     // Attributes necessary for the scouts patrol
     public int maxPatrolPoints = 5;
@@ -108,13 +108,13 @@ public class ArmyController : MonoBehaviour
             }
         }
 
-		// ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
-		// Bit shift the index of the layer (8) to get a bit mask
-		layerMask = 1 << 8 | 1 << 2;
+        // ejemplo Unity: http://docs.unity3d.com/Documentation/Components/Layers.html
+        // Bit shift the index of the layer (8) to get a bit mask
+        layerMask = 1 << 8 | 1 << 2;
 
-		// This would cast rays only against colliders in layer 8 and 2.
-		// But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
-		layerMask = ~layerMask;
+        // This would cast rays only against colliders in layer 8 and 2.
+        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
+        layerMask = ~layerMask;
     }
 
     // Update is called once per frame
@@ -376,30 +376,30 @@ public class ArmyController : MonoBehaviour
         {
             // lanzamos rayo y recogemos donde choca
             myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-			if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+            if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
             {
                 Vector3 destiny = myHit.point;
-				if (unitSelectedList.Count > 1)
-				{
+                if (unitSelectedList.Count > 1)
+                {
                     doubleClickStart = -1.0f;
                     //Calcular dependiendo de el numero de seleccionados distintos puntos de llegada
-					List<Vector3> destinyList;
-					destinyList = SwarmAlgorithm(destiny);
-					int i = 0;
-					foreach (GameObject u in unitSelectedList)
-					{
-						Debug.DrawLine(u.transform.localPosition, destinyList[i], Color.red, 1);
-						u.GetComponent<UnitController>().RightClickOnSelected(destinyList[i], myHit.transform);
-						i++;
-					}
-				}
+                    List<Vector3> destinyList;
+                    destinyList = SwarmAlgorithm(destiny);
+                    int i = 0;
+                    foreach (GameObject u in unitSelectedList)
+                    {
+                        Debug.DrawLine(u.transform.localPosition, destinyList[i], Color.red, 1);
+                        u.GetComponent<UnitController>().RightClickOnSelected(destinyList[i], myHit.transform);
+                        i++;
+                    }
+                }
                 else if (unitSelectedList.Count == 1)
-				{
-					GameObject u = unitSelectedList[0];
-					Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
-					//u.GetComponent<UnitController>().GoTo(destiny);
-					u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
-				}
+                {
+                    GameObject u = unitSelectedList[0];
+                    Debug.DrawLine(u.transform.localPosition, destiny, Color.red, 1);
+                    //u.GetComponent<UnitController>().GoTo(destiny);
+                    u.GetComponent<UnitController>().RightClickOnSelected(destiny, myHit.transform);
+                }
             }
         }
 
@@ -452,11 +452,11 @@ public class ArmyController : MonoBehaviour
         }
 
         // Spawn units
-		if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
             SpawnUnit(0);
         if (Input.GetKeyDown(KeyCode.Alpha2))
             SpawnUnit(1);
-		if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (Input.GetKeyDown(KeyCode.Alpha3))
             SpawnUnit(2);
         if (Input.GetKeyDown(KeyCode.Alpha4))
             SpawnUnit(3);
@@ -502,7 +502,7 @@ public class ArmyController : MonoBehaviour
 
     void OnGUI ()
     {
-		GUI.skin.label.fontSize = 12;
+        GUI.skin.label.fontSize = 12;
 
         if (teamNumber == 0)
             GUI.Label(new Rect(5, 5, 150, 100), "Team_A\n\tTotal resources: " + resources +
@@ -528,37 +528,37 @@ public class ArmyController : MonoBehaviour
         }
     } // OnGUI()
 
-	private List<Vector3> SwarmAlgorithm (Vector3 destiny)
-	{
-		List<Vector3> destinyList = new List<Vector3>();
-		double radious = System.Math.Sqrt(unitSelectedList.Count);
-		int truncateRadious = (int)System.Math.Truncate(radious);
-		Vector3 destinyAux = destiny;
-		Vector3 origDestiny = destiny;
-		//Esquina superior izquierda
-		int squareNum = (truncateRadious * truncateRadious);
-		int alpha = 3;
-		float beta = 0.5f;
-		int cont = 0;
-		int row = 0;
-		int contSqr = 0;
-		bool first = true;
-		int numSelected = unitSelectedList.Count;
+    private List<Vector3> SwarmAlgorithm (Vector3 destiny)
+    {
+        List<Vector3> destinyList = new List<Vector3>();
+        double radious = System.Math.Sqrt(unitSelectedList.Count);
+        int truncateRadious = (int)System.Math.Truncate(radious);
+        Vector3 destinyAux = destiny;
+        Vector3 origDestiny = destiny;
+        //Esquina superior izquierda
+        int squareNum = (truncateRadious * truncateRadious);
+        int alpha = 2;
+        float beta = 0.5f;
+        int cont = 0;
+        int row = 0;
+        int contSqr = 0;
+        bool first = true;
+        int numSelected = unitSelectedList.Count;
 
-		//Para saber como centrar las tropas
-		if (numSelected % 2 != 0)
-		{
-			beta = 1;
-		}
-		origDestiny.x = destinyAux.x = destiny.x - (float)(truncateRadious/2) - beta;
-		if (numSelected == 2)//Caso especial NumSelected = 2
-		{
-			foreach (GameObject u in unitSelectedList)
-			{
-				destinyList.Add(destinyAux);
-				destinyAux.x += alpha;
-			}
-		}
+        //Para saber como centrar las tropas
+        if (numSelected % 2 != 0)
+        {
+            beta = 1;
+        }
+        origDestiny.x = destinyAux.x = destiny.x - (float)(truncateRadious/2) - beta;
+        if (numSelected == 2)//Caso especial NumSelected = 2
+        {
+            foreach (GameObject u in unitSelectedList)
+            {
+                destinyList.Add(destinyAux);
+                destinyAux.x += alpha;
+            }
+        }
         else if (numSelected == 3)//Caso especial NumSelected = 2
         {
             foreach (GameObject u in unitSelectedList)
@@ -684,8 +684,8 @@ public class ArmyController : MonoBehaviour
         cube2.renderer.material.color = Color.white;
         Destroy(cube2, 2.0f);*/
 
-		return destinyList;	
-	}
+        return destinyList;    
+    }
 
     void DrawQuad (Rect position, Color color)
     {
@@ -698,18 +698,18 @@ public class ArmyController : MonoBehaviour
 
     private void CreatingSquare ()
     {
-		unitSelectedList.Clear();
+        //unitSelectedList.Clear();
 
         // se actualizan las posiciones de los vértices del cuadrado en pantalla:
-        UpdateSelectionPointScreen();        
+        UpdateSelectionPointScreen();
 
-        //Lanzamos 4 rayos para coger los 4 vertices del rectángulo
+        // 4 rays are launched in order to capture the 4 vertices of the quadrilateral
         for (int i = 0; i < squareSelectionPointsProyected.Length; i++)
         {
             // rayo:
             myRay = Camera.main.ScreenPointToRay(squareSelectionPointsScreen[i]);
             // recogemos posición
-			if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+            if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
                 squareSelectionPointsProyected[i] = myHit.point;
             
             // aparece un cubo negro en la proyección del rayo
@@ -758,64 +758,77 @@ public class ArmyController : MonoBehaviour
             ((squareSelectionPointsProyected[0].z - squareSelectionPointsProyected[2].z) * num2)) /
             den
         );
+
         //AddBlackBox(new Vector3(squareCenter.x, 1, squareCenter.y));
-        // se comprueba uno por uno si la unidad esta dentro del cuadrado
+
+        // radio de la circunferencia circunscrita del cuadrilátero
+        //float radius = Vector2.Distance(squareCenter,
+        //    new Vector2(squareSelectionPointsProyected[2].x, squareSelectionPointsProyected[3].z));
+        float radius = Vector2.Distance(
+            new Vector2(
+                squareSelectionPointsProyected[0].x,
+                squareSelectionPointsProyected[0].z
+            ),
+            new Vector2(
+                squareSelectionPointsProyected[2].x,
+                squareSelectionPointsProyected[2].z
+            )) * 0.5f;
+
+        // check one y one if the unit is inside the quadrilateral
         int count = unitList.Count;
         for (int i = 0; i < count; i++)
         {
+            // 2D position of the unit in the world floor
             Vector2 unitPos = new Vector2(unitList[i].transform.position.x,
                 unitList[i].transform.position.z);
-            // distance between the unit and the center of the selection square
-            float dist = Vector2.Distance(unitPos, squareCenter);
-            //float radius = Vector2.Distance(squareCenter,
-            //    new Vector2(squareSelectionPointsProyected[2].x, squareSelectionPointsProyected[3].z));
-            float radius = Vector2.Distance(
-                new Vector2(
-                    squareSelectionPointsProyected[0].x,
-                    squareSelectionPointsProyected[0].z
-                ),
-                new Vector2(
-                    squareSelectionPointsProyected[2].x,
-                    squareSelectionPointsProyected[2].z
-                ) ) / 2;
-            float d = 0;
-            int contNeg = 0, contPos = 0;
-            // // 1st: Manhattan distance
-            if (dist < radius)
+
+            // 1st: Manhattan distance
+            if ( Mathf.Abs(unitPos.x - squareCenter.x) <= radius &&
+                 Mathf.Abs(unitPos.y - squareCenter.y) <= radius )
             {
-                // 2nd: distance unit to segments of the square
-                for (int j = 0; j < 4; j++)
+                // 2nd: euclidean distance
+                // distance between the unit and the center of the selection square
+                float dist = Vector2.Distance(unitPos, squareCenter);
+
+                if (dist < radius)
                 {
-                    /*d = DistancePointToSegment(
-                        new Vector2(squareSelectionPointsProyected[j].x, squareSelectionPointsProyected[j].z),
-                        new Vector2(squareSelectionPointsProyected[(j + 1) % 4].x, squareSelectionPointsProyected[(j + 1) % 4].z),
-                        unitPos
-                    );*/
-                    // this alternative is less expensive:
-                    d = SignPointToSegment(
-                        squareSelectionPointsProyected[j],
-                        squareSelectionPointsProyected[(j + 1) % 4],
-                        unitPos
-                    );
-                    if (d < 0)
-                        contNeg++;
+                    // 3rd: distance unit to segments of the square
+                    int contNeg = 0, contPos = 0; float d = 0.0f;
+                    for (int j = 0; j < 4; j++)
+                    {
+                        /*d = DistancePointToSegment(
+                            new Vector2(squareSelectionPointsProyected[j].x, squareSelectionPointsProyected[j].z),
+                            new Vector2(squareSelectionPointsProyected[(j + 1) % 4].x, squareSelectionPointsProyected[(j + 1) % 4].z),
+                            unitPos
+                        );*/
+                        // this alternative is less expensive:
+                        d = SignPointToSegment
+                        (
+                            squareSelectionPointsProyected[  j          ],
+                            squareSelectionPointsProyected[ (j + 1) % 4 ],
+                            unitPos
+                        );
+                        if (d < 0)
+                            contNeg++;
+                        else
+                            contPos++;
+                    }
+                    if (contNeg == 4 || contPos == 4)
+                    {
+                        // the unit is inside the selection square
+                        // we add it to the selection list
+                        if (!unitSelectedList.Contains(unitList[i]))
+                            unitSelectedList.Add(unitList[i]);
+                        // and mark it as selected
+                        unitList[i].GetComponent<CSelectable>().SetSelected();
+                    }
                     else
-                        contPos++;
-                }
-                if (contNeg == 4 || contPos == 4)
-                {
-                    // the unit is inside the selection square
-                    // we add it to the selection list
-                    unitSelectedList.Add(unitList[i]);
-                    // and mark it as selected
-                    unitList[i].GetComponent<CSelectable>().SetSelected();
-                }
-                else
-                {
-                    // delete the unit from the selection list
-                    unitSelectedList.Remove(unitList[i]);
-                    // and mark it as deselected
-					unitList[i].GetComponent<CSelectable>().SetDeselect();
+                    {
+                        // delete the unit from the selection list
+                        unitSelectedList.Remove(unitList[i]);
+                        // and mark it as deselected
+                        unitList[i].GetComponent<CSelectable>().SetDeselect();
+                    }
                 }
             }
         }
@@ -920,19 +933,19 @@ public class ArmyController : MonoBehaviour
     {
         // deseleccionamos los que hubiera seleccionado
         foreach (GameObject u in unitSelectedList)
-			u.GetComponent<CSelectable>().SetDeselect();
+            u.GetComponent<CSelectable>().SetDeselect();
         // vaciamos la lista de seleccionados previamente
         unitSelectedList.Clear();
 
-		// deselect the army base
-		armyBase.GetComponent<CSelectable>().SetDeselect();
+        // deselect the army base
+        armyBase.GetComponent<CSelectable>().SetDeselect();
 
         // deselect the last building selected
         if (lastTowerSelected)
             lastTowerSelected.GetComponent<CSelectable>().SetDeselect();
         if (lastWarehouseSelected)
             lastWarehouseSelected.GetComponent<CSelectable>().SetDeselect();
-	}
+    }
 
     private GameObject AddBox (Vector3 position, Color color)
     {
