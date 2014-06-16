@@ -12,7 +12,7 @@ public class MenuDetroitMapa : MonoBehaviour
 
     public static readonly string SceneNameMenu = "MenuDetroitMapa";
 
-	public static readonly string SceneNameGame = "Online_Test"; //Application.loadedLevelName;
+    public static readonly string SceneNameGame = "RTS_Units_Test_FerYGuille_Online.unity";//"Online_Test"; //Application.loadedLevelName;
 
     public void Awake()
     {
@@ -105,6 +105,7 @@ public class MenuDetroitMapa : MonoBehaviour
 	        if (GUILayout.Button("Join Room", GUILayout.Width(100)))
 	        {
 				PhotonNetwork.JoinRoom(this.roomName);
+                
 	        }
 
 	        GUILayout.EndHorizontal();
@@ -147,8 +148,8 @@ public class MenuDetroitMapa : MonoBehaviour
 	                if (GUILayout.Button("Join"))
 	                {
 	                    PhotonNetwork.JoinRoom(roomInfo.name);
-//                        PhotonRTSTestLoader.joinedId++;
-						PhotonMOBATestLoader.joinedId++;
+                        PhotonRTSTestLoader.joinedId++;
+//						PhotonMOBATestLoader.joinedId++;
 	                }
 
 	                GUILayout.EndHorizontal();

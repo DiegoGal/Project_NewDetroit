@@ -214,9 +214,9 @@ public class UnitEngineerRemote : ControllableCharacter
                 newGrenade.transform.name = "Grenade";
                 newGrenade.transform.parent = dummyHand;
                 newGrenade.transform.rotation = transform.rotation;
-                newGrenade.transform.FindChild("FireballVisionSphere").GetComponent<CGrenadeVisionSphere>().SetOwner(this.gameObject);
-                newGrenade.transform.FindChild("FireballVisionSphere").GetComponent<CGrenadeVisionSphere>().SetDamage(1);
-                newGrenade.transform.FindChild("FireballVisionSphere").GetComponent<CGrenadeVisionSphere>().SetDestroyTime(2.5f);
+                newGrenade.transform.FindChild("GrenadeVisionSphere").GetComponent<CGrenadeVisionSphere>().SetOwner(this.gameObject);
+                newGrenade.transform.FindChild("GrenadeVisionSphere").GetComponent<CGrenadeVisionSphere>().SetDamage(1);
+                newGrenade.transform.FindChild("GrenadeVisionSphere").GetComponent<CGrenadeVisionSphere>().SetDestroyTime(2.5f);
             }
 
             newGrenade.rigidbody.AddForce(grenadeDir, ForceMode.Impulse);

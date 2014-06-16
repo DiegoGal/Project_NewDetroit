@@ -435,7 +435,7 @@ public class UnitEngineer : UnitController
         }
     }
 
-    private IEnumerator WaitAndCallback(float waitTime, float enemyDist)
+    private IEnumerator WaitAndCallback (float waitTime, float enemyDist)
     {
         yield return new WaitForSeconds(waitTime);
 
@@ -466,7 +466,6 @@ public class UnitEngineer : UnitController
                 newGrenade.transform.name = "Grenade";
                 newGrenade.transform.parent = dummyHand;
                 newGrenade.transform.rotation = transform.rotation;
-
                 newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetOwner(this.gameObject);
                 newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetDamage((int)attackPower);
                 newGrenade.transform.GetComponent<CGrenadeVisionSphere>().SetDestroyTime(2.5f);
@@ -482,10 +481,14 @@ public class UnitEngineer : UnitController
                     dir.z * 8.0f * (enemyDist / maxAttackDistance)
                 );
                 newGrenade.transform.parent = null;
-                newGrenade.rigidbody.AddForce(grenadeDir, ForceMode.Impulse);
+                newGrenade.rigidbody.AddForce
+                (
+                    grenadeDir, 
+                    ForceMode.Impulse
+                );
             }
 
-            if (enemySelected.GetComponent<CLife>().currentLife <= 0.0f)
+            if (enemySelected && enemySelected.GetComponent<CLife>().currentLife <= 0.0f)
             {
                 // the enemy has die
                 enemySelected = null;

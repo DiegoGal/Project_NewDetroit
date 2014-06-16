@@ -52,8 +52,8 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
             stream.SendNext(script.currentState);
             stream.SendNext(script.attack2Selected);
             stream.SendNext(script.getLife());
-            stream.SendNext(script.launchRocket);
-            stream.SendNext(script.rocketDir);
+            stream.SendNext(script.launchMissile);
+            stream.SendNext(script.missileDir);
 		}
 		else
 		{
@@ -65,8 +65,8 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
             unitState = (UnitController.State)stream.ReceiveNext();
             attack2Selected = (bool)stream.ReceiveNext();
             currentLife = (float)stream.ReceiveNext();
-            launchRocket = (bool)stream.ReceiveNext();
-            rocketDir = (Vector3)stream.ReceiveNext();
+            launchMissile = (bool)stream.ReceiveNext();
+            missileDir = (Vector3)stream.ReceiveNext();
 		}
 	}
 	
@@ -77,8 +77,8 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
     private UnitController.State unitState; // new State of Unit
     private bool attack2Selected; //to change the current type of attack
     private float currentLife; // for damage
-    private bool launchRocket; // true if the rocket is launch
-    private Vector3 rocketDir; //direction of the rocket
+    private bool launchMissile; // true if the missile is launch
+    private Vector3 missileDir; //direction of the missile
 	
 	void Update()
 	{
@@ -92,8 +92,8 @@ public class UnitHeavyArtilleryNetwork : Photon.MonoBehaviour {
             script.currentState = unitState;
             script.currentArtilleryState = state;
             script.attack2Selected = attack2Selected;
-            script.launchRocket = launchRocket;
-            script.rocketDir = rocketDir;
+            script.launchMissile = launchMissile;
+            script.MissileDir = missileDir;
 		}
 	}
 	

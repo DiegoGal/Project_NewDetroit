@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GrenadeShockwaveNetwork : BasicNetwork 
+public class GrenadeAndMissileShockwaveNetwork : BasicNetwork 
 {
     SphereCollider collider;
-    GrenadeAttack grenadeAttack;
+    ObjectAttack grenadeAttack;
 
     public override void Awake()
     {
         base.Awake();
 
         collider = GetComponent<SphereCollider>();
-        grenadeAttack = GetComponent<GrenadeAttack>();
+        grenadeAttack = GetComponent<ObjectAttack>();
 
         if (photonView.isMine)
         {
