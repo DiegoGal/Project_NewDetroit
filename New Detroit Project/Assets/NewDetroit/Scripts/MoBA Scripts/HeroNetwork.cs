@@ -11,6 +11,15 @@ public class HeroNetwork : BasicNetwork
 	{
 		base.Awake();
 
+		//Initialize CBasicAttributesHero
+		CBasicAttributesHero basicAttr = GetComponent<CBasicAttributesHero>();
+		basicAttr.setLevel(1);
+		basicAttr.currentLife = basicAttr.maximunLife = OrcController.LIFE_1;
+		basicAttr.setCurrentMana(OrcController.MANA_1);
+		basicAttr.setMaximunMana(OrcController.MANA_1);
+		basicAttr.setCurrentAdren(OrcController.ADREN_1);
+		basicAttr.setMaximunAdren(OrcController.ADREN_1);
+
 		//Initialize cState
 		cState = GetComponent<CStateUnit>();
 

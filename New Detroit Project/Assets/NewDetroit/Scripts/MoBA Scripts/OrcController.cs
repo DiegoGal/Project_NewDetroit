@@ -3,18 +3,18 @@ using System.Collections;
 
 public class OrcController : HeroeController
 {
-	private const int 		LIFE_1 = 		375, 	LIFE_2 = 		550, 	LIFE_3 = 		725, 	LIFE_4 = 		900,
+	public const int 		LIFE_1 = 		375, 	LIFE_2 = 		550, 	LIFE_3 = 		725, 	LIFE_4 = 		900,
 							ATT_P_1 = 		30, 	ATT_P_2 = 		45, 	ATT_P_3 = 		60, 	ATT_P_4 = 		75,
 							ATT_M_1 = 		25, 	ATT_M_2 = 		35, 	ATT_M_3 = 		45, 	ATT_M_4 = 		55;
-	private const double 	ATT_SPEED_1 = 	0.9, 	ATT_SPEED_2 = 	1, 		ATT_SPEED_3 = 	1.1, 	ATT_SPEED_4 = 	1.2;
-	private const int 		DEF_P_1 = 		25, 	DEF_P_2 = 		30, 	DEF_P_3 = 		35, 	DEF_P_4 = 		40,
+	public const double 	ATT_SPEED_1 = 	0.9, 	ATT_SPEED_2 = 	1, 		ATT_SPEED_3 = 	1.1, 	ATT_SPEED_4 = 	1.2;
+	public const int 		DEF_P_1 = 		25, 	DEF_P_2 = 		30, 	DEF_P_3 = 		35, 	DEF_P_4 = 		40,
 							DEF_M_1 = 		20, 	DEF_M_2 = 		25, 	DEF_M_3 = 		30, 	DEF_M_4 = 		35,
 							MANA_1 = 		175, 	MANA_2 = 		250, 	MANA_3 = 		350, 	MANA_4 = 		500,
 							ADREN_1 = 		150, 	ADREN_2 = 		250, 	ADREN_3 = 		350, 	ADREN_4 = 		450,
 							MOV_SPEED_1 = 	50, 	MOV_SPEED_2 = 	55, 	MOV_SPEED_3 = 	60, 	MOV_SPEED_4 = 	35;
 
 
-	protected const float 	COOLDOWN_SKILL_1 = 	5,	COOLDOWN_SKILL_2 = 	10,	COOLDOWN_SKILL_3 = 	20;
+	public const float 		COOLDOWN_SKILL_1 = 	5,	COOLDOWN_SKILL_2 = 	10,	COOLDOWN_SKILL_3 = 	20;
 	//-----------------------------------------------------------------------------------------------------------------
 
 
@@ -110,18 +110,18 @@ public class OrcController : HeroeController
 	{
 		base.Start ();
 
-        this.life.currentLife = LIFE_1;
-		cBasicAttributes.setCurrentMana(MANA_1);
-		cBasicAttributes.setCurrentAdren(ADREN_1);
+//		this.life.currentLife = LIFE_1;
+//		cBasicAttributes.setCurrentMana(MANA_1);
+//		cBasicAttributes.setCurrentAdren(ADREN_1);
 
-        this.life.maximunLife = LIFE_1;
+//		this.life.maximunLife = LIFE_1;
 		this.attackP = ATT_P_1;
 		this.attackM = ATT_M_1;
 		this.speedAtt = ATT_SPEED_1;
 		this.defP = DEF_P_1;
 		this.defM = DEF_M_1;
-		cBasicAttributes.setMaximunMana(MANA_1);
-		cBasicAttributes.setMaximunAdren(ADREN_1);
+//		cBasicAttributes.setMaximunMana(MANA_1);
+//		cBasicAttributes.setMaximunAdren(ADREN_1);
 		this.speedMov = MOV_SPEED_1;
 
 		//Set the collider cubes in both hands

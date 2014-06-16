@@ -70,6 +70,7 @@ public class BasicAttack : Photon.MonoBehaviour {
 	[RPC]
 	public void Damage(string sEnemy, int damage)	
 	{
+		Debug.Log("Ataco con " + damage + " de fuerza");
 		GameObject enemy = GameObject.Find(sEnemy);
 		enemy.GetComponent<CLife>().Damage(damage, 'P');
 	}

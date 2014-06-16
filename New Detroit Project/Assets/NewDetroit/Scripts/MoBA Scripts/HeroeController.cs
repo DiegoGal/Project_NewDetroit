@@ -267,7 +267,7 @@ public abstract class HeroeController : ControllableCharacter
 		cState.animationChanged = cState.animationChangeQueued = cState.animationChangeQueued2 = false;
 
 		cBasicAttributes = GetComponent<CBasicAttributesHero>();
-		cBasicAttributes.setLevel(1);
+//		cBasicAttributes.setLevel(1);
 	}//Start
 	
 	// Update is called once per frame
