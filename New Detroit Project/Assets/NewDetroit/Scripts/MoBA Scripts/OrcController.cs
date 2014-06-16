@@ -109,19 +109,11 @@ public class OrcController : HeroeController
 	public override void Start ()
 	{
 		base.Start ();
-
-//		this.life.currentLife = LIFE_1;
-//		cBasicAttributes.setCurrentMana(MANA_1);
-//		cBasicAttributes.setCurrentAdren(ADREN_1);
-
-//		this.life.maximunLife = LIFE_1;
 		this.attackP = ATT_P_1;
 		this.attackM = ATT_M_1;
 		this.speedAtt = ATT_SPEED_1;
 		this.defP = DEF_P_1;
 		this.defM = DEF_M_1;
-//		cBasicAttributes.setMaximunMana(MANA_1);
-//		cBasicAttributes.setMaximunAdren(ADREN_1);
 		this.speedMov = MOV_SPEED_1;
 
 		//Set the collider cubes in both hands
@@ -162,27 +154,6 @@ public class OrcController : HeroeController
 		Counter();
 		this.newLevel ();
 	}
-	
-//	// Cool Down for detecting less time the collision with particles
-//	private float CDParticleCollision; 
-//	//This is for the particles that collides with the orc
-//	void OnParticleCollision(GameObject other)
-//	{
-//		// get the particle system
-//		ParticleSystem particleSystem;
-//		particleSystem = other.GetComponent<ParticleSystem>();
-//		//If the particle is a Moco    
-//		if (particleSystem.tag == "Moco")
-//		{
-//			if (CDParticleCollision > 0)
-//				CDParticleCollision -= Time.deltaTime;
-//			else
-//			{
-//				life.Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
-//				CDParticleCollision = 0.1f; // 5 deltatime aprox
-//			}
-//		}
-//	}
 	
 
 	//--------------------------------------------------------------------------------------------

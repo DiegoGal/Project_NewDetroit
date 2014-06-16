@@ -14,11 +14,22 @@ public class HeroNetwork : BasicNetwork
 		//Initialize CBasicAttributesHero
 		CBasicAttributesHero basicAttr = GetComponent<CBasicAttributesHero>();
 		basicAttr.setLevel(1);
-		basicAttr.currentLife = basicAttr.maximunLife = OrcController.LIFE_1;
-		basicAttr.setCurrentMana(OrcController.MANA_1);
-		basicAttr.setMaximunMana(OrcController.MANA_1);
-		basicAttr.setCurrentAdren(OrcController.ADREN_1);
-		basicAttr.setMaximunAdren(OrcController.ADREN_1);
+		if (GetComponent<HeroeController>().getTypeHero() == HeroeController.TypeHeroe.Orc)
+		{
+			basicAttr.currentLife = basicAttr.maximunLife = OrcController.LIFE_1;
+			basicAttr.setCurrentMana(OrcController.MANA_1);
+			basicAttr.setMaximunMana(OrcController.MANA_1);
+			basicAttr.setCurrentAdren(OrcController.ADREN_1);
+			basicAttr.setMaximunAdren(OrcController.ADREN_1);
+		}
+		else
+		{
+			basicAttr.currentLife = basicAttr.maximunLife = RobotController.LIFE_1;
+			basicAttr.setCurrentMana(RobotController.MANA_1);
+			basicAttr.setMaximunMana(RobotController.MANA_1);
+			basicAttr.setCurrentAdren(RobotController.ADREN_1);
+			basicAttr.setMaximunAdren(RobotController.ADREN_1);
+		}
 
 		//Initialize cState
 		cState = GetComponent<CStateUnit>();
