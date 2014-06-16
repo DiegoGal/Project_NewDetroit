@@ -125,15 +125,15 @@ public class OrcController : HeroeController
 		this.speedMov = MOV_SPEED_1;
 
 		//Set the collider cubes in both hands
-		//Right hand
+		//Right hand	
 		Transform hand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand");
-		GameObject cubeColliderInst = (GameObject) Instantiate(cubeColliderHand, hand.position + new Vector3(-0.25f, -0.5f, 0), hand.rotation);
+		GameObject cubeColliderInst = (GameObject) PhotonNetwork.Instantiate(cubeColliderHand.name, hand.position + new Vector3(-0.25f, -0.5f, 0), hand.rotation, 0);
 		cubeColliderInst.transform.parent = hand;
 		cubeColliderInst.GetComponent<OrcBasicAttack> ().owner = this.gameObject;
-
+		
 		//Left hand
 		hand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 L Clavicle/Bip001 L UpperArm/Bip001 L Forearm/Bip001 L Hand");
-		cubeColliderInst = (GameObject) Instantiate(cubeColliderHand, hand.position + new Vector3(0.25f, -0.5f, 0), hand.rotation);
+		cubeColliderInst = (GameObject) PhotonNetwork.Instantiate(cubeColliderHand.name, hand.position + new Vector3(0.25f, -0.5f, 0), hand.rotation, 0);
 		cubeColliderInst.transform.parent = hand;
 		cubeColliderInst.GetComponent<OrcBasicAttack> ().owner = this.gameObject;
 		
@@ -320,7 +320,7 @@ public class OrcController : HeroeController
 
 	
 	//--------------------------------------------------------------------------------------------
-	//Corrutines
+	//Corrutines	
 	private IEnumerator FirstSkill(float time)
 	{
 		yield return new WaitForSeconds(time);
