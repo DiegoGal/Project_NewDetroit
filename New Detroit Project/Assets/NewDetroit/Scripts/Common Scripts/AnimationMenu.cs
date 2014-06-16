@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AnimationHeroMenu : MonoBehaviour {
+public class AnimationMenu : MonoBehaviour {
 
     public GameObject army;
     public GameObject heroe;
