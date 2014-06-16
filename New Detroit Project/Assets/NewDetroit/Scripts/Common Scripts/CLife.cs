@@ -34,9 +34,12 @@ public class CLife : MonoBehaviour
             currentLife -= damage;
 
             // blood!
-            GameObject blood = (GameObject)Instantiate(bloodParticles,
-                transform.position + transform.forward, transform.rotation);
-            Destroy(blood, 0.4f);
+			if (bloodParticles)
+			{
+	            GameObject blood = (GameObject)Instantiate(bloodParticles,
+	                transform.position + transform.forward, transform.rotation);
+	            Destroy(blood, 0.4f);
+			}
 
             SendMessage("UnitDamageMessage", null, SendMessageOptions.DontRequireReceiver);
         }

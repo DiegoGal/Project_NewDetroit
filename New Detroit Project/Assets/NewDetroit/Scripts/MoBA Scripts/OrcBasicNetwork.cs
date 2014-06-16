@@ -7,6 +7,8 @@ public class OrcBasicNetwork : BasicNetwork {
 	{
 		base.Awake();
 		
+		GetComponent<MeshRenderer> ().enabled = false;
+		
 		if (photonView.isMine)
 		{
 			GetComponent<BoxCollider>().enabled = true;
@@ -19,4 +21,18 @@ public class OrcBasicNetwork : BasicNetwork {
 			Destroy(GetComponent<Rigidbody>());
 		}
 	}
+	
+//	public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+//	{
+//		base.OnPhotonSerializeView(stream, info);
+//	
+//		if (stream.isWriting)
+//		{
+//			//We own this player: send the others our data
+//		}
+//		else
+//		{
+//			//Network player, receive data
+//		}
+//	}
 }

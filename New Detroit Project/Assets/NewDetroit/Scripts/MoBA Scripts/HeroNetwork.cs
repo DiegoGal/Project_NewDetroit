@@ -16,11 +16,12 @@ public class HeroNetwork : BasicNetwork
 
 		// Enabled/Disabled scripts
 		GetComponent<CBasicAttributesHero>().enabled = true;
+		GetComponent<CharacterController>().enabled = true;
 		cState.enabled = true;
 
 		if (photonView.isMine)
 		{
-			GetComponent<CharacterController>().enabled = true;
+//			GetComponent<CharacterController>().enabled = true;
 			GetComponent<ThirdPersonCamera>().enabled = true;
 			GetComponent<FogOfWarUnit>().enabled = true;
 			GetComponent<NavMeshObstacle>().enabled = true;
@@ -38,7 +39,7 @@ public class HeroNetwork : BasicNetwork
 		}
 		else
 		{
-			GetComponent<CharacterController>().enabled = false;
+//			GetComponent<CharacterController>().enabled = false;
 			GetComponent<ThirdPersonCamera>().enabled = false;
 			GetComponent<FogOfWarUnit>().enabled = false;
 			GetComponent<NavMeshObstacle>().enabled = false;

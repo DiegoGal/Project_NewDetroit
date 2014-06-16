@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BasicAttack : MonoBehaviour {
+public class BasicAttack : Photon.MonoBehaviour {
 	public GameObject owner;
 
 	public Vector3 movement; // Movement
 	
-	private int damage; // Damage
 	private bool hasCollided; // Tell us if the attack has collided with something
 	private string nameCollide; // Tell us the name of the collided object
 	private int lifeCollide; // Tell us the life of the collided object
@@ -68,7 +67,15 @@ public class BasicAttack : MonoBehaviour {
 	
 	
 	//------------------------------------------------------------------------------------------
-
+	[RPC]
+	public void Damage(string sEnemy, int damage)	
+	{
+		GameObject enemy = GameObject.Find(sEnemy);
+		enemy.GetComponent<CLife>().Damage(damage, 'P');
+	}
+	
+	//------------------------------------------------------------------------------------------
+	//MAIN
 	// Use this for initialization
 	void Start () {
 		GetComponent<MeshRenderer> ().enabled = false;
@@ -82,13 +89,14 @@ public class BasicAttack : MonoBehaviour {
 		{
 			CLife goCLife = go.GetComponent<CLife>();
 			if (goCLife == null) return;
-			if (goCLife.Damage(owner.GetComponent<HeroeController>().getAttackP(), 'P')) // Damage the enemy and check if it is dead
-			{
-				ControllableCharacter cchar = goCLife.GetComponent<ControllableCharacter>();
-				// TODO! esto solo recibe la experiencia en offline
-				if (cchar)
-					owner.GetComponent<HeroeController>().experienceUp(cchar.experienceGived);
-			}
+			
+			photonView.RPC("Damage", PhotonTargets.All, go.name, owner.GetComponent<HeroeController>().getAttackP());
+//			if (goCLife.Damage(owner.GetComponent<HeroeController>().getAttackP(), 'P')) // Damage the enemy and check if it is dead
+//			{
+//				ControllableCharacter cchar = goCLife.GetComponent<ControllableCharacter>();
+//				// TODO! only works in offline mode
+//				if (cchar) owner.GetComponent<HeroeController>().experienceUp(cchar.experienceGived);
+//			}
 		}
 	}
 }
