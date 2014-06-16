@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CGrenadeVisionSphere : Photon.MonoBehaviour {
+public class CMissileVisionCapsule : Photon.MonoBehaviour
+{
 
     private GameObject owner;
     private int damage;
     public GameObject splash;
-    private float destroyTime, destroyTimeAcum = 0;
+    private float destroyTime;
     private float timer = 0.0f;
     private bool thrown = false;
+    private float rotation = 0.9f;
 
 	// Use this for initialization
 	void Start () 
@@ -19,43 +21,39 @@ public class CGrenadeVisionSphere : Photon.MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        GameObject newSplash = null;
-        if (!thrown && (Time.time - timer) >= destroyTime)
+        //transform.parent.transform.Rotate(rotation, 0, 0);  
+        transform.Rotate(rotation, 0, 0);  
+	}
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (!thrown && other.gameObject.name != "TowerVisionSphere" && other.gameObject.name != "MissileSplash"
+            && other.gameObject.name != "ShockwaveArtilleryHeavy")
         {
-            newSplash = PhotonNetwork.Instantiate
-            (
-                "ShockwaveEngineer",
-                transform.position,
-                new Quaternion(),
-                0
-            ) as GameObject;
-            newSplash.transform.name = "ShockwaveEngineer";
+            GameObject newSplash = PhotonNetwork.Instantiate
+                (
+                    "ShockwaveArtilleryHeavy",
+                    transform.position,
+                    new Quaternion(),
+                    0
+                ) as GameObject;
+            newSplash.transform.name = "ShockwaveArtilleryHeavy";
             newSplash.GetComponent<ObjectAttack>().SetDamage(damage);
             newSplash.GetComponent<ObjectAttack>().SetOwner(owner);
-            newSplash.GetComponent<ObjectAttack>().typeOfObject = 0;
+            newSplash.GetComponent<ObjectAttack>().typeOfObject = 1;
             
             newSplash.AddComponent<Rigidbody>();
             newSplash.GetComponent<Rigidbody>().useGravity = false;
-
-            //Destroy(transform.parent.gameObject, 0.5f);
-            //transform.parent.rigidbody.isKinematic = true;
-
-            //Destroy(gameObject, 0.5f);
+            
+            //gameObject.SetActive(false);
+            
             rigidbody.isKinematic = true;
-
             //Destroy(newSplash, 1.2f);
-            //transform.parent.gameObject.SetActive(false);
             thrown = true;
-        }
-        else if (!thrown)
-        {
-            transform.Rotate(new Vector3 (8.0f, 15.0f, 3.0f));
-        }
-        
-        destroyTimeAcum += Time.deltaTime;
-        if (destroyTimeAcum >= destroyTime) 
             PhotonNetwork.Destroy(gameObject);
-	}
+        }
+    
+    }
 
     public void SetOwner(GameObject owner)
     {

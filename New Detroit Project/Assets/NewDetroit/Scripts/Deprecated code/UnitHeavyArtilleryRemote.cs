@@ -21,9 +21,9 @@ public class UnitHeavyArtilleryRemote : ControllableCharacter
 
     public GameObject frontWeapon, backWeapon;
 
-    public bool launchRocket = false; // true if the rocket is launch
-    public Vector3 rocketDir; //direction of the rocket
-    public GameObject rocket;
+    public bool launchMissile = false; // true if the missile is launch
+    public Vector3 MissileDir; //direction of the missile
+    public GameObject missile;
     public float attackPower2 = 40.0f;
     private float attackCadenceAux = 0.0f;
     // Animar según el estado actual
@@ -83,31 +83,31 @@ public class UnitHeavyArtilleryRemote : ControllableCharacter
                 {
                     if (attackCadenceAux >0)
                         attackCadenceAux -= Time.deltaTime;
-                    if (launchRocket)
+                    if (launchMissile)
                     {
                         
                         if (attackCadenceAux <= 0)
                         {
                             animation.Play("Deployment-Shot");
 
-                            // Instanciate a new Rocket
-                            GameObject newRocket = Instantiate
+                            // Instanciate a new missile
+                            GameObject newMissile = Instantiate
                             (
-                                rocket,
+                                missile,
                                 dummyLeftWeaponGunBarrel.transform.position,
                                 new Quaternion()
                             ) as GameObject;
-                            newRocket.rigidbody.isKinematic = false;
-                            newRocket.transform.name = "Rocket";
-                            newRocket.transform.rotation = dummyLeftWeaponGunBarrel.transform.rotation;
-                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetOwner(this.gameObject);
-                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDamage((int)attackPower2);
-                            newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDestroyTime(2.5f);
+                            newMissile.rigidbody.isKinematic = false;
+                            newMissile.transform.name = "Missile";
+                            newMissile.transform.rotation = dummyLeftWeaponGunBarrel.transform.rotation;
+                            newMissile.transform.FindChild("CMissileVisionCapsule").GetComponent<CMissileVisionCapsule>().SetOwner(this.gameObject);
+                            newMissile.transform.FindChild("CMissileVisionCapsule").GetComponent<CMissileVisionCapsule>().SetDamage((int)attackPower2);
+                            newMissile.transform.FindChild("CMissileVisionCapsule").GetComponent<CMissileVisionCapsule>().SetDestroyTime(2.5f);
 
-                            newRocket.transform.parent = null;
-                            newRocket.rigidbody.AddForce
+                            newMissile.transform.parent = null;
+                            newMissile.rigidbody.AddForce
                             (
-                                rocketDir,
+                                MissileDir,
                                 ForceMode.Impulse
                             );
                             attackCadenceAux = 2.0f;

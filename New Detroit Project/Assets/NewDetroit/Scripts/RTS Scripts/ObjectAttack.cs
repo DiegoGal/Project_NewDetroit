@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GrenadeAttack : ParticleDamage
+public class ObjectAttack : ParticleDamage
 {
     public GameObject owner;
     SphereCollider sphereCollider;
@@ -12,14 +12,19 @@ public class GrenadeAttack : ParticleDamage
 
     private float destroyTimeAcumSplash = 0;
 
+    private float xForce, yForce, zForce;
+    public float maxTime;
+
+    public int typeOfObject; // 0 engineer, 1 heavyArtillery
+
     // Use this for initialization
-    void Awake()
+    void Awake ()
     {
         sphereCollider = GetComponent<SphereCollider>();
     }
 
     // Update is called once per frame
-    void Update()
+    void Update ()
     {
         if (GetComponent<ParticleSystem>() && GetComponent<ParticleSystem>().particleCount > 0)
         {
@@ -32,13 +37,13 @@ public class GrenadeAttack : ParticleDamage
             PhotonNetwork.Destroy(this.gameObject);
     }
 
-    public void SetOwner(GameObject owner)
+    public void SetOwner (GameObject owner)
     {
         this.owner = owner;
     }
 
     [RPC]
-    public void AddNewUnitForce(string otherName)
+    public void AddNewUnitForce (string otherName, float xForce, float yForce, float zForce)
     {
         GameObject other = GameObject.Find(otherName);
         if (other.GetComponent<PhotonView>().isMine)
@@ -46,8 +51,7 @@ public class GrenadeAttack : ParticleDamage
             // For damage
             UnitController otherUC = other.GetComponent<UnitController>();
             float enemyDist = Vector3.Distance(transform.position, other.transform.position);
-            // TODO
-            //otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
+            otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
 
             // For add a force to the minions so they can fly
             if (!other.rigidbody)
@@ -60,15 +64,15 @@ public class GrenadeAttack : ParticleDamage
             Vector3 dir = other.transform.position - transform.position;
             dir = dir.normalized;
 
-            other.rigidbody.AddForce(new Vector3(dir.x * 0.7f,
-                                                  3.5f,
-                                                  dir.z * 0.7f),
+            other.rigidbody.AddForce(new Vector3(dir.x * xForce,
+                                                  yForce,
+                                                  dir.z * zForce),
                                                   ForceMode.Impulse);
             otherUC.Fly();
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter (Collider other)
     {
         if (other.gameObject.name != owner.name)
         {
@@ -79,13 +83,36 @@ public class GrenadeAttack : ParticleDamage
             }
             else if (other.tag == "Minion")
             {
-                if (!unitList.Contains(other) && owner.GetComponent<CTeam>().teamNumber != other.GetComponent<CTeam>().teamNumber)
+                if (!unitList.Contains(other) && 
+                    owner.GetComponent<CTeam>().teamNumber != other.GetComponent<CTeam>().teamNumber)
                 {
                     string name = other.name;
-                    photonView.RPC("AddNewUnitForce", PhotonTargets.All, name);
+                    float xForce = 0, yForce = 0, zForce = 0;
+                    switch (typeOfObject)
+                    {
+                        case 0:
+                            xForce = 0.7f;
+                            yForce = 3.5f;
+                            zForce = 0.7f;
+                            break;
+                        case 1:
+                            xForce = 5.0f;
+                            yForce = 9.0f;
+                            zForce = 5.0f;
+                            break;
+
+                    }
+                    if (typeOfObject == 0)
+                    {
+                        xForce = 0.7f;
+                        yForce = 3.5f;
+                        zForce = 0.7f;
+                    }
+                    photonView.RPC("AddNewUnitForce", PhotonTargets.All, name, xForce, yForce, zForce);
                     unitList.Add(other);
                 }
             }
         }
     }
+
 }

@@ -20,14 +20,14 @@ public class UnitHeavyArtillery : UnitArtillery
     public GameObject frontWeapon, backWeapon;
 
     //For attacking1
-    public GameObject rocket;
-    private GameObject newRocket;
+    public GameObject missile;
+    private GameObject newMissile;
     public bool zoneAttackMode = false;
     Vector3 zoneAttack;
 
-    // Sents if a rocket has been launched
-    public bool launchRocket = false;
-    public Vector3 rocketDir;
+    // Sents if a missile has been launched
+    public bool launchMissile = false;
+    public Vector3 missileDir;
 
     public enum DeployState
     {
@@ -60,7 +60,7 @@ public class UnitHeavyArtillery : UnitArtillery
     public override void Update ()
 	{
         //if (currentDeployState == DeployState.Undeployed || currentDeployState == DeployState.Deployed)
-		    base.Update();
+	    base.Update();
 
         if (isSelected && Input.GetKeyDown(KeyCode.D))
         {
@@ -159,48 +159,49 @@ public class UnitHeavyArtillery : UnitArtillery
                 {
                     if (attackCadenceAux <= 0)
                     {
-                        launchRocket = true;
+                        launchMissile = true;
                         //animation.Play("Deployment-Shot");
 						cState.animationName = "Deployment-Shot";
 						cState.animationChanged = true;
                         if (enemySelected)
                             transform.LookAt(enemySelected.transform);
 
-                        // Instanciate a new Rocket
+                        // Instanciate a new Missile
                         Debug.Log("Dummy position: " + dummyLeftWeaponGunBarrel.transform.position);
                         Debug.Log("HeavyArtillery position: " + transform.position);
-                        newRocket = Instantiate
+                        newMissile = PhotonNetwork.Instantiate
                         (
-                            rocket,
+                            "Goblin Missile",
                             dummyLeftWeaponGunBarrel.transform.position,
-                            new Quaternion()
+                            new Quaternion(),
+                            0
                         ) as GameObject;
-                        newRocket.rigidbody.isKinematic = false;
-                        newRocket.transform.name = "Rocket";
-                        newRocket.transform.rotation = dummyLeftWeaponGunBarrel.transform.rotation;
-                        newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetOwner(this.gameObject);
-                        newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDamage((int)attackPower2);
-                        newRocket.transform.FindChild("RocketVisionCapsule").GetComponent<CRocketVisionCapsule>().SetDestroyTime(2.5f);
+                        newMissile.rigidbody.isKinematic = false;
+                        newMissile.transform.name = "Missile";
+                        newMissile.transform.rotation = dummyLeftWeaponGunBarrel.transform.rotation;
+                        newMissile.transform.GetComponent<CMissileVisionCapsule>().SetOwner(this.gameObject);
+                        newMissile.transform.GetComponent<CMissileVisionCapsule>().SetDamage((int)attackPower2);
+                        newMissile.transform.GetComponent<CMissileVisionCapsule>().SetDestroyTime(2.5f);
 
 
                         attackCadenceAux = attackCadence;
                         Vector3 dir;
                         if (zoneAttackMode)
-                            dir = zoneAttack - newRocket.transform.position;
+                            dir = zoneAttack - newMissile.transform.position;
                         else
-                            dir = enemySelected.transform.position - newRocket.transform.position;
+                            dir = enemySelected.transform.position - newMissile.transform.position;
                         dir = dir.normalized;
-                        rocketDir = new Vector3
+                        missileDir = new Vector3
                         (
                             dir.x * 8.0f * (enemyDist / maxAttackDistance),
                             11,
                             dir.z * 8.0f * (enemyDist / maxAttackDistance)
                         );
                         //Vector3 dir1 = transform.forward.normalized;
-                        newRocket.transform.parent = null;
-                        newRocket.rigidbody.AddForce
+                        newMissile.transform.parent = null;
+                        newMissile.rigidbody.AddForce
                         (
-                            rocketDir,
+                            missileDir,
                             ForceMode.Impulse
                         );
 
@@ -225,7 +226,8 @@ public class UnitHeavyArtillery : UnitArtillery
                     cState.currentState = currentState;
 
                     attackCadenceAux = 2f;
-                    launchRocket = false; 
+                    launchMissile = false;
+                    this.StopAllCoroutines();
                     //PlayAnimationCrossFade("Idle01");
                 }
             }
@@ -238,7 +240,8 @@ public class UnitHeavyArtillery : UnitArtillery
 
                 //PlayAnimationCrossFade("Idle01");
                 attackCadenceAux = 2f;
-                launchRocket = false; 
+                launchMissile = false;
+                this.StopAllCoroutines();
             }
         }
     }
