@@ -297,7 +297,9 @@ public class OrcController : HeroeController
 		yield return new WaitForSeconds(time);
 
 		GameObject snt = (GameObject) PhotonNetwork.Instantiate("SnotPrefab", transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation, 0);
-		snt.GetComponent<ParticleDamage>().SetDamage(attackM);
+		SnotAttack sntAtt = snt.GetComponent<SnotAttack>();
+		sntAtt.SetDamage(1);
+		sntAtt.SetOwner(gameObject);
 
 		yield return new WaitForSeconds(3f);
 
