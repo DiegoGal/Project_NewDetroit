@@ -17,7 +17,7 @@ public class OrcBullStrikeAttack : ParticleDamage
 	}
 	
 	[RPC]
-	public void AddNewUnitForce (string otherName, float xForce, float yForce, float zForce)
+	public void AddNewUnitForce (string otherName)
 	{
 		GameObject other = GameObject.Find(otherName);
 		if (other.GetComponent<PhotonView>().isMine)
@@ -38,9 +38,9 @@ public class OrcBullStrikeAttack : ParticleDamage
 			Vector3 dir = other.transform.position - transform.position;
 			dir = dir.normalized;
 			
-			other.rigidbody.AddForce(new Vector3(dir.x * xForce,
-			                                     yForce,
-			                                     dir.z * zForce),
+			other.rigidbody.AddForce(new Vector3(dir.x * 2f,
+			                                     5f,
+			                                     dir.z * 2f),
 			                         ForceMode.Impulse);
 			otherUC.Fly();
 		}
@@ -65,14 +65,10 @@ public class OrcBullStrikeAttack : ParticleDamage
 					UnitController otherUC = other.GetComponent<UnitController>();
 					
 					photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
-					
-					
-					Vector3 dir = other.transform.position - transform.position;
-					dir = dir.normalized;
-					photonView.RPC("AddNewUnitForce", PhotonTargets.All, dir.x * 2.0f, 5.0f, dir.z * 2.0f);
+					photonView.RPC("AddNewUnitForce", PhotonTargets.All, other.gameObject.name);
 				}
 			}
-			else
+			else if (other.tag == "Player")
 			{
 				photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
 			}
