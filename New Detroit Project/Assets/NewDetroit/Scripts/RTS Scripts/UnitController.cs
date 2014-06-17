@@ -23,7 +23,7 @@ public class UnitController : ControllableCharacter
 	
     public float velocity = 3.5f;
     protected Vector3 destiny = new Vector3();
-    protected float destinyThreshold = 0.6f;
+    public float destinyThreshold = 0.6f;
     
     // health bar
     public Texture2D progressBarEmpty, progressBarFull;
@@ -188,7 +188,8 @@ public class UnitController : ControllableCharacter
         {
             // 1- comprobamos si el enemigo está "a mano" y se le puede atacar
             float distToEnemy = Vector3.Distance(transform.position, enemySelected.transform.position);
-            if (distToEnemy <= maxAttackDistance)
+            float enemyRaduis = enemySelected.GetComponent<ControllableCharacter>().radius;
+            if (distToEnemy <= maxAttackDistance + enemyRaduis)
             {
                 // change to Attack state
                 currentState = State.Attacking;
@@ -227,7 +228,8 @@ public class UnitController : ControllableCharacter
         float enemyDist = Vector3.Distance(transform.position, enemySelected.transform.position);
         if (enemySelected)
         {
-            if (enemyDist <= maxAttackDistance)
+            float enemyRaduis = enemySelected.GetComponent<ControllableCharacter>().radius;
+            if (enemyDist <= maxAttackDistance + enemyRaduis)
             {
                 if (attackCadenceAux <= 0)
                 {
@@ -235,7 +237,7 @@ public class UnitController : ControllableCharacter
 
                     attackCadenceAux = attackCadence;
 
-                    photonView.RPC("Kick", PhotonTargets.All);
+                    photonView.RPC("Kick", PhotonTargets.All, enemySelected.name, basicAttackPower);
                     if (!enemySelected.GetComponent<CLife>().IsAlive())
                     //if (enemySelected.Damage(basicAttackPower))
                     {
@@ -327,6 +329,16 @@ public class UnitController : ControllableCharacter
         }
     }
 
+    [RPC]
+    public void ChangeToDyingMaterial()
+    {
+        // update the Alpha Multiply Value of the material
+        float alphaValue = model.renderer.material.GetFloat("_AlphaMultiplyValue");
+        alphaValue *= 0.97f;
+        alphaValue -= 0.006f;
+        model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
+    }
+
     private void UpdateDying ()
     {
         timeFallingWhenDying -= Time.deltaTime;
@@ -345,6 +357,7 @@ public class UnitController : ControllableCharacter
 
             currentState = State.AscendingToHeaven;
             cState.currentState = currentState;
+            photonView.RPC("ChangeToDyingMaterial", PhotonTargets.All);
         }
     }
 
@@ -417,11 +430,11 @@ public class UnitController : ControllableCharacter
     }
 
     [RPC]
-    public bool Kick ()
+    public void Kick (string otherName, float damage)
     {
-        // TODO! enemySelected es nulo en instancias online, Kick tendría que recibir
-        // el identificador Photon de la unidad a atacar
-        return enemySelected.Damage(basicAttackPower);
+        GameObject other = GameObject.Find(otherName);
+        CLife otherCL = other.GetComponent<CLife>();
+        otherCL.Damage(damage);
     }
 
     public virtual void RightClickOnSelected (Transform destTransform)
@@ -473,14 +486,16 @@ public class UnitController : ControllableCharacter
         // play the dead animation             
         PlayAnimationCrossFade("Die");
         // and comunicate it to the army manager              
-        baseController.armyController.UnitDied(this.gameObject);
+        if (baseController)
+            baseController.armyController.UnitDied(this.gameObject);
 
         // play the dead sfx
         audio.Stop();
         audio.PlayOneShot(sfxDead);
 
         // delete the Nave Mesh Agent for elevate the model
-        Destroy(GetComponent<NavMeshAgent>());
+        if (GetComponent<NavMeshAgent>())
+            Destroy(GetComponent<NavMeshAgent>());
 
         Minimap.DeleteUnit(this);
     }

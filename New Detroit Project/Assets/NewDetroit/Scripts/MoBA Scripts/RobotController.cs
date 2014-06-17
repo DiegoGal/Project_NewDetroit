@@ -120,8 +120,8 @@ public class RobotController : HeroeController
 		base.Start ();
 		
 		this.life.currentLife = LIFE_1;
-		cBasicAttributes.setCurrentMana(MANA_1);
-		cBasicAttributes.setCurrentAdren(ADREN_1);
+//		cBasicAttributes.setCurrentMana(MANA_1);
+//		cBasicAttributes.setCurrentAdren(ADREN_1);
 		
 		this.life.maximunLife = LIFE_1;
 		this.attackP = ATT_P_1;
@@ -129,13 +129,13 @@ public class RobotController : HeroeController
 		this.speedAtt = ATT_SPEED_1;
 		this.defP = DEF_P_1;
 		this.defM = DEF_M_1;
-		cBasicAttributes.setMaximunMana(MANA_1);
-		cBasicAttributes.setMaximunAdren(ADREN_1);
+//		cBasicAttributes.setMaximunMana(MANA_1);
+//		cBasicAttributes.setMaximunAdren(ADREN_1);
 		this.speedMov = MOV_SPEED_1;
 
 		//Set the collider cubes in the sword
 		Transform sword = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Cylinder002/cuchilla");
-		GameObject cubeColliderInst = (GameObject) Instantiate(cubeColliderSword, sword.position + new Vector3(0.4f, 1, 0.1f), sword.rotation);
+		GameObject cubeColliderInst = (GameObject) PhotonNetwork.Instantiate(cubeColliderSword.name, sword.position + new Vector3(0.4f, 1, 0.1f), sword.rotation, 0);
 		cubeColliderInst.transform.parent = sword;
 		cubeColliderInst.GetComponent<RobotBasicAttack> ().owner = this.gameObject;
 
@@ -217,14 +217,16 @@ public class RobotController : HeroeController
 					cState.animationName = "Attack1";
 					cState.animationNameQueued = "Attack2";
 					cState.animationNameQueued2 = "Attack3";
-					cState.animationChanged = cState.animationChangeQueued = cState.animationChangeQueued2 = true;
+					cState.animationChanged = true;
+					cState.animationChangeQueued = true;
+					cState.animationChangeQueued2 = true;
                 }
 				// Instantiate the shot
-				if (animation.IsPlaying("Attack3") && !isShot)
-                {
-					isShot = true;
-					StartCoroutine(ThirdBasicAttack(0));
-                }
+//				if (animation.IsPlaying("Attack3") && !isShot)
+//                {
+//					isShot = true;
+//					StartCoroutine(ThirdBasicAttack(0));
+//                }
 				//------------------------------------
 				canRotate = false;
 				canMove = false;

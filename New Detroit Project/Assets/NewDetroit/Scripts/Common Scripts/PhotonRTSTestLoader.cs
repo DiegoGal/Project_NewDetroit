@@ -16,6 +16,7 @@ public class PhotonRTSTestLoader : MonoBehaviour
 
     public GameObject RedBase;
     public GameObject BlueBase;
+    public GameObject RobRender;
 
     public void Awake()
     {
@@ -36,10 +37,18 @@ public class PhotonRTSTestLoader : MonoBehaviour
             }
             else
             {
+                /*GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
+                heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
 
+                Camera.main.GetComponent<CameraRTSController>().enabled = false;
+                Camera.main.GetComponent<CameraMOBAController>().enabled = true;
+                Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+                
+                 */
                 RedBase.GetComponent<CSelectable>().enabled = false;
                 RedBase.GetComponent<BaseController>().enabled = false;
                 Destroy(army0);
+
             }
         }
 

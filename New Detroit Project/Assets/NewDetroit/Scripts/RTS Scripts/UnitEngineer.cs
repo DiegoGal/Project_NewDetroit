@@ -1163,7 +1163,7 @@ public class UnitEngineer : UnitController
     }
 
 	[RPC]
-	public void createGrenade()
+	public void CreateGrenade()
 	{
 		// Instanciate a new grenade
 		newGrenade = Instantiate
