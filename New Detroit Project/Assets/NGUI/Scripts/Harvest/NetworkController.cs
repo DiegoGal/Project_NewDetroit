@@ -22,10 +22,11 @@ public class NetworkController : Photon.MonoBehaviour
     public GameObject labelPlayers;
     // Auxiliar variables
     public GameObject originalButton;
-    private ArrayList layerButons;
+    private ArrayList layerButons  = new ArrayList();
     private short selected;
     private string roomName;
     public UILabel info;
+    public GameObject selectPanel; // for the animation of the 
 
     public void Start()
     {
@@ -34,8 +35,7 @@ public class NetworkController : Photon.MonoBehaviour
         scriptRoom.text = "";
         scriptRoom.UpdateNGUIText();
         scriptPlayer.text = "";
-        scriptPlayer.UpdateNGUIText();
-        layerButons = new ArrayList();
+        scriptPlayer.UpdateNGUIText();        
         selected = -1;
         info.text = "";
         originalButton.SetActive(false);
@@ -64,9 +64,26 @@ public class NetworkController : Photon.MonoBehaviour
         // PhotonNetwork.logLevel = NetworkLogLevel.Full;
     }
 
+    private IEnumerator WaitForAnimation(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);         
+    }
+
+    // TOFIX this does not work
+    private void playAnimations()
+    {
+        Animation anim = transform.parent.gameObject.GetComponent<Animation>();
+        anim.enabled = true;
+        anim.Play("Window - Back");
+        selectPanel.SetActive(true);        
+        selectPanel.animation["Window - Back"].speed = -1;
+        selectPanel.animation.Play("Window - Back");
+    }
+
     public void CreateRoom()
     {
         UILabel roomName = labelRoomName.GetComponent<UILabel>();
+        UILabel playerName = labelPlayerName.GetComponent<UILabel>();
         RoomInfo[] roomsInfo = PhotonNetwork.GetRoomList();
         int i = 0; bool enc = false;
         while (i < roomsInfo.Length && !enc)
@@ -77,16 +94,21 @@ public class NetworkController : Photon.MonoBehaviour
         // If there's no other roome with the same name
         if (!enc)
         {
+            playAnimations();
             if (roomName.text.Equals(""))
             {
+                if (!playerName.Equals(""))
+                    PhotonNetwork.playerName = playerName.text;
                 PhotonNetwork.CreateRoom("Room" + Random.Range(1, 9999), true, true, 4);
                 info.text = "Room created.";
             }
             else
-            {
+            {                                
+                if (!playerName.text.Equals(""))
+                    PhotonNetwork.playerName = playerName.text;
                 PhotonNetwork.CreateRoom(roomName.text, true, true, 4);
                 info.text = "Room " + roomName.text + " created.";
-            }
+            }            
         }
         else
         {
@@ -109,9 +131,22 @@ public class NetworkController : Photon.MonoBehaviour
                 info.text = "This room is full";
             }
             else
-                PhotonNetwork.JoinRoom(roomName);
+            {
+                UILabel playerName = labelPlayerName.GetComponent<UILabel>();
+                playAnimations();
+                if (!playerName.text.Equals(""))
+                    PhotonNetwork.playerName = playerName.text;
+                PhotonNetwork.JoinRoom(roomName);                
+            }
         }
     }
+
+   
+
+    // Udate is called once per frame
+    void Updatpe()
+    {        
+    }    
 
     public void ExitGame()
     {
@@ -147,6 +182,7 @@ public class NetworkController : Photon.MonoBehaviour
             roomScript.text = roomScript.text + roomsInfo[i].name + "\n";
             playerScript.text = playerScript.text + roomsInfo[i].playerCount + "/" + roomsInfo[i].maxPlayers + "\n";
         }
+
         originalButton.SetActive(false);
         originalButton.transform.GetChild(0).gameObject.SetActive(false);
     }
@@ -188,11 +224,12 @@ public class NetworkController : Photon.MonoBehaviour
     public void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom");
+        gameObject.SetActiveRecursively(false);
     }
 
     public void OnCreatedRoom()
     {
-        Debug.Log("OnCreatedRoom");
+        Debug.Log("OnCreatedRoom");        
         //PhotonNetwork.LoadLevel(SceneNameGame);
     }
 

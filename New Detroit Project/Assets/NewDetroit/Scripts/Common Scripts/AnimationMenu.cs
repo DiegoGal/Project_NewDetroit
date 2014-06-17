@@ -5,6 +5,8 @@ public class AnimationMenu : MonoBehaviour {
 
     public GameObject army;
     public GameObject heroe;
+    public GameObject linkScriptRol; //link to scriptRol
+    public int selection;
 
 	// Use this for initialization
 	void Start () {
@@ -15,6 +17,11 @@ public class AnimationMenu : MonoBehaviour {
 	void Update () {
 	    
 	}
+
+    void OnClick()
+    {
+        linkScriptRol.GetComponent<RolSelection>().SelectionUpdate(selection);
+    }
 
     void OnHover(bool isOver)
     {
