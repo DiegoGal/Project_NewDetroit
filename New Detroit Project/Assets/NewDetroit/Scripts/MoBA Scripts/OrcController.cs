@@ -51,8 +51,8 @@ public class OrcController : HeroeController
 				this.attackP = ATT_P_2;
 				this.attackM = ATT_M_2;
 				this.speedAtt = ATT_SPEED_2;
-				this.defP = DEF_P_2;
-				this.defM = DEF_M_2;
+				cBasicAttributes.setDeffensePhysic(DEF_P_2);
+				cBasicAttributes.setDeffenseMagic(DEF_M_2);
 				cBasicAttributes.setMaximunMana(MANA_2);
 				cBasicAttributes.setMaximunAdren(ADREN_2);
 				this.speedMov = MOV_SPEED_2;
@@ -62,8 +62,8 @@ public class OrcController : HeroeController
 				this.attackP = ATT_P_3;
 				this.attackM = ATT_M_3;
 				this.speedAtt = ATT_SPEED_3;
-				this.defP = DEF_P_3;
-				this.defM = DEF_M_3;
+				cBasicAttributes.setDeffensePhysic(DEF_P_3);
+				cBasicAttributes.setDeffenseMagic(DEF_M_3);
 				cBasicAttributes.setMaximunMana(MANA_3);
 				cBasicAttributes.setMaximunAdren(ADREN_3);
 				this.speedMov = MOV_SPEED_3;
@@ -73,8 +73,8 @@ public class OrcController : HeroeController
 				this.attackP = ATT_P_4;
 				this.attackM = ATT_M_4;
 				this.speedAtt = ATT_SPEED_4;
-				this.defP = DEF_P_4;
-				this.defM = DEF_M_4;
+				cBasicAttributes.setDeffensePhysic(DEF_P_4);
+				cBasicAttributes.setDeffenseMagic(DEF_M_4);
 				cBasicAttributes.setMaximunMana(MANA_4);
 				cBasicAttributes.setMaximunAdren(ADREN_4);
 				this.speedMov = MOV_SPEED_4;
@@ -112,8 +112,8 @@ public class OrcController : HeroeController
 		this.attackP = ATT_P_1;
 		this.attackM = ATT_M_1;
 		this.speedAtt = ATT_SPEED_1;
-		this.defP = DEF_P_1;
-		this.defM = DEF_M_1;
+		cBasicAttributes.setDeffensePhysic(DEF_P_1);
+		cBasicAttributes.setDeffenseMagic(DEF_M_1);
 		this.speedMov = MOV_SPEED_1;
 
 		//Set the collider cubes in both hands
@@ -311,8 +311,6 @@ public class OrcController : HeroeController
 		yield return new WaitForSeconds(time);
 
 		GameObject spl = (GameObject) PhotonNetwork.Instantiate("Shockwave", transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity, 0);
-    	spl.AddComponent<Rigidbody>();
-    	spl.GetComponent<Rigidbody>().useGravity = false;
 		spl.GetComponent<OrcSplashAttack>().SetDamage(attackM + 40);
 		spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
 

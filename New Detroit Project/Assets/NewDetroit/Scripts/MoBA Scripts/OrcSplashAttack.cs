@@ -83,6 +83,8 @@ public class OrcSplashAttack : ParticleDamage
                     
                     photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
 					photonView.RPC("AddNewUnitForce", PhotonTargets.All, other.gameObject.name);
+
+					unitList.Add(other);
                 }
             }
             else if (other.tag == "Player")

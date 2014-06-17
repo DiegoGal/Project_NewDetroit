@@ -38,7 +38,8 @@ public class RobotController : HeroeController
 	private float timeCountLife = 0;	//State recover
 
 	// Flags
-	private bool isShot = false;	// Skill 3
+	private bool doneFirstSkill = false;	// Skill 1
+	private bool isShot = false;			// Skill 3
 
 
 	//-----------------------------------------------------------------------------------------------------------------
@@ -59,8 +60,8 @@ public class RobotController : HeroeController
 				this.attackP = ATT_P_2;
 				this.attackM = ATT_M_2;
 				this.speedAtt = ATT_SPEED_2;
-				this.defP = DEF_P_2;
-				this.defM = DEF_M_2;
+				cBasicAttributes.setDeffensePhysic(DEF_P_2);
+				cBasicAttributes.setDeffenseMagic(DEF_M_2);
 				cBasicAttributes.setMaximunMana(MANA_2);
 				cBasicAttributes.setMaximunAdren(ADREN_2);
 				this.speedMov = MOV_SPEED_2;
@@ -70,8 +71,8 @@ public class RobotController : HeroeController
 				this.attackP = ATT_P_3;
 				this.attackM = ATT_M_3;
 				this.speedAtt = ATT_SPEED_3;
-				this.defP = DEF_P_3;
-				this.defM = DEF_M_3;
+				cBasicAttributes.setDeffensePhysic(DEF_P_3);
+				cBasicAttributes.setDeffenseMagic(DEF_M_3);
 				cBasicAttributes.setMaximunMana(MANA_3);
 				cBasicAttributes.setMaximunAdren(ADREN_3);
 				this.speedMov = MOV_SPEED_3;
@@ -81,8 +82,8 @@ public class RobotController : HeroeController
 				this.attackP = ATT_P_4;
 				this.attackM = ATT_M_4;
 				this.speedAtt = ATT_SPEED_4;
-				this.defP = DEF_P_4;
-				this.defM = DEF_M_4;
+				cBasicAttributes.setDeffensePhysic(DEF_P_4);
+				cBasicAttributes.setDeffenseMagic(DEF_M_4);
 				cBasicAttributes.setMaximunMana(MANA_4);
 				cBasicAttributes.setMaximunAdren(ADREN_4);
 				this.speedMov = MOV_SPEED_4;
@@ -127,8 +128,8 @@ public class RobotController : HeroeController
 		this.attackP = ATT_P_1;
 		this.attackM = ATT_M_1;
 		this.speedAtt = ATT_SPEED_1;
-		this.defP = DEF_P_1;
-		this.defM = DEF_M_1;
+		cBasicAttributes.setDeffensePhysic(DEF_P_1);
+		cBasicAttributes.setDeffenseMagic(DEF_M_1);
 //		cBasicAttributes.setMaximunMana(MANA_1);
 //		cBasicAttributes.setMaximunAdren(ADREN_1);
 		this.speedMov = MOV_SPEED_1;
@@ -160,7 +161,6 @@ public class RobotController : HeroeController
 		base.Update ();
 		updateManaAdren();
 		UpdateAnimation();
-		UpdateParticles();
 		Counter();
 		this.newLevel();
 	}
@@ -175,13 +175,14 @@ public class RobotController : HeroeController
             // Secondary attack
             if (state == StateHeroe.AttackSecond)
             {
-                if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total)
+				if (stateAttackSecond == AttackSecond.Attack1 && cooldown1 == cooldown1total && !doneFirstSkill)
                 {
 					StartCoroutine(FirstSkill(0));
 					//------------------------------------
 					canRotate = true;
 					canMove = true;
 					doingSecondaryAnim = false;
+					doneFirstSkill = true;
                 }
                 else if (stateAttackSecond == AttackSecond.Attack2 && cooldown2 == cooldown2total)
                 {
@@ -307,21 +308,6 @@ public class RobotController : HeroeController
         }
     }//UpdateAnimation
 
-	private void UpdateParticles()
-	{
-		//Modified the defense attributes with the first skill
-		if (fireCircleInst != null)
-		{
-			this.defP = DEF_P_1 + 50;
-			this.defM = DEF_M_1 + 50;
-		}
-		else
-		{
-			this.defP = DEF_P_1;
-			this.defM = DEF_M_1;
-		}
-	}
-
 	//-----------------------------------------------------------------------
 	// Corutines
 	private IEnumerator FirstSkill(float time)
@@ -329,11 +315,17 @@ public class RobotController : HeroeController
 		yield return new WaitForSeconds(time);
 
 		fireCircleInst = (GameObject)PhotonNetwork.Instantiate(fireBall.name, head.position + Vector3.down * 0.5f, transform.rotation, 0);
+		RobotCircleSkill rc = fireCircleInst.GetComponent<RobotCircleSkill>();
+		rc.setOwner(gameObject);
+		rc.UpDef();
 		fireCircleInst.transform.parent = head;
 
 		yield return new WaitForSeconds(1.7f);
 
+		rc.DownDef();
 		PhotonNetwork.Destroy(fireCircleInst);
+
+		doneFirstSkill = false;
 	}
 
 	private IEnumerator SecondSkill(float time)
