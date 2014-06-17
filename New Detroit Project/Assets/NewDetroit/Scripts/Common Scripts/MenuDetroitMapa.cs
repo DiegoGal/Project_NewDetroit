@@ -151,7 +151,8 @@ public class MenuDetroitMapa : MonoBehaviour
 	                {
 	                    PhotonNetwork.JoinRoom(roomInfo.name);
 //	                    PhotonRTSTestLoader.joinedId++;
-						PhotonMOBATestLoader.joinedId++;
+//						PhotonMOBATestLoader.joinedId++;
+						PhotonGeneralTestLoader.joinedId++;
 	                }
 
 	                GUILayout.EndHorizontal();
