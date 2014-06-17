@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class OrcBasicNetwork : BasicNetwork {
+public class RobotBasicNetwork : BasicNetwork {
 
 	public virtual void Awake()
 	{
@@ -12,12 +12,12 @@ public class OrcBasicNetwork : BasicNetwork {
 		if (photonView.isMine)
 		{
 			GetComponent<BoxCollider>().enabled = true;
-			GetComponent<OrcBasicAttack>().enabled = true;
+			GetComponent<RobotBasicAttack>().enabled = true;
 		}
 		else
 		{
 			GetComponent<BoxCollider>().enabled = false;
-			GetComponent<OrcBasicAttack>().enabled = false;
+			GetComponent<RobotBasicAttack>().enabled = false;
 			Destroy(GetComponent<Rigidbody>());
 		}
 	}
