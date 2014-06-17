@@ -43,16 +43,25 @@ public class ObjectAttack : ParticleDamage
     }
 
     [RPC]
-    public void AddNewUnitForce (string otherName, float xForce, float yForce, float zForce)
+    public void DamageHeroe(string otherName, int damage)
     {
         GameObject other = GameObject.Find(otherName);
+        CLife otherCL = other.GetComponent<CLife>();
+        float enemyDist = Vector3.Distance(transform.position, other.transform.position);
+        otherCL.Damage(damage / enemyDist, 'P');
+    }
+
+    [RPC]
+    public void AddNewUnitForce (string otherName, float xForce, float yForce, float zForce, int damage)
+    {
+        GameObject other = GameObject.Find(otherName);
+        // For damage
+        UnitController otherUC = other.GetComponent<UnitController>();
+        float enemyDist = Vector3.Distance(transform.position, other.transform.position);
+        otherUC.GetComponent<CLife>().Damage(damage / enemyDist, 'P');
+
         if (other.GetComponent<PhotonView>().isMine)
         {
-            // For damage
-            UnitController otherUC = other.GetComponent<UnitController>();
-            float enemyDist = Vector3.Distance(transform.position, other.transform.position);
-            otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
-
             // For add a force to the minions so they can fly
             if (!other.rigidbody)
                 other.gameObject.AddComponent<Rigidbody>();
@@ -76,17 +85,18 @@ public class ObjectAttack : ParticleDamage
     {
         if (other.gameObject.name != owner.name)
         {
+            string name = other.name;
             if (other.tag == "Player")
             {
-                CLife script = other.GetComponent<CLife>();
-                script.Damage(GetDamage(), 'P');
+                /*CLife script = other.GetComponent<CLife>();
+                script.Damage(GetDamage(), 'P');*/
+                photonView.RPC("DamageHeroe", PhotonTargets.All, name, GetDamage());
             }
             else if (other.tag == "Minion")
             {
                 if (!unitList.Contains(other) && 
                     owner.GetComponent<CTeam>().teamNumber != other.GetComponent<CTeam>().teamNumber)
-                {
-                    string name = other.name;
+                {                    
                     float xForce = 0, yForce = 0, zForce = 0;
                     switch (typeOfObject)
                     {
@@ -108,7 +118,7 @@ public class ObjectAttack : ParticleDamage
                         yForce = 3.5f;
                         zForce = 0.7f;
                     }
-                    photonView.RPC("AddNewUnitForce", PhotonTargets.All, name, xForce, yForce, zForce);
+                    photonView.RPC("AddNewUnitForce", PhotonTargets.All, name, xForce, yForce, zForce, GetDamage());
                     unitList.Add(other);
                 }
             }

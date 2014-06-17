@@ -28,7 +28,7 @@ public class CMissileVisionCapsule : Photon.MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!thrown && other.gameObject.name != "TowerVisionSphere" && other.gameObject.name != "MissileSplash"
-            && other.gameObject.name != "ShockwaveArtilleryHeavy")
+            && other.gameObject.name != "ShockwaveArtilleryHeavy" && other.gameObject.name != "Missile")
         {
             GameObject newSplash = PhotonNetwork.Instantiate
                 (
