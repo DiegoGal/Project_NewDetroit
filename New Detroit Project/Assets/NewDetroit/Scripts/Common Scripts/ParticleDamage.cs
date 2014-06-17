@@ -6,7 +6,7 @@ using System.Collections;
 public class ParticleDamage : Photon.MonoBehaviour {
     // Public
     // Private
-    private int totalDamage = 0;
+    protected int totalDamage = 0;
 
     public int GetDamage()
     {

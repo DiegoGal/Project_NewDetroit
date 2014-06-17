@@ -92,12 +92,6 @@ public class BasicAttack : Photon.MonoBehaviour {
 			if (goCLife == null) return;
 			
 			photonView.RPC("Damage", PhotonTargets.All, go.name, owner.GetComponent<HeroeController>().getAttackP());
-//			if (goCLife.Damage(owner.GetComponent<HeroeController>().getAttackP(), 'P')) // Damage the enemy and check if it is dead
-//			{
-//				ControllableCharacter cchar = goCLife.GetComponent<ControllableCharacter>();
-//				// TODO! only works in offline mode
-//				if (cchar) owner.GetComponent<HeroeController>().experienceUp(cchar.experienceGived);
-//			}
 		}
 	}
 }
