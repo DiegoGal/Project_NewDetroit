@@ -329,6 +329,16 @@ public class UnitController : ControllableCharacter
         }
     }
 
+    [RPC]
+    public void ChangeToDyingMaterial()
+    {
+        // update the Alpha Multiply Value of the material
+        float alphaValue = model.renderer.material.GetFloat("_AlphaMultiplyValue");
+        alphaValue *= 0.97f;
+        alphaValue -= 0.006f;
+        model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
+    }
+
     private void UpdateDying ()
     {
         timeFallingWhenDying -= Time.deltaTime;
@@ -347,6 +357,7 @@ public class UnitController : ControllableCharacter
 
             currentState = State.AscendingToHeaven;
             cState.currentState = currentState;
+            photonView.RPC("ChangeToDyingMaterial", PhotonTargets.All);
         }
     }
 
@@ -475,14 +486,16 @@ public class UnitController : ControllableCharacter
         // play the dead animation             
         PlayAnimationCrossFade("Die");
         // and comunicate it to the army manager              
-        baseController.armyController.UnitDied(this.gameObject);
+        if (baseController)
+            baseController.armyController.UnitDied(this.gameObject);
 
         // play the dead sfx
         audio.Stop();
         audio.PlayOneShot(sfxDead);
 
         // delete the Nave Mesh Agent for elevate the model
-        Destroy(GetComponent<NavMeshAgent>());
+        if (GetComponent<NavMeshAgent>())
+            Destroy(GetComponent<NavMeshAgent>());
 
         Minimap.DeleteUnit(this);
     }
