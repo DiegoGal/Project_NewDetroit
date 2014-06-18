@@ -11,6 +11,10 @@ public class CBasicAttributesHero : CLife {
 	private int maximunMana = 100;
 	private int currentMana;
 
+	// Deffense variables
+	private int deffenseMagic = 10;
+	private int deffensePhysic = 10;
+
 	//Level variable
 	private int level = 1;
 
@@ -184,4 +188,9 @@ public class CBasicAttributesHero : CLife {
 	public int getCurrentMana() { return currentMana; }
 	public void setLevel(int level) { this.level = level; }
 	public int getLevel() { return level; }
+	public void setDeffenseMagic(int def) { deffenseMagic = def; }
+	public int getDeffenseMagic() { return deffenseMagic; }
+	public void setDeffensePhysic(int def) { deffensePhysic = def; }
+	public int getDeffensePhysic() { return deffensePhysic; }
+
 }
