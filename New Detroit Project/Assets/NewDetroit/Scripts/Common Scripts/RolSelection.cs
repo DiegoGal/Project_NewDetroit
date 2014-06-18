@@ -60,7 +60,7 @@ public class RolSelection : Photon.MonoBehaviour {
     {
         while (PhotonNetwork.room == null)
             yield return new WaitForSeconds(0.1f);
-        labelRoomName.GetComponent<UILabel>().text = PhotonNetwork.room.name;
+        labelRoomName.GetComponent<UILabel>().text = "Room " + PhotonNetwork.room.name;
     }
 
     private void setSelected(int selected, float color)
