@@ -550,23 +550,23 @@ public class UnitController : ControllableCharacter
     }
 
     //This is for the particles that collides with the orc
-    void OnParticleCollision (GameObject other)
-    {
-        // get the particle system
-        ParticleSystem particleSystem;
-        particleSystem = other.GetComponent<ParticleSystem>();
-        //If the particle is a Moco    
-        if (particleSystem.tag == "Moco")
-        {
-            if (CDParticleCollision > 0)
-                CDParticleCollision -= Time.deltaTime;
-            else
-            {
-                life.Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
-                CDParticleCollision = 0.1f; // 5 deltatime aprox
-            }
-        }
-    }
+//    void OnParticleCollision (GameObject other)
+//    {
+//        // get the particle system
+//        ParticleSystem particleSystem;
+//        particleSystem = other.GetComponent<ParticleSystem>();
+//        //If the particle is a Moco    
+//        if (particleSystem.tag == "Moco")
+//        {
+//            if (CDParticleCollision > 0)
+//                CDParticleCollision -= Time.deltaTime;
+//            else
+//            {
+//                life.Damage(particleSystem.GetComponent<ParticleDamage>().GetDamage(), 'M');
+//                CDParticleCollision = 0.1f; // 5 deltatime aprox
+//            }
+//        }
+//    }
 
     public void Fly ()
     {
