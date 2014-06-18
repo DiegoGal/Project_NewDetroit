@@ -1,64 +1,55 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RobotTurn : ParticleDamage {
+public class SkillAttack : ParticleDamage {
 
 	private GameObject owner;
-	private System.Collections.Generic.List<Collider> unitList;
-	private float timeToTurn = 1f;
-
-
-	//------------------------------------------------------------
-
-
-	// Use this for initialization
-	void Start () {
-		unitList = new System.Collections.Generic.List<Collider>();
-	}
+	private System.Collections.Generic.List<Collider> unitList = new System.Collections.Generic.List<Collider>();
 	
-	// Update is called once per frame
-	void Update () {
-
-		if (timeToTurn <= 0) 
-		{
-			if (GetComponent<SphereCollider>().radius <= 6.0f)
-			{
-				GetComponent<SphereCollider>().radius +=  Time.deltaTime * 4;
-			}
-		}
-		else
-			timeToTurn -= Time.deltaTime;
-
-	}
-
+	
+	//--------------------------------------------------------------------------
+	
+	
 	void OnTriggerEnter(Collider other)
 	{
-		if (owner != null && other.gameObject.name != owner.name)
+		Debug.Log(other.tag);
+		if (other.gameObject.name != owner.name)
 		{
-			if (other.tag == "Player")
-			{
-				photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
-			}
-			else if (other.tag == "Minion")
+			if (other.tag == "Minion")
 			{
 				if (!unitList.Contains(other))
 				{
 					// For damage
 					UnitController otherUC = other.GetComponent<UnitController>();
-
+					
 					photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
 					photonView.RPC("AddNewUnitForce", PhotonTargets.All, other.gameObject.name);
-
+					
 					unitList.Add(other);
 				}
 			}
+			else if (other.tag == "Player")
+			{
+				photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
+			}
 		}
 	}
-
-
-	//-----------------------------------------------------------------
-
-
+	
+	void OnParticleCollision(GameObject other)
+	{
+		if (owner.name != other.name)
+		{
+			CLife goCLife = other.GetComponent<CLife>();
+			if (goCLife == null) return;
+			
+			photonView.RPC("Damage", PhotonTargets.All, other.name, totalDamage);
+		}
+	}
+	
+	
+	//-------------------------------------------------------------
+	
+	
 	[RPC]
 	public void Damage(string sEnemy, int damage)	
 	{
@@ -95,11 +86,11 @@ public class RobotTurn : ParticleDamage {
 			otherUC.Fly();
 		}
 	}
-
-
-	//-----------------------------------------------------------------
-
-
+	
+	
+	//--------------------------------------------------------------------------------------
+	
+	
 	public void setOwner(GameObject owner) { this.owner = owner; }
-	public void setTimeToTurn(float timeToTurn) { this.timeToTurn = timeToTurn; }
+	
 }

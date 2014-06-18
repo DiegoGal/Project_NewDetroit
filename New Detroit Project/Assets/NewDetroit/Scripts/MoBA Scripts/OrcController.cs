@@ -296,10 +296,10 @@ public class OrcController : HeroeController
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject snt = (GameObject) PhotonNetwork.Instantiate("SnotPrefab", transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation, 0);
-		SnotAttack sntAtt = snt.GetComponent<SnotAttack>();
-		sntAtt.SetDamage(1);
-		sntAtt.SetOwner(gameObject);
+		GameObject snt = (GameObject) PhotonNetwork.Instantiate(snot.name, transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation, 0);
+		SkillAttack sa = snt.GetComponent<SkillAttack>();
+		sa.SetDamage(1);
+		sa.setOwner(gameObject);
 
 		yield return new WaitForSeconds(3f);
 
@@ -310,9 +310,10 @@ public class OrcController : HeroeController
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject spl = (GameObject) PhotonNetwork.Instantiate("Shockwave", transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity, 0);
-		spl.GetComponent<OrcSplashAttack>().SetDamage(attackM + 40);
-		spl.GetComponent<OrcSplashAttack>().setOwner(gameObject);
+		GameObject spl = (GameObject) PhotonNetwork.Instantiate(splash.name, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity, 0);
+		SkillAttack sa = spl.GetComponent<SkillAttack>();
+		sa.SetDamage(attackM + 40);
+		sa.setOwner(gameObject);
 
 		yield return new WaitForSeconds(1.5f);
 		
@@ -323,10 +324,10 @@ public class OrcController : HeroeController
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject sphereThirdSkillInst = (GameObject) PhotonNetwork.Instantiate("SphereThirdSkill", head.position, transform.rotation, 0);
-		OrcBullStrikeAttack obsa = sphereThirdSkillInst.GetComponent<OrcBullStrikeAttack>();
-		obsa.setOwner(gameObject);
-		obsa.SetDamage(attackP + 100);
+		GameObject sphereThirdSkillInst = (GameObject) PhotonNetwork.Instantiate(sphereThirdSkill.name, head.position, transform.rotation, 0);
+		SkillAttack sa = sphereThirdSkillInst.GetComponent<SkillAttack>();
+		sa.setOwner(gameObject);
+		sa.SetDamage(attackP + 100);
 		sphereThirdSkillInst.transform.parent = pelvis;
 
 		yield return new WaitForSeconds(animation["BullStrike"].length * 0.8f);
@@ -338,7 +339,7 @@ public class OrcController : HeroeController
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject smokeInst = (GameObject)PhotonNetwork.Instantiate("SmokeParticles", transform.localPosition + Vector3.down*2, transform.rotation, 0);
+		GameObject smokeInst = (GameObject)PhotonNetwork.Instantiate(smoke.name, transform.localPosition + Vector3.down*2, transform.rotation, 0);
 		smokeInst.transform.parent = pelvis;
 
 		yield return new WaitForSeconds(5f);
