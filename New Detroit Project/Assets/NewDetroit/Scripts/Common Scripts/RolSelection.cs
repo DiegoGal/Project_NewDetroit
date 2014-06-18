@@ -3,7 +3,11 @@ using System.Collections;
 
 // For the registration of the selection 
 public class RolSelection : Photon.MonoBehaviour {
-    
+
+    public static readonly string SceneNameMenu = "MainMenu";
+
+    public static readonly string SceneNameGame = "NewDetroit01";
+
     public GameObject robArmy;
     public GameObject skelterArmy;
     public GameObject robRender;
@@ -11,8 +15,15 @@ public class RolSelection : Photon.MonoBehaviour {
     // for input selection
     public GameObject rightPanel;
     public GameObject leftPanel;
+    // label selection
+    public GameObject labelRed;
+    public GameObject labelBlue;
+    // label room name
+    public GameObject labelRoomName;
+    // Play game button
+    public GameObject playButton;
     // local player selection
-    public int localSelection;
+    public int localSelection;    
 
     public bool heroes;
     // 0 = Rob Render, 1 = Skelterbot, 2 = Rob Army, 3 = Skelter Army
@@ -41,15 +52,16 @@ public class RolSelection : Photon.MonoBehaviour {
                 model.renderer.materials[i].SetColor("_OutlineColor", Color.black);                
             for (int i = 0; i < model1.renderer.materials.Length; i++)
                 model1.renderer.materials[i].SetColor("_OutlineColor", Color.black);
-        }        
-        
+        }
+        StartCoroutine(SetRoomName());
 	}
-	
-	// Udate is called once per frame
-	void Updatpe () 
+
+    private IEnumerator SetRoomName()
     {
-        
-	}
+        while (PhotonNetwork.room == null)
+            yield return new WaitForSeconds(0.1f);
+        labelRoomName.GetComponent<UILabel>().text = PhotonNetwork.room.name;
+    }
 
     private void setSelected(int selected, float color)
     {   
@@ -77,7 +89,7 @@ public class RolSelection : Photon.MonoBehaviour {
     [RPC]
     public void PlayerSelection(int selected, string name)
     {
-        short i = 0; bool enc = false;
+        int i = 0; bool enc = false;
         while (i < rolSelected.Length && !enc)
         {
             if (players[i].Equals(name))
@@ -95,6 +107,10 @@ public class RolSelection : Photon.MonoBehaviour {
             i++;
         }
         setSelected(selected, 0.5f);
+        if (heroes)
+            UpdateNGUI("Heroes");
+        else
+            UpdateNGUI("Army");
     }
 
 
@@ -102,7 +118,7 @@ public class RolSelection : Photon.MonoBehaviour {
     [RPC]
     public void PlayerDeselection(int selected, string name)
     {
-        short i = 0; bool enc = false;
+        int i = 0; bool enc = false;
         while (i < rolSelected.Length && !enc)
         {
             if (rolSelected[i] == selected)
@@ -115,6 +131,10 @@ public class RolSelection : Photon.MonoBehaviour {
         }
 
         setSelected(selected, 1.0f);
+        if (heroes)
+            UpdateNGUI("Heroes");
+        else
+            UpdateNGUI("Army");
     }
 
 
@@ -124,14 +144,24 @@ public class RolSelection : Photon.MonoBehaviour {
         {            
             if (localSelection == i)
             {
-                
                 photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection,PhotonNetwork.playerName);
                 localSelection = -1;
             }
             else
             {
-                localSelection = i;             
-                photonView.RPC("PlayerSelection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);                
+                localSelection = i;
+                if (i == 0) // Rob Render
+                {
+                    robRender.animation.CrossFade("FloorHit");
+                    robRender.animation.CrossFadeQueued("Iddle01");
+                    StartCoroutine(DoAnimSelection(robRender.animation, "FloorHit"));
+                }
+                else  // Skelterbot
+                {
+                    skelterBot.animation.CrossFade("Attack1");
+                    skelterBot.animation.CrossFadeQueued("Idle01");
+                    StartCoroutine(DoAnimSelection(skelterBot.animation, "Attack1"));
+                }
             }
         }
         else
@@ -145,14 +175,32 @@ public class RolSelection : Photon.MonoBehaviour {
             else
             {
                 localSelection = i;
-                photonView.RPC("PlayerSelection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);                
+                Animation anim = null;
+                for (int j = 0; j < 3; j++)
+                {                    
+                    if (i == 2) // Rob Army                
+                        anim = robArmy.transform.GetChild(j).animation;
+                    else
+                        anim = skelterArmy.transform.GetChild(j).animation;
+                    anim["Attack1"].wrapMode = WrapMode.Default;
+                    anim.CrossFade("Attack1");
+                    anim.CrossFadeQueued("Idle01");
+                }
+                StartCoroutine(DoAnimSelection(anim, "Attack1"));                                              
             }
         }
     }
 
-    private bool isSelected(short i)
+    private IEnumerator DoAnimSelection(Animation anim, string name)
     {
-        short j=0;
+        while (anim.IsPlaying(name))
+            yield return new WaitForSeconds(0.1f);
+        photonView.RPC("PlayerSelection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);   
+    }
+
+    private bool isSelected(int i)
+    {
+        int j=0;
         while (j < rolSelected.Length)
         {
             if (rolSelected[j] == i)
@@ -162,7 +210,31 @@ public class RolSelection : Photon.MonoBehaviour {
         return false;
     }
 
-    public void ChangeSelection(string change)
+    private string whoSelected(int i)
+    {
+        int j = 0;
+        while (j < rolSelected.Length)
+        {
+            if (rolSelected[j] == i)
+                return players[j];
+            j++;
+        }
+        return "Error";
+    }
+
+    private bool AllPlayersIn()
+    {
+        int j = 0;
+        while (j < rolSelected.Length)
+        {
+            if (rolSelected[j] == -1)
+                return false;
+            j++;
+        }
+        return true;
+    }
+
+    public void UpdateNGUI(string change)
     {
         if (change.Equals("Heroes"))
             heroes = true;
@@ -170,17 +242,68 @@ public class RolSelection : Photon.MonoBehaviour {
             heroes = false;
         if (heroes)
         {
-            rightPanel.SetActive(!isSelected(0));
-            leftPanel.SetActive(!isSelected(1));
+            bool selected0 = isSelected(0);
+            bool selected1 = isSelected(1);
+
+            if (selected0)
+                labelRed.GetComponent<UILabel>().text = whoSelected(0) + " as Rob Render";
+            else
+                labelRed.GetComponent<UILabel>().text = "Play as Rob Render";
+
+            if (selected1)
+                labelBlue.GetComponent<UILabel>().text = whoSelected(1) + " as Skelterbot";
+            else
+                labelBlue.GetComponent<UILabel>().text = "Play as Skelterbot";
+
+            rightPanel.SetActive(!selected0);
+            leftPanel.SetActive(!selected1);
         }
         else
         {
-            rightPanel.SetActive(!isSelected(2));
-            leftPanel.SetActive(!isSelected(3));
+            bool selected2 = isSelected(2);
+            bool selected3 = isSelected(3);
+
+            if (selected2)
+                labelRed.GetComponent<UILabel>().text = whoSelected(2) + " as Rob Army";
+            else
+                labelRed.GetComponent<UILabel>().text = "Play as Rob Army";
+
+            if (selected3)
+                labelBlue.GetComponent<UILabel>().text = whoSelected(3) + " as Skelter Army";
+            else
+                labelBlue.GetComponent<UILabel>().text = "Play as Skelter Army";
+
+            rightPanel.SetActive(!selected2);
+            leftPanel.SetActive(!selected3);
         }
         robRender.SetActive(heroes);
         skelterBot.SetActive(heroes);
         robArmy.SetActive(!heroes);
-        skelterArmy.SetActive(!heroes);        
+        skelterArmy.SetActive(!heroes);
+
+        if (!AllPlayersIn())
+        {
+            playButton.GetComponent<UIButton>().enabled = false;
+            playButton.GetComponent<UIButton>().SetState(UIButtonColor.State.Disabled, true);
+            playButton.GetComponentInChildren<UILabel>().text = "Waiting for players";
+        }
+        else
+        {
+            playButton.GetComponent<UIButton>().enabled = true;
+            playButton.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, true);
+            playButton.GetComponentInChildren<UILabel>().text = "Start Game";
+        }
+    }
+
+    public void ExitRoom()
+    {
+        photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public void StartGame()
+    {
+        //here is where has to be loaded the level
+        //PhotonNetwork.LoadLevel(SceneNameGame);
     }
 }

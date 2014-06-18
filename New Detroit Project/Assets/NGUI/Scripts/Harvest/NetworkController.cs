@@ -10,10 +10,6 @@ public class NetworkController : Photon.MonoBehaviour
 
     private bool connectFailed = false;
 
-    public static readonly string SceneNameMenu = "MainMenu";
-
-    public static readonly string SceneNameGame = "NewDetroit01";
-
     // Input of the names
     public GameObject labelRoomName;
     public GameObject labelPlayerName;
@@ -69,17 +65,6 @@ public class NetworkController : Photon.MonoBehaviour
         yield return new WaitForSeconds(waitTime);         
     }
 
-    // TOFIX this does not work
-    private void playAnimations()
-    {
-        Animation anim = transform.parent.gameObject.GetComponent<Animation>();
-        anim.enabled = true;
-        anim.Play("Window - Back");
-        selectPanel.SetActive(true);        
-        selectPanel.animation["Window - Back"].speed = -1;
-        selectPanel.animation.Play("Window - Back");
-    }
-
     public void CreateRoom()
     {
         UILabel roomName = labelRoomName.GetComponent<UILabel>();
@@ -93,8 +78,7 @@ public class NetworkController : Photon.MonoBehaviour
         }
         // If there's no other roome with the same name
         if (!enc)
-        {
-            playAnimations();
+        {            
             if (roomName.text.Equals(""))
             {
                 if (!playerName.Equals(""))
@@ -132,8 +116,7 @@ public class NetworkController : Photon.MonoBehaviour
             }
             else
             {
-                UILabel playerName = labelPlayerName.GetComponent<UILabel>();
-                playAnimations();
+                UILabel playerName = labelPlayerName.GetComponent<UILabel>();                
                 if (!playerName.text.Equals(""))
                     PhotonNetwork.playerName = playerName.text;
                 PhotonNetwork.JoinRoom(roomName);                
@@ -224,7 +207,7 @@ public class NetworkController : Photon.MonoBehaviour
     public void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom");
-        gameObject.SetActiveRecursively(false);
+        gameObject.SetActive(false);
     }
 
     public void OnCreatedRoom()
