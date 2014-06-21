@@ -4,15 +4,17 @@ using System.Collections;
 public class NetworkController : Photon.MonoBehaviour
 {
 
-    //private string roomName = "myRoom";
+    //private string roomNameSelected = "myRoom";
 
     private Vector2 scrollPos = Vector2.zero;
 
     private bool connectFailed = false;
-
+    // For animation
+    public Animation roomsAnimation;
+    public Animation selectAnimation;
     // Input of the names
-    public GameObject labelRoomName;
-    public GameObject labelPlayerName;
+    public UILabel labelRoomName;
+    public UILabel labelPlayerName;
     // Output of the rooms
     public GameObject labelRooms;
     public GameObject labelPlayers;
@@ -20,9 +22,11 @@ public class NetworkController : Photon.MonoBehaviour
     public GameObject originalButton;
     private ArrayList layerButons  = new ArrayList();
     private short selected;
-    private string roomName;
+    private string roomNameSelected;
     public UILabel info;
     public GameObject selectPanel; // for the animation of the 
+
+    public GameObject rolSelection;
 
     public void Start()
     {
@@ -35,7 +39,12 @@ public class NetworkController : Photon.MonoBehaviour
         selected = -1;
         info.text = "";
         originalButton.SetActive(false);
-        roomName = "";
+        roomNameSelected = "";
+
+        labelRoomName.text = "Room" + Random.Range(1, 9999);
+        labelRoomName.UpdateNGUIText();
+        labelPlayerName.text = PhotonNetwork.playerName;
+        labelPlayerName.UpdateNGUIText();
     }
 
     public void Awake()
@@ -46,8 +55,10 @@ public class NetworkController : Photon.MonoBehaviour
         // the following line checks if this client was just created (and not yet online). if so, we connect
         if (PhotonNetwork.connectionStateDetailed == PeerState.PeerCreated)
         {
+            info.text = "Connected to server";
+            info.UpdateNGUIText();
             // Connect to the photon master-server. We use the settings saved in PhotonServerSettings (a .asset file in this project)
-            PhotonNetwork.ConnectUsingSettings("1.0");
+            PhotonNetwork.ConnectUsingSettings("1.0");            
         }
 
         // generate a name for this player, if none is assigned yet
@@ -60,48 +71,62 @@ public class NetworkController : Photon.MonoBehaviour
         // PhotonNetwork.logLevel = NetworkLogLevel.Full;
     }
 
-    private IEnumerator WaitForAnimation(float waitTime)
+    private void changeAnimation()
     {
-        yield return new WaitForSeconds(waitTime);         
+        ActiveAnimation.Play(roomsAnimation, "Window - Back", AnimationOrTween.Direction.Forward,
+            AnimationOrTween.EnableCondition.EnableThenPlay, AnimationOrTween.DisableCondition.DisableAfterForward);
+        ActiveAnimation.Play(selectAnimation, "Window - Back", AnimationOrTween.Direction.Reverse,
+            AnimationOrTween.EnableCondition.EnableThenPlay, AnimationOrTween.DisableCondition.DisableAfterForward);        
     }
 
     public void CreateRoom()
     {
-        UILabel roomName = labelRoomName.GetComponent<UILabel>();
-        UILabel playerName = labelPlayerName.GetComponent<UILabel>();
+        labelRoomName.UpdateNGUIText();
+        labelPlayerName.UpdateNGUIText();
+        PhotonNetwork.playerName = labelPlayerName.text;
         RoomInfo[] roomsInfo = PhotonNetwork.GetRoomList();
         int i = 0; bool enc = false;
         while (i < roomsInfo.Length && !enc)
         {
-            if (roomsInfo[i].name.Equals(roomName))
+            if (roomsInfo[i].name.Equals(labelRoomName.text))
                 enc = true;
         }
         // If there's no other roome with the same name
         if (!enc)
-        {            
-            if (roomName.text.Equals(""))
+        {
+            if (HasUniqueName())
             {
-                if (!playerName.Equals(""))
-                    PhotonNetwork.playerName = playerName.text;
-                PhotonNetwork.CreateRoom("Room" + Random.Range(1, 9999), true, true, 4);
-                info.text = "Room created.";
+                PhotonNetwork.CreateRoom(labelRoomName.text, true, true, 4);
+                info.text = "Room " + labelRoomName.text + " created.";
+                changeAnimation();
+                rolSelection.GetComponent<RolSelection>().UpdateSelection();
             }
             else
-            {                                
-                if (!playerName.text.Equals(""))
-                    PhotonNetwork.playerName = playerName.text;
-                PhotonNetwork.CreateRoom(roomName.text, true, true, 4);
-                info.text = "Room " + roomName.text + " created.";
-            }            
+            {
+                info.text = "That playername already exist";
+            }                                    
         }
         else
         {
-            info.text = "already exist a room with that name";
+            info.text = "That room already exist";
         }
+    }
+
+    // checks that the names are different
+    private bool HasUniqueName()
+    {
+        foreach (PhotonPlayer player in PhotonNetwork.otherPlayers)
+        {
+            if (player.name.Equals(PhotonNetwork.playerName))
+                return false;
+        }
+        return true;
     }
 
     public void JoinRoom()
     {
+        labelPlayerName.UpdateNGUIText();
+        PhotonNetwork.playerName = labelPlayerName.text;
         if (selected == -1)
         {
             info.text = "Select one room first";
@@ -116,10 +141,16 @@ public class NetworkController : Photon.MonoBehaviour
             }
             else
             {
-                UILabel playerName = labelPlayerName.GetComponent<UILabel>();                
-                if (!playerName.text.Equals(""))
-                    PhotonNetwork.playerName = playerName.text;
-                PhotonNetwork.JoinRoom(roomName);                
+                if (HasUniqueName())
+                {
+                    PhotonNetwork.JoinRoom(roomNameSelected);
+                    changeAnimation();
+                    rolSelection.GetComponent<RolSelection>().UpdateSelection();
+                }
+                else
+                {
+                    info.text = "That playername already exist";
+                }
             }
         }
     }
@@ -136,6 +167,7 @@ public class NetworkController : Photon.MonoBehaviour
         Application.Quit();
     }
 
+    [RPC]
     public void UpdateRooms()
     {
         RoomInfo[] roomsInfo = PhotonNetwork.GetRoomList();
@@ -188,19 +220,19 @@ public class NetworkController : Photon.MonoBehaviour
         {
             selected = -1;
             button.defaultColor = new Color(button.defaultColor.r, button.defaultColor.g, button.defaultColor.b, 0.0f);
-            roomName = "";
+            roomNameSelected = "";
         }
         else
         {
             selected = sel;
             RoomInfo[] roomsInfo = PhotonNetwork.GetRoomList();
-            roomName = roomsInfo[sel].name;
+            roomNameSelected = roomsInfo[sel].name;
             button.defaultColor = new Color(button.defaultColor.r, button.defaultColor.g, button.defaultColor.b, 0.5f);
         }
-        if (roomName.Equals(""))
+        if (roomNameSelected.Equals(""))
             info.text = "none selected";
         else
-            info.text = roomName + " selected";
+            info.text = roomNameSelected + " selected";
     }
 
     // We have two options here: we either joined(by title, list or random) or created a room.
@@ -225,7 +257,21 @@ public class NetworkController : Photon.MonoBehaviour
     public void OnFailedToConnectToPhoton(object parameters)
     {
         this.connectFailed = true;
+        info.text = "Connection lost";
+        StartCoroutine(ConnectionLost());
         Debug.Log("OnFailedToConnectToPhoton. StatusCode: " + parameters);
+    }
+
+    // waitis 2 seconds, and then tries to connect the server 
+    private IEnumerator ConnectionLost()
+    {
+        if (connectFailed)
+        {
+            yield return new WaitForSeconds(2f);
+            connectFailed = false;
+            info.text = "Connected to server";
+            PhotonNetwork.ConnectUsingSettings("1.0");            
+        }
     }
 }
 

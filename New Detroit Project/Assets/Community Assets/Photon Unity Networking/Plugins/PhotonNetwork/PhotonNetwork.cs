@@ -1095,14 +1095,14 @@ public static class PhotonNetwork
     /// Creates a room with given name but fails if this room is existing already.
     /// </summary>
     /// <remarks>
-    /// If you don't want to create a unique room-name, pass null or "" as name and the server will assign a roomName (a GUID as string).
+    /// If you don't want to create a unique room-name, pass null or "" as name and the server will assign a roomNameSelected (a GUID as string).
     /// Call this only on the master server. 
-    /// Internally, the master will respond with a server-address (and roomName, if needed). Both are used internally
-    /// to switch to the assigned game server and roomName.
+    /// Internally, the master will respond with a server-address (and roomNameSelected, if needed). Both are used internally
+    /// to switch to the assigned game server and roomNameSelected.
     /// 
     /// PhotonNetwork.autoCleanUpPlayerObjects will become this room's AutoCleanUp property and that's used by all clients that join this room.
     /// </remarks>
-    /// <param name="roomName">Unique name of the room to create.</param>
+    /// <param name="roomNameSelected">Unique name of the room to create.</param>
     public static void CreateRoom(string roomName)
     {
         CreateRoom(roomName, true, true, 0, null, null);
@@ -1112,12 +1112,12 @@ public static class PhotonNetwork
     /// Creates a room with given name but fails if this room is existing already.
     /// </summary>
     /// <remarks>
-    /// If you don't want to create a unique room-name, pass null or "" as name and the server will assign a roomName (a GUID as string).
+    /// If you don't want to create a unique room-name, pass null or "" as name and the server will assign a roomNameSelected (a GUID as string).
     /// Call this only on the master server. 
-    /// Internally, the master will respond with a server-address (and roomName, if needed). Both are used internally
-    /// to switch to the assigned game server and roomName
+    /// Internally, the master will respond with a server-address (and roomNameSelected, if needed). Both are used internally
+    /// to switch to the assigned game server and roomNameSelected
     /// </remarks>
-    /// <param name="roomName">Unique name of the room to create. Pass null or "" to make the server generate a name.</param>
+    /// <param name="roomNameSelected">Unique name of the room to create. Pass null or "" to make the server generate a name.</param>
     /// <param name="isVisible">Shows (or hides) this room from the lobby's listing of rooms.</param>
     /// <param name="isOpen">Allows (or disallows) others to join this room.</param>
     /// <param name="maxPlayers">Max number of players that can join the room.</param>
@@ -1130,14 +1130,14 @@ public static class PhotonNetwork
     /// Creates a room with given name but fails if this room is existing already.
     /// </summary>
     /// <remarks>
-    /// If you don't want to create a unique room-name, pass null or "" as name and the server will assign a roomName (a GUID as string).
+    /// If you don't want to create a unique room-name, pass null or "" as name and the server will assign a roomNameSelected (a GUID as string).
     /// Call this only on the master server. 
-    /// Internally, the master will respond with a server-address (and roomName, if needed). Both are used internally
-    /// to switch to the assigned game server and roomName.
+    /// Internally, the master will respond with a server-address (and roomNameSelected, if needed). Both are used internally
+    /// to switch to the assigned game server and roomNameSelected.
     /// 
     /// PhotonNetwork.autoCleanUpPlayerObjects will become this room's AutoCleanUp property and that's used by all clients that join this room.
     /// </remarks>
-    /// <param name="roomName">Unique name of the room to create. Pass null or "" to make the server generate a name.</param>
+    /// <param name="roomNameSelected">Unique name of the room to create. Pass null or "" to make the server generate a name.</param>
     /// <param name="isVisible">Shows (or hides) this room from the lobby's listing of rooms.</param>
     /// <param name="isOpen">Allows (or disallows) others to join this room.</param>
     /// <param name="maxPlayers">Max number of players that can join the room.</param>
@@ -1181,22 +1181,22 @@ public static class PhotonNetwork
     /// JoinRoom fails if the room is either full or no longer available (it might become empty while you attempt to join).
     /// Implement OnPhotonJoinRoomFailed() to get a callback in error case.
     /// 
-    /// To join a room from the lobby's listing, use RoomInfo.name as roomName here.</remarks>
+    /// To join a room from the lobby's listing, use RoomInfo.name as roomNameSelected here.</remarks>
     /// <see cref="PhotonNetworkingMessage.OnPhotonJoinRoomFailed"/>
     /// <see cref="PhotonNetworkingMessage.OnJoinedRoom"/>
-    /// <param name="roomName">Unique name of the room to join.</param>
+    /// <param name="roomNameSelected">Unique name of the room to join.</param>
     public static void JoinRoom(string roomName)
     {
         JoinRoom(roomName, false);
     }
 
-    /// <summary>Join room by roomName with an option to create it on the fly if not existing.</summary>
+    /// <summary>Join room by roomNameSelected with an option to create it on the fly if not existing.</summary>
     /// <remarks>
-    /// Join will try to enter a room by roomName. If this room is full or closed, this will fail.
+    /// Join will try to enter a room by roomNameSelected. If this room is full or closed, this will fail.
     /// If the room is not existing, JoinRoom will also fail by default.
     /// 
     /// You can set createIfNotExists to true to make the server instantly create the room if it doesn't exist.
-    /// This makes it easier to get into the same room when several players exchanged a roomName already: 
+    /// This makes it easier to get into the same room when several players exchanged a roomNameSelected already: 
     /// Any player can try to join or create the room in one step - it doesn't matter who's first.
     /// 
     /// OnJoinedRoom() gets called if the room existed and was joined, 
@@ -1204,12 +1204,12 @@ public static class PhotonNetwork
     /// OnPhotonJoinRoomFailed() gets called if the room couldn't be joined or created.
     /// Implement either in any script in the scene to react to joining/creating a room.
     /// 
-    /// To join a room from the lobby's listing, use RoomInfo.name as roomName here.</remarks>
+    /// To join a room from the lobby's listing, use RoomInfo.name as roomNameSelected here.</remarks>
     /// 
     /// <see cref="PhotonNetworkingMessage.OnPhotonJoinRoomFailed"/>
     /// <see cref="PhotonNetworkingMessage.OnJoinedRoom"/>
     /// 
-    /// <param name="roomName">Unique name of the room to join (or create if createIfNotExists is true).</param>
+    /// <param name="roomNameSelected">Unique name of the room to join (or create if createIfNotExists is true).</param>
     /// <param name="createIfNotExists">If true, the server will attempt to create a room, making the success callback OnCreatedRoom().</param>
     public static void JoinRoom(string roomName, bool createIfNotExists)
     {

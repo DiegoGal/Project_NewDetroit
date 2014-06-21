@@ -106,7 +106,7 @@ internal class LoadbalancingPeer : PhotonPeer
     /// <summary>
     /// Joins a room by name and sets this player's properties.
     /// </summary>
-    /// <param name="roomName"></param>
+    /// <param name="roomNameSelected"></param>
     /// <param name="playerProperties"></param>
     /// <param name="createIfNotExists"></param>
     /// <returns>If the operation could be sent (has to be connected).</returns>
@@ -730,7 +730,7 @@ public class ParameterCode
 
     // Codes for Azure / TCP Proxy are removed
 
-    /// <summary>(255) Code for the gameId/roomName (a unique name per room). Used in OpJoin and similar.</summary>
+    /// <summary>(255) Code for the gameId/roomNameSelected (a unique name per room). Used in OpJoin and similar.</summary>
     public const byte RoomName = (byte)LiteOpKey.GameId;
     /// <summary>(250) Code for broadcast parameter of OpSetProperties method.</summary>
     public const byte Broadcast = (byte)LiteOpKey.Broadcast;

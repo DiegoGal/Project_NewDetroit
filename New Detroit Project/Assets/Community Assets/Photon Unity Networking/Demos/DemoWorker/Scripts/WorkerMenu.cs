@@ -108,7 +108,7 @@ public class WorkerMenu : MonoBehaviour
         // Create a room (fails if exist!)
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
-        //this.roomName = GUILayout.TextField(this.roomName);
+        //this.roomNameSelected = GUILayout.TextField(this.roomNameSelected);
         if (GUILayout.Button("Join Room", GUILayout.Width(100)))
         {
             PhotonNetwork.JoinRoom(this.roomName);

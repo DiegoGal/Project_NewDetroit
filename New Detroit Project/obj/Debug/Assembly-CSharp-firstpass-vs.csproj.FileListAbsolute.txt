@@ -38,3 +38,4 @@ C:\Users\diego\Documents\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\
 C:\Users\diego\Documents\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass-vs.csprojResolveAssemblyReference.cache
 C:\Users\diego\Documents\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass.dll
 C:\Users\diego\Documents\GitHub\Project_NewDetroit\New Detroit Project\obj\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Diego\Desktop\GitHub\Project_NewDetroit\New Detroit Project\Temp\bin\Debug\EasyRoads3D.dll

@@ -53,14 +53,25 @@ public class RolSelection : Photon.MonoBehaviour {
             for (int i = 0; i < model1.renderer.materials.Length; i++)
                 model1.renderer.materials[i].SetColor("_OutlineColor", Color.black);
         }
-        StartCoroutine(SetRoomName());
 	}
+
+    public void UpdateSelection()
+    {
+        if (heroes)
+            UpdateNGUI("Heroes");
+        else
+            UpdateNGUI("Army");
+        StartCoroutine(SetRoomName());
+    }
 
     private IEnumerator SetRoomName()
     {
         while (PhotonNetwork.room == null)
             yield return new WaitForSeconds(0.1f);
         labelRoomName.GetComponent<UILabel>().text = "Room " + PhotonNetwork.room.name;
+        Debug.Log("Players " + PhotonNetwork.room.playerCount);
+        if (PhotonNetwork.room.playerCount > 1)
+            photonView.RPC("ReciveUpdate", PhotonTargets.MasterClient, PhotonNetwork.player);
     }
 
     private void setSelected(int selected, float color)
@@ -84,6 +95,29 @@ public class RolSelection : Photon.MonoBehaviour {
             default:
                 break;
         }
+    }
+
+    [RPC]
+    public void ReciveUpdate(PhotonPlayer toMe)
+    {
+        photonView.RPC("SendUpdate", toMe, rolSelected, players);
+    }
+
+    [RPC]
+    public void SendUpdate(int[] rolExtSelected, string[] playersExt)
+    {
+        for (int i = 0; i < playersExt.Length; i++)
+        {
+            rolSelected[i] = rolExtSelected[i];
+            players[i] = playersExt[i];
+            Debug.Log(players[i]);
+            if (rolSelected[i] != -1)
+                setSelected(rolSelected[i], 0.5f);
+        }
+        if (heroes)
+            UpdateNGUI("Heroes");
+        else
+            UpdateNGUI("Army");
     }
 
     [RPC]
