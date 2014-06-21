@@ -4,10 +4,6 @@ using System.Collections;
 // For the registration of the selection 
 public class RolSelection : Photon.MonoBehaviour {
 
-    public static readonly string SceneNameMenu = "MainMenu";
-
-    public static readonly string SceneNameGame = "NewDetroit01";
-
     public GameObject robArmy;
     public GameObject skelterArmy;
     public GameObject robRender;
@@ -23,7 +19,7 @@ public class RolSelection : Photon.MonoBehaviour {
     // Play game button
     public GameObject playButton;
     // local player selection
-    public int localSelection;    
+    public int localSelection;
 
     public bool heroes;
     // 0 = Rob Render, 1 = Skelterbot, 2 = Rob Army, 3 = Skelter Army
@@ -53,14 +49,25 @@ public class RolSelection : Photon.MonoBehaviour {
             for (int i = 0; i < model1.renderer.materials.Length; i++)
                 model1.renderer.materials[i].SetColor("_OutlineColor", Color.black);
         }
-        StartCoroutine(SetRoomName());
 	}
+
+    public void UpdateSelection()
+    {
+        if (heroes)
+            UpdateNGUI("Heroes");
+        else
+            UpdateNGUI("Army");
+        StartCoroutine(SetRoomName());
+    }
 
     private IEnumerator SetRoomName()
     {
         while (PhotonNetwork.room == null)
             yield return new WaitForSeconds(0.1f);
-        labelRoomName.GetComponent<UILabel>().text = "Room " + PhotonNetwork.room.name;
+        labelRoomName.GetComponent<UILabel>().text = "Room " + PhotonNetwork.room.name + " | Player " + PhotonNetwork.playerName;
+        Debug.Log("Players " + PhotonNetwork.room.playerCount);
+        if (PhotonNetwork.room.playerCount > 1)
+            photonView.RPC("ReciveUpdate", PhotonTargets.MasterClient, PhotonNetwork.player);
     }
 
     private void setSelected(int selected, float color)
@@ -84,6 +91,29 @@ public class RolSelection : Photon.MonoBehaviour {
             default:
                 break;
         }
+    }
+
+    [RPC]
+    public void ReciveUpdate(PhotonPlayer toMe)
+    {
+        photonView.RPC("SendUpdate", toMe, rolSelected, players);
+    }
+
+    [RPC]
+    public void SendUpdate(int[] rolExtSelected, string[] playersExt)
+    {
+        for (int i = 0; i < playersExt.Length; i++)
+        {
+            rolSelected[i] = rolExtSelected[i];
+            players[i] = playersExt[i];
+            Debug.Log(players[i]);
+            if (rolSelected[i] != -1)
+                setSelected(rolSelected[i], 0.5f);
+        }
+        if (heroes)
+            UpdateNGUI("Heroes");
+        else
+            UpdateNGUI("Army");
     }
 
     [RPC]
@@ -121,7 +151,7 @@ public class RolSelection : Photon.MonoBehaviour {
         int i = 0; bool enc = false;
         while (i < rolSelected.Length && !enc)
         {
-            if (rolSelected[i] == selected)
+            if (rolSelected[i] == selected && players[i].Equals(name))
             {
                 rolSelected[i] = -1;
                 players[i] = "";
@@ -281,6 +311,8 @@ public class RolSelection : Photon.MonoBehaviour {
         robArmy.SetActive(!heroes);
         skelterArmy.SetActive(!heroes);
 
+        playButton.GetComponent<UIButton>().enabled = true;
+        /*
         if (!AllPlayersIn())
         {
             playButton.GetComponent<UIButton>().enabled = false;
@@ -292,7 +324,7 @@ public class RolSelection : Photon.MonoBehaviour {
             playButton.GetComponent<UIButton>().enabled = true;
             playButton.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, true);
             playButton.GetComponentInChildren<UILabel>().text = "Start Game";
-        }
+        }*/
     }
 
     public void ExitRoom()
@@ -304,6 +336,7 @@ public class RolSelection : Photon.MonoBehaviour {
     public void StartGame()
     {
         //here is where has to be loaded the level
-        //PhotonNetwork.LoadLevel(SceneNameGame);
+        LocalGameManager.joinedId = localSelection;
+        PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);
     }
 }

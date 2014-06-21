@@ -21,7 +21,7 @@ public class GameManagerMapa : Photon.MonoBehaviour {
         
         if (!PhotonNetwork.connected)
         {
-            Application.LoadLevel(RolSelection.SceneNameMenu);
+            Application.LoadLevel(NetworkController.SceneNameMenu);
             return;
         }
         else

@@ -130,7 +130,7 @@ public class RoomInfo
     /// <summary>
     /// Constructs a RoomInfo to be used in room listings in lobby.
     /// </summary>
-    /// <param name="roomName"></param>
+    /// <param name="roomNameSelected"></param>
     /// <param name="properties"></param>
     protected internal RoomInfo(string roomName, Hashtable properties)
     {
