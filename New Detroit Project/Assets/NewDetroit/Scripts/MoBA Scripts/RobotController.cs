@@ -338,7 +338,7 @@ public class RobotController : HeroeController
 		sa.setOwner(gameObject);
 //		sa.setTimeToTurn(1f);
 
-		yield return new WaitForSeconds(5f);
+		yield return new WaitForSeconds(animation["Attack2"].length);
 
 		PhotonNetwork.Destroy(turnInst);
 	}

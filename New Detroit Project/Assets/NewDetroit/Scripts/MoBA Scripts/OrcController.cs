@@ -315,7 +315,7 @@ public class OrcController : HeroeController
 		sa.SetDamage(attackM + 40);
 		sa.setOwner(gameObject);
 
-		yield return new WaitForSeconds(1.5f);
+		yield return new WaitForSeconds(animation["FloorHit"].length * 0.75f);
 		
 		PhotonNetwork.Destroy(spl);
 	}
