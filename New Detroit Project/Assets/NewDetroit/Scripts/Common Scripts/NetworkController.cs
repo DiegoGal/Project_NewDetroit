@@ -4,6 +4,9 @@ using System.Collections;
 public class NetworkController : Photon.MonoBehaviour
 {
 
+    public static readonly string SceneNameMenu = "MainMenu";
+
+    public static readonly string SceneNameGame = "NewDetroit01_Jacob";
     //private string roomNameSelected = "myRoom";
 
     private Vector2 scrollPos = Vector2.zero;

@@ -4,10 +4,6 @@ using System.Collections;
 // For the registration of the selection 
 public class RolSelection : Photon.MonoBehaviour {
 
-    public static readonly string SceneNameMenu = "MainMenu";
-
-    public static readonly string SceneNameGame = "NewDetroit01";
-
     public GameObject robArmy;
     public GameObject skelterArmy;
     public GameObject robRender;
@@ -68,7 +64,7 @@ public class RolSelection : Photon.MonoBehaviour {
     {
         while (PhotonNetwork.room == null)
             yield return new WaitForSeconds(0.1f);
-        labelRoomName.GetComponent<UILabel>().text = "Room " + PhotonNetwork.room.name + "| Player " + PhotonNetwork.playerName;
+        labelRoomName.GetComponent<UILabel>().text = "Room " + PhotonNetwork.room.name + " | Player " + PhotonNetwork.playerName;
         Debug.Log("Players " + PhotonNetwork.room.playerCount);
         if (PhotonNetwork.room.playerCount > 1)
             photonView.RPC("ReciveUpdate", PhotonTargets.MasterClient, PhotonNetwork.player);
@@ -315,6 +311,8 @@ public class RolSelection : Photon.MonoBehaviour {
         robArmy.SetActive(!heroes);
         skelterArmy.SetActive(!heroes);
 
+        playButton.GetComponent<UIButton>().enabled = true;
+        /*
         if (!AllPlayersIn())
         {
             playButton.GetComponent<UIButton>().enabled = false;
@@ -326,7 +324,7 @@ public class RolSelection : Photon.MonoBehaviour {
             playButton.GetComponent<UIButton>().enabled = true;
             playButton.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, true);
             playButton.GetComponentInChildren<UILabel>().text = "Start Game";
-        }
+        }*/
     }
 
     public void ExitRoom()
@@ -338,6 +336,7 @@ public class RolSelection : Photon.MonoBehaviour {
     public void StartGame()
     {
         //here is where has to be loaded the level
-        //PhotonNetwork.LoadLevel(SceneNameGame);
+        LocalGameManager.joinedId = localSelection;
+        PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);
     }
 }
