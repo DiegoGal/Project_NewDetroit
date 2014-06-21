@@ -23,7 +23,7 @@ public class RolSelection : Photon.MonoBehaviour {
     // Play game button
     public GameObject playButton;
     // local player selection
-    public int localSelection;    
+    public int localSelection;
 
     public bool heroes;
     // 0 = Rob Render, 1 = Skelterbot, 2 = Rob Army, 3 = Skelter Army
@@ -68,7 +68,7 @@ public class RolSelection : Photon.MonoBehaviour {
     {
         while (PhotonNetwork.room == null)
             yield return new WaitForSeconds(0.1f);
-        labelRoomName.GetComponent<UILabel>().text = "Room " + PhotonNetwork.room.name;
+        labelRoomName.GetComponent<UILabel>().text = "Room " + PhotonNetwork.room.name + "| Player " + PhotonNetwork.playerName;
         Debug.Log("Players " + PhotonNetwork.room.playerCount);
         if (PhotonNetwork.room.playerCount > 1)
             photonView.RPC("ReciveUpdate", PhotonTargets.MasterClient, PhotonNetwork.player);
@@ -155,7 +155,7 @@ public class RolSelection : Photon.MonoBehaviour {
         int i = 0; bool enc = false;
         while (i < rolSelected.Length && !enc)
         {
-            if (rolSelected[i] == selected)
+            if (rolSelected[i] == selected && players[i].Equals(name))
             {
                 rolSelected[i] = -1;
                 players[i] = "";

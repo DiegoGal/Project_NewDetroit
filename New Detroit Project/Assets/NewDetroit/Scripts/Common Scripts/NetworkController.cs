@@ -45,6 +45,7 @@ public class NetworkController : Photon.MonoBehaviour
         labelRoomName.UpdateNGUIText();
         labelPlayerName.text = PhotonNetwork.playerName;
         labelPlayerName.UpdateNGUIText();
+        UpdateRooms();
     }
 
     public void Awake()
@@ -90,6 +91,7 @@ public class NetworkController : Photon.MonoBehaviour
         {
             if (roomsInfo[i].name.Equals(labelRoomName.text))
                 enc = true;
+            i++;
         }
         // If there's no other roome with the same name
         if (!enc)
@@ -167,12 +169,12 @@ public class NetworkController : Photon.MonoBehaviour
         Application.Quit();
     }
 
-    [RPC]
     public void UpdateRooms()
     {
         RoomInfo[] roomsInfo = PhotonNetwork.GetRoomList();
         Debug.Log(roomsInfo.Length);
         info.text = roomsInfo.Length + " rooms";
+        info.UpdateNGUIText();
         UILabel roomScript = labelRooms.GetComponent<UILabel>();
         UILabel playerScript = labelPlayers.GetComponent<UILabel>();
         roomScript.text = playerScript.text = "";
@@ -197,7 +199,8 @@ public class NetworkController : Photon.MonoBehaviour
             roomScript.text = roomScript.text + roomsInfo[i].name + "\n";
             playerScript.text = playerScript.text + roomsInfo[i].playerCount + "/" + roomsInfo[i].maxPlayers + "\n";
         }
-
+        roomScript.UpdateNGUIText();
+        playerScript.UpdateNGUIText();
         originalButton.SetActive(false);
         originalButton.transform.GetChild(0).gameObject.SetActive(false);
     }
