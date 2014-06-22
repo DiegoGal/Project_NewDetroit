@@ -53,15 +53,18 @@ public class UnitEngineerGoblin : UnitEngineer
                     lastWarehouse = warehouse;
                 towerArmy = PhotonNetwork.Instantiate
                 (
-                    "Robot Tower",
+                    "Goblin Tower",
                     transform.position + new Vector3(30,-30,30),
-					new Quaternion(0, 0, 0, 0),
+					towerArmyPrefab.transform.rotation,
 					0
                 ) as GameObject;
-                towerArmy.transform.Rotate(270.0f, 0.0f, 0.0f);
-                towerArmy.name = towerArmy.name.Replace("(Clone)", "");
+                
+                //towerArmy.transform.Rotate(270.0f, 0.0f, 0.0f);
+				towerArmy.transform.Rotate(0.0f, 0.0f, 180.0f);
+				towerArmy.name = towerArmy.name.Replace("(Clone)", "");
                 towerArmy.GetComponent<TowerArmy>().SetTeamNumber(this.teamNumber, team.teamColorIndex);
                 towerArmy.GetComponent<TowerArmy>().SetBaseController(baseController);
+				towerArmy.GetComponent<TowerArmy>().SetConstructMaterial();
                 newTAConstruct = true;
                 break;
             case 1:
@@ -71,15 +74,16 @@ public class UnitEngineerGoblin : UnitEngineer
                     lastWarehouse = warehouse;
 				warehouse = PhotonNetwork.Instantiate
                 (
-                    "Robot Warehouse",
+					"Goblin Warehouse",
                     transform.position + new Vector3(30, -30, 30),
-					new Quaternion(0, 0, 0, 0),
+					warehousePrefab.transform.rotation,
 					0
                 ) as GameObject;
-                warehouse.transform.Rotate(0.0f, 180.0f, 0.0f);
-                warehouse.name = warehouse.name.Replace("(Clone)", "");
+				warehouse.transform.Rotate(0.0f, 180.0f, 0.0f);
+				warehouse.name = warehouse.name.Replace("(Clone)", "");
                 warehouse.GetComponent<Warehouse>().SetTeamNumber(this.teamNumber, team.teamColorIndex);
                 warehouse.GetComponent<Warehouse>().SetBaseController(baseController);
+				warehouse.GetComponent<Warehouse>().SetConstructMaterial();
                 newWConstruct = true;
                 break;
         }

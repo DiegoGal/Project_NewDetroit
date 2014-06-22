@@ -123,6 +123,11 @@ public class TowerArmy : Tower
         renderer.material = activeMaterial;
     }
 
+	public void SetConstructMaterial ()
+	{
+		renderer.material = constructMaterial;
+	}
+	
     public void SetBaseController (BaseController baseController)
     {
         this.baseController = baseController;
@@ -333,6 +338,7 @@ public class TowerArmy : Tower
                 for (int i = 0; i < numEngineerPositions; i++)
                     cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
                 constructed = true;
+                photonView.RPC("Constructed",PhotonTargets.All, transform.position, transform.rotation);
                 return true;
             }
             else
@@ -341,6 +347,14 @@ public class TowerArmy : Tower
         return true;
 	}
 
+	[RPC]
+	public void Constructed(Vector3 position, Quaternion rotation)
+	{
+		this.transform.rotation = rotation;
+		this.transform.position = position;
+		this.gameObject.SetActive(true);
+	}
+	
 	public bool HasATeam ()
 	{
 		return team.teamNumber != -1;
