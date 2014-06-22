@@ -44,7 +44,7 @@ public class UnitEngineer : UnitController
     protected GameObject lastTowerArmy;
     protected GameObject lastWarehouse;
 
-    protected bool newTGConstruct = false;
+    protected bool newTAConstruct = false;
     protected bool newWConstruct = false;
     private Vector3 constructDestiny = new Vector3();
 
@@ -96,16 +96,18 @@ public class UnitEngineer : UnitController
 
         // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
         if (
-             Input.anyKeyDown &&
-             ((newTGConstruct && towerArmy.GetComponent<TowerArmy>().canConstruct) || (newWConstruct && warehouse.GetComponent<Warehouse>().canConstruct)) &&
+             Input.anyKeyDown && (newTAConstruct || newWConstruct) &&
+             //((newTAConstruct && towerArmy.GetComponent<TowerArmy>().canConstruct) || (newWConstruct && warehouse.GetComponent<Warehouse>().canConstruct)) &&
              Input.GetMouseButtonDown(0) 
              /*(currentEngineerState != EngineerState.GoingToConstructItem) &&
              (currentEngineerState != EngineerState.GoingToConstructPosition)*/
            )
         {
-            newTGConstruct = newWConstruct = false;
-            Destroy(towerArmy);
-            Destroy(warehouse);
+            if (newTAConstruct)
+                Destroy(towerArmy);
+            if (newWConstruct)
+                Destroy(warehouse);
+            newTAConstruct = newWConstruct = false;
         }
 
         switch (currentEngineerState)
@@ -136,7 +138,7 @@ public class UnitEngineer : UnitController
 						cState.currentEngineerState = currentEngineerState;
 
                         //animation.Play("Idle01");
-                        cState.animationName = "Idle";
+                        cState.animationName = "Idle01";
                         cState.animationChanged = true;
 
                         // hide the hammer
@@ -164,7 +166,7 @@ public class UnitEngineer : UnitController
 						cState.currentEngineerState = currentEngineerState;
 
                         //animation.Play("Idle01");
-                        cState.animationName = "Idle";
+                        cState.animationName = "Idle01";
                         cState.animationChanged = true;
 
                         Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
@@ -197,7 +199,7 @@ public class UnitEngineer : UnitController
 
                             currentItem.GetComponent<TowerArmy>().SetActiveMaterial();
                             //animation.Play("Idle01");
-                            cState.animationName = "Idle";
+                            cState.animationName = "Idle01";
                             cState.animationChanged = true;
 
                             // hide the hammer
@@ -221,7 +223,7 @@ public class UnitEngineer : UnitController
 
                             currentItem.GetComponent<Warehouse>().SetActiveMaterial();
                             //animation.Play("Idle01");
-                            cState.animationName = "Idle";
+                            cState.animationName = "Idle01";
                             cState.animationChanged = true;
 
                             // hide the hammer
@@ -243,13 +245,13 @@ public class UnitEngineer : UnitController
         // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
         if (
              Input.anyKeyDown &&
-             ((newTGConstruct && towerArmy.GetComponent<TowerArmy>().canConstruct) || (newWConstruct && warehouse.GetComponent<Warehouse>().canConstruct)) &&
+             ((newTAConstruct && towerArmy.GetComponent<TowerArmy>().canConstruct) || (newWConstruct && warehouse.GetComponent<Warehouse>().canConstruct)) &&
              Input.GetMouseButtonDown(0) 
              /*(currentEngineerState != EngineerState.GoingToConstructItem) &&
              (currentEngineerState != EngineerState.GoingToConstructPosition)*/
            )
         {
-            newTGConstruct = newWConstruct = false;
+            newTAConstruct = newWConstruct = false;
             Destroy(towerArmy);
             Destroy(warehouse);
         }
@@ -342,10 +344,10 @@ public class UnitEngineer : UnitController
 					cState.currentEngineerState = currentEngineerState;
 
                     //animation.Play("Idle01");
-                    cState.animationName = "Idle";
+                    cState.animationName = "Idle01";
                     cState.animationChanged = true;
 
-                    newTGConstruct = newWConstruct = false;
+                    newTAConstruct = newWConstruct = false;
                 }
                 break;
             case EngineerState.GoingToRepairPosition:
@@ -379,11 +381,11 @@ public class UnitEngineer : UnitController
                         currentEngineerState = EngineerState.Constructing;
 						cState.currentEngineerState = currentEngineerState;
 
-                        if (newTGConstruct)
+                        if (newTAConstruct)
                             Minimap.InsertTower(towerArmy.GetComponent<Tower>());
                         else if (newWConstruct)
                             Minimap.InsertWarehouse(warehouse.GetComponent<Warehouse>());
-                        newTGConstruct = newWConstruct = false;
+                        newTAConstruct = newWConstruct = false;
 
                         // show the hammer
                         hammerInst.SetActive(true);
@@ -395,10 +397,10 @@ public class UnitEngineer : UnitController
 					cState.currentEngineerState = currentEngineerState;
 
                     //animation.Play("Idle01");
-                    cState.animationName = "Idle";
+                    cState.animationName = "Idle01";
                     cState.animationChanged = true;
 
-                    newTGConstruct = newWConstruct = false;
+                    newTAConstruct = newWConstruct = false;
                 }
                 break;
         }
@@ -665,7 +667,7 @@ public class UnitEngineer : UnitController
         //LeaveQueues ();
 
         // if he is constructing a towerGoblin
-        if (newTGConstruct)
+        if (newTAConstruct)
         {
             // if he can construct it
             if (towerArmy.transform.GetComponent<TowerArmy>().StartConstruct(constructDestiny, baseController))
@@ -727,7 +729,7 @@ public class UnitEngineer : UnitController
         else if (destTransform.name == "Tower Neutral")
         {
             attackCadenceAux = attackCadAuxEngineer;
-            newTGConstruct = newWConstruct = false;
+            newTAConstruct = newWConstruct = false;
 
             if (destTransform.GetComponent<BuildingController>().team.teamNumber != teamNumber) // if it's not in the same team
             {
@@ -775,14 +777,14 @@ public class UnitEngineer : UnitController
                 comp1 = destTransform.GetComponent<ColliderConstruct>().gameObject;
                 comp2 = towerArmy.transform.GetComponent<TowerArmy>().transform.FindChild("TowerSphereConstruct").gameObject;
             }
-            else if (newTGConstruct)
+            else if (newTAConstruct)
             {
                 comp1 = destTransform.GetComponent<TowerArmy>().gameObject;
                 comp2 = towerArmy.transform.GetComponent<TowerArmy>().gameObject;
             }
-            if ((comp1 != comp2) || !newTGConstruct) // If it's not the same towerArmy that is going To Construct
+            if ((comp1 != comp2) || !newTAConstruct) // If it's not the same towerArmy that is going To Construct
             {
-                newTGConstruct = newWConstruct = false;
+                newTAConstruct = newWConstruct = false;
                 // if it's in the same team he has to reapir it
                 if (currentItem.GetComponent<BuildingController>().team.teamNumber == teamNumber)
                 {
@@ -838,7 +840,7 @@ public class UnitEngineer : UnitController
 
             if ((comp1 != comp2) || !newWConstruct) // If it's not the same towerArmy that is going To Construct
             {
-                newTGConstruct = newWConstruct = false;
+                newTAConstruct = newWConstruct = false;
                 // if it's in the same team he has to reapir it
                 if (currentItem.GetComponent<BuildingController>().team.teamNumber == teamNumber)
                 {
@@ -1139,7 +1141,7 @@ public class UnitEngineer : UnitController
 
 	public bool IsNewConstructing ()
 	{
-		return newTGConstruct || newWConstruct;
+		return newTAConstruct || newWConstruct;
 	}
 
     public virtual void SetCanConstruct (int item)

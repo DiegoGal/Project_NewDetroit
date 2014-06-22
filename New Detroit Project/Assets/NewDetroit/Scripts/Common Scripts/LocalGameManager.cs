@@ -13,6 +13,7 @@ public class LocalGameManager : MonoBehaviour {
     public GameObject blueArmyManager;
     public Transform redArmyCameraPosition;
     public Transform blueArmyCameraPosition;
+    public GameObject navmeshColliders;
 
     public void Awake()
     {
@@ -55,6 +56,7 @@ public class LocalGameManager : MonoBehaviour {
                     blueBase.GetComponent<CSelectable>().enabled = false;
                     blueBase.GetComponent<BaseController>().enabled = false;
                     blueBase.GetComponent<FogOfWarUnit>().enabled = false;
+                    navmeshColliders.SetActive(false);
                     Destroy(army1);
                 break;
                 case 3: // Skelter Army
@@ -65,6 +67,7 @@ public class LocalGameManager : MonoBehaviour {
                     blueBase.GetComponent<CSelectable>().enabled = true;
                     blueBase.GetComponent<BaseController>().enabled = true;
                     blueBase.GetComponent<FogOfWarUnit>().enabled = true;
+                    navmeshColliders.SetActive(false);
                 	Destroy(army0);
                 break;
                 default:
