@@ -80,6 +80,8 @@ public class UnitEngineer : UnitController
     private IEnumerator coroutineID;
 
     private bool attacked = false;
+    
+    private bool reGone = false;
 
     public override void Start ()
     {
@@ -393,6 +395,11 @@ public class UnitEngineer : UnitController
                         // show the hammer
                         hammerInst.SetActive(true);
                     }
+                    else
+                    {
+						base.GoTo(lastEngineerPos);
+						reGone = true;
+                    }
                 }
                 else
                 {
@@ -662,7 +669,8 @@ public class UnitEngineer : UnitController
 
     public override void RightClickOnSelected(Vector3 destiny, Transform destTransform)
     {
-        // hide the laptop
+		reGone = false;
+		// hide the laptop
         laptopInst.SetActive(false);
         // hide the hammer
         hammerInst.SetActive(false);
@@ -767,7 +775,7 @@ public class UnitEngineer : UnitController
             }
         }
         // if it is a TG
-        else if (destTransform.tag == "Tower Army")
+        else if (destTransform.tag == "TowerArmy")
         {
             LeaveQueues ();
 

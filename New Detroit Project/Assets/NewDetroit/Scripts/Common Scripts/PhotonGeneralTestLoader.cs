@@ -29,9 +29,13 @@ public class PhotonGeneralTestLoader : MonoBehaviour
 		{
 			if (joinedId == 0)
 			{
-				BlueBase.GetComponent<CSelectable>().enabled = false;
-				BlueBase.GetComponent<BaseController>().enabled = false;
-				Destroy(army1);
+				RedBase.GetComponent<CSelectable>().enabled = false;
+				RedBase.GetComponent<BaseController>().enabled = false;
+				Destroy(army0);
+			
+//				BlueBase.GetComponent<CSelectable>().enabled = false;
+//				BlueBase.GetComponent<BaseController>().enabled = false;
+//				Destroy(army1);
 
 ////				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);				
 //				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
@@ -44,9 +48,13 @@ public class PhotonGeneralTestLoader : MonoBehaviour
 			else
 			{
 				
-				RedBase.GetComponent<CSelectable>().enabled = false;
-				RedBase.GetComponent<BaseController>().enabled = false;
-				Destroy(army0);
+//				RedBase.GetComponent<CSelectable>().enabled = false;
+//				RedBase.GetComponent<BaseController>().enabled = false;
+//				Destroy(army0);
+				
+				BlueBase.GetComponent<CSelectable>().enabled = false;
+				BlueBase.GetComponent<BaseController>().enabled = false;
+				Destroy(army1);
 
 //				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
 ////				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
