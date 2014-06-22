@@ -47,8 +47,7 @@ public class NetworkController : Photon.MonoBehaviour
         labelRoomName.text = "Room" + Random.Range(1, 9999);
         labelRoomName.UpdateNGUIText();
         labelPlayerName.text = PhotonNetwork.playerName;
-        labelPlayerName.UpdateNGUIText();
-        UpdateRooms();
+        labelPlayerName.UpdateNGUIText();        
     }
 
     public void Awake()
@@ -80,7 +79,8 @@ public class NetworkController : Photon.MonoBehaviour
         ActiveAnimation.Play(roomsAnimation, "Window - Back", AnimationOrTween.Direction.Forward,
             AnimationOrTween.EnableCondition.EnableThenPlay, AnimationOrTween.DisableCondition.DisableAfterForward);
         ActiveAnimation.Play(selectAnimation, "Window - Back", AnimationOrTween.Direction.Reverse,
-            AnimationOrTween.EnableCondition.EnableThenPlay, AnimationOrTween.DisableCondition.DisableAfterForward);        
+            AnimationOrTween.EnableCondition.EnableThenPlay, AnimationOrTween.DisableCondition.DisableAfterForward);
+        RolSelection.isOnline = true;
     }
 
     public void CreateRoom()
@@ -170,6 +170,20 @@ public class NetworkController : Photon.MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    private IEnumerator AutomaticUpdateRooms()
+    {
+        while (this.enabled)
+        {
+            UpdateRooms();
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    public void CallAutomaticUpdate()
+    {
+        StartCoroutine(AutomaticUpdateRooms());
     }
 
     public void UpdateRooms()

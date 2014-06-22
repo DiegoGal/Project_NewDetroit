@@ -20,11 +20,16 @@ public class RolSelection : Photon.MonoBehaviour {
     public GameObject playButton;
     // local player selection
     public int localSelection;
+    // exit button reference
+    public GameObject offlineExitButton;
+    public GameObject onlineExitButton;
 
     public bool heroes;
     // 0 = Rob Render, 1 = Skelterbot, 2 = Rob Army, 3 = Skelter Army
     public int[] rolSelected;
     public string[] players;
+
+    public static bool isOnline;
 
 	// Use this for initialization
 	void Start () 
@@ -49,7 +54,16 @@ public class RolSelection : Photon.MonoBehaviour {
             for (int i = 0; i < model1.renderer.materials.Length; i++)
                 model1.renderer.materials[i].SetColor("_OutlineColor", Color.black);
         }
+        onlineExitButton.SetActive(true);
+        offlineExitButton.SetActive(false);
 	}
+
+    public void SetOffline()
+    {
+        isOnline = false;
+        onlineExitButton.SetActive(false);
+        offlineExitButton.SetActive(true);
+    }
 
     public void UpdateSelection()
     {
@@ -174,7 +188,10 @@ public class RolSelection : Photon.MonoBehaviour {
         {            
             if (localSelection == i)
             {
-                photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection,PhotonNetwork.playerName);
+                if (isOnline)
+                    photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection,PhotonNetwork.playerName);
+                else
+                    PlayerDeselection(localSelection, PhotonNetwork.playerName);
                 localSelection = -1;
             }
             else
@@ -198,8 +215,11 @@ public class RolSelection : Photon.MonoBehaviour {
         {
             i = i + 2;
             if (localSelection == i)
-            {                
-                photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);
+            {
+                if (isOnline)
+                    photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);
+                else
+                    PlayerDeselection(localSelection, PhotonNetwork.playerName);
                 localSelection = -1;
             }
             else
@@ -225,7 +245,10 @@ public class RolSelection : Photon.MonoBehaviour {
     {
         while (anim.IsPlaying(name))
             yield return new WaitForSeconds(0.1f);
-        photonView.RPC("PlayerSelection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);   
+        if (isOnline)
+            photonView.RPC("PlayerSelection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);
+        else
+            PlayerSelection(localSelection, PhotonNetwork.playerName);
     }
 
     private bool isSelected(int i)
@@ -364,8 +387,16 @@ public class RolSelection : Photon.MonoBehaviour {
     public void StartGame()
     {
         //here is where has to be loaded the level
-        if (AllPlayersIn())
-            photonView.RPC("CallToCountdown", PhotonTargets.All);
+        if (isOnline)
+        {
+            if (AllPlayersIn())
+                photonView.RPC("CallToCountdown", PhotonTargets.All);
+        }
+        else
+        {
+            // Load the offline level
+        }
+
         //PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);
     }
 }

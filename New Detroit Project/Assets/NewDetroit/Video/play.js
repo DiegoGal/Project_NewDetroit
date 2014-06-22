@@ -1,0 +1,1 @@
+﻿renderer.material.mainTexture.Play();
