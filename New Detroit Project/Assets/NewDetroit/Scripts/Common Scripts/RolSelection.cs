@@ -283,7 +283,7 @@ public class RolSelection : Photon.MonoBehaviour {
             else numPlay++;
             j++;
         }
-        return numPlay >= 1;// true;
+        return numPlay >= 2;// true;
     }
 
     public void UpdateNGUI(string change)
@@ -351,7 +351,10 @@ public class RolSelection : Photon.MonoBehaviour {
 
     public void ExitRoom()
     {
-        photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);
+        if (isOnline)
+            photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);
+        else
+            PlayerDeselection(localSelection, PhotonNetwork.playerName);
         PhotonNetwork.LeaveRoom();
     }
 
@@ -393,6 +396,7 @@ public class RolSelection : Photon.MonoBehaviour {
         else
         {
             // Load the offline level
+            Application.LoadLevel(NetworkController.SceneNameGameOffline);
         }
 
         //PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);
