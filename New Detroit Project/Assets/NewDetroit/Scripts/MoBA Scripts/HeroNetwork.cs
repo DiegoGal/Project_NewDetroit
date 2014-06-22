@@ -21,6 +21,8 @@ public class HeroNetwork : BasicNetwork
 			basicAttr.setMaximunMana(OrcController.MANA_1);
 			basicAttr.setCurrentAdren(OrcController.ADREN_1);
 			basicAttr.setMaximunAdren(OrcController.ADREN_1);
+			basicAttr.setDeffensePhysic(OrcController.DEF_P_1);
+			basicAttr.setDeffenseMagic(OrcController.DEF_M_1);
 		}
 		else
 		{
@@ -29,6 +31,8 @@ public class HeroNetwork : BasicNetwork
 			basicAttr.setMaximunMana(RobotController.MANA_1);
 			basicAttr.setCurrentAdren(RobotController.ADREN_1);
 			basicAttr.setMaximunAdren(RobotController.ADREN_1);
+			basicAttr.setDeffensePhysic(RobotController.DEF_P_1);
+			basicAttr.setDeffenseMagic(RobotController.DEF_M_1);
 		}
 
 		//Initialize cState
