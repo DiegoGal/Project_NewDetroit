@@ -20,6 +20,8 @@ public class UnitHarvesterGoblin : UnitHarvester
             dummyHead = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/Dummy Sombrero");
         if (dummyBackPack == null)
             dummyBackPack = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Dummy Espalda");
+
+        type = TypeHeroe.Orc;
     }
 
     public override void Start ()

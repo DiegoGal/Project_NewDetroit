@@ -40,6 +40,8 @@ public class UnitEngineerRobot : UnitEngineer
         hammerInst.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
         // hide it
         hammerInst.SetActive(false);
+
+        type = TypeHeroe.Robot;
     }
 	
     public override void SetCanConstruct (int item)

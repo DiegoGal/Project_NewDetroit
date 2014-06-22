@@ -43,6 +43,8 @@ public class ControllableCharacter : Photon.MonoBehaviour
 
     public float radius;
 
+    protected TypeHeroe type;
+
 	// --------------------------------------------------------------
 
     public virtual void Awake ()
@@ -150,5 +152,7 @@ public class ControllableCharacter : Photon.MonoBehaviour
     {
         this.teamNumber = teamNumber;
     }
+    
+    public TypeHeroe getTypeHero() { return type; }
 
 } // class ControllableCharacter

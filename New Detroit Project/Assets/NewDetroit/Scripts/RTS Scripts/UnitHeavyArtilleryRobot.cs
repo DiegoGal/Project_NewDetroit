@@ -20,6 +20,8 @@ public class UnitHeavyArtilleryRobot : UnitHeavyArtillery
 
         if (!dome)
             dome = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Xtra01").gameObject;
+
+        type = TypeHeroe.Robot;
     }
 
     protected override void RemoveAssetsFromModel()

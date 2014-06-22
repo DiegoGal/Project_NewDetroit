@@ -22,6 +22,8 @@ public class UnitBasicArtilleryRobot : UnitBasicArtillery
             leftWeapon = dummyLeftWeapon.gameObject;
         if (dummyBat)
             baseballBat = dummyBat.gameObject;
+
+        type = TypeHeroe.Robot;
     }
 
 } // class UnitBasicArtillery
