@@ -448,11 +448,11 @@ public abstract class HeroeController : ControllableCharacter
 	protected void Counter()
 	{
 		// Secondary attack
-//		if (cooldown1 < cooldown1total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack1) cooldown1 -= Time.deltaTime;
+		if (cooldown1 < cooldown1total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack1) cooldown1 -= Time.deltaTime;
 		if (cooldown1 <= 0) cooldown1 = cooldown1total;
-//		if (cooldown2 < cooldown2total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
+		if (cooldown2 < cooldown2total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack2) cooldown2 -= Time.deltaTime;
 		if (cooldown2 <= 0) cooldown2 = cooldown2total;
-//		if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
+		if (cooldown3 < cooldown3total || state == StateHeroe.AttackSecond && stateAttackSecond == AttackSecond.Attack3) cooldown3 -= Time.deltaTime;
 		if (cooldown3 <= 0) cooldown3 = cooldown3total;
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------------

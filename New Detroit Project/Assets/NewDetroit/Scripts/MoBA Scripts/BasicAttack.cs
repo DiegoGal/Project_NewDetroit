@@ -70,8 +70,15 @@ public class BasicAttack : Photon.MonoBehaviour {
 	[RPC]
 	public void Damage(string sEnemy, int damage)	
 	{
-		Debug.Log("Ataco con " + damage + " de fuerza");
 		GameObject enemy = GameObject.Find(sEnemy);
+		
+		if (enemy.tag == "player")
+		{
+			CBasicAttributesHero cbah = enemy.GetComponent<CBasicAttributesHero>();
+			damage -= cbah.getDeffensePhysic();
+			damage = Mathf.Max(0, damage);
+		}
+		
 		enemy.GetComponent<CLife>().Damage(damage, 'P');
 	}
 	
@@ -86,6 +93,9 @@ public class BasicAttack : Photon.MonoBehaviour {
 
 	void OnTriggerEnter (Collider collisionInfo){
 		GameObject go = collisionInfo.gameObject;
+		CTeam ct = go.GetComponent<CTeam>();
+		if (ct == null || ct.teamNumber == owner.GetComponent<CTeam>().teamNumber) return;
+		
 		if (go.name != this.owner.name)
 		{
 			CLife goCLife = go.GetComponent<CLife>();
