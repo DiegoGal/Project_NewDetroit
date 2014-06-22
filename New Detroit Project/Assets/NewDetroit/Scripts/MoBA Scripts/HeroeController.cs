@@ -29,12 +29,6 @@ public abstract class HeroeController : ControllableCharacter
 		Attack2,
 		Attack3,
 	}
-	
-	public enum TypeHeroe // The type of the heroe
-	{
-		Orc, 
-		Robot
-	}
 
 
 	//---------------------------------------------------------------------------------------------
@@ -72,7 +66,7 @@ public abstract class HeroeController : ControllableCharacter
 	protected CBasicAttributesHero cBasicAttributes;
 	protected double 	speedAtt;
 	private bool attackInstantiate;	// Activate the spheres of arms
-	protected TypeHeroe type;	// Type of heroe
+	//protected TypeHeroe type;	// Type of heroe
 	protected StateHeroe state = StateHeroe.Idle; // The state of the heroe
 	protected AttackSecond stateAttackSecond;	// The state of secondary attack
 	private bool 	ability1, 
@@ -524,7 +518,7 @@ public abstract class HeroeController : ControllableCharacter
 	//Getters
 	public StateHeroe getState() { return state; }
 	public AttackSecond getStateSecondAttack() { return stateAttackSecond; }
-	public TypeHeroe getTypeHero() { return type; }
+	//public TypeHeroe getTypeHero() { return type; }
 	public int getExperience() { return experience; }
 	public int getCurrentAdren() { return (int) cBasicAttributes.getCurrentAdren(); }
 	public int getAdren() { return (int) cBasicAttributes.getMaximunAdren(); }

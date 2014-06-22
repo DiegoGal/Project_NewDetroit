@@ -17,6 +17,9 @@ public class UnitNetwork : BasicNetwork
 	public virtual void Awake ()
 	{
 		base.Awake();
+
+        if (GetComponent<ControllableCharacter>().getTypeHero() == ControllableCharacter.TypeHeroe.Orc) GetComponent<CTeam>().teamNumber = 0;
+        else GetComponent<CTeam>().teamNumber = 1;
 	
 		selectableScript      = GetComponent<CSelectable>();
         unitScript            = GetComponent<UnitController>();

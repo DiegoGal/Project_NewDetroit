@@ -277,7 +277,7 @@ public class BaseController : CResourceBuilding
             newUnit.GetComponent<ControllableCharacter>().isMine = true;
             newUnit.GetComponent<UnitController>().SetArmyBase(this);
             newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);
-            newUnit.GetComponent<CTeam>().teamNumber = this.team.teamNumber;
+            //newUnit.GetComponent<CTeam>().teamNumber = this.team.teamNumber;
             newUnit.GetComponent<CTeam>().teamColorIndex = GetComponent<CTeam>().teamColorIndex;
             newUnit.GetComponent<CSelectable>().ResetTeamColor();
             newUnit.GetComponent<UnitController>().GoTo(spawnDestiny);

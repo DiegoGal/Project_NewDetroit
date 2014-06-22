@@ -174,10 +174,12 @@ public class NetworkController : Photon.MonoBehaviour
 
     private IEnumerator AutomaticUpdateRooms()
     {
-        while (this.enabled)
+        int cont = 2;
+        while (this.enabled && cont > 0)
         {
             UpdateRooms();
             yield return new WaitForSeconds(1f);
+            cont--;
         }
     }
 

@@ -21,6 +21,8 @@ public class UnitHeavyArtilleryGoblin : UnitHeavyArtillery
             frontWeapon = dummyLeftWeapon.FindChild("GoblinHeavyArtilleryWeapon01_A").gameObject;
         if (dummyRightWeapon)
             backWeapon = dummyRightWeapon.FindChild("GoblinHeavyArtilleryWeapon01_B").gameObject;
+
+        type = TypeHeroe.Orc;
     }
 
 } // class UnitHeavyArtillery

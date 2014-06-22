@@ -40,6 +40,8 @@ public class UnitEngineerGoblin : UnitEngineer
         hammerInst.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
         // hide it
         hammerInst.SetActive(false);
+
+        type = TypeHeroe.Orc;
     }
 	
     public override void SetCanConstruct (int item)

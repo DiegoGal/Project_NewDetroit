@@ -21,6 +21,8 @@ public class UnitScoutGoblin : UnitScout
 
          if (!mount)
              mount = transform.FindChild("Box002").gameObject;
+
+         type = TypeHeroe.Orc;
     }
 
     public void UnitDamageMessage ()
