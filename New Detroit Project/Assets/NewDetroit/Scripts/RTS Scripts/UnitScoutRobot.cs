@@ -26,6 +26,8 @@ public class UnitScoutRobot : UnitScout
             mount = transform.FindChild("Mount").gameObject;
 
         fireParticles = transform.FindChild("FireMower2").gameObject;
+
+        type = TypeHeroe.Robot;
     }
 
     public void UnitDamageMessage()

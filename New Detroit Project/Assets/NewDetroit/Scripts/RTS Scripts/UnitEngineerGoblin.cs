@@ -40,6 +40,8 @@ public class UnitEngineerGoblin : UnitEngineer
         hammerInst.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
         // hide it
         hammerInst.SetActive(false);
+
+        type = TypeHeroe.Orc;
     }
 	
     public override void SetCanConstruct (int item)
@@ -51,11 +53,12 @@ public class UnitEngineerGoblin : UnitEngineer
                     lastTowerArmy = towerArmy;
                 if (warehouse)
                     lastWarehouse = warehouse;
-                towerArmy = Instantiate
+                towerArmy = PhotonNetwork.Instantiate
                 (
-                    towerArmyPrefab,
+                    "Robot Tower",
                     transform.position + new Vector3(30,-30,30),
-                    new Quaternion(0, 0, 0, 0)
+					new Quaternion(0, 0, 0, 0),
+					0
                 ) as GameObject;
                 towerArmy.transform.Rotate(270.0f, 0.0f, 0.0f);
                 towerArmy.name = towerArmy.name.Replace("(Clone)", "");
@@ -68,11 +71,12 @@ public class UnitEngineerGoblin : UnitEngineer
                     lastTowerArmy = towerArmy;
                 if (warehouse)
                     lastWarehouse = warehouse;
-                warehouse = Instantiate
+				warehouse = PhotonNetwork.Instantiate
                 (
-                    warehousePrefab,
+                    "Robot Warehouse",
                     transform.position + new Vector3(30, -30, 30),
-                    new Quaternion(0, 0, 0, 0)
+					new Quaternion(0, 0, 0, 0),
+					0
                 ) as GameObject;
                 warehouse.transform.Rotate(0.0f, 180.0f, 0.0f);
                 warehouse.name = warehouse.name.Replace("(Clone)", "");

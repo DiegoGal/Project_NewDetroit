@@ -28,6 +28,8 @@ public class UnitBasicArtilleryGoblin : UnitBasicArtillery
             rightWeapon = dummyRightWeapon.gameObject;
         if (dummyBat)
             baseballBat = dummyBat.gameObject;
+
+        type = TypeHeroe.Orc;
     }
 
 } // class UnitBasicArtillery

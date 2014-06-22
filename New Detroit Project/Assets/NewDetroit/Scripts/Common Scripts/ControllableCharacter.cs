@@ -3,6 +3,12 @@ using System.Collections;
 
 public class ControllableCharacter : Photon.MonoBehaviour
 {
+    public enum TypeHeroe // The type of the heroe
+    {
+        Orc,
+        Robot
+    }
+
 	// --------------------------------------------------------------
 
     // referente to the Team component of the character
@@ -36,6 +42,8 @@ public class ControllableCharacter : Photon.MonoBehaviour
     public bool isMine; // Tell us if that instance if ours or not
 
     public float radius;
+
+    protected TypeHeroe type;
 
 	// --------------------------------------------------------------
 
@@ -144,5 +152,7 @@ public class ControllableCharacter : Photon.MonoBehaviour
     {
         this.teamNumber = teamNumber;
     }
+    
+    public TypeHeroe getTypeHero() { return type; }
 
 } // class ControllableCharacter
