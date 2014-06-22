@@ -115,13 +115,13 @@ public class UnitEngineer : UnitController
             
             case EngineerState.Waiting:
                 //animation.Play("Idle Wait");
-                cState.animationName = "Idle Wait";
+				cState.animationName = "Idle Wait";
 			    cState.animationChanged = true;
 
                 break;
             case EngineerState.Repairing:
                 //animation.Play("Build");
-                cState.animationName = "Build";
+				cState.animationName = "Build";
 			    cState.animationChanged = true;
                 
                 actualEngineerTime += Time.deltaTime;
@@ -277,6 +277,7 @@ public class UnitEngineer : UnitController
                     }
                     else
                     {
+                    	StopMoving();
                         currentEngineerState = EngineerState.Waiting;
 						cState.currentEngineerState = currentEngineerState;
 
@@ -303,6 +304,7 @@ public class UnitEngineer : UnitController
                     }
                     else
                     {
+						StopMoving();
                         currentEngineerState = EngineerState.Waiting;
 						cState.currentEngineerState = currentEngineerState;
 
@@ -331,6 +333,7 @@ public class UnitEngineer : UnitController
                         }
                         else
                         {
+							StopMoving();
                             currentEngineerState = EngineerState.Waiting;
 							cState.currentEngineerState = currentEngineerState;
 
@@ -550,7 +553,7 @@ public class UnitEngineer : UnitController
             enemySelected = null;
             currentState = State.Idle;
             cState.currentState = currentState;
-
+	
             PlayAnimationCrossFade("Idle01");
             attackCadenceAux = attackCadAuxEngineer;
             this.StopAllCoroutines();
@@ -726,7 +729,7 @@ public class UnitEngineer : UnitController
         }
         // if he is not constructing
         // if it is a TN
-        else if (destTransform.name == "Tower Neutral")
+        else if (destTransform.tag == "TowerNeutral")
         {
             attackCadenceAux = attackCadAuxEngineer;
             newTAConstruct = newWConstruct = false;
@@ -764,7 +767,7 @@ public class UnitEngineer : UnitController
             }
         }
         // if it is a TG
-        else if (destTransform.name == "Goblin Tower" || destTransform.name == "Robot Tower")
+        else if (destTransform.tag == "Tower Army")
         {
             LeaveQueues ();
 
@@ -772,7 +775,7 @@ public class UnitEngineer : UnitController
             GameObject comp1 = null;
             GameObject comp2 = null;
             currentItem = destTransform;
-            if (destTransform.name == "TowerSphereConstruct")
+            if (destTransform.tag == "TowerSphereConstruct")
             {
                 comp1 = destTransform.GetComponent<ColliderConstruct>().gameObject;
                 comp2 = towerArmy.transform.GetComponent<TowerArmy>().transform.FindChild("TowerSphereConstruct").gameObject;
@@ -819,7 +822,7 @@ public class UnitEngineer : UnitController
             }
         }
         // if it is a warehouse
-        else if (destTransform.name == "Goblin Warehouse" || destTransform.name == "Robot Warehouse")
+        else if (destTransform.tag == "Warehouse")
         {
             LeaveQueues();
 
@@ -827,7 +830,7 @@ public class UnitEngineer : UnitController
             currentItem = destTransform;
             GameObject comp1 = null;
             GameObject comp2 = null;
-            if (destTransform.name == "WarehouseBoxConstruct")
+            if (destTransform.tag == "WarehouseBoxConstruct")
             {
                 comp1 = destTransform.GetComponent<ColliderConstruct>().gameObject;
                 comp2 = warehouse.transform.GetComponent<Warehouse>().transform.FindChild("WarehouseBoxConstruct").gameObject;

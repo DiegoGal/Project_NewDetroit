@@ -29,32 +29,32 @@ public class PhotonGeneralTestLoader : MonoBehaviour
 		{
 			if (joinedId == 0)
 			{
-//				BlueBase.GetComponent<CSelectable>().enabled = false;
-//				BlueBase.GetComponent<BaseController>().enabled = false;
-//				Destroy(army1);
+				BlueBase.GetComponent<CSelectable>().enabled = false;
+				BlueBase.GetComponent<BaseController>().enabled = false;
+				Destroy(army1);
 
-//				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);				
-				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
-				heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
-				
-				Camera.main.GetComponent<CameraRTSController>().enabled = false;
-				Camera.main.GetComponent<CameraMOBAController>().enabled = true;
-				Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+////				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);				
+//				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
+//				heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
+//				
+//				Camera.main.GetComponent<CameraRTSController>().enabled = false;
+//				Camera.main.GetComponent<CameraMOBAController>().enabled = true;
+//				Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
 			}
 			else
 			{
 				
-//				RedBase.GetComponent<CSelectable>().enabled = false;
-//				RedBase.GetComponent<BaseController>().enabled = false;
-//				Destroy(army0);
+				RedBase.GetComponent<CSelectable>().enabled = false;
+				RedBase.GetComponent<BaseController>().enabled = false;
+				Destroy(army0);
 
-				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
-//				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
-				heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
-				
-				Camera.main.GetComponent<CameraRTSController>().enabled = false;
-				Camera.main.GetComponent<CameraMOBAController>().enabled = true;
-				Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+//				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
+////				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
+//				heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
+//				
+//				Camera.main.GetComponent<CameraRTSController>().enabled = false;
+//				Camera.main.GetComponent<CameraMOBAController>().enabled = true;
+//				Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
 			}
 		}
 		

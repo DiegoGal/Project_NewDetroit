@@ -104,4 +104,12 @@ public abstract class Tower : BuildingController
     {
         return radius;
     }
+    
+	[RPC]
+	public void Kick(string otherName, float damage)
+	{
+		GameObject other = GameObject.Find(otherName);
+		CLife otherCL = other.GetComponent<CLife>();
+		otherCL.Damage(damage);
+	}
 }

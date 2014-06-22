@@ -273,14 +273,6 @@ public class TowerArmy : Tower
 
 	}// Update
 
-    [RPC]
-    public void Kick(string otherName, float damage)
-    {
-        GameObject other = GameObject.Find(otherName);
-        CLife otherCL = other.GetComponent<CLife>();
-        otherCL.Damage(damage);
-    }
-
 	public virtual void OnGUI ()
 	{
         Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);

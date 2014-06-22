@@ -47,11 +47,12 @@ public class UnitEngineerRobot : UnitEngineer
         switch (item)
         {
             case 0:
-                towerArmy = Instantiate
+				towerArmy = PhotonNetwork.Instantiate
                 (
-                    towerArmyPrefab,
+                    "Goblin Tower",
                     transform.position + new Vector3(30,-30,30),
-                    new Quaternion(0, 0, 0, 0)
+                    new Quaternion(0, 0, 0, 0),
+                    0
                 ) as GameObject;
                 //towerArmy.transform.Rotate(270.0f, 0.0f, 0.0f);
                 towerArmy.name = towerArmy.name.Replace("(Clone)", "");
@@ -60,11 +61,12 @@ public class UnitEngineerRobot : UnitEngineer
                 newTAConstruct = true;
                 break;
             case 1:
-                warehouse = Instantiate
+				warehouse = PhotonNetwork.Instantiate
                 (
-                    warehousePrefab,
+                    "Goblin Warehouse",
                     transform.position + new Vector3(30, -30, 30),
-                    new Quaternion(0, 0, 0, 0)
+                    new Quaternion(0, 0, 0, 0),
+                    0
                 ) as GameObject;
                 warehouse.transform.Rotate(0.0f, 180.0f, 0.0f);
                 warehouse.name = warehouse.name.Replace("(Clone)", "");
