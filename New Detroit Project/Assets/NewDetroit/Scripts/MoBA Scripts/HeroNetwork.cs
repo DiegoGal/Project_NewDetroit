@@ -23,6 +23,7 @@ public class HeroNetwork : BasicNetwork
 			basicAttr.setMaximunAdren(OrcController.ADREN_1);
 			basicAttr.setDeffensePhysic(OrcController.DEF_P_1);
 			basicAttr.setDeffenseMagic(OrcController.DEF_M_1);
+			GetComponent<CTeam>().teamNumber = 0;
 		}
 		else
 		{
@@ -33,6 +34,7 @@ public class HeroNetwork : BasicNetwork
 			basicAttr.setMaximunAdren(RobotController.ADREN_1);
 			basicAttr.setDeffensePhysic(RobotController.DEF_P_1);
 			basicAttr.setDeffenseMagic(RobotController.DEF_M_1);
+			GetComponent<CTeam>().teamNumber = 1;
 		}
 
 		//Initialize cState

@@ -134,6 +134,26 @@ public class CBasicAttributesHero : CLife {
 		rectangleLevel = new Rect (x, y, width, height);
 		
 	}
+	
+	
+	//-------------------------------------------------------
+	
+	
+	[RPC]
+	public void UpdateAdren(int amount)
+	{
+		currentAdren += amount;
+		if (currentAdren < 0) currentAdren = 0;
+		if (currentAdren > maximunAdren) currentAdren = maximunAdren;
+	}
+	
+	[RPC]
+	public void UpdateMana(int amount)
+	{
+		currentMana += amount;
+		if (currentMana < 0) currentMana = 0;
+		if (currentMana > maximunMana) currentMana = maximunMana;
+	}
 
 
 	//-------------------------------------------------------
@@ -143,7 +163,8 @@ public class CBasicAttributesHero : CLife {
 			return false;
 		else
 		{
-			currentAdren -= adren;
+			photonView.RPC("UpdateAdren", PhotonTargets.All, -adren);
+//			currentAdren -= adren;
 			return true;
 		}
 	}
@@ -154,21 +175,30 @@ public class CBasicAttributesHero : CLife {
 			return false;
 		else
 		{
-			currentMana -= mana;
+			photonView.RPC("UpdateMana", PhotonTargets.All, -mana);
+//			currentMana -= mana;
 			return true;
 		}
 	}
 
 	public void recoverAdren(int adren)
 	{
-		currentAdren += adren;
-		currentAdren = Mathf.Min(maximunAdren, currentAdren);
+		if (currentAdren < maximunAdren)
+		{
+			photonView.RPC("UpdateAdren", PhotonTargets.All, adren);
+		}
+//		currentAdren += adren;
+//		currentAdren = Mathf.Min(maximunAdren, currentAdren);
 	}
 
 	public void recoverMana(int mana)
 	{
-		currentMana += mana;
-		currentMana = Mathf.Min(maximunMana, currentMana);
+		if (currentMana < maximunMana)
+		{
+			photonView.RPC("UpdateMana", PhotonTargets.All, mana);
+		}
+//		currentMana += mana;
+//		currentMana = Mathf.Min(maximunMana, currentMana);
 	}
 
 	public void levelUp()

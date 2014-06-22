@@ -259,8 +259,10 @@ public class RobotController : HeroeController
 				//------------------------------------
                 this.life.currentLife = 0;
                 this.transform.position = this.initialPosition;
-                isMine = false;
 				//------------------------------------
+				state = StateHeroe.Recover;
+				//------------------------------------
+                isMine = false;
 				canRotate = false;
 				canMove = false;
 				extraSpeed = false;
@@ -271,13 +273,15 @@ public class RobotController : HeroeController
                 else
                 {
                     this.timeCountLife = 0;
-                    this.life.currentLife += 20;
-                    if (this.life.currentLife >= this.life.maximunLife)
-                    {
-                        this.life.currentLife = this.life.maximunLife;
-                        this.state = StateHeroe.Idle;
-                        isMine = true;
-                    }
+//                    this.life.currentLife += 20;
+//                    if (this.life.currentLife >= this.life.maximunLife)
+//                    {
+//                        this.life.currentLife = this.life.maximunLife;
+//                        this.state = StateHeroe.Idle;
+//                        isMine = true;
+//                    }
+					isMine = life.HealAlly(20);
+					if (isMine) state = StateHeroe.Idle;
                 }
 				//------------------------------------
 				canRotate = false;

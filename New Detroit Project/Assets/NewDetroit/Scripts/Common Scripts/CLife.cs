@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CLife : MonoBehaviour
+public class CLife : Photon.MonoBehaviour
 {
     
     // Life variables
@@ -61,7 +61,8 @@ public class CLife : MonoBehaviour
         // propias, y en la clase UnitNetwork de las de otros
         SendMessage("UnitDiedMessage");
     }
-
+    
+	[RPC]
     public bool Heal (float amount)
     {
         if (currentLife < maximunLife)
@@ -86,4 +87,14 @@ public class CLife : MonoBehaviour
     {
         currentLife = eLife;
     }
+    
+	public bool HealAlly(float amount)
+	{
+		photonView.RPC("Heal", PhotonTargets.All, amount);
+		
+		if (currentLife == maximunLife)
+			return true;
+		else
+			return false;
+	}
 }
