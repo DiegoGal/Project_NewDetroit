@@ -61,7 +61,7 @@ public class UnitEngineerGoblin : UnitEngineer
                 towerArmy.name = towerArmy.name.Replace("(Clone)", "");
                 towerArmy.GetComponent<TowerArmy>().SetTeamNumber(this.teamNumber, team.teamColorIndex);
                 towerArmy.GetComponent<TowerArmy>().SetBaseController(baseController);
-                newTGConstruct = true;
+                newTAConstruct = true;
                 break;
             case 1:
                 if (towerArmy)
