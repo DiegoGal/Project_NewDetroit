@@ -254,14 +254,15 @@ public class RolSelection : Photon.MonoBehaviour {
 
     private bool AllPlayersIn()
     {
-        int j = 0;
+        int j = 0, numPlay = 0;
         while (j < rolSelected.Length)
         {
-            if (rolSelected[j] == -1)
-                return false;
+            if (rolSelected[j] == -1);
+                //return false;
+            else numPlay++;
             j++;
         }
-        return true;
+        return numPlay >= 1;// true;
     }
 
     public void UpdateNGUI(string change)
@@ -333,10 +334,38 @@ public class RolSelection : Photon.MonoBehaviour {
         PhotonNetwork.LeaveRoom();
     }
 
+    public void LoadScene()
+    {
+        LocalGameManager.joinedId = localSelection;
+        PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);
+    }
+
+    private IEnumerator FinalCountdown()
+    {
+        int count = 5;
+            //yield return new WaitForSeconds(0.1f);
+            //count -= 0.1f - Time.deltaTime;
+        playButton.GetComponentInChildren<UILabel>().text = "" + count;
+        while (count > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            count -= 1;
+            playButton.GetComponentInChildren<UILabel>().text = "" + count;
+        }
+        LoadScene();        
+    }
+
+    [RPC]
+    private void CallToCountdown()
+    {
+        StartCoroutine(FinalCountdown());
+    }
+
     public void StartGame()
     {
         //here is where has to be loaded the level
-        LocalGameManager.joinedId = localSelection;
-        PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);
+        if (AllPlayersIn())
+            photonView.RPC("CallToCountdown", PhotonTargets.All);
+        //PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);
     }
 }
