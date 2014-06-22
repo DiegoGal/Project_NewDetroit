@@ -33,8 +33,8 @@ public class PhotonGeneralTestLoader : MonoBehaviour
 //				BlueBase.GetComponent<BaseController>().enabled = false;
 //				Destroy(army1);
 
-				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
-//				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
+//				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
+				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
 				heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
 				
 				Camera.main.GetComponent<CameraRTSController>().enabled = false;
@@ -48,8 +48,8 @@ public class PhotonGeneralTestLoader : MonoBehaviour
 //				RedBase.GetComponent<BaseController>().enabled = false;
 //				Destroy(army0);
 
-				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
-//				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
+//				GameObject heroInst = PhotonNetwork.Instantiate("Skelterbot", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
+				GameObject heroInst = PhotonNetwork.Instantiate("Rob Render", Camera.main.transform.position + Vector3.down * 24f, new Quaternion(), 0);
 				heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
 				
 				Camera.main.GetComponent<CameraRTSController>().enabled = false;

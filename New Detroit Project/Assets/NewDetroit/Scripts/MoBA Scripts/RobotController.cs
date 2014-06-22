@@ -223,11 +223,11 @@ public class RobotController : HeroeController
 					cState.animationChangeQueued2 = true;
                 }
 				// Instantiate the shot
-//				if (animation.IsPlaying("Attack3") && !isShot)
-//                {
-//					isShot = true;
-//					StartCoroutine(ThirdBasicAttack(0));
-//                }
+				if (animation.IsPlaying("Attack3") && !isShot)
+                {
+					isShot = true;
+					StartCoroutine(ThirdBasicAttack(0));
+                }
 				//------------------------------------
 				canRotate = false;
 				canMove = false;
@@ -336,7 +336,6 @@ public class RobotController : HeroeController
 		SkillAttack sa = turnInst.GetComponent<SkillAttack>();
 		sa.SetDamage(75);
 		sa.setOwner(gameObject);
-//		sa.setTimeToTurn(1f);
 
 		yield return new WaitForSeconds(animation["Attack2"].length);
 
@@ -353,10 +352,9 @@ public class RobotController : HeroeController
 		fireShotInst = (GameObject)PhotonNetwork.Instantiate(skelterShot.name, gun.position, transform.rotation, 0);
 		SkillAttack sa = fireShotInst.GetComponent<SkillAttack>();
 		sa.setOwner(gameObject);
-		sa.SetDamage(75);		
-//		sa.setSpeed(2);
-//		sa.setDirection(transform.forward);
-//		sa.setTimeToShot(1.7f);
+		sa.SetDamage(75);	
+		SkillLaunch sl = fireShotInst.GetComponent<SkillLaunch>();
+		sl.direction = transform.forward;
 		fireShotInst.transform.parent = gun;
 
 		yield return new WaitForSeconds(2.5f);
@@ -372,12 +370,11 @@ public class RobotController : HeroeController
 			PhotonNetwork.Destroy(fireShotInst);
 		skelterShot.GetComponent<MeshRenderer>().enabled = false;
 		fireShotInst = (GameObject)PhotonNetwork.Instantiate(skelterShot.name, gun.position, transform.rotation, 0);
-		SkillAttack sa = turnInst.GetComponent<SkillAttack>();
-		sa.SetDamage(75);
+		SkillAttack sa = fireShotInst.GetComponent<SkillAttack>();
 		sa.setOwner(gameObject);
-//		sa.setSpeed(2);
-//		sa.setDirection(transform.forward);
-//		sa.setTimeToShot(1.7f);
+		sa.SetDamage(20);		
+		SkillLaunch sl = fireShotInst.GetComponent<SkillLaunch>();
+		sl.direction = transform.forward;
 		fireShotInst.transform.parent = gun;
 
 		yield return new WaitForSeconds(animation["Attack3"].length);

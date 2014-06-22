@@ -3,12 +3,23 @@ using System.Collections;
 
 public class SkillAttack : ParticleDamage {
 
+	public bool damagePhysic = true;
+	//------------------------
 	private GameObject owner;
 	private System.Collections.Generic.List<Collider> unitList = new System.Collections.Generic.List<Collider>();
+	private char damageType = 'P';
 	
 	
 	//--------------------------------------------------------------------------
 	
+	
+	public void Awake()
+	{
+		if (damagePhysic)
+			damageType = 'P';
+		else
+			damageType = 'M';
+	}	
 	
 	void OnTriggerEnter(Collider other)
 	{
@@ -22,7 +33,7 @@ public class SkillAttack : ParticleDamage {
 					// For damage
 					UnitController otherUC = other.GetComponent<UnitController>();
 					
-					photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
+//					photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
 					photonView.RPC("AddNewUnitForce", PhotonTargets.All, other.gameObject.name);
 					
 					unitList.Add(other);
@@ -54,7 +65,14 @@ public class SkillAttack : ParticleDamage {
 	public void Damage(string sEnemy, int damage)	
 	{
 		GameObject enemy = GameObject.Find(sEnemy);
-		enemy.GetComponent<CLife>().Damage(damage, 'M');
+//		CBasicAttributesHero cbah = enemy.GetComponent<CBasicAttributesHero>();
+//		if (damagePhysic)
+//			damage -= cbah.getDeffensePhysic();
+//		else
+//			damage -= cbah.getDeffenseMagic();
+//		damage = Mathf.Max(0, totalDamage);
+		
+		enemy.GetComponent<CLife>().Damage(damage, damageType);
 	}
 	
 	[RPC]
@@ -66,7 +84,7 @@ public class SkillAttack : ParticleDamage {
 			// For damage
 			UnitController otherUC = other.GetComponent<UnitController>();
 			float enemyDist = Vector3.Distance(transform.position, other.transform.position);
-			otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
+			otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, damageType);
 			
 			// For add a force to the minions so they can fly
 			if (!other.rigidbody)
