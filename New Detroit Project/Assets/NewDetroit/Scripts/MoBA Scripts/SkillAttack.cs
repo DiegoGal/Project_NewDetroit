@@ -24,7 +24,12 @@ public class SkillAttack : ParticleDamage {
 	void OnTriggerEnter(Collider other)
 	{
 		Debug.Log(other.tag);
-		if (other.gameObject.name != owner.name)
+		
+		GameObject go = other.gameObject;	
+		CTeam ct = go.GetComponent<CTeam>();
+		if (ct == null || ct.teamNumber == owner.GetComponent<CTeam>().teamNumber) return;
+		
+		if (go.name != owner.name)
 		{
 			if (other.tag == "Minion")
 			{
@@ -48,6 +53,9 @@ public class SkillAttack : ParticleDamage {
 	
 	void OnParticleCollision(GameObject other)
 	{
+		CTeam ct = other.GetComponent<CTeam>();
+		if (ct == null || ct.teamNumber == owner.GetComponent<CTeam>().teamNumber) return;
+	
 		if (owner.name != other.name)
 		{
 			CLife goCLife = other.GetComponent<CLife>();
@@ -65,12 +73,12 @@ public class SkillAttack : ParticleDamage {
 	public void Damage(string sEnemy, int damage)	
 	{
 		GameObject enemy = GameObject.Find(sEnemy);
-//		CBasicAttributesHero cbah = enemy.GetComponent<CBasicAttributesHero>();
-//		if (damagePhysic)
-//			damage -= cbah.getDeffensePhysic();
-//		else
-//			damage -= cbah.getDeffenseMagic();
-//		damage = Mathf.Max(0, totalDamage);
+		CBasicAttributesHero cbah = enemy.GetComponent<CBasicAttributesHero>();
+		if (damagePhysic)
+			damage -= cbah.getDeffensePhysic();
+		else
+			damage -= cbah.getDeffenseMagic();
+		damage = Mathf.Max(0, damage);
 		
 		enemy.GetComponent<CLife>().Damage(damage, damageType);
 	}

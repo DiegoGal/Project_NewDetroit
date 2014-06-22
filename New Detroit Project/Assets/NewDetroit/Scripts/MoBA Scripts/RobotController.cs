@@ -145,8 +145,8 @@ public class RobotController : HeroeController
 		cooldown1 = COOLDOWN_SKILL_1; cooldown2 = COOLDOWN_SKILL_2; cooldown3 = COOLDOWN_SKILL_3;
 		
 		//Mana and adrenaline for skills
-		manaSkill1 = 50; manaSkill2 = -1; manaSkill3 = -1;
-		adrenSkill1 = -1; adrenSkill2 = 75; adrenSkill3 = 150;
+		manaSkill1 = 50; manaSkill2 = -1; manaSkill3 = 150;
+		adrenSkill1 = -1; adrenSkill2 = 75; adrenSkill3 = -1;
 		
 		//Initialize the animation
 		animation.Play ("Idle01");

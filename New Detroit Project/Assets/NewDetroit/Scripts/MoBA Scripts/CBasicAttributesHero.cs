@@ -143,7 +143,7 @@ public class CBasicAttributesHero : CLife {
 			return false;
 		else
 		{
-			//currentAdren -= adren;
+			currentAdren -= adren;
 			return true;
 		}
 	}
