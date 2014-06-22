@@ -72,6 +72,8 @@ public class LocalGameManager : MonoBehaviour {
                 break;
                 default:
                     Debug.Log("Error at selection");
+                    Destroy(army0);
+                    Destroy(army1);
                     break;
             }           
         }
