@@ -54,8 +54,6 @@ public class RolSelection : Photon.MonoBehaviour {
             for (int i = 0; i < model1.renderer.materials.Length; i++)
                 model1.renderer.materials[i].SetColor("_OutlineColor", Color.black);
         }
-        onlineExitButton.SetActive(true);
-        offlineExitButton.SetActive(false);
 	}
 
     public void SetOffline()
