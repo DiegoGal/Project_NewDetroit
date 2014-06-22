@@ -237,7 +237,9 @@ public class TowerArmy : Tower
                         Destroy(particles, 0.4f);
                         // first we check if the enemy is now alive
                         //ControllableCharacter lastEnemyAtackedUC = (ControllableCharacter)lastEnemyAttacked;
-                        if (lastEnemyAttacked.Damage(attackPower, 'P'))
+                        //if (lastEnemyAttacked.Damage(attackPower, 'P'))
+                        photonView.RPC("Kick", PhotonTargets.All, lastEnemyAttacked.name, attackPower);
+                        if (lastEnemyAttacked.GetComponent<CLife>().currentLife <= 0.0f)
                         {
                             // the enemy died, time to reset the lastEnemyAttacked reference
                             enemiesInside.Remove(lastEnemyAttacked);
@@ -266,11 +268,18 @@ public class TowerArmy : Tower
                         currentTowerState = TowerState.Idle;
 
                     break;
-
             }
         }
 
 	}// Update
+
+    [RPC]
+    public void Kick(string otherName, float damage)
+    {
+        GameObject other = GameObject.Find(otherName);
+        CLife otherCL = other.GetComponent<CLife>();
+        otherCL.Damage(damage);
+    }
 
 	public virtual void OnGUI ()
 	{
