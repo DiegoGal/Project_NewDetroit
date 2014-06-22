@@ -3,6 +3,12 @@ using System.Collections;
 
 public class ControllableCharacter : Photon.MonoBehaviour
 {
+    public enum TypeHeroe // The type of the heroe
+    {
+        Orc,
+        Robot
+    }
+
 	// --------------------------------------------------------------
 
     // referente to the Team component of the character

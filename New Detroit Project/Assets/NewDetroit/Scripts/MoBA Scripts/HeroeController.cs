@@ -29,12 +29,6 @@ public abstract class HeroeController : ControllableCharacter
 		Attack2,
 		Attack3,
 	}
-	
-	public enum TypeHeroe // The type of the heroe
-	{
-		Orc, 
-		Robot
-	}
 
 
 	//---------------------------------------------------------------------------------------------
