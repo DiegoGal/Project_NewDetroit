@@ -167,7 +167,9 @@ public class TowerNeutral : Tower
                     Destroy(particles, 0.4f);
                     // first we check if the enemy is now alive
                     //ControllableCharacter lastEnemyAtackedUC = (ControllableCharacter)lastEnemyAttacked;
-                    if (lastEnemyAttacked.Damage(attackPower, 'P'))
+                    //if (lastEnemyAttacked.Damage(attackPower, 'P'))
+					photonView.RPC("Kick", PhotonTargets.All, lastEnemyAttacked.name, attackPower);
+					if (lastEnemyAttacked.GetComponent<CLife>().currentLife <= 0.0f)
                     {
                         // the enemy died, time to reset the lastEnemyAttacked reference
                         enemiesInside.Remove(lastEnemyAttacked);
@@ -289,5 +291,4 @@ public class TowerNeutral : Tower
             cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
         }
     }
-
 }
