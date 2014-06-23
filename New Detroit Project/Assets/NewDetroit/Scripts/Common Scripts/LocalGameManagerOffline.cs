@@ -77,7 +77,10 @@ public class LocalGameManagerOffline : MonoBehaviour
 					//Destroy(robotEnemies);
                     break;
                 case 2: // Rob Army
+                    Camera.main.GetComponent<CameraRTSController>().enabled = true;
+                    Camera.main.GetComponent<CameraMOBAController>().enabled = false;
                     Camera.main.transform.position = redArmyCameraPosition.position;
+
                     redBase.GetComponent<CSelectable>().enabled = true;
                     redBase.GetComponent<BaseController>().enabled = true;
                     redBase.GetComponent<FogOfWarUnit>().enabled = true;
@@ -89,7 +92,10 @@ public class LocalGameManagerOffline : MonoBehaviour
 					//Destroy(robRenderEnemies);
                     break;
                 case 3: // Skelter Army
+                    Camera.main.GetComponent<CameraRTSController>().enabled = true;
+                    Camera.main.GetComponent<CameraMOBAController>().enabled = false;
                     Camera.main.transform.position = blueArmyCameraPosition.position;
+
                     redBase.GetComponent<CSelectable>().enabled = false;
                     redBase.GetComponent<BaseController>().enabled = false;
                     redBase.GetComponent<FogOfWarUnit>().enabled = false;
