@@ -15,31 +15,8 @@ public class UnitEngineerGoblin : UnitEngineer
         if (dummyHand == null)
             dummyHand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Mano Der");
 
-        // instanciate a laptop
-        laptopInst = Instantiate
-        (
-            laptop,
-            dummyLaptop.transform.position,
-            new Quaternion()
-        ) as GameObject;
-        laptopInst.transform.name = "Laptop";
-        laptopInst.transform.parent = dummyLaptop;
-        laptopInst.transform.rotation = transform.rotation;
-        // hide it
-        laptopInst.SetActive(false);
-
-        // instanciate a Hammer
-        hammerInst = Instantiate
-        (
-            hammer,
-            dummyHand.transform.position,
-            new Quaternion()
-        ) as GameObject;
-        hammerInst.transform.name = "Hammer";
-        hammerInst.transform.parent = dummyHand;
-        hammerInst.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
-        // hide it
-        hammerInst.SetActive(false);
+        photonView.RPC("InstanciateLaptop", PhotonTargets.All);
+        photonView.RPC("InstanciateHammer", PhotonTargets.All);
 
         type = TypeHeroe.Orc;
     }
@@ -64,7 +41,9 @@ public class UnitEngineerGoblin : UnitEngineer
                 //towerArmy.transform.Rotate(270.0f, 0.0f, 0.0f);
 				towerArmy.transform.Rotate(0.0f, 0.0f, 180.0f);
 				towerArmy.name = towerArmy.name.Replace("(Clone)", "");
-                towerArmy.GetComponent<TowerArmy>().SetTeamNumber(this.teamNumber, team.teamColorIndex);
+                //towerArmy.GetComponent<TowerArmy>().SetTeamNumber(this.teamNumber, team.teamColorIndex);
+                towerArmy.GetComponent<CTeamTowerArmy>().teamNumber = this.team.teamNumber;
+                towerArmy.GetComponent<CTeamTowerArmy>().teamColorIndex = this.team.teamColorIndex;
                 towerArmy.GetComponent<TowerArmy>().SetBaseController(baseController);
 				towerArmy.GetComponent<TowerArmy>().SetConstructMaterial();
                 newTAConstruct = true;

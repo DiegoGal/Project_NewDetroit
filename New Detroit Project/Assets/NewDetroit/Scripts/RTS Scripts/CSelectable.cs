@@ -27,8 +27,7 @@ public class CSelectable : MonoBehaviour
 
 	// Use this for initialization
 	void Awake ()
-    {
-
+    {        
         model = transform.FindChild("Model");
         if (model)
         {

@@ -83,7 +83,7 @@ public class CameraRTSController : MonoBehaviour
             if (
                  ( Input.GetKey(KeyCode.RightArrow) //||
                    //Input.GetKey(KeyCode.D) ||
-                   //(Input.mousePosition.x >= Screen.width * (1 - scrollEdge)) )
+                  // (Input.mousePosition.x >= Screen.width * (1 - scrollEdge)) )
                  && (transform.position.x < xMinMax.y))
                 )
             {
@@ -92,7 +92,7 @@ public class CameraRTSController : MonoBehaviour
             else if (
                 ( Input.GetKey(KeyCode.LeftArrow) //||
                   //Input.GetKey(KeyCode.A) ||
-                  //(Input.mousePosition.x <= Screen.width * scrollEdge) )
+                 // (Input.mousePosition.x <= Screen.width * scrollEdge) )
                  && (transform.position.x > xMinMax.x))
                 )
             {

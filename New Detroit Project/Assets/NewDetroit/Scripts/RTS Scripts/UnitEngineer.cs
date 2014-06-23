@@ -144,7 +144,8 @@ public class UnitEngineer : UnitController
                         cState.animationChanged = true;
 
                         // hide the hammer
-                        hammerInst.SetActive(false);
+                        //hammerInst.SetActive(false);
+                        photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
                     }
                     actualEngineerTime = 0;
                 }
@@ -174,7 +175,8 @@ public class UnitEngineer : UnitController
                         Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
                         
                         // hide the laptop
-                        laptopInst.SetActive(false);
+                        //laptopInst.SetActive(false);
+                        photonView.RPC("SetActiveLaptop", PhotonTargets.All, false);
                     }
                     actualEngineerTime = 0;
                 }
@@ -205,7 +207,8 @@ public class UnitEngineer : UnitController
                             cState.animationChanged = true;
 
                             // hide the hammer
-                            hammerInst.SetActive(false);
+                            //hammerInst.SetActive(false);
+                            photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
                         }
                         actualEngineerTime = 0;
                     }
@@ -229,7 +232,8 @@ public class UnitEngineer : UnitController
                             cState.animationChanged = true;
 
                             // hide the hammer
-                            hammerInst.SetActive(false);
+                            //hammerInst.SetActive(false);
+                            photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
 
                             baseController.GetArmyController().AddWarehouse(currentItem.GetComponent<CResourceBuilding>());
                         }
@@ -363,7 +367,8 @@ public class UnitEngineer : UnitController
 					cState.currentEngineerState = currentEngineerState;
 
                     // show the hammer
-                    hammerInst.SetActive(true);
+                    //hammerInst.SetActive(true);
+                    photonView.RPC("SetActiveHammer", PhotonTargets.All, true);
                 }
                 break;
             case EngineerState.GoingToConquestPosition:
@@ -374,7 +379,8 @@ public class UnitEngineer : UnitController
 					cState.currentEngineerState = currentEngineerState;
 
                     // show the laptop
-                    laptopInst.SetActive(true);
+                    //laptopInst.SetActive(true);
+                    photonView.RPC("SetActiveLaptop", PhotonTargets.All, true);
                 }
                 break;
             case EngineerState.GoingToConstructPosition:
@@ -393,7 +399,8 @@ public class UnitEngineer : UnitController
                         newTAConstruct = newWConstruct = false;
 
                         // show the hammer
-                        hammerInst.SetActive(true);
+                        //hammerInst.SetActive(true);
+                        photonView.RPC("SetActiveHammer", PhotonTargets.All, true);
                     }
                     else
                     {
@@ -671,9 +678,11 @@ public class UnitEngineer : UnitController
     {
 		reGone = false;
 		// hide the laptop
-        laptopInst.SetActive(false);
+        //laptopInst.SetActive(false);
+        photonView.RPC("SetActiveLaptop", PhotonTargets.All, false);
         // hide the hammer
-        hammerInst.SetActive(false);
+        //hammerInst.SetActive(false);
+        photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
 
         //LeaveQueues ();
 
@@ -1187,4 +1196,52 @@ public class UnitEngineer : UnitController
 			new Quaternion()
 		) as GameObject;
 	}
+
+    [RPC]
+    public void InstanciateHammer()
+    {
+        // instanciate a Hammer
+        hammerInst = Instantiate
+        (
+            hammer,
+            dummyHand.transform.position,
+            new Quaternion()       
+        ) as GameObject;
+        hammerInst.transform.name = "Hammer";
+        hammerInst.transform.parent = dummyHand;
+        hammerInst.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f));
+        // hide it
+        hammerInst.SetActive(false);
+    }
+
+    [RPC]
+    public void InstanciateLaptop()
+    {
+        // instanciate a laptop
+        laptopInst = Instantiate
+        (
+            laptop,
+            dummyLaptop.transform.position,
+            new Quaternion()
+        ) as GameObject;
+        laptopInst.transform.name = "Laptop";
+        laptopInst.transform.parent = dummyLaptop;
+        laptopInst.transform.rotation = transform.rotation;
+        // hide it
+        laptopInst.SetActive(false);
+    }
+
+    [RPC]
+    public void SetActiveLaptop(bool a)
+    {
+        // hide it
+        laptopInst.SetActive(a);
+    }
+
+    [RPC]
+    public void SetActiveHammer(bool a)
+    {
+        // hide it
+        hammerInst.SetActive(a);
+    }
 }

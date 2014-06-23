@@ -135,7 +135,8 @@ public abstract class BuildingController : Photon.MonoBehaviour
             {
                 pos = engineerPositions[i];
                 index = i;
-                engineerPosTaken[i] = true;
+                //engineerPosTaken[i] = true;
+                photonView.RPC("MorePositionsTaken", PhotonTargets.All, i);
                 cubes[i].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
                 found = true;
             }
@@ -145,6 +146,13 @@ public abstract class BuildingController : Photon.MonoBehaviour
         if (!found)
             engineerQueue.Add(unit);
         return found;
+    }
+
+    [RPC]
+    public void MorePositionsTaken(int i)
+    {
+        engineerPosTaken[i] = true;
+        cubes[i].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
     }
 
     public void SetTeamNumber (int teamNumber, int teamColorIndex)

@@ -19,7 +19,7 @@ public class TowerNeutral : Tower
 	private TowerState currentTowerState = TowerState.Neutral;
 	
 	//Conts for Tower conquest
-	private float[] contConq;
+	public float[] contConq;
 
 	//Constant when the tower is conquered
 	private const float finalCont = 100.0f;
@@ -31,7 +31,9 @@ public class TowerNeutral : Tower
 
     // to show the conquer cubes
     public bool showCubes = true;
-
+    
+    private int contStream = 0;
+    private int teamNumberEngineer = -1;
 	// Use this for initialization
 	public override void Start ()
     {
@@ -92,6 +94,13 @@ public class TowerNeutral : Tower
                         actualTimeConquering[i] = 0;
                     }
                 }
+                if (contStream >= 10 && teamNumberEngineer != -1 && contConq[teamNumberEngineer] > 0)
+                {
+                    photonView.RPC("UpdateContConq", PhotonTargets.All, teamNumberEngineer, contConq[teamNumberEngineer]);
+                    contStream = 0;
+                }
+                else
+                    contStream++;
                 break;
 
             case TowerState.Idle:
@@ -205,7 +214,8 @@ public class TowerNeutral : Tower
 	{
         actualTimeConquering[teamNumber] = 0;
         contConq[teamNumber] += sum;
-        if (contConq[teamNumber] >= finalCont)
+        teamNumberEngineer = teamNumber;
+        if (IsCurrentStateNeutral() && contConq[teamNumber] >= finalCont)
         {
             for (int i = 0; i < teamsPlaying; i++)
                 contConq[i] = 0;
@@ -218,7 +228,8 @@ public class TowerNeutral : Tower
             DistanceMeasurerTool.InsertUnit(team);
 
             // change the state to Idle
-            currentTowerState = TowerState.Idle;
+            //currentTowerState = TowerState.Idle;
+            photonView.RPC("NewConquest", PhotonTargets.All, life.currentLife);
 
             UpdateEnemiesInside(teamNumber);
             RemoveEngineersInQueue();
@@ -229,6 +240,19 @@ public class TowerNeutral : Tower
         }
         return false;
 	}
+
+    [RPC]
+    public void NewConquest (float lif)
+    {
+        currentTowerState = TowerState.Idle;
+        life.currentLife = lif;
+    }
+
+    [RPC]
+    public void UpdateContConq(int teamN, float sum)
+    {
+        contConq[teamN] = sum;
+    }
 
 	// It's called when a team isn't repairing and the state is neutral
 	private void LessConquest (int team)
@@ -287,8 +311,16 @@ public class TowerNeutral : Tower
             UnitEngineer unit = engineerQueue[0];
             unit.FinishWaitingToRepair(engineerPositions[index], index);
             engineerQueue.RemoveAt(0);
-            engineerPosTaken[index] = true;
+            //engineerPosTaken[index] = true;
+            photonView.RPC("LessPositionsTaken", PhotonTargets.All, index);
             cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
         }
+    }
+   
+    [RPC]
+    public void LessPositionsTaken(int i)
+    {
+        engineerPosTaken[i] = false;
+        cubes[i].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
     }
 }

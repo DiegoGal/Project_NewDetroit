@@ -236,9 +236,12 @@ public class TowerArmy : Tower
                         // Attack!
                         Debug.DrawLine(transform.position, lastEnemyAttacked.transform.position, Color.red, 0.2f);
                         // emite some particles:
-                        GameObject particles = (GameObject)Instantiate(shotParticles,
-                                                                       shotDummy.position,
-                                                                       transform.rotation);
+                        GameObject particles = (GameObject)Instantiate
+                        (
+                            shotParticles,
+                            shotDummy.position,
+                            transform.rotation
+                        );
                         Destroy(particles, 0.4f);
                         // first we check if the enemy is now alive
                         //ControllableCharacter lastEnemyAtackedUC = (ControllableCharacter)lastEnemyAttacked;
@@ -339,6 +342,8 @@ public class TowerArmy : Tower
                     cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
                 constructed = true;
                 photonView.RPC("Constructed",PhotonTargets.All, transform.position, transform.rotation);
+                // insert the tower in the DistanceMeasurerTool
+                DistanceMeasurerTool.InsertUnit(team);
                 return true;
             }
             else
