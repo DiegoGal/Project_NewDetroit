@@ -4,7 +4,7 @@ using System.Collections;
 public class LocalGameManagerOffline : MonoBehaviour
 {
 
-    public static int joinedId = -1;
+    public static int joinedId = 2;
 
     public GameObject army0, army1;
 
