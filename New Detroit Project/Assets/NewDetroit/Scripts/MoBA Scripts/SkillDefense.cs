@@ -13,12 +13,18 @@ public class SkillDefense : Photon.MonoBehaviour {
 	
 	public void UpDef()
 	{
-		photonView.RPC("UpDeffense", PhotonTargets.All, owner.name);
+		if (PhotonNetwork.connected)
+			photonView.RPC("UpDeffense", PhotonTargets.All, owner.name);
+		else
+			UpDeffense(owner.name);
 	}
 	
 	public void DownDef()
 	{
-		photonView.RPC("DownDeffense", PhotonTargets.All, owner.name);
+		if (PhotonNetwork.connected)
+			photonView.RPC("DownDeffense", PhotonTargets.All, owner.name);
+		else
+			DownDeffense(owner.name);
 	}
 	
 	

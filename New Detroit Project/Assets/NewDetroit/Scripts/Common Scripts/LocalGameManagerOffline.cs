@@ -6,17 +6,18 @@ public class LocalGameManagerOffline : MonoBehaviour
 
     public static int joinedId = -1;
 
-    public ArmyController army0, army1;
+    public GameObject army0, army1;
 
     public GameObject redBase;
     public GameObject blueBase;
-    public GameObject redArmyManager;
-    public GameObject blueArmyManager;
     public Transform redArmyCameraPosition;
     public Transform blueArmyCameraPosition;
     public GameObject navmeshColliders;
     public GameObject prefabRobRender;
     public GameObject prefabSkelterbot;
+    
+	public GameObject robRenderEnemies;
+    public GameObject robotEnemies;
 
     public void Awake()
     {
@@ -32,24 +33,48 @@ public class LocalGameManagerOffline : MonoBehaviour
             switch (joinedId)
             {
                 case 0: // Rob Render
-                    heroInst = (GameObject)Instantiate(prefabRobRender, redArmyCameraPosition.position + Vector3.down * 24f, new Quaternion());
+                	heroInst = (GameObject)Instantiate(prefabRobRender, redArmyCameraPosition.position + Vector3.down * 24f + Vector3.forward * 16, new Quaternion());
                     heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
+                    
+					heroInst.GetComponent<CharacterController>().enabled = true;
+					heroInst.GetComponent<ThirdPersonCamera>().enabled = true;
+					heroInst.GetComponent<FogOfWarUnit>().enabled = false;
+					heroInst.GetComponent<OrcController>().enabled = true;
+					heroInst.GetComponent<Animation>().enabled = true;
+					heroInst.GetComponent<NavMeshObstacle>().enabled = true;
+					heroInst.GetComponent<CStateUnit>().enabled = true;
+					heroInst.GetComponent<HeroNetwork>().enabled = false;
+					heroInst.GetComponent<CTeamUnit>().enabled = true;
 
                     Camera.main.GetComponent<CameraRTSController>().enabled = false;
                     Camera.main.GetComponent<CameraMOBAController>().enabled = true;
                     Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+					navmeshColliders.SetActive(true);
                     Destroy(army1);
                     Destroy(army0);
+					//Destroy(robRenderEnemies);
                     break;
                 case 1: // Skelterbot
                     heroInst = (GameObject)Instantiate(prefabSkelterbot, blueArmyCameraPosition.position + Vector3.down * 24f, new Quaternion());
                     heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
+                    
+					heroInst.GetComponent<CharacterController>().enabled = true;
+					heroInst.GetComponent<ThirdPersonCamera>().enabled = true;
+					heroInst.GetComponent<FogOfWarUnit>().enabled = false;
+					heroInst.GetComponent<RobotController>().enabled = true;
+					heroInst.GetComponent<Animation>().enabled = true;
+					heroInst.GetComponent<NavMeshObstacle>().enabled = true;
+					heroInst.GetComponent<CStateUnit>().enabled = true;
+					heroInst.GetComponent<HeroNetwork>().enabled = false;
+					heroInst.GetComponent<CTeamUnit>().enabled = true;
 
                     Camera.main.GetComponent<CameraRTSController>().enabled = false;
                     Camera.main.GetComponent<CameraMOBAController>().enabled = true;
                     Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+					navmeshColliders.SetActive(false);
                     Destroy(army1);
                     Destroy(army0);
+					//Destroy(robotEnemies);
                     break;
                 case 2: // Rob Army
                     Camera.main.transform.position = redArmyCameraPosition.position;
@@ -59,8 +84,9 @@ public class LocalGameManagerOffline : MonoBehaviour
                     blueBase.GetComponent<CSelectable>().enabled = false;
                     blueBase.GetComponent<BaseController>().enabled = false;
                     blueBase.GetComponent<FogOfWarUnit>().enabled = false;
-                    navmeshColliders.SetActive(false);
+                    navmeshColliders.SetActive(true);
                     Destroy(army1);
+					//Destroy(robRenderEnemies);
                     break;
                 case 3: // Skelter Army
                     Camera.main.transform.position = blueArmyCameraPosition.position;
@@ -70,8 +96,9 @@ public class LocalGameManagerOffline : MonoBehaviour
                     blueBase.GetComponent<CSelectable>().enabled = true;
                     blueBase.GetComponent<BaseController>().enabled = true;
                     blueBase.GetComponent<FogOfWarUnit>().enabled = true;
-                    navmeshColliders.SetActive(false);
+					navmeshColliders.SetActive(true);
                     Destroy(army0);
+					//Destroy(robotEnemies);
                     break;
                 default:
                     Debug.Log("Error at selection");

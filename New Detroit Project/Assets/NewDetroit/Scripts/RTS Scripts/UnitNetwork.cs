@@ -18,8 +18,9 @@ public class UnitNetwork : BasicNetwork
 	{
 		base.Awake();
 
-        if (GetComponent<ControllableCharacter>().getTypeHero() == ControllableCharacter.TypeHeroe.Orc) GetComponent<CTeam>().teamNumber = 0;
-        else GetComponent<CTeam>().teamNumber = 1;
+		if (PhotonNetwork.connected)
+        	if (GetComponent<ControllableCharacter>().getTypeHero() == ControllableCharacter.TypeHeroe.Orc) GetComponent<CTeam>().teamNumber = 0;
+        	else GetComponent<CTeam>().teamNumber = 1;
 	
 		selectableScript      = GetComponent<CSelectable>();
         unitScript            = GetComponent<UnitController>();
@@ -28,27 +29,30 @@ public class UnitNetwork : BasicNetwork
         navMeshAgent          = GetComponent<NavMeshAgent>();
         stateScript           = GetComponent<CStateUnit>();
 		
-		if (photonView.isMine)
-		{
-			//MINE: local player, simply enable the local scripts
-			selectableScript.enabled      = true;
-            unitScript.enabled            = true;
-			fogOfWarScript.enabled        = true;
-            unitAnimationsNetwork.enabled = false;
-			navMeshAgent.enabled          = true;
-
-            //Debug.Log("MINE");
-		}
+		if (PhotonNetwork.connected)
+			if (photonView.isMine)
+			{
+				//MINE: local player, simply enable the local scripts
+				selectableScript.enabled      = true;
+	            unitScript.enabled            = true;
+				fogOfWarScript.enabled        = true;
+	            unitAnimationsNetwork.enabled = false;
+				navMeshAgent.enabled          = true;
+	
+	            //Debug.Log("MINE");
+			}
+			else
+			{           
+				selectableScript.enabled      = false;
+	            unitScript.enabled            = false;
+				fogOfWarScript.enabled        = false;
+	            unitAnimationsNetwork.enabled = true;
+				navMeshAgent.enabled          = false;
+	
+	            //Debug.Log("not MINE");
+			}
 		else
-		{           
-			selectableScript.enabled      = false;
-            unitScript.enabled            = false;
-			fogOfWarScript.enabled        = false;
-            unitAnimationsNetwork.enabled = true;
-			navMeshAgent.enabled          = false;
-
-            //Debug.Log("not MINE");
-		}
+			enabled = false;
 
         // se captura la referencia al modelo
         model = transform.FindChild("Model");

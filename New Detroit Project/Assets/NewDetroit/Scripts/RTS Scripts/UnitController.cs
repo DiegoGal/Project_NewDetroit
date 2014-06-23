@@ -236,8 +236,10 @@ public class UnitController : ControllableCharacter
                     transform.LookAt(enemySelected.transform);
 
                     attackCadenceAux = attackCadence;
-
-                    photonView.RPC("Kick", PhotonTargets.All, enemySelected.name, basicAttackPower);
+					if (PhotonNetwork.connected)
+                    	photonView.RPC("Kick", PhotonTargets.All, enemySelected.name, basicAttackPower);
+                    else
+                    	Kick(enemySelected.name,basicAttackPower);
                     if (!enemySelected.GetComponent<CLife>().IsAlive())
                     //if (enemySelected.Damage(basicAttackPower))
                     {
@@ -357,7 +359,10 @@ public class UnitController : ControllableCharacter
 
             currentState = State.AscendingToHeaven;
             cState.currentState = currentState;
-            photonView.RPC("ChangeToDyingMaterial", PhotonTargets.All);
+            if (PhotonNetwork.connected)
+            	photonView.RPC("ChangeToDyingMaterial", PhotonTargets.All);
+            else
+            	ChangeToDyingMaterial();
         }
     }
 
@@ -377,7 +382,10 @@ public class UnitController : ControllableCharacter
         model.renderer.material.SetFloat("_AlphaMultiplyValue", alphaValue);
         if (alphaValue <= 0.0f)
             //Destroy(this.gameObject);
-            PhotonNetwork.Destroy(gameObject);
+			if (PhotonNetwork.connected)
+            	PhotonNetwork.Destroy(gameObject);
+			else
+				Destroy(gameObject);
     }
 
     public virtual void OnGUI ()

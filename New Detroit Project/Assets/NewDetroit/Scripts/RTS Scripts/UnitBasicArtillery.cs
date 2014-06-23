@@ -113,7 +113,10 @@ public class UnitBasicArtillery : UnitArtillery
                         ;
                         // first we check if the enemy is now alive
                         //if (lastEnemyAttacked.Damage(basicAttackPower))
-                        photonView.RPC("Kick", PhotonTargets.All, lastEnemyAttacked.name, basicAttackPower);
+                        if (PhotonNetwork.connected)
+                        	photonView.RPC("Kick", PhotonTargets.All, lastEnemyAttacked.name, basicAttackPower);
+                        else
+                        	Kick (lastEnemyAttacked.name,basicAttackPower);	
                         if (lastEnemyAttacked.GetComponent<CLife>().currentLife <= 0.0f)
                         {
                             // the enemy died, time to reset the lastEnemyAttacked reference

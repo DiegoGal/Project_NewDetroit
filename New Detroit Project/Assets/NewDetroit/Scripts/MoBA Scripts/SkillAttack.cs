@@ -39,14 +39,20 @@ public class SkillAttack : ParticleDamage {
 					UnitController otherUC = other.GetComponent<UnitController>();
 					
 //					photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
-					photonView.RPC("AddNewUnitForce", PhotonTargets.All, other.gameObject.name);
+					if (PhotonNetwork.connected)
+						photonView.RPC("AddNewUnitForce", PhotonTargets.All, other.gameObject.name);
+					else
+						AddNewUnitForce(other.gameObject.name);
 					
 					unitList.Add(other);
 				}
 			}
 			else if (other.tag == "Player")
 			{
-				photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
+				if (PhotonNetwork.connected)
+					photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
+				else
+					Damage(other.gameObject.name, totalDamage);
 			}
 		}
 	}
@@ -61,7 +67,10 @@ public class SkillAttack : ParticleDamage {
 			CLife goCLife = other.GetComponent<CLife>();
 			if (goCLife == null) return;
 			
-			photonView.RPC("Damage", PhotonTargets.All, other.name, totalDamage);
+			if (PhotonNetwork.connected)
+				photonView.RPC("Damage", PhotonTargets.All, other.name, totalDamage);
+			else
+				Damage(other.name, totalDamage);
 		}
 	}
 	
@@ -87,7 +96,7 @@ public class SkillAttack : ParticleDamage {
 	public void AddNewUnitForce (string otherName)
 	{
 		GameObject other = GameObject.Find(otherName);
-		if (other.GetComponent<PhotonView>().isMine)
+		if (other.GetComponent<PhotonView>().isMine || !PhotonNetwork.connected)
 		{
 			// For damage
 			UnitController otherUC = other.GetComponent<UnitController>();

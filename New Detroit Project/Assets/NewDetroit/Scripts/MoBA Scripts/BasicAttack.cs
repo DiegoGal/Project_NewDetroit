@@ -100,8 +100,10 @@ public class BasicAttack : Photon.MonoBehaviour {
 		{
 			CLife goCLife = go.GetComponent<CLife>();
 			if (goCLife == null) return;
-			
-			photonView.RPC("Damage", PhotonTargets.All, go.name, owner.GetComponent<HeroeController>().getAttackP());
+			if (PhotonNetwork.connected)
+				photonView.RPC("Damage", PhotonTargets.All, go.name, owner.GetComponent<HeroeController>().getAttackP());
+			else
+				Damage (go.name,owner.GetComponent<HeroeController>().getAttackP());
 		}
 	}
 }

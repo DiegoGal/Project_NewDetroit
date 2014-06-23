@@ -12,22 +12,22 @@ public class SkillAttackNetwork : BasicNetwork {
 	public virtual void Awake()
 	{
 		base.Awake();
-		
-		if (photonView.isMine)
-		{
-			GetComponent<SkillAttack>().enabled = true;
-			if (!isParticleDamage)
-				GetComponent<SphereCollider>().enabled = true;
-		}
-		else
-		{
-			GetComponent<SkillAttack>().enabled = false;			
-			if (!isParticleDamage)
+		if (PhotonNetwork.connected)
+			if (photonView.isMine)
 			{
-				GetComponent<SphereCollider>().enabled = false;
-				Destroy(GetComponent<Rigidbody>());
+				GetComponent<SkillAttack>().enabled = true;
+				if (!isParticleDamage)
+					GetComponent<SphereCollider>().enabled = true;
 			}
-		}
+			else
+			{
+				GetComponent<SkillAttack>().enabled = false;			
+				if (!isParticleDamage)
+				{
+					GetComponent<SphereCollider>().enabled = false;
+					Destroy(GetComponent<Rigidbody>());
+				}
+			}
 	}
 	
 }

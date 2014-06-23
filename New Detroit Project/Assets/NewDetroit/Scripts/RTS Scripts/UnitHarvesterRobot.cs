@@ -138,10 +138,16 @@ public class UnitHarvesterRobot : UnitHarvester
 //        actualMineralPack.transform.parent = dummyMineralPack;
         
 		// intanciamos un pack de minerales encima de la unidad
-		photonView.RPC("InstanciateMineralPack", PhotonTargets.All);
+		if (PhotonNetwork.connected)
+			photonView.RPC("InstanciateMineralPack", PhotonTargets.All);
+		else
+			InstanciateMineralPack();
         // se esconde:
         //ShowMineralPack(loaded);
-		photonView.RPC("ShowMineralPack", PhotonTargets.All, false);
+        if (PhotonNetwork.connected)
+			photonView.RPC("ShowMineralPack", PhotonTargets.All, false);
+		else
+			ShowMineralPack(false);
         
     }
 

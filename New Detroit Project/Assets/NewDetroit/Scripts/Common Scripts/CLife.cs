@@ -90,7 +90,10 @@ public class CLife : Photon.MonoBehaviour
     
 	public bool HealAlly(float amount)
 	{
-		photonView.RPC("Heal", PhotonTargets.All, amount);
+		if (PhotonNetwork.connected)
+			photonView.RPC("Heal", PhotonTargets.All, amount);
+		else
+			Heal(amount);
 		
 		if (currentLife == maximunLife)
 			return true;
