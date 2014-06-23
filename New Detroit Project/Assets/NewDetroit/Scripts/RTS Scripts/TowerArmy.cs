@@ -246,7 +246,10 @@ public class TowerArmy : Tower
                         // first we check if the enemy is now alive
                         //ControllableCharacter lastEnemyAtackedUC = (ControllableCharacter)lastEnemyAttacked;
                         //if (lastEnemyAttacked.Damage(attackPower, 'P'))
-                        photonView.RPC("Kick", PhotonTargets.All, lastEnemyAttacked.name, attackPower);
+                        if (PhotonNetwork.connected)
+                        	photonView.RPC("Kick", PhotonTargets.All, lastEnemyAttacked.name, attackPower);
+                        else
+                        	Kick(lastEnemyAttacked.name, attackPower);
                         if (lastEnemyAttacked.GetComponent<CLife>().currentLife <= 0.0f)
                         {
                             // the enemy died, time to reset the lastEnemyAttacked reference
@@ -341,7 +344,10 @@ public class TowerArmy : Tower
                 for (int i = 0; i < numEngineerPositions; i++)
                     cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
                 constructed = true;
-                photonView.RPC("Constructed",PhotonTargets.All, transform.position, transform.rotation);
+                if (PhotonNetwork.connected)
+                	photonView.RPC("Constructed",PhotonTargets.All, transform.position, transform.rotation);
+                else
+                	Constructed(transform.position, transform.rotation);
                 // insert the tower in the DistanceMeasurerTool
                 DistanceMeasurerTool.InsertUnit(team);
                 return true;

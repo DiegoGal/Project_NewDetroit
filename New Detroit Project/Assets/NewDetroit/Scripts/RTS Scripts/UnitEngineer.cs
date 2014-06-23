@@ -145,7 +145,10 @@ public class UnitEngineer : UnitController
 
                         // hide the hammer
                         //hammerInst.SetActive(false);
-                        photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
+                        if (PhotonNetwork.connected)
+                        	photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
+                        else
+                        	SetActiveHammer(false);
                     }
                     actualEngineerTime = 0;
                 }
@@ -176,7 +179,10 @@ public class UnitEngineer : UnitController
                         
                         // hide the laptop
                         //laptopInst.SetActive(false);
-                        photonView.RPC("SetActiveLaptop", PhotonTargets.All, false);
+						if (PhotonNetwork.connected)
+                        	photonView.RPC("SetActiveLaptop", PhotonTargets.All, false);
+                        else
+                        	SetActiveLaptop(false);
                     }
                     actualEngineerTime = 0;
                 }
@@ -208,7 +214,10 @@ public class UnitEngineer : UnitController
 
                             // hide the hammer
                             //hammerInst.SetActive(false);
-                            photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
+							if (PhotonNetwork.connected)
+                            	photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
+                            else
+                            	SetActiveHammer(false);
                         }
                         actualEngineerTime = 0;
                     }
@@ -233,7 +242,10 @@ public class UnitEngineer : UnitController
 
                             // hide the hammer
                             //hammerInst.SetActive(false);
-                            photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
+							if (PhotonNetwork.connected)
+                            	photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
+                            else
+                            	SetActiveHammer(false);
 
                             baseController.GetArmyController().AddWarehouse(currentItem.GetComponent<CResourceBuilding>());
                         }
@@ -368,7 +380,10 @@ public class UnitEngineer : UnitController
 
                     // show the hammer
                     //hammerInst.SetActive(true);
-                    photonView.RPC("SetActiveHammer", PhotonTargets.All, true);
+					if (PhotonNetwork.connected)
+                    	photonView.RPC("SetActiveHammer", PhotonTargets.All, true);
+                    else
+                    	SetActiveHammer(true);
                 }
                 break;
             case EngineerState.GoingToConquestPosition:
@@ -380,7 +395,10 @@ public class UnitEngineer : UnitController
 
                     // show the laptop
                     //laptopInst.SetActive(true);
-                    photonView.RPC("SetActiveLaptop", PhotonTargets.All, true);
+					if (PhotonNetwork.connected)
+                    	photonView.RPC("SetActiveLaptop", PhotonTargets.All, true);
+                    else
+                    	SetActiveLaptop(true);
                 }
                 break;
             case EngineerState.GoingToConstructPosition:
@@ -400,7 +418,10 @@ public class UnitEngineer : UnitController
 
                         // show the hammer
                         //hammerInst.SetActive(true);
-                        photonView.RPC("SetActiveHammer", PhotonTargets.All, true);
+						if (PhotonNetwork.connected)
+                        	photonView.RPC("SetActiveHammer", PhotonTargets.All, true);
+                        else
+                        	SetActiveHammer(true);
                     }
                     else
                     {
@@ -474,12 +495,19 @@ public class UnitEngineer : UnitController
 //                ) as GameObject;
 
 				//photonView.RPC("createGrenade", PhotonTargets.All);
-				newGrenade = PhotonNetwork.Instantiate(
-					"Goblin Grenade",
-					dummyHand.transform.position,
-					new Quaternion(),
-					0
-				);
+				if (PhotonNetwork.connected)
+					newGrenade = PhotonNetwork.Instantiate(
+						"Goblin Grenade",
+						dummyHand.transform.position,
+						new Quaternion(),
+						0
+					);
+				else
+					newGrenade = (GameObject) Instantiate(
+						grenade,
+						dummyHand.transform.position,
+						new Quaternion()
+					);
 				
                 newGrenade.rigidbody.isKinematic = false;
                 newGrenade.transform.name = "Grenade";
@@ -679,10 +707,16 @@ public class UnitEngineer : UnitController
 		reGone = false;
 		// hide the laptop
         //laptopInst.SetActive(false);
-        photonView.RPC("SetActiveLaptop", PhotonTargets.All, false);
+        if (PhotonNetwork.connected)
+        	photonView.RPC("SetActiveLaptop", PhotonTargets.All, false);
+        else 
+        	SetActiveLaptop(false);
         // hide the hammer
         //hammerInst.SetActive(false);
-        photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
+        if (PhotonNetwork.connected)
+        	photonView.RPC("SetActiveHammer", PhotonTargets.All, false);
+        else
+        	SetActiveHammer(false);
 
         //LeaveQueues ();
 
