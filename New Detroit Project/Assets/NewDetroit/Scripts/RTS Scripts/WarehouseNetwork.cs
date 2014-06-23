@@ -15,7 +15,7 @@ public class WarehouseNetwork : Photon.MonoBehaviour
 			lifeScript.enabled = true;
 			GetComponent<Warehouse>().enabled = true;
 		}
-		else
+        else if (PhotonNetwork.connected)
 		{
 			lifeScript.enabled = true;
 			GetComponent<Warehouse>().enabled = false;
@@ -46,7 +46,8 @@ public class WarehouseNetwork : Photon.MonoBehaviour
 	
 	void Update()
 	{
-		if (!photonView.isMine)
+        if (PhotonNetwork.connected)
+        if (!photonView.isMine)
 		{
 			lifeScript.setLife(life);
 		}

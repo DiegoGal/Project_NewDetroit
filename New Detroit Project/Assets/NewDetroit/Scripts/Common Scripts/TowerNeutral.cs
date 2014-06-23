@@ -94,7 +94,7 @@ public class TowerNeutral : Tower
                         actualTimeConquering[i] = 0;
                     }
                 }
-                if (contStream >= 10 && teamNumberEngineer != -1 && contConq[teamNumberEngineer] > 0)
+                if (PhotonNetwork.connected && contStream >= 10 && teamNumberEngineer != -1 && contConq[teamNumberEngineer] > 0)
                 {
                     photonView.RPC("UpdateContConq", PhotonTargets.All, teamNumberEngineer, contConq[teamNumberEngineer]);
                     contStream = 0;
@@ -177,7 +177,10 @@ public class TowerNeutral : Tower
                     // first we check if the enemy is now alive
                     //ControllableCharacter lastEnemyAtackedUC = (ControllableCharacter)lastEnemyAttacked;
                     //if (lastEnemyAttacked.Damage(attackPower, 'P'))
-					photonView.RPC("Kick", PhotonTargets.All, lastEnemyAttacked.name, attackPower);
+                    if (PhotonNetwork.connected)
+                        photonView.RPC("Kick", PhotonTargets.All, lastEnemyAttacked.name, attackPower);
+                    else lastEnemyAttacked.Damage(attackPower, 'P');
+
 					if (lastEnemyAttacked.GetComponent<CLife>().currentLife <= 0.0f)
                     {
                         // the enemy died, time to reset the lastEnemyAttacked reference
@@ -228,8 +231,10 @@ public class TowerNeutral : Tower
             DistanceMeasurerTool.InsertUnit(team);
 
             // change the state to Idle
-            //currentTowerState = TowerState.Idle;
-            photonView.RPC("NewConquest", PhotonTargets.All, life.currentLife);
+            //
+            if (PhotonNetwork.connected) 
+                photonView.RPC("NewConquest", PhotonTargets.All, life.currentLife);
+            else currentTowerState = TowerState.Idle;
 
             UpdateEnemiesInside(teamNumber);
             RemoveEngineersInQueue();
@@ -312,7 +317,10 @@ public class TowerNeutral : Tower
             unit.FinishWaitingToRepair(engineerPositions[index], index);
             engineerQueue.RemoveAt(0);
             //engineerPosTaken[index] = true;
-            photonView.RPC("LessPositionsTaken", PhotonTargets.All, index);
+            if (PhotonNetwork.connected) 
+                photonView.RPC("LessPositionsTaken", PhotonTargets.All, index);
+            else
+                engineerPosTaken[index] = true;
             cubes[index].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
         }
     }

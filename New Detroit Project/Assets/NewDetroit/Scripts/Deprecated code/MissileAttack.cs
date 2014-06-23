@@ -29,7 +29,9 @@ public class MissileAttack : ParticleDamage
 
         destroyTimeAcumSplash += Time.deltaTime;
         if (destroyTimeAcumSplash >= 1.2f)
-            PhotonNetwork.Destroy(this.gameObject);
+            if (PhotonNetwork.connected)
+                PhotonNetwork.Destroy(this.gameObject);
+            else Destroy(this.gameObject);
     }
 
     public void SetOwner (GameObject owner)

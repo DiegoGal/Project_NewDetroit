@@ -41,6 +41,7 @@ public class BasicNetwork : Photon.MonoBehaviour
 
     public virtual void Update()
     {
+        if (PhotonNetwork.connected)
         if (!photonView.isMine && correctPlayerPos.y != -10)
         {
             //Update remote player (smooth this, this looks good, at the cost of some accuracy)

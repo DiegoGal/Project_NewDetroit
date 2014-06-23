@@ -495,6 +495,7 @@ public class UnitEngineer : UnitController
 //                ) as GameObject;
 
 				//photonView.RPC("createGrenade", PhotonTargets.All);
+
 				if (PhotonNetwork.connected)
 					newGrenade = PhotonNetwork.Instantiate(
 						"Goblin Grenade",

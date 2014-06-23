@@ -18,7 +18,7 @@ public class UnitNetwork : BasicNetwork
 	{
 		base.Awake();
 
-		if (PhotonNetwork.connected)
+		//if (PhotonNetwork.connected)
         	if (GetComponent<ControllableCharacter>().getTypeHero() == ControllableCharacter.TypeHeroe.Orc) GetComponent<CTeam>().teamNumber = 0;
         	else GetComponent<CTeam>().teamNumber = 1;
 	

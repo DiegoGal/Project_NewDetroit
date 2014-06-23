@@ -42,6 +42,7 @@ public class BuildingNetwork : Photon.MonoBehaviour
 
     void Update()
     {
+        if (PhotonNetwork.connected)
         if (!photonView.isMine)
         {
             lifeScript.setLife(life);

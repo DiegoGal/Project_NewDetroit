@@ -170,13 +170,13 @@ public class UnitHeavyArtillery : UnitArtillery
                         Debug.Log("Dummy position: " + dummyLeftWeaponGunBarrel.transform.position);
                         Debug.Log("HeavyArtillery position: " + transform.position);
                         if (PhotonNetwork.connected)
-                        newMissile = PhotonNetwork.Instantiate
-                        (
-                            "Goblin Missile",
-                            dummyLeftWeaponGunBarrel.transform.position,
-                            new Quaternion(),
-                            0
-                        ) as GameObject;
+                            newMissile = PhotonNetwork.Instantiate
+                            (
+                                "Goblin Missile",
+                                dummyLeftWeaponGunBarrel.transform.position,
+                                new Quaternion(),
+                                0
+                            ) as GameObject;
                         else
 							newMissile = Instantiate
 								(

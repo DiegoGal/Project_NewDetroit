@@ -136,7 +136,10 @@ public abstract class BuildingController : Photon.MonoBehaviour
                 pos = engineerPositions[i];
                 index = i;
                 //engineerPosTaken[i] = true;
-                photonView.RPC("MorePositionsTaken", PhotonTargets.All, i);
+                if (PhotonNetwork.connected)
+                    photonView.RPC("MorePositionsTaken", PhotonTargets.All, i);
+                else engineerPosTaken[i] = true;
+
                 cubes[i].renderer.material.color = new Color(0.863f, 0.078f, 0.235f);
                 found = true;
             }

@@ -15,7 +15,7 @@ public class MissileNetwork : BasicNetwork
         capsuleColl = GetComponent<CapsuleCollider>();
         rigidB = GetComponent<Rigidbody>();
         visionCapsule = GetComponent<CMissileVisionCapsule>();
-
+        if (PhotonNetwork.connected)
         if (photonView.isMine)
         {
             capsuleColl.enabled = true;
