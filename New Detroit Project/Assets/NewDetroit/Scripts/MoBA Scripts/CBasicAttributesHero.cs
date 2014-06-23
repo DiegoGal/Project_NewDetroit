@@ -163,7 +163,10 @@ public class CBasicAttributesHero : CLife {
 			return false;
 		else
 		{
-			photonView.RPC("UpdateAdren", PhotonTargets.All, -adren);
+			if (PhotonNetwork.connected)
+				photonView.RPC("UpdateAdren", PhotonTargets.All, -adren);
+			else
+				UpdateAdren(-adren);
 //			currentAdren -= adren;
 			return true;
 		}
@@ -175,7 +178,10 @@ public class CBasicAttributesHero : CLife {
 			return false;
 		else
 		{
-			photonView.RPC("UpdateMana", PhotonTargets.All, -mana);
+			if (PhotonNetwork.connected)
+				photonView.RPC("UpdateMana", PhotonTargets.All, -mana);
+			else 
+				UpdateMana(-mana);
 //			currentMana -= mana;
 			return true;
 		}
@@ -185,7 +191,10 @@ public class CBasicAttributesHero : CLife {
 	{
 		if (currentAdren < maximunAdren)
 		{
-			photonView.RPC("UpdateAdren", PhotonTargets.All, adren);
+			if (PhotonNetwork.connected)
+				photonView.RPC("UpdateAdren", PhotonTargets.All, adren);
+			else
+				UpdateAdren(adren);
 		}
 //		currentAdren += adren;
 //		currentAdren = Mathf.Min(maximunAdren, currentAdren);
@@ -195,7 +204,10 @@ public class CBasicAttributesHero : CLife {
 	{
 		if (currentMana < maximunMana)
 		{
-			photonView.RPC("UpdateMana", PhotonTargets.All, mana);
+			if (PhotonNetwork.connected)
+				photonView.RPC("UpdateMana", PhotonTargets.All, mana);
+			else
+				UpdateMana(mana);
 		}
 //		currentMana += mana;
 //		currentMana = Mathf.Min(maximunMana, currentMana);

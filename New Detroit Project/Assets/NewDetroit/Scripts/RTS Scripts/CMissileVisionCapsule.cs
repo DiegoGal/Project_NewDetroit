@@ -30,13 +30,22 @@ public class CMissileVisionCapsule : Photon.MonoBehaviour
         if (!thrown && other.gameObject.name != "TowerVisionSphere" && other.gameObject.name != "MissileSplash"
             && other.gameObject.name != "ShockwaveArtilleryHeavy" && other.gameObject.name != "Missile")
         {
-            GameObject newSplash = PhotonNetwork.Instantiate
+			GameObject newSplash;
+        	if (PhotonNetwork.connected)
+            newSplash = PhotonNetwork.Instantiate
                 (
                     "ShockwaveArtilleryHeavy",
                     transform.position,
                     new Quaternion(),
                     0
                 ) as GameObject;
+            else
+				newSplash = Instantiate
+					(
+						splash,
+						transform.position,
+						new Quaternion()
+						) as GameObject;
             newSplash.transform.name = "ShockwaveArtilleryHeavy";
             newSplash.GetComponent<ObjectAttack>().SetDamage(damage);
             newSplash.GetComponent<ObjectAttack>().SetOwner(owner);
@@ -50,7 +59,10 @@ public class CMissileVisionCapsule : Photon.MonoBehaviour
             rigidbody.isKinematic = true;
             //Destroy(newSplash, 1.2f);
             thrown = true;
-            PhotonNetwork.Destroy(gameObject);
+            if (PhotonNetwork.connected)
+            	PhotonNetwork.Destroy(gameObject);
+            else
+            	Destroy(gameObject);
         }
     
     }

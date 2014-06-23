@@ -169,6 +169,7 @@ public class UnitHeavyArtillery : UnitArtillery
                         // Instanciate a new Missile
                         Debug.Log("Dummy position: " + dummyLeftWeaponGunBarrel.transform.position);
                         Debug.Log("HeavyArtillery position: " + transform.position);
+                        if (PhotonNetwork.connected)
                         newMissile = PhotonNetwork.Instantiate
                         (
                             "Goblin Missile",
@@ -176,6 +177,13 @@ public class UnitHeavyArtillery : UnitArtillery
                             new Quaternion(),
                             0
                         ) as GameObject;
+                        else
+							newMissile = Instantiate
+								(
+									missile,
+									dummyLeftWeaponGunBarrel.transform.position,
+									new Quaternion()
+									) as GameObject;
                         newMissile.rigidbody.isKinematic = false;
                         newMissile.transform.name = "Missile";
                         newMissile.transform.rotation = dummyLeftWeaponGunBarrel.transform.rotation;

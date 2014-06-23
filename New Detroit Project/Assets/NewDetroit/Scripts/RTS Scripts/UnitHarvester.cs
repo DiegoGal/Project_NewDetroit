@@ -291,7 +291,10 @@ public class UnitHarvester : UnitController
 
                         // se muestra el pack de minerales
                         loaded = true;
-                        photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
+                        if (PhotonNetwork.connected)
+                        	photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
+                        else
+                        	ShowMineralPack(loaded);
                         //ShowMineralPack(loaded);
 
                         CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
@@ -740,7 +743,10 @@ public class UnitHarvester : UnitController
 			// escondemos el pack de minerales
             loaded = false;
             //ShowMineralPack(false);
-            photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
+            if (PhotonNetwork.connected)
+            	photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
+            else
+            	ShowMineralPack(loaded);
 
             if (nextHarvestState == HarvestState.GoingToMine)
             {

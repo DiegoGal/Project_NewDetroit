@@ -9,16 +9,17 @@ public class RobotBasicNetwork : BasicNetwork {
 		
 		GetComponent<MeshRenderer> ().enabled = false;
 		
-		if (photonView.isMine)
-		{
-			GetComponent<BoxCollider>().enabled = true;
-			GetComponent<RobotBasicAttack>().enabled = true;
-		}
-		else
-		{
-			GetComponent<BoxCollider>().enabled = false;
-			GetComponent<RobotBasicAttack>().enabled = false;
-			Destroy(GetComponent<Rigidbody>());
-		}
+		if (PhotonNetwork.connected)
+			if (photonView.isMine)
+			{
+				GetComponent<BoxCollider>().enabled = true;
+				GetComponent<RobotBasicAttack>().enabled = true;
+			}
+			else
+			{
+				GetComponent<BoxCollider>().enabled = false;
+				GetComponent<RobotBasicAttack>().enabled = false;
+				Destroy(GetComponent<Rigidbody>());
+			}
 	}
 }

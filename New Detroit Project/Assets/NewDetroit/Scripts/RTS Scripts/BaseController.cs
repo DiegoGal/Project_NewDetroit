@@ -273,7 +273,7 @@ public class BaseController : CResourceBuilding
         }
 
         if (newUnit)
-        {
+        {        		
             newUnit.GetComponent<ControllableCharacter>().isMine = true;
             newUnit.GetComponent<UnitController>().SetArmyBase(this);
             newUnit.GetComponent<UnitController>().SetBasePosition(transform.position);

@@ -70,6 +70,7 @@ public class RolSelection : Photon.MonoBehaviour {
         else
             UpdateNGUI("Army");
         StartCoroutine(SetRoomName());
+		playButton.GetComponentInChildren<UILabel>().text = "Start";
     }
 
     private IEnumerator SetRoomName()
@@ -283,7 +284,7 @@ public class RolSelection : Photon.MonoBehaviour {
             else numPlay++;
             j++;
         }
-        return numPlay >= 2;// true;
+        return numPlay >= 1;// true;
     }
 
     public void UpdateNGUI(string change)
@@ -396,7 +397,15 @@ public class RolSelection : Photon.MonoBehaviour {
         else
         {
             // Load the offline level
-            Application.LoadLevel(NetworkController.SceneNameGameOffline);
+			if (localSelection == -1)
+			{
+				playButton.GetComponentInChildren<UILabel>().text = "Select role";
+			}
+			else
+			{
+				LocalGameManagerOffline.joinedId = localSelection;
+				Application.LoadLevel(NetworkController.SceneNameGameOffline);
+			}			
         }
 
         //PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);

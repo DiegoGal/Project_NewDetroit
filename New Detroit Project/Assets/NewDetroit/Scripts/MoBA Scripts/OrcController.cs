@@ -119,13 +119,21 @@ public class OrcController : HeroeController
 		//Set the collider cubes in both hands
 		//Right hand	
 		Transform hand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand");
-		GameObject cubeColliderInst = (GameObject) PhotonNetwork.Instantiate(cubeColliderHand.name, hand.position + new Vector3(-0.25f, -0.5f, 0), hand.rotation, 0);
+		GameObject cubeColliderInst;
+		if (PhotonNetwork.connected) 
+			cubeColliderInst = (GameObject) PhotonNetwork.Instantiate(cubeColliderHand.name, hand.position + new Vector3(-0.25f, -0.5f, 0), hand.rotation, 0);
+		else 
+			cubeColliderInst = (GameObject) Instantiate(cubeColliderHand, hand.position + new Vector3(-0.25f, -0.5f, 0), hand.rotation);
+			
 		cubeColliderInst.transform.parent = hand;
 		cubeColliderInst.GetComponent<OrcBasicAttack> ().owner = this.gameObject;
 		
 		//Left hand
 		hand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 L Clavicle/Bip001 L UpperArm/Bip001 L Forearm/Bip001 L Hand");
-		cubeColliderInst = (GameObject) PhotonNetwork.Instantiate(cubeColliderHand.name, hand.position + new Vector3(0.25f, -0.5f, 0), hand.rotation, 0);
+		if (PhotonNetwork.connected)
+			cubeColliderInst = (GameObject) PhotonNetwork.Instantiate(cubeColliderHand.name, hand.position + new Vector3(0.25f, -0.5f, 0), hand.rotation, 0);
+		else
+			cubeColliderInst = (GameObject) Instantiate(cubeColliderHand, hand.position + new Vector3(0.25f, -0.5f, 0), hand.rotation);
 		cubeColliderInst.transform.parent = hand;
 		cubeColliderInst.GetComponent<OrcBasicAttack> ().owner = this.gameObject;
 		
@@ -300,35 +308,56 @@ public class OrcController : HeroeController
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject snt = (GameObject) PhotonNetwork.Instantiate(snot.name, transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation, 0);
+		GameObject snt;
+		if (PhotonNetwork.connected)
+			snt = (GameObject) PhotonNetwork.Instantiate(snot.name, transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation, 0);
+		else
+		{
+			snt = (GameObject) Instantiate(snot, transform.localPosition + transform.forward * 2 + Vector3.up, transform.rotation);
+			snt.GetComponent<SkillAttackNetwork>().enabled = false;
+		}
 		SkillAttack sa = snt.GetComponent<SkillAttack>();
 		sa.SetDamage(1);
 		sa.setOwner(gameObject);
 
 		yield return new WaitForSeconds(3f);
 
-		PhotonNetwork.Destroy(snt);
+		if (PhotonNetwork.connected)
+			PhotonNetwork.Destroy(snt);
+		else
+			Destroy(snt);
 	}
 
 	private IEnumerator SecondSkill(float time)
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject spl = (GameObject) PhotonNetwork.Instantiate(splash.name, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity, 0);
+		GameObject spl;
+		if (PhotonNetwork.connected) 
+			 spl = (GameObject) PhotonNetwork.Instantiate(splash.name, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity, 0);
+		else
+			spl = (GameObject) Instantiate(splash, transform.position + new Vector3(0, -1.3f, 0), Quaternion.identity);
 		SkillAttack sa = spl.GetComponent<SkillAttack>();
 		sa.SetDamage(attackM + 40);
 		sa.setOwner(gameObject);
 
 		yield return new WaitForSeconds(animation["FloorHit"].length * 0.75f);
 		
-		PhotonNetwork.Destroy(spl);
+		if (PhotonNetwork.connected)
+			PhotonNetwork.Destroy(spl);
+		else
+			Destroy(spl);
 	}
 
 	private IEnumerator ThirdSkill(float time)
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject sphereThirdSkillInst = (GameObject) PhotonNetwork.Instantiate(sphereThirdSkill.name, head.position, transform.rotation, 0);
+		GameObject sphereThirdSkillInst;
+		if (PhotonNetwork.connected) 
+			sphereThirdSkillInst = (GameObject) PhotonNetwork.Instantiate(sphereThirdSkill.name, head.position, transform.rotation, 0);
+		else
+			sphereThirdSkillInst = (GameObject) Instantiate(sphereThirdSkill, head.position, transform.rotation);
 		SkillAttack sa = sphereThirdSkillInst.GetComponent<SkillAttack>();
 		sa.setOwner(gameObject);
 		sa.SetDamage(attackP + 100);
@@ -336,19 +365,29 @@ public class OrcController : HeroeController
 
 		yield return new WaitForSeconds(animation["BullStrike"].length * 0.8f);
 
-		PhotonNetwork.Destroy(sphereThirdSkillInst);
+		if (PhotonNetwork.connected)
+			PhotonNetwork.Destroy(sphereThirdSkillInst);
+		else
+			Destroy(sphereThirdSkillInst);
 	}
 
 	private IEnumerator SmokeParticles(float time)
 	{
 		yield return new WaitForSeconds(time);
 
-		GameObject smokeInst = (GameObject)PhotonNetwork.Instantiate(smoke.name, transform.localPosition + Vector3.down*2, transform.rotation, 0);
+		GameObject smokeInst;
+		if (PhotonNetwork.connected)
+			smokeInst = (GameObject)PhotonNetwork.Instantiate(smoke.name, transform.localPosition + Vector3.down*2, transform.rotation, 0);
+		else
+			smokeInst = (GameObject) Instantiate(smoke, transform.localPosition + Vector3.down*2, transform.rotation);
 		smokeInst.transform.parent = pelvis;
 
 		yield return new WaitForSeconds(5f);
 		
-		PhotonNetwork.Destroy(smokeInst);
+		if (PhotonNetwork.connected)
+			PhotonNetwork.Destroy(smokeInst);
+		else
+			Destroy(smokeInst);
 	}
 }
 
