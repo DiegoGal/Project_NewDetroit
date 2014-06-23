@@ -9,13 +9,14 @@ public class TowerArmyNetwork : Photon.MonoBehaviour
 	void Awake()
 	{
 		lifeScript = GetComponent<CLife>();
-		
+        GetComponent<CTeamTowerArmy>().enabled = true;
+
 		if (photonView.isMine)
 		{
 			lifeScript.enabled = true;
 			GetComponent<TowerArmy>().enabled = true;
 		}
-		else
+		else if (PhotonNetwork.connected)
 		{
 			lifeScript.enabled = true;
 			GetComponent<TowerArmy>().enabled = false;
@@ -30,6 +31,7 @@ public class TowerArmyNetwork : Photon.MonoBehaviour
 	
 	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 	{
+
 		if (stream.isWriting)
 		{
 			//We own this player: send the others our data
@@ -47,7 +49,8 @@ public class TowerArmyNetwork : Photon.MonoBehaviour
 	
 	void Update()
 	{
-		if (!photonView.isMine)
+        if (PhotonNetwork.connected)
+        if (!photonView.isMine)
 		{
 			lifeScript.setLife(life);
 		}

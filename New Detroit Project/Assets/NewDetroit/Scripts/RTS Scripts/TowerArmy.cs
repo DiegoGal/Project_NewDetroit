@@ -346,8 +346,8 @@ public class TowerArmy : Tower
                 constructed = true;
                 if (PhotonNetwork.connected)
                 	photonView.RPC("Constructed",PhotonTargets.All, transform.position, transform.rotation);
-                else
-                	Constructed(transform.position, transform.rotation);
+                //else
+                //    Constructed(transform.position, transform.rotation);
                 // insert the tower in the DistanceMeasurerTool
                 DistanceMeasurerTool.InsertUnit(team);
                 return true;

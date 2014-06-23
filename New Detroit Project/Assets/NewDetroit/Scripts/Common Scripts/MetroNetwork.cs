@@ -42,6 +42,7 @@ public class MetroNetwork : Photon.MonoBehaviour
 
     void Update()
     {
+        if (PhotonNetwork.connected)
         if (!photonView.isMine)
         {
             resourcesScript.setActualResources(resources);

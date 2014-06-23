@@ -76,6 +76,7 @@ public class UnitController : ControllableCharacter
         model = transform.FindChild("Model");
 
         radius = 0.25f;
+
     }
 
     // Use this for initialization
@@ -100,6 +101,7 @@ public class UnitController : ControllableCharacter
 
             PlayAnimation("Walk");
         }
+       
     }
 
     // Update is called once per frame
@@ -239,7 +241,7 @@ public class UnitController : ControllableCharacter
 					if (PhotonNetwork.connected)
                     	photonView.RPC("Kick", PhotonTargets.All, enemySelected.name, basicAttackPower);
                     else
-                    	Kick(enemySelected.name,basicAttackPower);
+                        enemySelected.GetComponent<CLife>().Damage(basicAttackPower);
                     if (!enemySelected.GetComponent<CLife>().IsAlive())
                     //if (enemySelected.Damage(basicAttackPower))
                     {

@@ -34,7 +34,10 @@ public class ObjectAttack : ParticleDamage
 
         destroyTimeAcumSplash += Time.deltaTime;
         if (destroyTimeAcumSplash >= 1.2f)
-            PhotonNetwork.Destroy(this.gameObject);
+            if (PhotonNetwork.connected) 
+                PhotonNetwork.Destroy(this.gameObject);
+            else
+                Destroy(this.gameObject);
     }
 
     public void SetOwner (GameObject owner)
@@ -90,7 +93,13 @@ public class ObjectAttack : ParticleDamage
             {
                 /*CLife script = other.GetComponent<CLife>();
                 script.Damage(GetDamage(), 'P');*/
-                photonView.RPC("DamageHeroe", PhotonTargets.All, name, GetDamage());
+                if (PhotonNetwork.connected)
+                    photonView.RPC("DamageHeroe", PhotonTargets.All, name, GetDamage());
+                else
+                {
+                    CLife script = other.GetComponent<CLife>();
+                    script.Damage(GetDamage(), 'P');
+                }
             }
             else if (other.tag == "Minion")
             {
@@ -118,7 +127,37 @@ public class ObjectAttack : ParticleDamage
                         yForce = 3.5f;
                         zForce = 0.7f;
                     }
-                    photonView.RPC("AddNewUnitForce", PhotonTargets.All, name, xForce, yForce, zForce, GetDamage());
+                    if (PhotonNetwork.connected)
+                        photonView.RPC("AddNewUnitForce", PhotonTargets.All, name, xForce, yForce, zForce, GetDamage());
+                    else
+                    {
+                        
+                        // For damage
+                        UnitController otherUC = other.GetComponent<UnitController>();
+                        float enemyDist = Vector3.Distance(transform.position, other.transform.position);
+                        otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, 'P');
+
+                        if (other.GetComponent<PhotonView>().isMine || !(PhotonNetwork.connected))
+                        {
+                            // For add a force to the minions so they can fly
+                            if (!other.rigidbody)
+                                other.gameObject.AddComponent<Rigidbody>();
+                            other.rigidbody.isKinematic = false;
+                            other.rigidbody.useGravity = true;
+
+                            if (other.GetComponent<NavMeshAgent>() && other.GetComponent<NavMeshAgent>().enabled)
+                                other.GetComponent<NavMeshAgent>().Stop(true);
+                            Vector3 dir = other.transform.position - transform.position;
+                            dir = dir.normalized;
+
+                            other.rigidbody.AddForce(new Vector3(dir.x * xForce,
+                                                                  yForce,
+                                                                  dir.z * zForce),
+                                                                  ForceMode.Impulse);
+                            otherUC.Fly();
+                        }
+                        
+                    }
                     unitList.Add(other);
                 }
             }

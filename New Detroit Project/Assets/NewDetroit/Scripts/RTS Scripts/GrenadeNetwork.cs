@@ -14,7 +14,7 @@ public class GrenadeNetwork : BasicNetwork {
 		sphereColl = GetComponent<SphereCollider>();
 		rigidB = GetComponent<Rigidbody>();
 		visionSphere = GetComponent<CGrenadeVisionSphere>();
-		
+		if (PhotonNetwork.connected)
 		if (photonView.isMine)
 		{
 			sphereColl.enabled = true;

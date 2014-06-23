@@ -43,7 +43,7 @@ public class ControllableCharacter : Photon.MonoBehaviour
 
     public float radius;
 
-    protected TypeHeroe type;
+    public TypeHeroe type;
 
 	// --------------------------------------------------------------
 

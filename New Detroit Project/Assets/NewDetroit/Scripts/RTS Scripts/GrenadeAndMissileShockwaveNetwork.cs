@@ -13,6 +13,7 @@ public class GrenadeAndMissileShockwaveNetwork : BasicNetwork
         collider = GetComponent<SphereCollider>();
         grenadeAttack = GetComponent<ObjectAttack>();
 
+        if (PhotonNetwork.connected)
         if (photonView.isMine)
         {
 
