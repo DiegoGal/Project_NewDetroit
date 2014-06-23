@@ -101,7 +101,7 @@ public class SkillAttack : ParticleDamage {
 			// For damage
 			UnitController otherUC = other.GetComponent<UnitController>();
 			float enemyDist = Vector3.Distance(transform.position, other.transform.position);
-			otherUC.GetComponent<CLife>().Damage(GetDamage() / enemyDist, damageType);
+			otherUC.GetComponent<CLife>().Damage(totalDamage, damageType);
 			
 			// For add a force to the minions so they can fly
 			if (!other.rigidbody)

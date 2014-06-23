@@ -92,6 +92,15 @@ public class LocalGameManager : MonoBehaviour {
 
     }
 
+    void OnGUI()
+    {
+        if (GUI.Button(new Rect(Screen.width/2 - 40,0,80,20),"Exit room"))
+        {
+            PhotonNetwork.LeaveRoom();
+            Application.LoadLevel(NetworkController.SceneNameMenu);
+        }
+    }
+
     public void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom");

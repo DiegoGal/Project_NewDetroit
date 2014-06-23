@@ -113,6 +113,13 @@ public class LocalGameManagerOffline : MonoBehaviour
                     break;
             }
         }
+    }
 
+    void OnGUI()
+    {
+        if (GUI.Button(new Rect(Screen.width / 2 - 40, 0, 80, 20), "Exit room"))
+        {
+            Application.LoadLevel(NetworkController.SceneNameMenu);
+        }
     }
 }
