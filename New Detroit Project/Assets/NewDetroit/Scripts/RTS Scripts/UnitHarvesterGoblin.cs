@@ -35,7 +35,7 @@ public class UnitHarvesterGoblin : UnitHarvester
         // capturamos la instancia del pico en la mano
         if (dummyHand)
             peak = dummyHand.FindChild("GoblinHarvesterBeak").gameObject;
-
+         
         // intanciamos un pack de minerales encima de la unidad
         photonView.RPC("InstanciateMineralPack", PhotonTargets.All);
         // se esconde:
