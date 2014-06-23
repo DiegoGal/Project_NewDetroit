@@ -96,7 +96,14 @@ public class BaseController : CResourceBuilding
         life.currentLife = life.maximunLife;
 
 	}
-	
+
+    [RPC]
+    public void EndGame()
+    {
+        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.LoadLevel(NetworkController.SceneNameMenu);
+    }
+
 	// Update is called once per frame
     public override void Update ()
     {
@@ -117,6 +124,10 @@ public class BaseController : CResourceBuilding
                 cubeSpawnDest.transform.position = spawnDestiny;
 			}
 		}
+        if (life.currentLife <= 0)
+        {
+            photonView.RPC("EndGame",PhotonTargets.All);
+        }
 		
 	}
 
