@@ -845,12 +845,13 @@ public class ArmyController : MonoBehaviour
         // se actualizan las posiciones de los vértices del cuadrado en pantalla:
         UpdateSelectionPointScreen();
 
-        Vector3 unitScreenPos;
+        Vector3 unitScreenPos = new Vector3();
         int count = unitList.Count;
         for (int i = 0; i < count; i++)
         {
             // capture the screen position of the unit
-            unitScreenPos = unitList[i].GetComponent<ControllableCharacter>().screenPosition;
+            if (unitList[i])
+                unitScreenPos = unitList[i].GetComponent<ControllableCharacter>().screenPosition;
             // check if the position if inside the square we are creating
             if (unitScreenPos.x >= squareSelectionPointsScreen[0].x &&
                 unitScreenPos.y <= squareSelectionPointsScreen[0].y &&
@@ -861,7 +862,8 @@ public class ArmyController : MonoBehaviour
                 if (!unitSelectedList.Contains(unitList[i])) 
                     unitSelectedList.Add(unitList[i]);
                 // and mark it as selected
-                unitList[i].GetComponent<CSelectable>().SetSelected();
+                if (unitList[i])
+                    unitList[i].GetComponent<CSelectable>().SetSelected();
             }
             else
             {
@@ -871,10 +873,13 @@ public class ArmyController : MonoBehaviour
                     if (!unitSelectedList.Contains(unitList[i])) 
                         unitSelectedList.Remove(unitList[i]);
                     // and mark it as deselected
-                    unitList[i].GetComponent<CSelectable>().SetDeselect();
+                    if (unitList[i]) 
+                        unitList[i].GetComponent<CSelectable>().SetDeselect();
                 }
                 // and mark it a de-selected
-                unitList[i].GetComponent<CSelectable>().SetDeselect();
+
+                if (unitList[i]) 
+                    unitList[i].GetComponent<CSelectable>().SetDeselect();
             }
         }
     } // CreatingSquare2 ()
