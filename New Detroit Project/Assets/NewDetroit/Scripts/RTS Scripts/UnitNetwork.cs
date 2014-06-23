@@ -19,13 +19,13 @@ public class UnitNetwork : BasicNetwork
 		base.Awake();
 
 		//if (PhotonNetwork.connected)
+        if (GetComponent<ControllableCharacter>())
         	if (GetComponent<ControllableCharacter>().getTypeHero() == ControllableCharacter.TypeHeroe.Orc) GetComponent<CTeam>().teamNumber = 0;
         	else GetComponent<CTeam>().teamNumber = 1;
 	
 		selectableScript      = GetComponent<CSelectable>();
         unitScript            = GetComponent<UnitController>();
 		fogOfWarScript	      = GetComponent<FogOfWarUnit>();
-        unitAnimationsNetwork = GetComponent<UnitAnimationsNetwork>();
         navMeshAgent          = GetComponent<NavMeshAgent>();
         stateScript           = GetComponent<CStateUnit>();
 		
@@ -36,7 +36,6 @@ public class UnitNetwork : BasicNetwork
 				selectableScript.enabled      = true;
 	            unitScript.enabled            = true;
 				fogOfWarScript.enabled        = true;
-	            unitAnimationsNetwork.enabled = false;
 				navMeshAgent.enabled          = true;
 	
 	            //Debug.Log("MINE");
@@ -46,7 +45,6 @@ public class UnitNetwork : BasicNetwork
 				selectableScript.enabled      = false;
 	            unitScript.enabled            = false;
 				fogOfWarScript.enabled        = false;
-	            unitAnimationsNetwork.enabled = true;
 				navMeshAgent.enabled          = false;
 	
 	            //Debug.Log("not MINE");

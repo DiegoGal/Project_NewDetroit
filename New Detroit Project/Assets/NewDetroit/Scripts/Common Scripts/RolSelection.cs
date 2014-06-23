@@ -21,7 +21,6 @@ public class RolSelection : Photon.MonoBehaviour {
     // local player selection
     public int localSelection;
     // exit button reference
-    public GameObject offlineExitButton;
     public GameObject onlineExitButton;
 
     public bool heroes;
@@ -55,13 +54,6 @@ public class RolSelection : Photon.MonoBehaviour {
                 model1.renderer.materials[i].SetColor("_OutlineColor", Color.black);
         }
 	}
-
-    public void SetOffline()
-    {
-        isOnline = false;
-        onlineExitButton.SetActive(false);
-        offlineExitButton.SetActive(true);
-    }
 
     public void UpdateSelection()
     {
