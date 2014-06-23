@@ -38,7 +38,7 @@ public class SkillAttack : ParticleDamage {
 					// For damage
 					UnitController otherUC = other.GetComponent<UnitController>();
 					
-//					photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
+					photonView.RPC("Damage", PhotonTargets.All, other.gameObject.name, totalDamage);
 					if (PhotonNetwork.connected)
 						photonView.RPC("AddNewUnitForce", PhotonTargets.All, other.gameObject.name);
 					else
@@ -83,11 +83,14 @@ public class SkillAttack : ParticleDamage {
 	{
 		GameObject enemy = GameObject.Find(sEnemy);
 		CBasicAttributesHero cbah = enemy.GetComponent<CBasicAttributesHero>();
-		if (damagePhysic)
-			damage -= cbah.getDeffensePhysic();
-		else
-			damage -= cbah.getDeffenseMagic();
-		damage = Mathf.Max(0, damage);
+        if (cbah != null)
+        {
+            if (damagePhysic)
+                damage -= cbah.getDeffensePhysic();
+            else
+                damage -= cbah.getDeffenseMagic();
+            damage = Mathf.Max(0, damage);
+        }
 		
 		enemy.GetComponent<CLife>().Damage(damage, damageType);
 	}
