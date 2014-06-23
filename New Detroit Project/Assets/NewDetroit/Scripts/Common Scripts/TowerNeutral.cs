@@ -38,7 +38,7 @@ public class TowerNeutral : Tower
 	public override void Start ()
     {
         base.Start();
-
+        distanceToWait = 2;
         // inicialization of the contConq and actualTimeConquering arrays depending of the number of teams playing
         contConq = new float[teamsPlaying];
         actualTimeConquering = new float[teamsPlaying];
