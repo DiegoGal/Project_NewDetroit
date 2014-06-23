@@ -4,7 +4,6 @@ using System.Collections;
 public class PlayVideo : MonoBehaviour {
 
     public MovieTexture mt;
-    public GameObject offline;
     public GameObject online;
     public GameObject video;
     public GameObject exit;
@@ -37,7 +36,6 @@ public class PlayVideo : MonoBehaviour {
         while (mt.isPlaying)
             yield return new WaitForSeconds(0.1f);
         //Disable();
-        offline.SetActive(true);
         online.SetActive(true);
         video.SetActive(true);
         exit.SetActive(true);
@@ -51,7 +49,6 @@ public class PlayVideo : MonoBehaviour {
         audioS.clip = mt.audioClip;
 
         gameObject.SetActive(true);
-        offline.SetActive(false);
         online.SetActive(false);
         video.SetActive(false);
         exit.SetActive(false);
