@@ -390,15 +390,15 @@ public class UnitController : ControllableCharacter
 				Destroy(gameObject);
     }
 
-    //public virtual void OnGUI ()
-    //{
+    public virtual void OnGUI ()
+    {
         /*Vector2 size = new Vector2(48.0f, 12.0f);
 
-        // draw the background:
+         draw the background:
         GUI.BeginGroup(new Rect(screenPosition.x, Screen.height - screenPosition.y, size.x, size.y));
             GUI.Box(new Rect(0, 0, size.x, size.y), progressBarEmpty);
 
-            // draw the filled-in part:
+             draw the filled-in part:
             GUI.BeginGroup(new Rect(0, 0, size.x * (float)currentLife / (float)maximunLife, size.y));
                 GUI.Box(new Rect(0, 0, size.x, size.y), progressBarFull);
             GUI.EndGroup();
@@ -406,14 +406,14 @@ public class UnitController : ControllableCharacter
         GUI.EndGroup();*/
 
         // rectángulo donde se dibujará la barra
-    //    if (currentState != State.AscendingToHeaven)
-    //    {
-    //        Rect rect1 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f, 3.0f);
-    //        GUI.DrawTexture(rect1, progressBarEmpty);
-    //        Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (life.currentLife / life.maximunLife), 3.0f);
-    //        GUI.DrawTexture(rect2, progressBarFull);
-    //    }
-    //}
+        if (currentState != State.AscendingToHeaven)
+        {
+            Rect rect1 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f, 3.0f);
+            GUI.DrawTexture(rect1, progressBarEmpty);
+            Rect rect2 = new Rect(screenPosition.x - 10.0f, Screen.height - screenPosition.y - 30.0f, 20.0f * (life.currentLife / life.maximunLife), 3.0f);
+            GUI.DrawTexture(rect2, progressBarFull);
+        }
+    }
 
     public void GoTo (Vector3 destiny)
     {
