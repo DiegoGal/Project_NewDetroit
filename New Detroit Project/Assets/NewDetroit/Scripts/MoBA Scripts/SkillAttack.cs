@@ -117,9 +117,9 @@ public class SkillAttack : ParticleDamage {
 			Vector3 dir = other.transform.position - transform.position;
 			dir = dir.normalized;
 			
-			other.rigidbody.AddForce(new Vector3(dir.x * 2f,
-			                                     5f,
-			                                     dir.z * 2f),
+			other.rigidbody.AddForce(new Vector3(dir.x * 5f,
+			                                     10f,
+			                                     dir.z * 5f),
 			                         ForceMode.Impulse);
 			otherUC.Fly();
 		}
