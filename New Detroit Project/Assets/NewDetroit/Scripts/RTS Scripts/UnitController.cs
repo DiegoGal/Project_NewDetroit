@@ -76,7 +76,6 @@ public class UnitController : ControllableCharacter
         model = transform.FindChild("Model");
 
         radius = 0.25f;
-
     }
 
     // Use this for initialization
@@ -238,10 +237,16 @@ public class UnitController : ControllableCharacter
                     transform.LookAt(enemySelected.transform);
 
                     attackCadenceAux = attackCadence;
-					if (PhotonNetwork.connected)
-                    	photonView.RPC("Kick", PhotonTargets.All, enemySelected.name, basicAttackPower);
-                    else
+                    if (PhotonNetwork.offlineMode)
+                    {
+                        Debug.Log("te pego");
                         enemySelected.GetComponent<CLife>().Damage(basicAttackPower);
+                    }
+                    else
+                    {
+                        Debug.Log("te kiko");
+                        photonView.RPC("Kick", PhotonTargets.All, enemySelected.name, basicAttackPower);
+                    }
                     if (!enemySelected.GetComponent<CLife>().IsAlive())
                     //if (enemySelected.Damage(basicAttackPower))
                     {

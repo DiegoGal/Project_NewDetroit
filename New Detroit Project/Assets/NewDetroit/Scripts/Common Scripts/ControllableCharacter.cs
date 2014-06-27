@@ -15,7 +15,7 @@ public class ControllableCharacter : Photon.MonoBehaviour
     public CTeam team;
 
 	// number that identifies the team to which the character belongs
-    public int teamNumber { get; private set; }
+    protected int teamNumber;
 
     // reference to the Life component of the character
     public CLife life;
@@ -50,8 +50,7 @@ public class ControllableCharacter : Photon.MonoBehaviour
     public virtual void Awake ()
     {
         team = GetComponent<CTeam>();
-        teamNumber = team.teamNumber;
-
+        
         life = GetComponent<CLife>();
     }
 
@@ -59,6 +58,7 @@ public class ControllableCharacter : Photon.MonoBehaviour
     {
         screenPosition = Camera.main.WorldToScreenPoint(transform.position);
 
+        teamNumber = team.teamNumber;
         team.visionSphereRadius = visionSphereRadius;
     }
 
@@ -144,13 +144,13 @@ public class ControllableCharacter : Photon.MonoBehaviour
 
     public int GetTeamNumber ()
     {
-        return teamNumber;
+        return team.teamNumber;
     }
-
 
     public void SetTeamNumber (int teamNumber)
     {
         this.teamNumber = teamNumber;
+        team.teamNumber = teamNumber;
     }
     
     public TypeHeroe getTypeHero() { return type; }

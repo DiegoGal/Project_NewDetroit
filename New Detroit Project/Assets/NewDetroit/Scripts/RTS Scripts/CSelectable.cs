@@ -81,9 +81,14 @@ public class CSelectable : MonoBehaviour
 
     public void ResetTeamColor ()
     {
-        teamColor = outlineColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];
+        /*teamColor = outlineColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];
         for (int i = 0; i < numberOfMaterials; i++)
-            model.renderer.materials[i].SetColor("_OutlineColor", teamColor);
+            model.renderer.materials[i].SetColor("_OutlineColor", teamColor);*/
+
+        teamColor = TeamsColors.colors[GetComponent<CTeam>().teamColorIndex];
+        if (selected)
+            for (int i = 0; i < numberOfMaterials; i++)
+                model.renderer.materials[i].SetColor("_OutlineColor", teamColor);
     }
 
 	public void SetSelected ()

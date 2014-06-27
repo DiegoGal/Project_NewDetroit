@@ -30,25 +30,28 @@ public class UnitHarvesterGoblin : UnitHarvester
 
         // instanciamos los accesorios del modelo
         float[] randoms = { Random.value, Random.value, Random.value };
-        if (PhotonNetwork.connected)
-        	photonView.RPC("InstanciateAccesories", PhotonTargets.All, randoms[0], randoms[1], randoms[2]);
+
+        if (PhotonNetwork.offlineMode)
+            InstanciateAccesories(randoms[0], randoms[1], randoms[2]);
         else
-       		InstanciateAccesories(randoms[0], randoms[1], randoms[2]);
+            photonView.RPC("InstanciateAccesories", PhotonTargets.All, randoms[0], randoms[1], randoms[2]);
 
         // capturamos la instancia del pico en la mano
         if (dummyHand)
             peak = dummyHand.FindChild("GoblinHarvesterBeak").gameObject;
          
         // intanciamos un pack de minerales encima de la unidad
-        if (PhotonNetwork.connected)
-        	photonView.RPC("InstanciateMineralPack", PhotonTargets.All);
+        if (PhotonNetwork.offlineMode)
+            InstanciateMineralPack();
         else
-        	InstanciateMineralPack();
+        	photonView.RPC("InstanciateMineralPack", PhotonTargets.All);
+            
         // se esconde:
-        if (PhotonNetwork.connected)
+        if (PhotonNetwork.offlineMode)
+            ShowMineralPack(false);
+        else
         	photonView.RPC("ShowMineralPack", PhotonTargets.All, false);
-        else 
-        	ShowMineralPack(false);
+
     }
 
     [RPC]

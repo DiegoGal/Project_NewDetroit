@@ -92,7 +92,6 @@ public class UnitHarvester : UnitController
         base.Start();
 
         basicAttackPower = secondaryAttackPower = attackPower;
-
     }
 
     [RPC]
@@ -291,10 +290,11 @@ public class UnitHarvester : UnitController
 
                         // se muestra el pack de minerales
                         loaded = true;
-                        if (PhotonNetwork.connected)
-                        	photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
+                        if (PhotonNetwork.offlineMode)
+                            ShowMineralPack(loaded);
                         else
-                        	ShowMineralPack(loaded);
+                        	photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
+                        	
                         //ShowMineralPack(loaded);
 
                         CResourceBuilding resourceBuilding = baseController.GetArmyController().GetResourceBuilding(currentMine.GetComponent<CResources>());
@@ -695,7 +695,7 @@ public class UnitHarvester : UnitController
              // se ha hecho click derecho en una unidad
              ControllableCharacter unit = destTransform.GetComponent<ControllableCharacter>();
              // se comprueba que la unidad sea del mismo equipo y que no tenga la vida máxima
-             if ( (unit.teamNumber == teamNumber) && (unit.getLife() < unit.GetMaximunLife()) )
+             if ( (unit.GetTeamNumber() == teamNumber) && (unit.getLife() < unit.GetMaximunLife()) )
              {
                  // la unidad es del mismo equipo
                  Debug.Log("A curar!");
@@ -742,11 +742,10 @@ public class UnitHarvester : UnitController
 
 			// escondemos el pack de minerales
             loaded = false;
-            //ShowMineralPack(false);
-            if (PhotonNetwork.connected)
-            	photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
+            if (PhotonNetwork.offlineMode)
+                ShowMineralPack(loaded);
             else
-            	ShowMineralPack(loaded);
+                photonView.RPC("ShowMineralPack", PhotonTargets.All, loaded);
 
             if (nextHarvestState == HarvestState.GoingToMine)
             {
@@ -783,6 +782,8 @@ public class UnitHarvester : UnitController
     {
         GameObject particles = (GameObject)Instantiate(mineralParticles,
                 peak.transform.position, new Quaternion());
+        particles.transform.Rotate(new Vector3(-90.0f, 0.0f, 0.0f));
+        //particles.transform.LookAt(Vector3.up);
         Destroy(particles, 0.4f);
 
         if (currentHarvestState == HarvestState.Choping)
