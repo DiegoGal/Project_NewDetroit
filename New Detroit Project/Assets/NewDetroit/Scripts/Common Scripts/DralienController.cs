@@ -25,6 +25,10 @@ public class DralienController : MonoBehaviour
 
     private float distance;
 
+    private Vector3 prevPosition;
+    private int positionRepeatCount = 0;
+    private int maxPosRepeatCount = 50;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -35,11 +39,14 @@ public class DralienController : MonoBehaviour
 
         animation.Play("Digging");
         animation.CrossFadeQueued("Idle");
+
+        prevPosition = transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+        prevPosition = transform.position;
         switch (currentState)
         {
             case State.Idle:
@@ -55,6 +62,14 @@ public class DralienController : MonoBehaviour
                     timeToSearchForNewDestAux = timeToSearchForNewDest + Random.Range(-0.5f, 0.5f);
 
                     currentState = State.GoingTo;
+
+                    positionRepeatCount = 0;
+
+                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    cube.transform.position = nextDestiny;
+                    cube.transform.localScale = new Vector3(0.5f, 2.0f, 0.5f);
+                    cube.renderer.material.color = Color.red;
+                    Destroy(cube, 2.0f);
                 }
                 else
                 {
@@ -70,17 +85,41 @@ public class DralienController : MonoBehaviour
                 break;
 
             case State.GoingTo:
-                distance = Vector3.Distance(transform.position, nextDestiny);
-                if (distance <= 1.0f)
+                if (prevPosition == transform.position)
                 {
-                    GetComponent<NavMeshAgent>().Stop();
+                    positionRepeatCount++;
+                    if (positionRepeatCount >= maxPosRepeatCount)
+                    {
+                        // se ha atascado
+                        GetComponent<NavMeshAgent>().Stop();
 
-                    animation.CrossFade("Idle");
+                        animation.CrossFade("Idle");
 
-                    currentState = State.Idle;
+                        currentState = State.Idle;
+
+                        positionRepeatCount = 0;
+                    }
+                }
+                else
+                {
+                    positionRepeatCount = 0;
+                    prevPosition = transform.position;
+                    //distance = Vector3.Distance(transform.position, nextDestiny);
+                    // esto es más eficiente
+                    float distX = transform.position.x - nextDestiny.x; distX = distX * distX;
+                    float distZ = transform.position.z - nextDestiny.z; distZ = distZ * distZ;
+                    distance = distX + distZ;
+                    if (distance <= 1.4f)
+                    {
+                        GetComponent<NavMeshAgent>().Stop();
+
+                        animation.CrossFade("Idle");
+
+                        currentState = State.Idle;
+                    }
                 }
                 break;
         }
-        
+
 	}
 }

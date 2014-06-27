@@ -87,7 +87,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 		
     } // Update
 
-    /*public void OnGUI ()
+    public void OnGUI ()
     {
         GUI.skin.label.fontSize = 10;
 
@@ -106,7 +106,7 @@ public class DistanceMeasurerTool : MonoBehaviour
             }
         }
     }
-    */
+    
     private void SearchStep ()
     {
         int list0Count = Army0.Count,
@@ -214,12 +214,13 @@ public class DistanceMeasurerTool : MonoBehaviour
             try
             {
                 Army0.RemoveAt(unitIndex);
+
+                distancesMatrix.RemoveAt(unitIndex);
             }
             catch (System.Exception e)
             {
                 bool WAT = true;
             }
-            distancesMatrix.RemoveAt(unitIndex);
 
             if (prevIndexi > 0)
                 prevIndexi--;
@@ -230,14 +231,16 @@ public class DistanceMeasurerTool : MonoBehaviour
             try
             {
                 Army1.RemoveAt(unitIndex);
+
+                int auxCont = Army0.Count;
+                for (int i = 0; i < auxCont; i++)
+                    distancesMatrix[i].RemoveAt(unitIndex);
             }
             catch (System.Exception e)
             {
                 bool WAT = true;
             }
-            int auxCont = Army0.Count;
-            for (int i = 0; i < auxCont; i++)
-                distancesMatrix[i].RemoveAt(unitIndex);
+            
 
             if (prevIndexj > 0)
                 prevIndexj--;
