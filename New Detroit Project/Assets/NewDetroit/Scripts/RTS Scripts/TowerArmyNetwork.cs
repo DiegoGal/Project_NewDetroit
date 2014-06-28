@@ -25,8 +25,9 @@ public class TowerArmyNetwork : Photon.MonoBehaviour
 			Destroy(GameObject.Find("TowerSphereConstruct"));
 			//renderer.material = (Material) Resources.Load("GoblinTower_Material",typeof(Material));
 		}
-		
-		gameObject.name = gameObject.name + photonView.viewID;
+
+        gameObject.name = gameObject.name + photonView.viewID;
+        gameObject.name = gameObject.name.Replace("(Clone)", ""); 
 	}
 	
 	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

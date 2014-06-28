@@ -86,7 +86,7 @@ public class ArmyController : MonoBehaviour
 
         // añadimos la base del ejército a la lista de edificios del ejército
         resourceBuildingList.Add(armyBase.GetComponent<CResourceBuilding>());
-        Minimap.SetBase(armyBase.GetComponent<CResourceBuilding>());
+        //Minimap.SetBase(armyBase.GetComponent<CResourceBuilding>());
 
         // se establece el número y el color del equipo en la base
         armyBase.GetComponent<BaseController>().SetTeamNumber(teamNumber, teamColorIndex);
@@ -104,7 +104,7 @@ public class ArmyController : MonoBehaviour
                 unit.SetTeamColorIndex(teamColorIndex);
                 unitList.Add(go);
                 //DistanceMeasurerTool.InsertUnit(unit);
-                Minimap.InsertUnit(unit);
+                Minimap.InsertUnit(unit.transform, GetComponent<CTeam>().teamNumber);
             }
         }
 
@@ -989,11 +989,11 @@ public class ArmyController : MonoBehaviour
             unitSelectedList.Remove(unit);
 
         DistanceMeasurerTool.DeleteUnit(unit.GetComponent<CTeam>());
-        Minimap.DeleteUnit(unit.GetComponent<UnitController>());
+       
         // destroy the unit from the game
         //Destroy(unit, 4.0f); now this is done in the UnitControler itself
     }
-
+        
     public void AddWarehouse (CResourceBuilding w)
     {
         if (!resourceBuildingList.Contains(w))
@@ -1153,7 +1153,7 @@ public class ArmyController : MonoBehaviour
                     ((UnitEngineer)unitCont).SetBuildingPrefabsReferences(towerPrefab, warehousePrefab);
                 }
                 //DistanceMeasurerTool.InsertUnit(newUnit.GetComponent<ControllableCharacter>());
-                Minimap.InsertUnit(newUnit.GetComponent<UnitController>());
+                //Minimap.InsertUnit(newUnit.transform, GetComponent<CTeam>().teamNumber);
             }
             // TODO: else mostrar aviso de que no hay recursos suficientes
         }

@@ -156,7 +156,6 @@ public abstract class HeroeController : ControllableCharacter
 	// Use this for initialization
 	public override void Start ()
     {
-
         base.Start();
 
 		/*transform.FindChild ("Pivot");

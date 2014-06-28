@@ -34,6 +34,7 @@ public class LocalGameManager : MonoBehaviour {
                     Camera.main.GetComponent<CameraRTSController>().enabled = false;
                     Camera.main.GetComponent<CameraMOBAController>().enabled = true;
                     Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+                    Minimap.teamNumber = 0;
                     Destroy(army1);
                     Destroy(army0);
                 break;
@@ -44,6 +45,7 @@ public class LocalGameManager : MonoBehaviour {
                     Camera.main.GetComponent<CameraRTSController>().enabled = false;
                     Camera.main.GetComponent<CameraMOBAController>().enabled = true;
                     Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+                    Minimap.teamNumber = 1;
                     Destroy(army1);
                     Destroy(army0);
                 break;
@@ -57,6 +59,7 @@ public class LocalGameManager : MonoBehaviour {
                     blueBase.GetComponent<BaseController>().enabled = false;
                     blueBase.GetComponent<FogOfWarUnit>().enabled = false;
                     navmeshColliders.SetActive(false);
+                    Minimap.teamNumber = 0;
                     Destroy(army1);
                 break;
                 case 3: // Skelter Army
@@ -68,6 +71,7 @@ public class LocalGameManager : MonoBehaviour {
                     blueBase.GetComponent<BaseController>().enabled = true;
                     blueBase.GetComponent<FogOfWarUnit>().enabled = true;
                     navmeshColliders.SetActive(false);
+                    Minimap.teamNumber = 1;
                 	Destroy(army0);
                 break;
                 default:

@@ -39,7 +39,7 @@ public class BaseController : CResourceBuilding
     public override void Start ()
     {
         base.Start();
-
+        //Minimap.SetBase(GetComponent<CResourceBuilding>());
         radius = baseRadius;
 
         spawnOrigin = transform.FindChild("SpawnPoint").position;
