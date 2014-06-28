@@ -7,16 +7,15 @@ public class PlayVideo : MonoBehaviour {
     public GameObject online;
     public GameObject video;
     public GameObject exit;
+    public UILabel texto;
 
     AudioSource audioS;
 
 	// Use this for initialization
 	void Start () {
-        //MovieTexture vt = renderer.material.mainTexture as MovieTexture;
-        //((MovieTexture)GetComponent<UITexture>().mainTexture).Play();
-        //vt.Play();
+        
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 	
@@ -53,5 +52,14 @@ public class PlayVideo : MonoBehaviour {
         video.SetActive(false);
         exit.SetActive(false);
         StartCoroutine("WaitForClip");
+    }
+
+    public void UpdateText()
+    {
+        texto.text = "C:> Welcome to the madness game Mutant Meat City. \n\n" +
+        "        press play online to select a room and join a game! \n\n" +
+        "        or play the video. It's amazing! \n\n" +
+        "        or exit the game... wait! are you sure?? :(";
+        texto.UpdateNGUIText();
     }
 }
