@@ -522,6 +522,21 @@ public class Minimap : MonoBehaviour
         //GUI.DrawTexture(rect1, textureMap);
         GUI.DrawTexture(rect1, map);
 
+        // Draw tiles
+        float littleSize = size / 20;
+        for (int i = 0; i <= 20; i++)
+        {
+            GUI.DrawTexture(new Rect(i * littleSize + margin, posHeight, 1f, size), textureBase1);
+            GUI.DrawTexture(new Rect(margin, i * littleSize + posHeight, size, 1f), textureBase1);
+        }
+
+        //Draw transparent tiles
+        for (int i = 0; i < 20; i++)
+            for (int j = 0; j < 20; j++)
+            {
+                if (fogTypeMatrix[i, j].alwaysVisible > 0 || fogTypeMatrix[i, j].GetFogType() == 2) GUI.DrawTexture(new Rect(i * littleSize + margin, j * littleSize + posHeight, littleSize, littleSize), textureTowerNeutral);
+            }
+
         // my own team
         foreach (Vector2 unit in myUnitList)
         {
