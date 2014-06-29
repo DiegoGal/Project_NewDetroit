@@ -23,7 +23,7 @@ public class UnitScoutRobot : UnitScout
         base.Awake();
 
         if (!mount)
-            mount = transform.FindChild("Mount").gameObject;
+            mount = transform.FindChild("Nave").gameObject;
 
         fireParticles = transform.FindChild("FireMower2").gameObject;
 
@@ -78,31 +78,6 @@ public class UnitScoutRobot : UnitScout
         Destroy(explosionFireInst, 2.5f);
         Destroy(explosionSmokeInst, 2.5f);
         Destroy(explosionPiecesInst, 2.5f);
-    }
-
-    protected override void PlayAnimation (string animationName)
-    {
-        
-    }
-
-    protected override void PlayAnimationQueued (string animationName)
-    {
-        
-    }
-
-    protected override void PlayAnimationCrossFade (string animationName)
-    {
-        
-    }
-
-    protected override void PlayAnimationCrossFadeQueued (string animationName)
-    {
-        
-    }
-
-    protected override void PlayIdleWaitAnimation ()
-    {
-        
     }
 
     protected override void RemoveAssetsFromModel()
