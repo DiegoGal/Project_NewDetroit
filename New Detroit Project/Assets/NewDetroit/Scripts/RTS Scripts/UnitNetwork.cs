@@ -55,7 +55,13 @@ public class UnitNetwork : BasicNetwork
         // se captura la referencia al modelo
         model = transform.FindChild("Model");
 	}
-	
+
+    public override void Start()
+    {
+        base.Start();
+        Minimap.InsertUnit(transform, GetComponent<CTeam>().teamNumber);
+    }
+
 	public virtual void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
 	{
 		base.OnPhotonSerializeView(stream, info);

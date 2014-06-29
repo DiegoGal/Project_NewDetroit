@@ -512,7 +512,15 @@ public class UnitController : ControllableCharacter
         if (GetComponent<NavMeshAgent>())
             Destroy(GetComponent<NavMeshAgent>());
 
-        Minimap.DeleteUnit(this);
+        photonView.RPC("MinimapUnitDied", PhotonTargets.All, this.name, GetComponent<CTeam>().teamNumber);
+       // Minimap.DeleteUnit(this.transform, GetComponent<CTeam>().teamNumber);
+    }
+
+    [RPC]
+    public void MinimapUnitDied(string sUnit, int teamN)
+    {
+        Transform transform1 = GameObject.Find(sUnit).transform;
+        Minimap.DeleteUnit(transform1, teamN);
     }
 
     public void setDyingMaterial()

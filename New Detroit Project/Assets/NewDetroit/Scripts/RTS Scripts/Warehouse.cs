@@ -125,6 +125,8 @@ public class Warehouse : CResourceBuilding
 
                 cubes[i].SetActive(createCubes);
             }
+            if (!PhotonNetwork.offlineMode)
+                photonView.RPC("Constructed", PhotonTargets.All, transform.position, transform.rotation);
             DestroyUnnecessaryGameobjects();
             return true;
         }
@@ -177,10 +179,8 @@ public class Warehouse : CResourceBuilding
                 for (int i = 0; i < numEngineerPositions; i++)
                     cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
                 constructed = true;
-                if (PhotonNetwork.connected)
-					photonView.RPC("Constructed",PhotonTargets.All, transform.position, transform.rotation);
-				else
-					Constructed(transform.position, transform.rotation);
+                //else
+                //    Constructed(transform.position, transform.rotation);
 				return true;
             }
             else

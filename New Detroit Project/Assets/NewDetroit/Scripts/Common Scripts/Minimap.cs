@@ -17,31 +17,43 @@ public class Minimap : MonoBehaviour
     public Texture textureBase0;
     public Texture textureBase1;
     public Texture textureTowerNeutral;
+    public Texture textureMyHeroe;
+    public Texture textureEnemyHeroe;
 
     // Minimap properties
-    public static float size        = 180.0f;
+    public static float size        = 200.0f;
     public static float margin      = 10.0f;
     public static float posHeight;
 
     //Terrain properties
-    public const float sizeWorldFloor = 500;
-    public static float sizeProportion;
+    public static float sizeWorldFloor = 250;
+    public static float sizeProportionY;
+    public static float sizeProportionX;
+
+    public Terrain terrain;
 
     private int contUpdate0 = 0;
     private int contUpdate1 = 0;
     private int contX = 0;
     private int contY = 0;
 
+    public GameObject orcBase;
+    public GameObject robotBase;
+
+    public Texture map;
+
     public class StructMatrix
     {
         private int fogType;
         private int cont;
+        public int alwaysVisible;
         private const int MAXCONT = 10;
 
         public StructMatrix()
         {
             fogType = 0;
             cont = 0;
+            alwaysVisible = 0;
         }
 
         public StructMatrix(int fogType, int cont)
@@ -148,13 +160,17 @@ public class Minimap : MonoBehaviour
     }
 
     // Array for fogType
-    private StructMatrix[,] fogTypeMatrix; // 0 -> opaque, 1 -> semitransparent, 2 -> transparent
+    private static StructMatrix[,] fogTypeMatrix; // 0 -> opaque, 1 -> semitransparent, 2 -> transparent
     private const int MATRIXSIZE = 20;
     private static float tileSize;
     
     //Unit lists
-    public static List<UnitController> myArmy       = new List<UnitController>();
-    public static List<UnitController> enemyArmy    = new List<UnitController>();
+    public static List<Transform> myArmy    = new List<Transform>();
+    public static List<Transform> enemyArmy = new List<Transform>();
+
+    // Heroes
+    public static Transform myHeroe;
+    public static Transform enemyHeroe;
 
     // Positions of the own GameObjects lists
     public static List<Vector2> myUnitList          = new List<Vector2>();    
@@ -162,6 +178,7 @@ public class Minimap : MonoBehaviour
     public static List<Vector2> myTowerList         = new List<Vector2>();
     public static List<Vector2> myWarehouseList     = new List<Vector2>();
     public static Vector2 myBase;
+    public static Vector2 myHeroePos;
 
     // Positions and fogtype of the enemy GameObjects lists
     public static List<StructUnitFogPos> enemyUnitList              = new List<StructUnitFogPos>();
@@ -169,13 +186,17 @@ public class Minimap : MonoBehaviour
     public static List<StructBuildingFogPos> enemyTowerList         = new List<StructBuildingFogPos>();
     public static List<StructBuildingFogPos> enemyWarehouseList     = new List<StructBuildingFogPos>();
     public static StructBuildingFogPos enemyBase;
-    
+    public static StructUnitFogPos enemyHeroePos;
+
     private int cont = 0;
 
 	// Use this for initialization
 	void Start () 
     {
-        sizeProportion = size / sizeWorldFloor;
+        sizeWorldFloor = terrain.terrainData.size.x;
+        sizeProportionY = size / sizeWorldFloor;
+        sizeProportionX = size / (sizeWorldFloor);
+
         posHeight = Screen.height - (size + margin);
         
         // Inicialize the matrix
@@ -188,6 +209,35 @@ public class Minimap : MonoBehaviour
             }
         }
         tileSize = size / MATRIXSIZE;
+
+        // Bases
+        Vector3 bcOrc = orcBase.transform.position;
+        Vector3 bcRobot = robotBase.transform.position;
+
+        float posxOrc = margin + (bcOrc.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        float posyOrc = posHeight + ((sizeWorldFloor / 2) - bcOrc.z) * sizeProportionY;
+
+        float posxRobot = margin + (bcRobot.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        float posyRobot = posHeight + ((sizeWorldFloor / 2) - bcRobot.z) * sizeProportionY;
+        
+        if (teamNumber == 1)
+        {
+            myBase = new Vector2(posxRobot, posyRobot);
+            SetTileTransparent(posxRobot, posyRobot, true);
+            // Update the tile
+            int tileX = (int)((posxOrc - margin) / tileSize);
+            int tileY = (int)((posyOrc - posHeight) / tileSize);
+            enemyBase = new StructBuildingFogPos(new Vector2(posxOrc, posyOrc), 0, tileX, tileY);
+        }
+        else
+        {
+            myBase = new Vector2(posxOrc, posyOrc);
+            SetTileTransparent(posxOrc, posyOrc, true);
+            // Update the tile
+            int tileX = (int)((posxRobot - margin) / tileSize);
+            int tileY = (int)((posyRobot - posHeight) / tileSize);
+            enemyBase = new StructBuildingFogPos(new Vector2(posxRobot, posyRobot), 0, tileX, tileY);
+        } 
 	}
 
 	void LateUpdate () 
@@ -203,14 +253,14 @@ public class Minimap : MonoBehaviour
                 i = i % MATRIXSIZE;
                 j = j % MATRIXSIZE;
                 // If the tile is transparent and has to change to semitransparent
-                if (fogTypeMatrix[i, j].IsMaxCont() && fogTypeMatrix[i, j].GetFogType() == 2)
+                if (fogTypeMatrix[i, j].alwaysVisible == 0 && fogTypeMatrix[i, j].IsMaxCont() && fogTypeMatrix[i, j].GetFogType() == 2)
                 {
                     fogTypeMatrix[i, j].SetFogType(1);
                     fogTypeMatrix[i, j].ResetCont();
                         
                 }
                 // else if the tile is transparent we increase its cont
-                else if (fogTypeMatrix[i, j].GetFogType() == 2)
+                else if (fogTypeMatrix[i, j].alwaysVisible == 0 && fogTypeMatrix[i, j].GetFogType() == 2)
                     fogTypeMatrix[i, j].IncreaseCont();
             }
         }
@@ -219,41 +269,162 @@ public class Minimap : MonoBehaviour
             contY = (contY + 1) % 4;
         
         // myArmy
-        for (int i = contUpdate0; i < max0; i += 3 )
-        {            
-            // Update the unit position
-            float posx = margin + (myArmy[i].transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
-            float posy = posHeight + ((sizeWorldFloor / 2) - myArmy[i].transform.position.z) * sizeProportion;
-            myUnitList[i] = new Vector2(posx, posy);          
-            
-            // Update the matrix
-            int tileX = (int)((posx - margin) / tileSize);
-            int tileY = (int)((posy - posHeight) / tileSize);
-            fogTypeMatrix[tileX, tileY].SetFogType(2);
-            if (fogTypeMatrix[tileX, tileY].GetCont() != 0)
-                fogTypeMatrix[tileX, tileY].ResetCont();
+        if (myArmy.Count > 0)
+        {
+            for (int i = contUpdate0; i < max0; i += 3)
+            {
+                // Update the unit position
+                float posx = margin + (myArmy[i].position.x + (sizeWorldFloor / 2)) * sizeProportionX;
+                float posy = posHeight + ((sizeWorldFloor / 2) - myArmy[i].position.z) * sizeProportionY;
+                myUnitList[i] = new Vector2(posx, posy);
+
+                // Update the matrix
+                SetTileTransparent(posx, posy, false);
+            }
+            contUpdate0 = (contUpdate0 + 1) % 4;
         }
-        contUpdate0 = (contUpdate0 + 1) % 4;
+        else
+            contUpdate0 = (contUpdate0 + 1) % 4;
+
+        // myHeroe
+        if (myHeroe && contUpdate0 == 0)
+        {
+            // Update the heroe position
+            float posx = margin + (myHeroe.position.x + (sizeWorldFloor / 2)) * sizeProportionX;
+            float posy = posHeight + ((sizeWorldFloor / 2) - myHeroe.position.z) * sizeProportionY;
+            myHeroePos = new Vector2(posx, posy);
+
+            // Update the matrix
+            SetTileTransparent(posx, posy, false);
+        }
         
         // enemyArmy
-        for (int i = contUpdate1; i < max1; i += 3)
+        if (enemyArmy.Count > 0)
         {
-            // update the unit position
-            float posx = margin + (enemyArmy[i].transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
-            float posy = posHeight + ((sizeWorldFloor / 2) - enemyArmy[i].transform.position.z) * sizeProportion;
-            enemyUnitList[i].SetPosition(new Vector2(posx, posy));
+            for (int i = contUpdate1; i < max1; i += 3)
+            {
+                // update the unit position
+                float posx = margin + (enemyArmy[i].position.x + (sizeWorldFloor / 2)) * sizeProportionX;
+                float posy = posHeight + ((sizeWorldFloor / 2) - enemyArmy[i].position.z) * sizeProportionY;
+                enemyUnitList[i].SetPosition(new Vector2(posx, posy));
 
-            // update the unit fog type            
+                // update the unit fog type            
+                int tileX = (int)((posx - margin) / tileSize);
+                int tileY = (int)((posy - posHeight) / tileSize);
+                enemyUnitList[i].SetFogType(fogTypeMatrix[tileX, tileY].GetFogType());
+            }
+            contUpdate1 = (contUpdate1 + 1) % 4;
+        }
+        //enemyHeroe
+        if (enemyHeroe && contUpdate0 == 0)
+        {
+            // Update the heroe position
+            float posx = margin + (enemyHeroe.position.x + (sizeWorldFloor / 2)) * sizeProportionX;
+            float posy = posHeight + ((sizeWorldFloor / 2) - enemyHeroe.position.z) * sizeProportionY;
+            enemyHeroePos.SetPosition(new Vector2(posx, posy));
+
+            // update the heroe fog type            
             int tileX = (int)((posx - margin) / tileSize);
             int tileY = (int)((posy - posHeight) / tileSize);
-            enemyUnitList[i].SetFogType(fogTypeMatrix[tileX, tileY].GetFogType());
+            enemyHeroePos.SetFogType(fogTypeMatrix[tileX, tileY].GetFogType());
         }
-        contUpdate1 = (contUpdate1 + 1) % 4;
 	}
 
-    public static void InsertUnit (UnitController unit)
+    public static void SetTileTransparent(float posx, float posy, bool alwaysTransparent)
     {
-        if (unit.GetTeamNumber() == teamNumber)
+        // Get the tiles
+        int tileX = (int)((posx - margin) / tileSize);
+        int tileY = (int)((posy - posHeight) / tileSize);
+        
+        // Update the current tile
+        fogTypeMatrix[tileX, tileY].SetFogType(2);
+        fogTypeMatrix[tileX, tileY].ResetCont();
+
+        // Update the around tiles
+        if (tileX > 0)
+        {
+            if (tileY > 0)
+            {
+                fogTypeMatrix[tileX - 1, tileY - 1].SetFogType(2);
+                fogTypeMatrix[tileX - 1, tileY - 1].ResetCont();
+            }
+            fogTypeMatrix[tileX - 1, tileY].SetFogType(2);
+            fogTypeMatrix[tileX - 1, tileY].ResetCont();
+            if (tileY < MATRIXSIZE - 1)
+            {
+                fogTypeMatrix[tileX - 1, tileY + 1].SetFogType(2);
+                fogTypeMatrix[tileX - 1, tileY + 1].ResetCont();
+            }
+        }
+        if (tileX < MATRIXSIZE - 1)
+        {
+            if (tileY > 0)
+            {
+                fogTypeMatrix[tileX + 1, tileY - 1].SetFogType(2);
+                fogTypeMatrix[tileX + 1, tileY - 1].ResetCont();
+            }
+            fogTypeMatrix[tileX + 1, tileY].SetFogType(2);
+            fogTypeMatrix[tileX + 1, tileY].ResetCont();
+            if (tileY < MATRIXSIZE - 1)
+            {
+                fogTypeMatrix[tileX + 1, tileY + 1].SetFogType(2);
+                fogTypeMatrix[tileX + 1, tileY + 1].ResetCont();
+            }
+        }
+        if (tileY > 0)
+        {
+            fogTypeMatrix[tileX, tileY - 1].SetFogType(2);
+            fogTypeMatrix[tileX, tileY - 1].ResetCont();
+        }
+        if (tileY < MATRIXSIZE - 1)
+        {
+            fogTypeMatrix[tileX, tileY + 1].SetFogType(2);
+            fogTypeMatrix[tileX, tileY + 1].ResetCont();
+        }
+
+        // Reset the cont
+        //if (fogTypeMatrix[tileX, tileY].GetCont() != 0)
+        //{
+        //    fogTypeMatrix[tileX, tileY].ResetCont();
+        //}
+
+        // Always transparent
+        if (alwaysTransparent)
+            //fogTypeMatrix[tileX, tileY].alwaysVisible++;
+            SetTileAlwaysTransparent(tileX, tileY);
+    }
+
+    public static void SetTileAlwaysTransparent(int tileX, int tileY)
+    {
+        // Current tile
+        fogTypeMatrix[tileX , tileY].alwaysVisible++;
+
+        // Around tiles
+        if (tileX > 0)
+        {
+            if (tileY > 0) 
+                fogTypeMatrix[tileX - 1, tileY - 1].alwaysVisible++;
+            fogTypeMatrix[tileX - 1, tileY].alwaysVisible++;
+            if (tileY < 19) 
+                fogTypeMatrix[tileX - 1, tileY + 1].alwaysVisible++;
+        }
+        if (tileX < 19)
+        {
+            if (tileY > 0) 
+                fogTypeMatrix[tileX + 1, tileY - 1].alwaysVisible++;
+            fogTypeMatrix[tileX + 1, tileY].alwaysVisible++;
+            if (tileY < 19) 
+                fogTypeMatrix[tileX + 1, tileY + 1].alwaysVisible++;
+        }
+        if (tileY > 0) 
+            fogTypeMatrix[tileX, tileY - 1].alwaysVisible++;
+        if (tileY < 19) 
+            fogTypeMatrix[tileX, tileY + 1].alwaysVisible++;
+    }
+
+    public static void InsertUnit(Transform unit, int teamN)
+    {
+        if (teamN == teamNumber)
         {
             myArmy.Add(unit);
             myUnitList.Add(new Vector2());
@@ -266,13 +437,25 @@ public class Minimap : MonoBehaviour
                
     }
 
-    public static void DeleteUnit (UnitController unit)
+    public static void DeleteUnit(Transform unit, int teamN)
     {
-        if (unit.GetTeamNumber() == teamNumber)
+        if (teamN == teamNumber)
         {
             int pos = myArmy.IndexOf(unit);
             if (pos != -1)
             {
+                // Update the unit position
+                float posx = margin + (unit.position.x + (sizeWorldFloor / 2)) * sizeProportionX;
+                float posy = posHeight + ((sizeWorldFloor / 2) - unit.position.z) * sizeProportionY;
+                //myUnitList[i] = new Vector2(posx, posy);
+
+                // Update the matrix
+                int tileX = (int)((posx - margin) / tileSize);
+                int tileY = (int)((posy - posHeight) / tileSize);
+
+                if (fogTypeMatrix[tileX, tileY].alwaysVisible == 0) 
+                    fogTypeMatrix[tileX, tileY].SetFogType(1);
+                
                 myArmy.Remove(unit);
                 myUnitList.RemoveAt(pos);
             }
@@ -289,13 +472,16 @@ public class Minimap : MonoBehaviour
 
     }
 
-    public static void InsertTower (Tower tower)
+    public static void InsertTower(Transform tower, int teamN)
     {
-        float posx = margin + (tower.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
-        float posy = posHeight + ((sizeWorldFloor / 2) - tower.transform.position.z) * sizeProportion;
+        float posx = margin + (tower.position.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        float posy = posHeight + ((sizeWorldFloor / 2) - tower.position.z) * sizeProportionY;
 
-        if (tower.team.teamNumber == teamNumber)
+        if (teamN == teamNumber)
+        {
             myTowerList.Add(new Vector2(posx, posy));
+            SetTileTransparent(posx, posy, true);
+        }
         else
         {
             // Update the tile
@@ -305,13 +491,16 @@ public class Minimap : MonoBehaviour
         }
     }
 
-    public static void InsertWarehouse (Warehouse warehouse)
+    public static void InsertWarehouse (Transform warehouse, int teamN)
     {
-        float posx = margin + (warehouse.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
-        float posy = posHeight + ((sizeWorldFloor / 2) - warehouse.transform.position.z) * sizeProportion;
+        float posx = margin + (warehouse.position.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        float posy = posHeight + ((sizeWorldFloor / 2) - warehouse.position.z) * sizeProportionY;
 
-        if (warehouse.team.teamNumber == teamNumber)
+        if (teamN == teamNumber)
+        {
             myWarehouseList.Add(new Vector2(posx, posy));
+            SetTileTransparent(posx, posy, true);
+        }
         else
         {
             // Update the tile
@@ -321,14 +510,17 @@ public class Minimap : MonoBehaviour
         }
     }
 
-    public static void SetTowerNeutral(TowerNeutral tower)
+    public static void SetTowerNeutral(Transform tower, int teamN)
     {
 
-        float posx = margin + (tower.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
-        float posy = posHeight + ((sizeWorldFloor / 2) - tower.transform.position.z) * sizeProportion;
-        
-        if (tower.team.teamNumber == teamNumber)
+        float posx = margin + (tower.position.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        float posy = posHeight + ((sizeWorldFloor / 2) - tower.position.z) * sizeProportionY;
+
+        if (teamN == teamNumber)
+        {
             myTowerNeutralList.Add(new Vector2(posx, posy));
+            SetTileTransparent(posx, posy, true);
+        }
         else
         {
             // Update the tile
@@ -338,20 +530,19 @@ public class Minimap : MonoBehaviour
         }   
     }
 
-    public static void SetBase (CResourceBuilding baseBuilding)
+    public static void InsertHeroe(Transform heroe, int teamN)
     {
-        float posx = margin + (baseBuilding.transform.position.x + (sizeWorldFloor / 2)) * sizeProportion;
-        float posy = posHeight + ((sizeWorldFloor / 2) - baseBuilding.transform.position.z) * sizeProportion;
-
-        if (baseBuilding.team.teamNumber == 0)
-            myBase = new Vector2(posx, posy);
+        if (teamN == teamNumber)
+        {
+            myHeroe = heroe;
+            myHeroePos = new Vector2();
+        }
         else
         {
-            // Update the tile
-            int tileX = (int)((posx - margin) / tileSize);
-            int tileY = (int)((posy - posHeight) / tileSize);
-            enemyBase = new StructBuildingFogPos(new Vector2(posx, posy), 0, tileX, tileY);
-        }  
+            enemyHeroe = heroe;
+            enemyHeroePos = new StructUnitFogPos();
+        }
+
     }
 
     public virtual void OnGUI ()
@@ -359,28 +550,49 @@ public class Minimap : MonoBehaviour
         // Esquina superior izquierda: x = -250, z = 250;
         Rect rect1;
         rect1 = new Rect(margin, posHeight, size, size);
-        GUI.DrawTexture(rect1, textureMap);
-        
+        //GUI.DrawTexture(rect1, textureMap);
+        GUI.DrawTexture(rect1, map);
+
+        // Draw tiles
+        float littleSize = size / 20;
+        for (int i = 0; i <= 20; i++)
+        {
+            GUI.DrawTexture(new Rect(i * littleSize + margin, posHeight, 1f, size), textureBase1);
+            GUI.DrawTexture(new Rect(margin, i * littleSize + posHeight, size, 1f), textureBase1);
+        }
+
+        //Draw transparent tiles
+        for (int i = 0; i < 20; i++)
+            for (int j = 0; j < 20; j++)
+            {
+                if (fogTypeMatrix[i, j].alwaysVisible > 0 || fogTypeMatrix[i, j].GetFogType() == 2) GUI.DrawTexture(new Rect(i * littleSize + margin, j * littleSize + posHeight, littleSize, littleSize), textureTowerNeutral);
+            }
+
         // my own team
         foreach (Vector2 unit in myUnitList)
         {
-            rect1 = new Rect(unit.x, unit.y, 1.0f, 1.0f);
+            rect1 = new Rect(unit.x, unit.y, 2.0f, 2.0f);
             GUI.DrawTexture(rect1, textureUnit0);
         }
         foreach (Vector2 tower in myTowerList)
         {
-            rect1 = new Rect(tower.x, tower.y, 3.0f, 3.0f);
+            rect1 = new Rect(tower.x, tower.y, 4.0f, 4.0f);
             GUI.DrawTexture(rect1, textureTower0);
         }
         foreach (Vector2 warehouse in myWarehouseList)
         {
-            rect1 = new Rect(warehouse.x, warehouse.y, 3.0f, 3.0f);
+            rect1 = new Rect(warehouse.x, warehouse.y, 4.0f, 4.0f);
             GUI.DrawTexture(rect1, textureWarehouse0);
         }
         foreach (Vector2 tower in myTowerNeutralList)
         {
-            rect1 = new Rect(tower.x, tower.y, 3.0f, 3.0f);
+            rect1 = new Rect(tower.x, tower.y, 4.0f, 4.0f);
             GUI.DrawTexture(rect1, textureTowerNeutral);
+        }
+        if (myHeroe)
+        {
+            rect1 = new Rect(myHeroePos.x, myHeroePos.y, 4.0f, 4.0f);
+            GUI.DrawTexture(rect1, textureMyHeroe);
         }
 
         // enemy team
@@ -389,7 +601,7 @@ public class Minimap : MonoBehaviour
             if (unit.GetFogType() == 2)
             {
                 Vector2 posUnit = unit.GetPosition();
-                rect1 = new Rect(posUnit.x, posUnit.y, 1.0f, 1.0f);
+                rect1 = new Rect(posUnit.x, posUnit.y, 2.0f, 2.0f);
                 GUI.DrawTexture(rect1, textureUnit1);
             }
         } 
@@ -399,7 +611,7 @@ public class Minimap : MonoBehaviour
             if (fogT != 0)
             {
                 Vector2 posBuilding = tower.GetPosition();
-                rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
+                rect1 = new Rect(posBuilding.x, posBuilding.y, 4.0f, 4.0f);
                 GUI.DrawTexture(rect1, textureTower1);
             }
         }
@@ -409,7 +621,7 @@ public class Minimap : MonoBehaviour
             if (fogT != 0)
             {
                 Vector2 posBuilding = warehouse.GetPosition();
-                rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
+                rect1 = new Rect(posBuilding.x, posBuilding.y, 4.0f, 4.0f);
                 GUI.DrawTexture(rect1, textureWarehouse1);
             }
         }
@@ -419,20 +631,26 @@ public class Minimap : MonoBehaviour
             if (fogT != 0)
             {
                 Vector2 posBuilding = tower.GetPosition();
-                rect1 = new Rect(posBuilding.x, posBuilding.y, 3.0f, 3.0f);
+                rect1 = new Rect(posBuilding.x, posBuilding.y, 4.0f, 4.0f);
                 GUI.DrawTexture(rect1, textureTowerNeutral);
             }
         }
+        if (enemyHeroe && enemyHeroePos.GetFogType() == 2)
+        {
+            Vector2 posHeroe = enemyHeroePos.GetPosition();
+            rect1 = new Rect(posHeroe.x, posHeroe.y, 4.0f, 4.0f);
+            GUI.DrawTexture(rect1, textureEnemyHeroe);
+        }
         
         // myBase
-        rect1 = new Rect(myBase.x, myBase.y, 4.0f, 4.0f);
+        rect1 = new Rect(myBase.x, myBase.y, 8.0f, 8.0f);
         GUI.DrawTexture(rect1, textureBase0);
         // enemyBase
         int fogTBase = fogTypeMatrix[enemyBase.GetTileX(), enemyBase.GetTileY()].GetFogType();
         if (fogTBase != 0)
         {
             Vector2 posBuilding = enemyBase.GetPosition();
-            rect1 = new Rect(posBuilding.x, posBuilding.y, 4.0f, 4.0f);
+            rect1 = new Rect(posBuilding.x, posBuilding.y, 8.0f, 8.0f);
             GUI.DrawTexture(rect1, textureBase1);
         }
     }

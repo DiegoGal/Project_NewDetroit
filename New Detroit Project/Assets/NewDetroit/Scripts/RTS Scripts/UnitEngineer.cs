@@ -175,8 +175,11 @@ public class UnitEngineer : UnitController
                         cState.animationName = "Idle01";
                         cState.animationChanged = true;
 
-                        Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
-                        
+                        //Minimap.SetTowerNeutral(currentItem.GetComponent<TowerNeutral>());
+                        if (PhotonNetwork.offlineMode)
+                            Minimap.SetTowerNeutral(currentItem.transform, team.teamNumber);
+                        else
+                            photonView.RPC("MinimapInsertTN", PhotonTargets.All, currentItem.name, team.teamNumber);
                         // hide the laptop
                         //laptopInst.SetActive(false);
 						if (PhotonNetwork.connected)
@@ -285,7 +288,8 @@ public class UnitEngineer : UnitController
                     if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
                             ref lastEngineerPos,
                             ref lastEngineerIndex,
-                            this))
+                            this,
+                            false))
                     {
                         // there is a gap and we have the position
                         currentEngineerState = EngineerState.GoingToRepairPosition;
@@ -312,7 +316,8 @@ public class UnitEngineer : UnitController
                     if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
                         ref lastEngineerPos,
                         ref lastEngineerIndex,
-                        this))
+                        this,
+                        true))
                     {
                         // there is a gap and we have the position
                         currentEngineerState = EngineerState.GoingToConquestPosition;
@@ -341,7 +346,8 @@ public class UnitEngineer : UnitController
                         if (currentItem.GetComponent<BuildingController>().GetEngineerPosition(
                                 ref lastEngineerPos,
                                 ref lastEngineerIndex,
-                                this))
+                                this,
+                                false))
                         {
                             // there is a gap and we have the position
                             currentEngineerState = EngineerState.GoingToConstructPosition;
@@ -411,9 +417,20 @@ public class UnitEngineer : UnitController
 						cState.currentEngineerState = currentEngineerState;
 
                         if (newTAConstruct)
-                            Minimap.InsertTower(towerArmy.GetComponent<Tower>());
+                        {
+                            if (PhotonNetwork.offlineMode)
+                                Minimap.InsertTower(towerArmy.transform, team.teamNumber);
+                            else
+                                photonView.RPC("MinimapInsertTA", PhotonTargets.All, towerArmy.name, team.teamNumber);
+                        }
                         else if (newWConstruct)
-                            Minimap.InsertWarehouse(warehouse.GetComponent<Warehouse>());
+                        {
+                            if (PhotonNetwork.offlineMode)
+                                Minimap.InsertWarehouse(warehouse.transform, team.teamNumber);
+                            else
+                                photonView.RPC("MinimapInsertW", PhotonTargets.All, warehouse.name, team.teamNumber);
+                        }
+                           
                         newTAConstruct = newWConstruct = false;
 
                         // show the hammer
@@ -443,7 +460,30 @@ public class UnitEngineer : UnitController
                 break;
         }
     }
-    
+
+    [RPC]
+    public void MinimapInsertTA (string sTower, int teamN)
+    {
+        //Transform transform1 = GameObject.Find(sTower).transform;
+        GameObject transformGO = GameObject.Find(sTower);
+        Transform transform1 = transformGO.transform;
+        Minimap.InsertTower(transform1, teamN);
+    }
+
+    [RPC]
+    public void MinimapInsertW (string sWareHouse, int teamN)
+    {
+        Transform transform1 = GameObject.Find(sWareHouse).transform;
+        Minimap.InsertWarehouse(transform1, teamN);
+    }
+
+    [RPC]
+    public void MinimapInsertTN (string sTower, int teamN)
+    {
+        Transform transform1 = GameObject.Find(sTower).transform;
+        Minimap.SetTowerNeutral(transform1, teamN);
+    }
+
     protected override void UpdateGoingToAnEnemy ()
     {
         // 1- comprobamos si el enemigo está "a mano" y se le puede atacar

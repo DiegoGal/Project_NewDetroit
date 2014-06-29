@@ -82,7 +82,12 @@ public class HeroNetwork : BasicNetwork
 			}
 		}
 	}
-	
+
+    public override void Start()
+    {
+        base.Start();
+        Minimap.InsertHeroe(this.transform, GetComponent<CTeam>().teamNumber);
+    }
 	public virtual void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
 	{
 		base.OnPhotonSerializeView(stream, info);

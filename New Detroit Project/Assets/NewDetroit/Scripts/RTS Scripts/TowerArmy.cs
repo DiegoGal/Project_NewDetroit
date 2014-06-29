@@ -113,6 +113,8 @@ public class TowerArmy : Tower
                 cubes[i].SetActive(createCubes);
             }
             DestroyUnnecessaryGameobjects();
+            if (!PhotonNetwork.offlineMode)
+                photonView.RPC("Constructed", PhotonTargets.All, transform.position, transform.rotation);
             return true;
         }
         return false;
@@ -343,9 +345,7 @@ public class TowerArmy : Tower
                 RemoveEngineersInQueue();
                 for (int i = 0; i < numEngineerPositions; i++)
                     cubes[i].renderer.material.color = new Color(0.196f, 0.804f, 0.196f);
-                constructed = true;
-                if (PhotonNetwork.connected)
-                	photonView.RPC("Constructed",PhotonTargets.All, transform.position, transform.rotation);
+                constructed = true;           
                 //else
                 //    Constructed(transform.position, transform.rotation);
                 // insert the tower in the DistanceMeasurerTool

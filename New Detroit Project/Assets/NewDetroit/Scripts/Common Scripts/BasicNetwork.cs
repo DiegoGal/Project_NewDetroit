@@ -20,6 +20,10 @@ public class BasicNetwork : Photon.MonoBehaviour
         gameObject.name = gameObject.name.Replace("(Clone)", ""); 
     }
 
+    public virtual void Start ()
+    {
+    }
+
     public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)

@@ -126,7 +126,7 @@ public abstract class BuildingController : Photon.MonoBehaviour
         }
     }
 
-    public bool GetEngineerPosition (ref Vector3 pos, ref int index, UnitEngineer unit)
+    public bool GetEngineerPosition (ref Vector3 pos, ref int index, UnitEngineer unit, bool conquest)
     {
         int i = 0; bool found = false;
         while (!found && (i < numEngineerPositions))
@@ -136,7 +136,7 @@ public abstract class BuildingController : Photon.MonoBehaviour
                 pos = engineerPositions[i];
                 index = i;
                 //engineerPosTaken[i] = true;
-                if (PhotonNetwork.connected)
+                if (conquest && !PhotonNetwork.offlineMode)
                     photonView.RPC("MorePositionsTaken", PhotonTargets.All, i);
                 else engineerPosTaken[i] = true;
 
