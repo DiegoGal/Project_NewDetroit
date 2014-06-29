@@ -366,10 +366,10 @@ public class UnitController : ControllableCharacter
 
             currentState = State.AscendingToHeaven;
             cState.currentState = currentState;
-            if (PhotonNetwork.connected)
-            	photonView.RPC("ChangeToDyingMaterial", PhotonTargets.All);
+            if (PhotonNetwork.offlineMode)
+                ChangeToDyingMaterial();
             else
-            	ChangeToDyingMaterial();
+            	photonView.RPC("ChangeToDyingMaterial", PhotonTargets.All);
         }
     }
 
