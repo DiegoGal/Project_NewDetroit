@@ -65,11 +65,11 @@ public class DralienController : MonoBehaviour
 
                     positionRepeatCount = 0;
 
-                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     cube.transform.position = nextDestiny;
                     cube.transform.localScale = new Vector3(0.5f, 2.0f, 0.5f);
                     cube.renderer.material.color = Color.red;
-                    Destroy(cube, 2.0f);
+                    Destroy(cube, 2.0f);*/
                 }
                 else
                 {
