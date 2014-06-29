@@ -104,7 +104,7 @@ public class ArmyController : MonoBehaviour
                 unit.SetTeamColorIndex(teamColorIndex);
                 unitList.Add(go);
                 //DistanceMeasurerTool.InsertUnit(unit);
-                Minimap.InsertUnit(unit.transform, GetComponent<CTeam>().teamNumber);
+                //Minimap.InsertUnit(unit.transform, GetComponent<CTeam>().teamNumber);
             }
         }
 
