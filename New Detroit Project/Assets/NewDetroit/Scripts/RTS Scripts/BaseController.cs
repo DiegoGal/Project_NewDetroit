@@ -207,7 +207,7 @@ public class BaseController : CResourceBuilding
                         if ((team.teamNumber % 2) == 0)
                             unit = "Goblin_Engineer_TeamA";
                         else
-                            unit = "Goblin_Engineer_TeamB";
+                            unit = "Robot_Engineer_TeamA";
                         // Instantiation with Photon
                         newUnit = PhotonNetwork.Instantiate(unit, spawnOrigin, new Quaternion(), 0); 
                         // Remove part of resources
