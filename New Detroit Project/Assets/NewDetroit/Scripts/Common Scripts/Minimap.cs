@@ -192,6 +192,18 @@ public class Minimap : MonoBehaviour
 
     private int cont = 0;
 
+    // Camera
+    RaycastHit myHit;
+    int layerMask;
+    Vector3[]   squareSelectionPointsProyected, 
+                squareSelectionPointsScreen = { new Vector3(0, 0, 0), new Vector3(Screen.width, 0, 0), 
+                                                new Vector3(0, Screen.height, 0), new Vector3(Screen.width, Screen.height, 0)};
+    Vector3 pos1, pos2, pos3, pos4;
+    float pos1X, pos1Y;
+    float pos2X, pos2Y;
+    float pos3X, pos3Y;
+    float pos4X, pos4Y;
+
 	// Use this for initialization
 	void Start () 
     {
@@ -239,7 +251,11 @@ public class Minimap : MonoBehaviour
             int tileX = (int)((posxRobot - margin) / tileSize);
             int tileY = (int)((posyRobot - posHeight) / tileSize);
             enemyBase = new StructBuildingFogPos(new Vector2(posxRobot, posyRobot), 0, tileX, tileY);
-        } 
+        }
+ 
+        // Attrib for camera
+        squareSelectionPointsProyected = new Vector3[4];
+        layerMask = 1 << 11;
 	}
 
 	void LateUpdate () 
@@ -329,6 +345,49 @@ public class Minimap : MonoBehaviour
             int tileX = (int)((posx - margin) / tileSize);
             int tileY = (int)((posy - posHeight) / tileSize);
             enemyHeroePos.SetFogType(fogTypeMatrix[tileX, tileY].GetFogType());
+        }
+
+        // Camera
+        for (int i = 0; i < 4; i++)
+        {
+            // rayo:
+            Ray myRay = Camera.main.ScreenPointToRay(squareSelectionPointsScreen[i]);
+            // recogemos posición
+            if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+                squareSelectionPointsProyected[i] = myHit.point;
+
+            // aparece un cubo negro en la proyección del rayo
+            //AddBlackBox(myHit.point);
+        }
+
+        pos1 = squareSelectionPointsProyected[0];
+        pos2 = squareSelectionPointsProyected[1];
+        pos3 = squareSelectionPointsProyected[2];
+        pos4 = squareSelectionPointsProyected[3];
+
+        pos1X = margin + (pos1.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        pos1Y = posHeight + ((sizeWorldFloor / 2) - pos1.z) * sizeProportionY;
+
+        pos2X = margin + (pos2.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        pos2Y = posHeight + ((sizeWorldFloor / 2) - pos2.z) * sizeProportionY;
+
+        pos3X = margin + (pos3.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        pos3Y = posHeight + ((sizeWorldFloor / 2) - pos3.z) * sizeProportionY;
+
+        pos4X = margin + (pos4.x + (sizeWorldFloor / 2)) * sizeProportionX;
+        pos4Y = posHeight + ((sizeWorldFloor / 2) - pos4.z) * sizeProportionY;
+
+        if (Input.GetMouseButton(0))
+        {
+            float posX = Input.mousePosition.x, posY = Input.mousePosition.y;
+            // In the minimap
+            if (posX > margin && posX < margin + size && posY > margin && posY < margin + size)
+            {
+                float posXTerrain = (posX - margin) / sizeProportionX - sizeWorldFloor / 2;
+                float posYTerrain = (posY - margin) / sizeProportionY - sizeWorldFloor / 2;
+
+                Camera.main.transform.position = new Vector3(posXTerrain, Camera.main.transform.position.y, posYTerrain);
+            }
         }
 	}
 
@@ -660,50 +719,10 @@ public class Minimap : MonoBehaviour
         }
 
         // Draw camera vision
-        Vector3[] squareSelectionPointsProyected = new Vector3[4],
-                    squareSelectionPointsScreen = { new Vector3(0, 0, 0), new Vector3(Screen.width, 0, 0), new Vector3(0, Screen.height, 0), new Vector3(Screen.width, Screen.height, 0) };
-        RaycastHit myHit;
-        int layerMask;
-
-        layerMask = 1 << 11;
-
-        for (int i = 0; i < 4; i++)
-        {
-            // rayo:
-            Ray myRay = Camera.main.ScreenPointToRay(squareSelectionPointsScreen[i]);
-            // recogemos posición
-            if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
-                squareSelectionPointsProyected[i] = myHit.point;
-
-            // aparece un cubo negro en la proyección del rayo
-            //AddBlackBox(myHit.point);
-        }
-
-        Vector3 pos1 = squareSelectionPointsProyected[0],
-                pos2 = squareSelectionPointsProyected[1],
-                pos3 = squareSelectionPointsProyected[2],
-                pos4 = squareSelectionPointsProyected[3];
-
-        float pos1X = margin + (pos1.x + (sizeWorldFloor / 2)) * sizeProportionX,
-            pos1Y = posHeight + ((sizeWorldFloor / 2) - pos1.z) * sizeProportionY;
-
-        float pos2X = margin + (pos2.x + (sizeWorldFloor / 2)) * sizeProportionX,
-            pos2Y = posHeight + ((sizeWorldFloor / 2) - pos2.z) * sizeProportionY;
-
-        float pos3X = margin + (pos3.x + (sizeWorldFloor / 2)) * sizeProportionX,
-            pos3Y = posHeight + ((sizeWorldFloor / 2) - pos3.z) * sizeProportionY;
-
-        float pos4X = margin + (pos4.x + (sizeWorldFloor / 2)) * sizeProportionX,
-            pos4Y = posHeight + ((sizeWorldFloor / 2) - pos4.z) * sizeProportionY;
-
         GUI.DrawTexture(new Rect(pos1X, pos1Y, 0, 0), textureWhite);
         //GUI.DrawTexture(new Rect(pos2X, pos2Y, 3, 3), textureWhite);
         //GUI.DrawTexture(new Rect(pos3X, pos3Y, 3, 3), textureWhite);
         //GUI.DrawTexture(new Rect(pos4X, pos4Y, 3, 3), textureWhite);
-        //Drawing.DrawLine(new Vector2(pos1X, pos1Y), new Vector2(pos2X, pos2Y), Color.white);
-        //Drawing.DrawLine(new Vector2(pos2X, pos2Y), new Vector2(pos4X, pos4Y), Color.white);
-        //Drawing.DrawLine(new Vector2(pos4X, pos4Y), new Vector2(pos3X, pos3Y), Color.white);
-        //Drawing.DrawLine(new Vector2(pos3X, pos3Y), new Vector2(pos1X, pos1Y), Color.white);
 
         //GL.Color(Color.white);
         GL.PushMatrix();

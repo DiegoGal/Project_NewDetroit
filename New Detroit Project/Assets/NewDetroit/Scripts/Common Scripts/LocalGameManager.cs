@@ -17,7 +17,7 @@ public class LocalGameManager : MonoBehaviour {
 
     public void Awake()
     {
-        if (!PhotonNetwork.connected)
+        if (PhotonNetwork.offlineMode)
         {
             Application.LoadLevel(NetworkController.SceneNameMenu);
             return;
@@ -96,14 +96,14 @@ public class LocalGameManager : MonoBehaviour {
 
     }
 
-    void OnGUI()
-    {
-        if (GUI.Button(new Rect(Screen.width/2 - 40,0,80,20),"Exit room"))
-        {
-            PhotonNetwork.LeaveRoom();
-            Application.LoadLevel(NetworkController.SceneNameMenu);
-        }
-    }
+    //void OnGUI()
+    //{
+    //    if (GUI.Button(new Rect(Screen.width/2 - 40,0,80,20),"Exit room"))
+    //    {
+    //        PhotonNetwork.LeaveRoom();
+    //        Application.LoadLevel(NetworkController.SceneNameMenu);
+    //    }
+    //}
 
     public void OnJoinedRoom()
     {

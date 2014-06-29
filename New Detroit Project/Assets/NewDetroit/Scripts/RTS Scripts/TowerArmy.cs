@@ -286,24 +286,24 @@ public class TowerArmy : Tower
 
 	}// Update
 
-	public virtual void OnGUI ()
-	{
-        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
-        Rect rect1;
-        Rect rect2;
-        if (constructed)
-        {
-            rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
-            rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f);
-        }
-        else
-        {
-            rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
-            rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (contConstr / finalCont), 4.0f);
-        }
-        GUI.DrawTexture(rect1, progressBarEmpty);
-        GUI.DrawTexture(rect2, progressBarFull);
-	}
+    //public virtual void OnGUI ()
+    //{
+    //    Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
+    //    Rect rect1;
+    //    Rect rect2;
+    //    if (constructed)
+    //    {
+    //        rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
+    //        rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f);
+    //    }
+    //    else
+    //    {
+    //        rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 4.0f);
+    //        rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f * (contConstr / finalCont), 4.0f);
+    //    }
+    //    GUI.DrawTexture(rect1, progressBarEmpty);
+    //    GUI.DrawTexture(rect2, progressBarFull);
+    //}
 
 	/*private bool CanConstruct()
 	{

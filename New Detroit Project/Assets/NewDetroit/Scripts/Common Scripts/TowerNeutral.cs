@@ -271,41 +271,41 @@ public class TowerNeutral : Tower
         return currentTowerState == TowerState.Neutral;
     }
 
-    public virtual void OnGUI ()
-    {
-        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
+    //public virtual void OnGUI ()
+    //{
+    //    Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
 
-        // rectángulo donde se dibujará la barra de conquista
-        if (currentTowerState == TowerState.Neutral)
-        {
-            GUI.skin.label.fontSize = 10;
+    //    // rectángulo donde se dibujará la barra de conquista
+    //    if (currentTowerState == TowerState.Neutral)
+    //    {
+    //        GUI.skin.label.fontSize = 10;
 
-            // Team 0
-            GUI.Label(new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 130.0f, 120.0f, 50),
-                  "Team 0 conquered");
-            Rect rect3 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 110.0f, 120.0f, 4.0f);
-            GUI.DrawTexture(rect3, progressBarEmpty);
-            Rect rect4 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 110.0f, 120.0f * (contConq[0] / finalCont), 4.0f);
-            GUI.DrawTexture(rect4, progressBarFull);
+    //        // Team 0
+    //        GUI.Label(new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 130.0f, 120.0f, 50),
+    //              "Team 0 conquered");
+    //        Rect rect3 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 110.0f, 120.0f, 4.0f);
+    //        GUI.DrawTexture(rect3, progressBarEmpty);
+    //        Rect rect4 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 110.0f, 120.0f * (contConq[0] / finalCont), 4.0f);
+    //        GUI.DrawTexture(rect4, progressBarFull);
 
-            // Team 1
-            GUI.Label(new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 50),
-                  "Team 1 conquered");
-            Rect rect5 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 80.0f, 120.0f, 4.0f);
-            GUI.DrawTexture(rect5, progressBarEmpty);
-            Rect rect6 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 80.0f, 120.0f * (contConq[1] / finalCont), 4.0f);
-            GUI.DrawTexture(rect6, progressBarFull);
-        }
-        else
-        {
-            // rectángulo donde se dibujará la barra de vida
-            Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f, 4.0f);
-            GUI.DrawTexture(rect1, progressBarEmpty);
-            Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f);
-            GUI.DrawTexture(rect2, progressBarFull);
+    //        // Team 1
+    //        GUI.Label(new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 100.0f, 120.0f, 50),
+    //              "Team 1 conquered");
+    //        Rect rect5 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 80.0f, 120.0f, 4.0f);
+    //        GUI.DrawTexture(rect5, progressBarEmpty);
+    //        Rect rect6 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 80.0f, 120.0f * (contConq[1] / finalCont), 4.0f);
+    //        GUI.DrawTexture(rect6, progressBarFull);
+    //    }
+    //    else
+    //    {
+    //        // rectángulo donde se dibujará la barra de vida
+    //        Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f, 4.0f);
+    //        GUI.DrawTexture(rect1, progressBarEmpty);
+    //        Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 200.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f);
+    //        GUI.DrawTexture(rect2, progressBarFull);
 
-        }
-    }
+    //    }
+    //}
 
     public void LeaveEngineerPositionConquest (int index)
     {

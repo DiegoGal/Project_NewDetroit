@@ -131,15 +131,15 @@ public class BaseController : CResourceBuilding
 		
 	}
 
-    public virtual void OnGUI()
-    {
-        Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
-        Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 50.0f, 120.0f, 4.0f);
-        Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 50.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f); 
+    //public virtual void OnGUI()
+    //{
+    //    Vector3 camPos = Camera.main.WorldToScreenPoint(transform.position);
+    //    Rect rect1 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 50.0f, 120.0f, 4.0f);
+    //    Rect rect2 = new Rect(camPos.x - 60.0f, Screen.height - camPos.y - 50.0f, 120.0f * (life.currentLife / life.maximunLife), 4.0f); 
 
-        GUI.DrawTexture(rect1, progressBarEmpty);
-        GUI.DrawTexture(rect2, progressBarFull);
-    }
+    //    GUI.DrawTexture(rect1, progressBarEmpty);
+    //    GUI.DrawTexture(rect2, progressBarFull);
+    //}
 
     void OnCollisionEnter (Collision collision)
     {
