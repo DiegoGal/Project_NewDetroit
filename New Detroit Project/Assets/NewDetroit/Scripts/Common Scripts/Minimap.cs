@@ -20,6 +20,7 @@ public class Minimap : MonoBehaviour
     public Texture textureMyHeroe;
     public Texture textureEnemyHeroe;
     public Texture textureSemiTransparent;
+    public Texture textureWhite;
 
     // Minimap properties
     public static float size        = 200.0f;
@@ -657,6 +658,68 @@ public class Minimap : MonoBehaviour
             rect1 = new Rect(posBuilding.x, posBuilding.y, 8.0f, 8.0f);
             GUI.DrawTexture(rect1, textureBase1);
         }
-    }
 
+        // Draw camera vision
+        Vector3[] squareSelectionPointsProyected = new Vector3[4],
+                    squareSelectionPointsScreen = { new Vector3(0, 0, 0), new Vector3(Screen.width, 0, 0), new Vector3(0, Screen.height, 0), new Vector3(Screen.width, Screen.height, 0) };
+        RaycastHit myHit;
+        int layerMask;
+
+        layerMask = 1 << 11;
+
+        for (int i = 0; i < 4; i++)
+        {
+            // rayo:
+            Ray myRay = Camera.main.ScreenPointToRay(squareSelectionPointsScreen[i]);
+            // recogemos posición
+            if (Physics.Raycast(myRay, out myHit, 1000f, layerMask))
+                squareSelectionPointsProyected[i] = myHit.point;
+
+            // aparece un cubo negro en la proyección del rayo
+            //AddBlackBox(myHit.point);
+        }
+
+        Vector3 pos1 = squareSelectionPointsProyected[0],
+                pos2 = squareSelectionPointsProyected[1],
+                pos3 = squareSelectionPointsProyected[2],
+                pos4 = squareSelectionPointsProyected[3];
+
+        float pos1X = margin + (pos1.x + (sizeWorldFloor / 2)) * sizeProportionX,
+            pos1Y = posHeight + ((sizeWorldFloor / 2) - pos1.z) * sizeProportionY;
+
+        float pos2X = margin + (pos2.x + (sizeWorldFloor / 2)) * sizeProportionX,
+            pos2Y = posHeight + ((sizeWorldFloor / 2) - pos2.z) * sizeProportionY;
+
+        float pos3X = margin + (pos3.x + (sizeWorldFloor / 2)) * sizeProportionX,
+            pos3Y = posHeight + ((sizeWorldFloor / 2) - pos3.z) * sizeProportionY;
+
+        float pos4X = margin + (pos4.x + (sizeWorldFloor / 2)) * sizeProportionX,
+            pos4Y = posHeight + ((sizeWorldFloor / 2) - pos4.z) * sizeProportionY;
+
+        GUI.DrawTexture(new Rect(pos1X, pos1Y, 0, 0), textureWhite);
+        //GUI.DrawTexture(new Rect(pos2X, pos2Y, 3, 3), textureWhite);
+        //GUI.DrawTexture(new Rect(pos3X, pos3Y, 3, 3), textureWhite);
+        //GUI.DrawTexture(new Rect(pos4X, pos4Y, 3, 3), textureWhite);
+        //Drawing.DrawLine(new Vector2(pos1X, pos1Y), new Vector2(pos2X, pos2Y), Color.white);
+        //Drawing.DrawLine(new Vector2(pos2X, pos2Y), new Vector2(pos4X, pos4Y), Color.white);
+        //Drawing.DrawLine(new Vector2(pos4X, pos4Y), new Vector2(pos3X, pos3Y), Color.white);
+        //Drawing.DrawLine(new Vector2(pos3X, pos3Y), new Vector2(pos1X, pos1Y), Color.white);
+
+        //GL.Color(Color.white);
+        GL.PushMatrix();
+        GL.Begin(GL.LINES);
+            GL.Vertex3(pos1X, pos1Y, 0);
+            GL.Vertex3(pos2X, pos2Y, 0);
+
+            GL.Vertex3(pos2X, pos2Y, 0);
+            GL.Vertex3(pos4X, pos4Y, 0);
+
+            GL.Vertex3(pos4X, pos4Y, 0);
+            GL.Vertex3(pos3X, pos3Y, 0);
+
+            GL.Vertex3(pos3X, pos3Y, 0);
+            GL.Vertex3(pos1X, pos1Y, 0);
+        GL.End();
+        GL.PopMatrix();
+    }
 }
