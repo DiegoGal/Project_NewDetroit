@@ -82,10 +82,11 @@ public class UnitScoutRobot : UnitScout
 
     protected override void RemoveAssetsFromModel()
     {
-        base.RemoveAssetsFromModel();
+        Debug.Break();
+        //base.RemoveAssetsFromModel();
 
-        if (fireParticles)
-            Destroy(fireParticles);
+        /*if (fireParticles)
+            Destroy(fireParticles);*/
     }
 
 }

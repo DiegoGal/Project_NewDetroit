@@ -152,8 +152,8 @@ public class UnitScout : UnitController
 
     protected override void RemoveAssetsFromModel ()
     {
-        if (mount)
-            Destroy(mount);
+        /*if (mount)
+            Destroy(mount);*/
     }
 
 }

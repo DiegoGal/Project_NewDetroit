@@ -500,33 +500,33 @@ public class ArmyController : MonoBehaviour
         else return false;
     }
 
-    //void OnGUI ()
-    //{
-    //    GUI.skin.label.fontSize = 12;
+    void OnGUI ()
+    {
+        GUI.skin.label.fontSize = 12;
 
-    //    if (teamNumber == 0)
-    //        GUI.Label(new Rect(5, 5, 150, 100), "Team_A\n\tTotal resources: " + resources +
-    //            "\n\tEconomy: " + economy +
-    //            "\n\tTotal Units: " + unitList.Count);
-    //    else if (teamNumber == 1)
-    //        GUI.Label(new Rect(Screen.width - 140, 5, 150, 100), "Team_B\n\tTotal resources: " + resources +
-    //            "\n\tEconomy: " + economy +
-    //            "\n\tTotal Units: " + unitList.Count);
+        if (teamNumber == 0)
+            GUI.Label(new Rect(5, 5, 150, 100), "Team_A\n\tTotal resources: " + resources +
+                "\n\tEconomy: " + economy +
+                "\n\tTotal Units: " + unitList.Count);
+        else if (teamNumber == 1)
+            GUI.Label(new Rect(Screen.width - 140, 5, 150, 100), "Team_B\n\tTotal resources: " + resources +
+                "\n\tEconomy: " + economy +
+                "\n\tTotal Units: " + unitList.Count);
 
-    //    // selecting rectangle
-    //    if (selecting)
-    //    {
-    //        DrawQuad(
-    //            new Rect(
-    //                squareSelectionPointsScreen[0].x,
-    //                Screen.height - squareSelectionPointsScreen[0].y,
-    //                squareSelectionPointsScreen[2].x - squareSelectionPointsScreen[0].x,
-    //                squareSelectionPointsScreen[0].y - squareSelectionPointsScreen[2].y
-    //            ),
-    //            new Color(0.0f, 0.0f, 1.0f, 0.085f)
-    //        );
-    //    }
-    //} // OnGUI()
+        // selecting rectangle
+        if (selecting)
+        {
+            DrawQuad(
+                new Rect(
+                    squareSelectionPointsScreen[0].x,
+                    Screen.height - squareSelectionPointsScreen[0].y,
+                    squareSelectionPointsScreen[2].x - squareSelectionPointsScreen[0].x,
+                    squareSelectionPointsScreen[0].y - squareSelectionPointsScreen[2].y
+                ),
+                new Color(0.0f, 0.0f, 1.0f, 0.085f)
+            );
+        }
+    } // OnGUI()
 
     private List<Vector3> SwarmAlgorithm (Vector3 destiny)
     {
