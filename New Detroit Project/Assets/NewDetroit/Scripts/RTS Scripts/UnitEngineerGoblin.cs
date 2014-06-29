@@ -15,15 +15,15 @@ public class UnitEngineerGoblin : UnitEngineer
         if (dummyHand == null)
             dummyHand = transform.FindChild("Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 R Clavicle/Bip001 R UpperArm/Bip001 R Forearm/Bip001 R Hand/Mano Der");
 
-		if (PhotonNetwork.connected)
+		if (PhotonNetwork.offlineMode)
 		{
-        	photonView.RPC("InstanciateLaptop", PhotonTargets.All);
-        	photonView.RPC("InstanciateHammer", PhotonTargets.All);
+            InstanciateLaptop();
+            InstanciateHammer();
         }
         else
         {
-        	InstanciateLaptop();
-        	InstanciateHammer();
+            photonView.RPC("InstanciateLaptop", PhotonTargets.All);
+            photonView.RPC("InstanciateHammer", PhotonTargets.All);
         }
 
         type = TypeHeroe.Orc;
