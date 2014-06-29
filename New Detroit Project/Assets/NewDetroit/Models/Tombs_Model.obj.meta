@@ -1,18 +1,38 @@
 fileFormatVersion: 2
-guid: 2512f2f2e25efc84aa6204ae28ffe3fc
+guid: f85ab5cf2ed83ec43a6483baa4baebb4
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
-    100000: Box054
-    100002: //RootNode
-    400000: Box054
-    400002: //RootNode
-    2300000: Box054
-    3300000: Box054
-    4300000: Box054
+    100000: Box001
+    100002: Box002
+    100004: Box003
+    100006: Cone001
+    100008: Cone002
+    100010: //RootNode
+    400000: Box001
+    400002: Box002
+    400004: Box003
+    400006: Cone001
+    400008: Cone002
+    400010: //RootNode
+    2300000: Box001
+    2300002: Box002
+    2300004: Box003
+    2300006: Cone001
+    2300008: Cone002
+    3300000: Box001
+    3300002: Box002
+    3300004: Box003
+    3300006: Cone001
+    3300008: Cone002
+    4300000: Box001
+    4300002: Box002
+    4300004: Box003
+    4300006: Cone001
+    4300008: Cone002
     9500000: //RootNode
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
@@ -47,7 +67,7 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     human: []
@@ -61,5 +81,5 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   userData: 
