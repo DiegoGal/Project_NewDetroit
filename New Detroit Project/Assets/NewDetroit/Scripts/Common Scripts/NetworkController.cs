@@ -4,7 +4,7 @@ using System.Collections;
 public class NetworkController : Photon.MonoBehaviour
 {
 
-    public static readonly string SceneNameMenu = "MainMenu";
+    public static readonly string SceneNameMenu = "MainMenuJacob";
 
     public static readonly string SceneNameGame = "NewDetroit01_Jacob";
 

@@ -22,6 +22,11 @@ public class LocalGameManager : MonoBehaviour {
             Application.LoadLevel(NetworkController.SceneNameMenu);
             return;
         }
+        else if (!PhotonNetwork.connected)
+        {
+            Application.LoadLevel(NetworkController.SceneNameMenu);
+            return;
+        }
         else
         {
             GameObject heroInst;
@@ -37,7 +42,7 @@ public class LocalGameManager : MonoBehaviour {
                     Minimap.teamNumber = 0;
                     Destroy(army1);
                     Destroy(army0);
-                break;
+                    break;
                 case 1: // Skelterbot
                     heroInst = PhotonNetwork.Instantiate("Skelterbot", blueArmyCameraPosition.position + Vector3.down * 24f, new Quaternion(), 0);
                     heroInst.GetComponent<ThirdPersonCamera>().cameraTransform = Camera.main.transform;
@@ -48,7 +53,7 @@ public class LocalGameManager : MonoBehaviour {
                     Minimap.teamNumber = 1;
                     Destroy(army1);
                     Destroy(army0);
-                break;
+                    break;
                 case 2: // Rob Army
 
                     Camera.main.transform.position = redArmyCameraPosition.position;
@@ -61,9 +66,9 @@ public class LocalGameManager : MonoBehaviour {
                     navmeshColliders.SetActive(false);
                     Minimap.teamNumber = 0;
                     Destroy(army1);
-                break;
+                    break;
                 case 3: // Skelter Army
-                Camera.main.transform.position = blueArmyCameraPosition.position;
+                    Camera.main.transform.position = blueArmyCameraPosition.position;
                     redBase.GetComponent<CSelectable>().enabled = false;
                     redBase.GetComponent<BaseController>().enabled = false;
                     redBase.GetComponent<FogOfWarUnit>().enabled = false;
@@ -72,14 +77,14 @@ public class LocalGameManager : MonoBehaviour {
                     blueBase.GetComponent<FogOfWarUnit>().enabled = true;
                     navmeshColliders.SetActive(false);
                     Minimap.teamNumber = 1;
-                	Destroy(army0);
-                break;
+                    Destroy(army0);
+                    break;
                 default:
                     Debug.Log("Error at selection");
                     Destroy(army0);
                     Destroy(army1);
                     break;
-            }           
+            }
         }
 
     }
