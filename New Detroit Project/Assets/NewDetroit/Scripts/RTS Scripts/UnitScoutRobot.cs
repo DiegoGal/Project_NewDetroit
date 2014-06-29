@@ -51,42 +51,53 @@ public class UnitScoutRobot : UnitScout
     {
         base.UnitDiedMessage();
 
-        if (mount)
-            Destroy(mount);
-
-        explosionFireInst = Instantiate
-        (
-            particlesExplosionFire,
-            transform.position,
-            transform.rotation
-        ) as GameObject;
-
-        explosionSmokeInst = Instantiate
-        (
-            particlesExplosionSmoke,
-            transform.position,
-            new Quaternion(0f, 180f, 180f, 0f)
-        ) as GameObject;
-
-        explosionPiecesInst = Instantiate
-        (
-            particlesExplosionPieces,
-            transform.position,
-            new Quaternion(0f, 180f, 180f, 0f)
-        ) as GameObject;
-
-        Destroy(explosionFireInst, 2.5f);
-        Destroy(explosionSmokeInst, 2.5f);
-        Destroy(explosionPiecesInst, 2.5f);
+        /*if (mount)
+            Destroy(mount);*/
+        RemoveAssetsFromModel();
     }
 
     protected override void RemoveAssetsFromModel()
     {
-        Debug.Break();
-        //base.RemoveAssetsFromModel();
+        base.RemoveAssetsFromModel();
 
-        /*if (fireParticles)
-            Destroy(fireParticles);*/
+        if (fireParticles)
+            Destroy(fireParticles);
+
+        StartCoroutine(DestroyShip(1.25f));
+    }
+
+    private IEnumerator DestroyShip (float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        if (mount)
+        {
+            explosionFireInst = Instantiate
+            (
+                particlesExplosionFire,
+                mount.transform.position,
+                mount.transform.rotation
+            ) as GameObject;
+
+            explosionSmokeInst = Instantiate
+            (
+                particlesExplosionSmoke,
+                mount.transform.position,
+                new Quaternion(0f, 180f, 180f, 0f)
+            ) as GameObject;
+
+            explosionPiecesInst = Instantiate
+            (
+                particlesExplosionPieces,
+                mount.transform.position,
+                new Quaternion(0f, 180f, 180f, 0f)
+            ) as GameObject;
+
+            Destroy(explosionFireInst, 2.5f);
+            Destroy(explosionSmokeInst, 2.5f);
+            Destroy(explosionPiecesInst, 4.0f);
+
+            Destroy(mount);
+        }
     }
 
 }
