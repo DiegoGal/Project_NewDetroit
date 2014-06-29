@@ -253,14 +253,14 @@ public class Minimap : MonoBehaviour
                 i = i % MATRIXSIZE;
                 j = j % MATRIXSIZE;
                 // If the tile is transparent and has to change to semitransparent
-                if (fogTypeMatrix[i, j].alwaysVisible > 0 && fogTypeMatrix[i, j].IsMaxCont() && fogTypeMatrix[i, j].GetFogType() == 2)
+                if (fogTypeMatrix[i, j].alwaysVisible == 0 && fogTypeMatrix[i, j].IsMaxCont() && fogTypeMatrix[i, j].GetFogType() == 2)
                 {
                     fogTypeMatrix[i, j].SetFogType(1);
                     fogTypeMatrix[i, j].ResetCont();
                         
                 }
                 // else if the tile is transparent we increase its cont
-                else if (fogTypeMatrix[i, j].alwaysVisible > 0 && fogTypeMatrix[i, j].GetFogType() == 2)
+                else if (fogTypeMatrix[i, j].alwaysVisible == 0 && fogTypeMatrix[i, j].GetFogType() == 2)
                     fogTypeMatrix[i, j].IncreaseCont();
             }
         }
@@ -332,36 +332,63 @@ public class Minimap : MonoBehaviour
 
     public static void SetTileTransparent(float posx, float posy, bool alwaysTransparent)
     {
-        // Update the matrix
+        // Get the tiles
         int tileX = (int)((posx - margin) / tileSize);
         int tileY = (int)((posy - posHeight) / tileSize);
         
+        // Update the current tile
         fogTypeMatrix[tileX, tileY].SetFogType(2);
+        fogTypeMatrix[tileX, tileY].ResetCont();
+
+        // Update the around tiles
         if (tileX > 0)
         {
-            if (tileY > 0) 
+            if (tileY > 0)
+            {
                 fogTypeMatrix[tileX - 1, tileY - 1].SetFogType(2);
+                fogTypeMatrix[tileX - 1, tileY - 1].ResetCont();
+            }
             fogTypeMatrix[tileX - 1, tileY].SetFogType(2);
-            if (tileY < 19) 
+            fogTypeMatrix[tileX - 1, tileY].ResetCont();
+            if (tileY < MATRIXSIZE - 1)
+            {
                 fogTypeMatrix[tileX - 1, tileY + 1].SetFogType(2);
+                fogTypeMatrix[tileX - 1, tileY + 1].ResetCont();
+            }
         }
-        if (tileX < 19)
+        if (tileX < MATRIXSIZE - 1)
         {
-            if (tileY > 0) 
+            if (tileY > 0)
+            {
                 fogTypeMatrix[tileX + 1, tileY - 1].SetFogType(2);
-            fogTypeMatrix[tileX - 1, tileY].SetFogType(2);
-            if (tileY < 19) 
+                fogTypeMatrix[tileX + 1, tileY - 1].ResetCont();
+            }
+            fogTypeMatrix[tileX + 1, tileY].SetFogType(2);
+            fogTypeMatrix[tileX + 1, tileY].ResetCont();
+            if (tileY < MATRIXSIZE - 1)
+            {
                 fogTypeMatrix[tileX + 1, tileY + 1].SetFogType(2);
+                fogTypeMatrix[tileX + 1, tileY + 1].ResetCont();
+            }
         }
-        if (tileY > 0) 
-            fogTypeMatrix[tileX, tileY - 1].SetFogType(2);
-        if (tileY < 19) 
-            fogTypeMatrix[tileX, tileY + 1].SetFogType(2);
-
-        if (fogTypeMatrix[tileX, tileY].GetCont() != 0)
+        if (tileY > 0)
         {
-            fogTypeMatrix[tileX, tileY].ResetCont();
+            fogTypeMatrix[tileX, tileY - 1].SetFogType(2);
+            fogTypeMatrix[tileX, tileY - 1].ResetCont();
         }
+        if (tileY < MATRIXSIZE - 1)
+        {
+            fogTypeMatrix[tileX, tileY + 1].SetFogType(2);
+            fogTypeMatrix[tileX, tileY + 1].ResetCont();
+        }
+
+        // Reset the cont
+        //if (fogTypeMatrix[tileX, tileY].GetCont() != 0)
+        //{
+        //    fogTypeMatrix[tileX, tileY].ResetCont();
+        //}
+
+        // Always transparent
         if (alwaysTransparent)
             //fogTypeMatrix[tileX, tileY].alwaysVisible++;
             SetTileAlwaysTransparent(tileX, tileY);
@@ -369,6 +396,10 @@ public class Minimap : MonoBehaviour
 
     public static void SetTileAlwaysTransparent(int tileX, int tileY)
     {
+        // Current tile
+        fogTypeMatrix[tileX , tileY].alwaysVisible++;
+
+        // Around tiles
         if (tileX > 0)
         {
             if (tileY > 0) 
@@ -381,7 +412,7 @@ public class Minimap : MonoBehaviour
         {
             if (tileY > 0) 
                 fogTypeMatrix[tileX + 1, tileY - 1].alwaysVisible++;
-            fogTypeMatrix[tileX - 1, tileY].alwaysVisible++;
+            fogTypeMatrix[tileX + 1, tileY].alwaysVisible++;
             if (tileY < 19) 
                 fogTypeMatrix[tileX + 1, tileY + 1].alwaysVisible++;
         }
