@@ -87,7 +87,7 @@ public class DistanceMeasurerTool : MonoBehaviour
 		
     } // Update
 
-    public void OnGUI ()
+   /* public void OnGUI ()
     {
         GUI.skin.label.fontSize = 10;
 
@@ -106,7 +106,7 @@ public class DistanceMeasurerTool : MonoBehaviour
             }
         }
     }
-    
+    */
     private void SearchStep ()
     {
         int list0Count = Army0.Count,

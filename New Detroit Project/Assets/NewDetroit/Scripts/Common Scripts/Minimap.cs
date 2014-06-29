@@ -19,6 +19,7 @@ public class Minimap : MonoBehaviour
     public Texture textureTowerNeutral;
     public Texture textureMyHeroe;
     public Texture textureEnemyHeroe;
+    public Texture textureSemiTransparent;
 
     // Minimap properties
     public static float size        = 200.0f;
@@ -555,19 +556,22 @@ public class Minimap : MonoBehaviour
 
         // Draw tiles
         float littleSize = size / 20;
-        for (int i = 0; i <= 20; i++)
-        {
-            GUI.DrawTexture(new Rect(i * littleSize + margin, posHeight, 1f, size), textureBase1);
-            GUI.DrawTexture(new Rect(margin, i * littleSize + posHeight, size, 1f), textureBase1);
-        }
+        //for (int i = 0; i <= 20; i++)
+        //{
+        //    GUI.DrawTexture(new Rect(i * littleSize + margin, posHeight, 1f, size), textureBase1);
+        //    GUI.DrawTexture(new Rect(margin, i * littleSize + posHeight, size, 1f), textureBase1);
+        //}
 
         //Draw transparent tiles
-        for (int i = 0; i < 20; i++)
-            for (int j = 0; j < 20; j++)
+        for (int i = 0; i < MATRIXSIZE; i++)
+            for (int j = 0; j < MATRIXSIZE; j++)
             {
-                if (fogTypeMatrix[i, j].alwaysVisible > 0 || fogTypeMatrix[i, j].GetFogType() == 2) GUI.DrawTexture(new Rect(i * littleSize + margin, j * littleSize + posHeight, littleSize, littleSize), textureTowerNeutral);
+                if (fogTypeMatrix[i, j].GetFogType() == 0) 
+                    GUI.DrawTexture(new Rect(i * littleSize + margin, j * littleSize + posHeight, littleSize, littleSize), textureMap);
+                else if (fogTypeMatrix[i, j].GetFogType() == 1)
+                    GUI.DrawTexture(new Rect(i * littleSize + margin, j * littleSize + posHeight, littleSize, littleSize), textureSemiTransparent);
             }
-
+        
         // my own team
         foreach (Vector2 unit in myUnitList)
         {
