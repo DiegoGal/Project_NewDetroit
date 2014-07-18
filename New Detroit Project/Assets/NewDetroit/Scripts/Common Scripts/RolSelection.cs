@@ -22,6 +22,8 @@ public class RolSelection : Photon.MonoBehaviour {
     public int localSelection;
     // exit button reference
     public GameObject onlineExitButton;
+    // lock button reference
+    public GameObject lockButton;
 
     public bool heroes;
     // 0 = Rob Render, 1 = Skelterbot, 2 = Rob Army, 3 = Skelter Army
@@ -29,6 +31,7 @@ public class RolSelection : Photon.MonoBehaviour {
     public string[] players;
 
     public static bool isOnline;
+    public bool locked;
 
 	// Use this for initialization
 	void Start () 
@@ -52,7 +55,7 @@ public class RolSelection : Photon.MonoBehaviour {
                 model.renderer.materials[i].SetColor("_OutlineColor", Color.black);                
             for (int i = 0; i < model1.renderer.materials.Length; i++)
                 model1.renderer.materials[i].SetColor("_OutlineColor", Color.black);
-        }
+        }        
 	}
 
     public void UpdateSelection()
@@ -62,6 +65,11 @@ public class RolSelection : Photon.MonoBehaviour {
         else
             UpdateNGUI("Army");
         StartCoroutine(SetRoomName());
+        lockButton.SetActive(true);
+        locked = false;
+        rightPanel.SetActive(true);
+        leftPanel.SetActive(true);
+        playButton.GetComponent<UIButton>().isEnabled = false;
 		playButton.GetComponentInChildren<UILabel>().text = "Start";
     }
 
@@ -140,8 +148,7 @@ public class RolSelection : Photon.MonoBehaviour {
                 enc = true;
             }
             i++;
-        }
-        setSelected(selected, 0.5f);
+        }        
         if (heroes)
             UpdateNGUI("Heroes");
         else
@@ -285,6 +292,7 @@ public class RolSelection : Photon.MonoBehaviour {
             heroes = true;
         else
             heroes = false;
+        
         if (heroes)
         {
             bool selected0 = isSelected(0);
@@ -300,8 +308,11 @@ public class RolSelection : Photon.MonoBehaviour {
             else
                 labelBlue.GetComponent<UILabel>().text = "Play as Skelterbot";
 
-            rightPanel.SetActive(!selected0);
-            leftPanel.SetActive(!selected1);
+            if (!locked)
+            {
+                rightPanel.SetActive(!selected0);
+                leftPanel.SetActive(!selected1);
+            }
         }
         else
         {
@@ -318,15 +329,16 @@ public class RolSelection : Photon.MonoBehaviour {
             else
                 labelBlue.GetComponent<UILabel>().text = "Play as Skelter Army";
 
-            rightPanel.SetActive(!selected2);
-            leftPanel.SetActive(!selected3);
+            if (!locked)
+            {
+                rightPanel.SetActive(!selected2);
+                leftPanel.SetActive(!selected3);
+            }
         }
         robRender.SetActive(heroes);
         skelterBot.SetActive(heroes);
         robArmy.SetActive(!heroes);
-        skelterArmy.SetActive(!heroes);
-
-        playButton.GetComponent<UIButton>().enabled = true;
+        skelterArmy.SetActive(!heroes);        
         /*
         if (!AllPlayersIn())
         {
@@ -340,6 +352,19 @@ public class RolSelection : Photon.MonoBehaviour {
             playButton.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, true);
             playButton.GetComponentInChildren<UILabel>().text = "Start Game";
         }*/
+    }
+
+    public void Lock()
+    {
+        if (localSelection != -1)
+        {
+            setSelected(localSelection, 0.5f);
+            lockButton.SetActive(false);
+            locked = true;
+            rightPanel.SetActive(false);
+            leftPanel.SetActive(false);
+            playButton.GetComponent<UIButton>().isEnabled = true;
+        }
     }
 
     public void ExitRoom()
@@ -375,6 +400,7 @@ public class RolSelection : Photon.MonoBehaviour {
     [RPC]
     private void CallToCountdown()
     {
+        playButton.GetComponent<UIButton>().isEnabled = false;
         StartCoroutine(FinalCountdown());
     }
 
