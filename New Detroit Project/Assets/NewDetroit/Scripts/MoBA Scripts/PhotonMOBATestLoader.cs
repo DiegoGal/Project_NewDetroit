@@ -33,7 +33,7 @@ public class PhotonMOBATestLoader : MonoBehaviour
 
 				Camera.main.GetComponent<CameraRTSController>().enabled = false;
 				Camera.main.GetComponent<CameraMOBAController>().enabled = true;
-				Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+                Camera.main.GetComponent<CameraMOBAController>().hero = heroInst;
             }
             else
             {
@@ -43,7 +43,7 @@ public class PhotonMOBATestLoader : MonoBehaviour
 				
 				Camera.main.GetComponent<CameraRTSController>().enabled = false;
 				Camera.main.GetComponent<CameraMOBAController>().enabled = true;
-				Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+				Camera.main.GetComponent<CameraMOBAController>().hero = heroInst;
             }
         }
 

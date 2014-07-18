@@ -12,28 +12,14 @@ public class HeroNetwork : BasicNetwork
 		base.Awake();
 
 		//Initialize CBasicAttributesHero
-		CBasicAttributesHero basicAttr = GetComponent<CBasicAttributesHero>();
-		basicAttr.setLevel(1);
-		if (GetComponent<HeroeController>().getTypeHero() == HeroeController.TypeHeroe.Orc)
+        AttributesHero attributes = GetComponent<AttributesHero>();
+        attributes.setLevel(1);
+		if (GetComponent<StateOrc>() != null)
 		{
-			basicAttr.currentLife = basicAttr.maximunLife = OrcController.LIFE_1;
-			basicAttr.setCurrentMana(OrcController.MANA_1);
-			basicAttr.setMaximunMana(OrcController.MANA_1);
-			basicAttr.setCurrentAdren(OrcController.ADREN_1);
-			basicAttr.setMaximunAdren(OrcController.ADREN_1);
-			basicAttr.setDeffensePhysic(OrcController.DEF_P_1);
-			basicAttr.setDeffenseMagic(OrcController.DEF_M_1);
 			GetComponent<CTeam>().teamNumber = 0;
 		}
 		else
 		{
-			basicAttr.currentLife = basicAttr.maximunLife = RobotController.LIFE_1;
-			basicAttr.setCurrentMana(RobotController.MANA_1);
-			basicAttr.setMaximunMana(RobotController.MANA_1);
-			basicAttr.setCurrentAdren(RobotController.ADREN_1);
-			basicAttr.setMaximunAdren(RobotController.ADREN_1);
-			basicAttr.setDeffensePhysic(RobotController.DEF_P_1);
-			basicAttr.setDeffenseMagic(RobotController.DEF_M_1);
 			GetComponent<CTeam>().teamNumber = 1;
 		}
 
@@ -41,27 +27,27 @@ public class HeroNetwork : BasicNetwork
 		cState = GetComponent<CStateUnit>();
 
 		// Enabled/Disabled scripts
-		GetComponent<CBasicAttributesHero>().enabled = true;
+		GetComponent<AttributesHero>().enabled = true;
 		GetComponent<CharacterController>().enabled = true;
 		cState.enabled = true;
 
 		if (photonView.isMine)
 		{
 //			GetComponent<CharacterController>().enabled = true;
-			GetComponent<ThirdPersonCamera>().enabled = true;
+			//GetComponent<ThirdPersonCamera>().enabled = true;
 			GetComponent<FogOfWarUnit>().enabled = true;
 			GetComponent<NavMeshObstacle>().enabled = true;
 
 			//Orc
-			if (GetComponent<HeroeController>().getTypeHero() == HeroeController.TypeHeroe.Orc)
-			{
-				GetComponent<OrcController>().enabled = true;
-			}
-			//Robot
-			else
-			{
-				GetComponent<RobotController>().enabled = true;
-			}
+            //if (GetComponent<HeroeController>().getTypeHero() == HeroeController.TypeHeroe.Orc)
+            //{
+            //    //GetComponent<OrcController>().enabled = true;
+            //}
+            ////Robot
+            //else
+            //{
+            //    //GetComponent<RobotController>().enabled = true;
+            //}
 		}
 		else
 		{
@@ -73,12 +59,12 @@ public class HeroNetwork : BasicNetwork
 			//Orc
 			if (GetComponent<HeroeController>().getTypeHero() == HeroeController.TypeHeroe.Orc)
 			{
-				GetComponent<OrcController>().enabled = false;
+                //GetComponent<OrcController>().enabled = false;
 			}
 			//Robot
 			else
 			{
-				GetComponent<RobotController>().enabled = false;
+                //GetComponent<RobotController>().enabled = false;
 			}
 		}
 	}
