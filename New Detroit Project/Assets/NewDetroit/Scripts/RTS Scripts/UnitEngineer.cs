@@ -980,7 +980,15 @@ public class UnitEngineer : UnitController
         }
         else
         {
+            /*LeaveQueues();
+            base.RightClickOnSelected(destiny, destTransform);*/
+
             LeaveQueues();
+
+            currentEngineerState = EngineerState.None;
+            cState.currentEngineerState = currentEngineerState;
+
+            attackCadenceAux = attackCadAuxEngineer;
             base.RightClickOnSelected(destiny, destTransform);
         }
     }// RightClickOSelected
