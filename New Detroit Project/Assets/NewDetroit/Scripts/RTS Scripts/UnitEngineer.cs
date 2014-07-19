@@ -98,7 +98,7 @@ public class UnitEngineer : UnitController
 
         // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
         if (
-             Input.anyKeyDown && (newTAConstruct || newWConstruct) &&
+             Input.anyKeyDown && IsNewConstructing() &&
              //((newTAConstruct && towerArmy.GetComponent<TowerArmy>().canConstruct) || (newWConstruct && warehouse.GetComponent<Warehouse>().canConstruct)) &&
              Input.GetMouseButtonDown(0) 
              /*(currentEngineerState != EngineerState.GoingToConstructItem) &&
@@ -113,8 +113,7 @@ public class UnitEngineer : UnitController
         }
 
         switch (currentEngineerState)
-        {
-            
+        {           
             case EngineerState.Waiting:
                 //animation.Play("Idle Wait");
 				cState.animationName = "Idle Wait";
@@ -263,7 +262,6 @@ public class UnitEngineer : UnitController
     {
         base.UpdateGoingTo();
 
-        // If this is selected and "C" is pulsed, a towerGoblin has to be instanciate with transparency
         if (
              Input.anyKeyDown &&
              ((newTAConstruct && towerArmy.GetComponent<TowerArmy>().canConstruct) || (newWConstruct && warehouse.GetComponent<Warehouse>().canConstruct)) &&
@@ -1257,6 +1255,10 @@ public class UnitEngineer : UnitController
         // We destroy the Laptop
         if (hammerInst)
             Destroy(laptopInst);
+        if (newTAConstruct)
+            Destroy(towerArmy);
+        if (newWConstruct)
+            Destroy(warehouse);
     }
 
 	[RPC]
