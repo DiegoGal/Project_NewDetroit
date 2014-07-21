@@ -332,6 +332,9 @@ public class UnitHarvester : UnitController
                         if (distItem <= minDistanceToHeal + 1.0f)
                         {
                             transform.LookAt(currentCharacterHealed.transform);
+
+                            photonView.RPC("Heal", PhotonTargets.All, currentCharacterHealed.name, amountOfLifePerHeal);
+
                             if (currentCharacterHealed.Heal(amountOfLifePerHeal))
                             {
                                 // el compañero ya ha sido curado
@@ -595,6 +598,14 @@ public class UnitHarvester : UnitController
         }
             base.RightClickOnSelected(destiny, destTransform);
     } // RightClickOnSelected*/
+
+    [RPC]
+    public void Heal(string otherName, float amount)
+    {
+        GameObject other = GameObject.Find(otherName);
+        CLife otherCL = other.GetComponent<CLife>();
+        otherCL.Heal(amount);
+    }
 
     public override void RightClickOnSelected (Vector3 destiny, Transform destTransform)
     {
