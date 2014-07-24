@@ -380,7 +380,7 @@ public class Minimap : MonoBehaviour
         pos4X = margin + (pos4.x + (sizeWorldFloor / 2)) * sizeProportionX;
         pos4Y = posHeight + ((sizeWorldFloor / 2) - pos4.z) * sizeProportionY;
 
-        if (Input.GetMouseButton(0))
+        if (RTSMode && Input.GetMouseButton(0))
         {
             float posX = Input.mousePosition.x, posY = Input.mousePosition.y;
             // In the minimap
@@ -753,23 +753,20 @@ public class Minimap : MonoBehaviour
             GL.PushMatrix();
             GL.Begin(GL.LINES);
             GL.LoadIdentity();
+            // Rotate triangle
             Vector3 eulerAngle = myHeroe.transform.eulerAngles;
             float aux = eulerAngle.y;
             eulerAngle.y = eulerAngle.z;
             eulerAngle.z = aux;
-            Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(myHeroePos.x, myHeroePos.y, 0), Quaternion.Euler(eulerAngle), Vector3.one);
+            Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(myHeroePos.x, myHeroePos.y, 0), Quaternion.Euler(eulerAngle), new Vector3(16, 16, 1));
             GL.MultMatrix(matrix);
-
             // Draw triangle
             GL.Vertex3(0, 0, 0);
-            GL.Vertex3(20, -40, 0);
-
-            GL.Vertex3(20, -40, 0);
-            GL.Vertex3(-20, -40, 0);
-
-            GL.Vertex3(-20, -40, 0);
+            GL.Vertex3(1, -2, 0);
+            GL.Vertex3(1, -2, 0);
+            GL.Vertex3(-1, -2, 0);
+            GL.Vertex3(-1, -2, 0);
             GL.Vertex3(0, 0, 0);
-
             GL.End();
             GL.PopMatrix();
         }

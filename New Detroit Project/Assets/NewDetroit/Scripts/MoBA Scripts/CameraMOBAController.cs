@@ -153,10 +153,15 @@ public class CameraMOBAController : MonoBehaviour
 
 	void Start ()
 	{
+        // Components from hero
         attHero = hero.GetComponent<AttributesHero>();
         stateHero = hero.GetComponent<StateHero>();
 
+        // Rects that represent the MOBA's GUI
         InitGUIRects();
+
+        // Hide cursor
+        Screen.showCursor = false;
 	}
 
 	void Update ()
