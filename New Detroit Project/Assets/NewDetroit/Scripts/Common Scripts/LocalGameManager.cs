@@ -40,6 +40,7 @@ public class LocalGameManager : MonoBehaviour {
                     Camera.main.GetComponent<CameraMOBAController>().enabled = true;
                     Camera.main.GetComponent<CameraMOBAController>().hero = heroInst;
                     Minimap.teamNumber = 0;
+                    Minimap.SetRTSMode(false);
                     Destroy(army1);
                     Destroy(army0);
                     break;
@@ -51,11 +52,11 @@ public class LocalGameManager : MonoBehaviour {
                     Camera.main.GetComponent<CameraMOBAController>().enabled = true;
                     Camera.main.GetComponent<CameraMOBAController>().hero = heroInst;
                     Minimap.teamNumber = 1;
+                    Minimap.SetRTSMode(false);
                     Destroy(army1);
                     Destroy(army0);
                     break;
                 case 2: // Rob Army
-
                     Camera.main.transform.position = redArmyCameraPosition.position;
                     redBase.GetComponent<CSelectable>().enabled = true;
                     redBase.GetComponent<BaseController>().enabled = true;
@@ -65,6 +66,7 @@ public class LocalGameManager : MonoBehaviour {
                     blueBase.GetComponent<FogOfWarUnit>().enabled = false;
                     navmeshColliders.SetActive(false);
                     Minimap.teamNumber = 0;
+                    Minimap.SetRTSMode(true);
                     Destroy(army1);
                     break;
                 case 3: // Skelter Army
@@ -77,6 +79,7 @@ public class LocalGameManager : MonoBehaviour {
                     blueBase.GetComponent<FogOfWarUnit>().enabled = true;
                     navmeshColliders.SetActive(false);
                     Minimap.teamNumber = 1;
+                    Minimap.SetRTSMode(true);
                     Destroy(army0);
                     break;
                 default:

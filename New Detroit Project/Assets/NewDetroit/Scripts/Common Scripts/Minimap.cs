@@ -44,6 +44,9 @@ public class Minimap : MonoBehaviour
 
     public Texture map;
 
+    // Flags
+    private static bool RTSMode = true;
+
     public class StructMatrix
     {
         private int fogType;
@@ -724,9 +727,12 @@ public class Minimap : MonoBehaviour
         //GUI.DrawTexture(new Rect(pos3X, pos3Y, 3, 3), textureWhite);
         //GUI.DrawTexture(new Rect(pos4X, pos4Y, 3, 3), textureWhite);
 
-        //GL.Color(Color.white);
-        GL.PushMatrix();
-        GL.Begin(GL.LINES);
+        // RTS mode
+        if (RTSMode)
+        {
+            //GL.Color(Color.white);
+            GL.PushMatrix();
+            GL.Begin(GL.LINES);
             GL.Vertex3(pos1X, pos1Y, 0);
             GL.Vertex3(pos2X, pos2Y, 0);
 
@@ -738,7 +744,43 @@ public class Minimap : MonoBehaviour
 
             GL.Vertex3(pos3X, pos3Y, 0);
             GL.Vertex3(pos1X, pos1Y, 0);
-        GL.End();
-        GL.PopMatrix();
+            GL.End();
+            GL.PopMatrix();
+        }
+        // MOBA mode
+        else
+        {
+            GL.PushMatrix();
+            GL.Begin(GL.LINES);
+            GL.LoadIdentity();
+            Vector3 eulerAngle = myHeroe.transform.eulerAngles;
+            float aux = eulerAngle.y;
+            eulerAngle.y = eulerAngle.z;
+            eulerAngle.z = aux;
+            Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(myHeroePos.x, myHeroePos.y, 0), Quaternion.Euler(eulerAngle), Vector3.one);
+            GL.MultMatrix(matrix);
+
+            // Draw triangle
+            GL.Vertex3(0, 0, 0);
+            GL.Vertex3(20, -40, 0);
+
+            GL.Vertex3(20, -40, 0);
+            GL.Vertex3(-20, -40, 0);
+
+            GL.Vertex3(-20, -40, 0);
+            GL.Vertex3(0, 0, 0);
+
+            GL.End();
+            GL.PopMatrix();
+        }
+    }
+
+
+    // ------------------------------------------------------------------------------------------------------------------
+
+
+    public static void SetRTSMode(bool value)
+    {
+        RTSMode = value;
     }
 }
