@@ -75,7 +75,8 @@ public class StateRobot : StateHero
     {
         if (state == StateHeroEnum.Dead)
         {
-
+            cState.animationName = "Die";
+            cState.animationChanged = true;
         }
         else if (state == StateHeroEnum.Recover)
         {

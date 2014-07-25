@@ -109,6 +109,7 @@ public class StateHero : MonoBehaviour
         }
 
         // DEBUG
+        // Experience up
         timeLevelUp += Time.deltaTime;
         if (Input.GetKey(KeyCode.L) && timeLevelUp >= 1)
         {
@@ -122,6 +123,8 @@ public class StateHero : MonoBehaviour
             }
             timeLevelUp = 0;
         }
+        // Die
+        if (Input.GetKey(KeyCode.Delete)) attributes.Die();
 	}
 
 
