@@ -35,7 +35,7 @@ public class SkillDefense : Photon.MonoBehaviour {
 	public void UpDeffense(string name)	
 	{
 		GameObject robot = GameObject.Find(name);
-		CBasicAttributesHero cbah = robot.GetComponent<CBasicAttributesHero>();
+        AttributesHero cbah = robot.GetComponent<AttributesHero>();
 		cbah.setDeffenseMagic(cbah.getDeffenseMagic() + 50);
 		cbah.setDeffensePhysic(cbah.getDeffensePhysic() + 50);
 	}
@@ -44,7 +44,7 @@ public class SkillDefense : Photon.MonoBehaviour {
 	public void DownDeffense(string name)	
 	{
 		GameObject robot = GameObject.Find(name);
-		CBasicAttributesHero cbah = robot.GetComponent<CBasicAttributesHero>();
+        AttributesHero cbah = robot.GetComponent<AttributesHero>();
 		cbah.setDeffenseMagic(cbah.getDeffenseMagic() - 50);
 		cbah.setDeffensePhysic(cbah.getDeffensePhysic() - 50);
 		

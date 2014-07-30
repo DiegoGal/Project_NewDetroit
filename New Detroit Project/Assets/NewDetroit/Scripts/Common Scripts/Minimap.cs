@@ -44,6 +44,9 @@ public class Minimap : MonoBehaviour
 
     public Texture map;
 
+    // Flags
+    private static bool RTSMode = true;
+
     public class StructMatrix
     {
         private int fogType;
@@ -377,7 +380,7 @@ public class Minimap : MonoBehaviour
         pos4X = margin + (pos4.x + (sizeWorldFloor / 2)) * sizeProportionX;
         pos4Y = posHeight + ((sizeWorldFloor / 2) - pos4.z) * sizeProportionY;
 
-        if (Input.GetMouseButton(0))
+        if (RTSMode && Input.GetMouseButton(0))
         {
             float posX = Input.mousePosition.x, posY = Input.mousePosition.y;
             // In the minimap
@@ -724,9 +727,12 @@ public class Minimap : MonoBehaviour
         //GUI.DrawTexture(new Rect(pos3X, pos3Y, 3, 3), textureWhite);
         //GUI.DrawTexture(new Rect(pos4X, pos4Y, 3, 3), textureWhite);
 
-        //GL.Color(Color.white);
-        GL.PushMatrix();
-        GL.Begin(GL.LINES);
+        // RTS mode
+        if (RTSMode)
+        {
+            //GL.Color(Color.white);
+            GL.PushMatrix();
+            GL.Begin(GL.LINES);
             GL.Vertex3(pos1X, pos1Y, 0);
             GL.Vertex3(pos2X, pos2Y, 0);
 
@@ -738,7 +744,40 @@ public class Minimap : MonoBehaviour
 
             GL.Vertex3(pos3X, pos3Y, 0);
             GL.Vertex3(pos1X, pos1Y, 0);
-        GL.End();
-        GL.PopMatrix();
+            GL.End();
+            GL.PopMatrix();
+        }
+        // MOBA mode
+        else
+        {
+            GL.PushMatrix();
+            GL.Begin(GL.LINES);
+            GL.LoadIdentity();
+            // Rotate triangle
+            Vector3 eulerAngle = myHeroe.transform.eulerAngles;
+            float aux = eulerAngle.y;
+            eulerAngle.y = eulerAngle.z;
+            eulerAngle.z = aux;
+            Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(myHeroePos.x, myHeroePos.y, 0), Quaternion.Euler(eulerAngle), new Vector3(16, 16, 1));
+            GL.MultMatrix(matrix);
+            // Draw triangle
+            GL.Vertex3(0, 0, 0);
+            GL.Vertex3(1, -2, 0);
+            GL.Vertex3(1, -2, 0);
+            GL.Vertex3(-1, -2, 0);
+            GL.Vertex3(-1, -2, 0);
+            GL.Vertex3(0, 0, 0);
+            GL.End();
+            GL.PopMatrix();
+        }
+    }
+
+
+    // ------------------------------------------------------------------------------------------------------------------
+
+
+    public static void SetRTSMode(bool value)
+    {
+        RTSMode = value;
     }
 }

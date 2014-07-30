@@ -49,7 +49,7 @@ public class NetworkController : Photon.MonoBehaviour
         labelRoomName.text = "Room" + Random.Range(1, 9999);
         labelRoomName.UpdateNGUIText();
         labelPlayerName.text = PhotonNetwork.playerName;
-        labelPlayerName.UpdateNGUIText();        
+        labelPlayerName.UpdateNGUIText();
     }
 
     public void Awake()
@@ -69,7 +69,11 @@ public class NetworkController : Photon.MonoBehaviour
         // generate a name for this player, if none is assigned yet
         if (string.IsNullOrEmpty(PhotonNetwork.playerName))
         {
-            PhotonNetwork.playerName = "Guest" + Random.Range(1, 9999);
+            do
+            {
+                PhotonNetwork.playerName = "Guest" + Random.Range(1, 9999);
+            }
+            while (!HasUniqueName());
         }
 
         // if you wanted more debug out, turn this on:

@@ -82,7 +82,7 @@ public class SkillAttack : ParticleDamage {
 	public void Damage(string sEnemy, int damage)	
 	{
 		GameObject enemy = GameObject.Find(sEnemy);
-		CBasicAttributesHero cbah = enemy.GetComponent<CBasicAttributesHero>();
+        AttributesHero cbah = enemy.GetComponent<AttributesHero>();
         if (cbah != null)
         {
             if (damagePhysic)

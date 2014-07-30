@@ -38,12 +38,12 @@ public class GameManagerJacob : MonoBehaviour {
                 // Activar cosas de rob
                 instRob.GetComponent<ThirdPersonCamera>().enabled = true;
                 instRob.GetComponent<ThirdPersonNetwork>().enabled = false;
-                instRob.GetComponent<OrcController>().isMine = true;
+                //instRob.GetComponent<OrcController>().isMine = true;
 
 				Camera.mainCamera.GetComponent<CameraRTSController>().enabled = false;
-				CameraMOBAController camera = Camera.mainCamera.GetComponent<CameraMOBAController>();
+				CameraMOBAController camera = Camera.main.GetComponent<CameraMOBAController>();
 				camera.enabled = true;
-				camera.heroe = instRob.GetComponent<HeroeController>();
+                camera.hero = instRob;
 				onGUI = false;
 
 				//-----------------------------------------------------------------

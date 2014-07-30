@@ -42,16 +42,19 @@ public class PlayVideo : MonoBehaviour {
         Destroy(audioS);
     }
 
-    public void PlayVideoNow ()
+    public void PlayVideoNow()
     {
-        audioS = gameObject.AddComponent<AudioSource>();
-        audioS.clip = mt.audioClip;
+        if ( mt != null )
+        {
+            audioS = gameObject.AddComponent<AudioSource>();
+            audioS.clip = mt.audioClip;
 
-        gameObject.SetActive(true);
-        online.SetActive(false);
-        video.SetActive(false);
-        exit.SetActive(false);
-        StartCoroutine("WaitForClip");
+            gameObject.SetActive(true);
+            online.SetActive(false);
+            video.SetActive(false);
+            exit.SetActive(false);
+            StartCoroutine("WaitForClip");
+        }
     }
 
     public void UpdateText()

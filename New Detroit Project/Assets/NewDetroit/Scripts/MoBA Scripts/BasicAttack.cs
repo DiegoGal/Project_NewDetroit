@@ -74,7 +74,8 @@ public class BasicAttack : Photon.MonoBehaviour {
 		
 		if (enemy.tag == "player")
 		{
-			CBasicAttributesHero cbah = enemy.GetComponent<CBasicAttributesHero>();
+            
+            AttributesHero cbah = enemy.GetComponent<AttributesHero>();
 			damage -= cbah.getDeffensePhysic();
 			damage = Mathf.Max(0, damage);
 		}
@@ -101,9 +102,9 @@ public class BasicAttack : Photon.MonoBehaviour {
 			CLife goCLife = go.GetComponent<CLife>();
 			if (goCLife == null) return;
 			if (PhotonNetwork.connected)
-				photonView.RPC("Damage", PhotonTargets.All, go.name, owner.GetComponent<HeroeController>().getAttackP());
+				photonView.RPC("Damage", PhotonTargets.All, go.name, owner.GetComponent<AttributesHero>().getAttackPhysic());
 			else
-				Damage (go.name,owner.GetComponent<HeroeController>().getAttackP());
+                Damage(go.name, owner.GetComponent<AttributesHero>().getAttackPhysic());
 		}
 	}
 }

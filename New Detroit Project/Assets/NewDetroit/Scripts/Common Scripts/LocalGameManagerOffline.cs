@@ -39,7 +39,7 @@ public class LocalGameManagerOffline : MonoBehaviour
 					heroInst.GetComponent<CharacterController>().enabled = true;
 					heroInst.GetComponent<ThirdPersonCamera>().enabled = true;
 					heroInst.GetComponent<FogOfWarUnit>().enabled = false;
-					heroInst.GetComponent<OrcController>().enabled = true;
+                    //heroInst.GetComponent<OrcController>().enabled = true;
 					heroInst.GetComponent<Animation>().enabled = true;
 					heroInst.GetComponent<NavMeshObstacle>().enabled = true;
 					heroInst.GetComponent<CStateUnit>().enabled = true;
@@ -48,7 +48,7 @@ public class LocalGameManagerOffline : MonoBehaviour
 
                     Camera.main.GetComponent<CameraRTSController>().enabled = false;
                     Camera.main.GetComponent<CameraMOBAController>().enabled = true;
-                    Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+                    Camera.main.GetComponent<CameraMOBAController>().hero = heroInst;
 					navmeshColliders.SetActive(true);
                     Destroy(army1);
                     Destroy(army0);
@@ -61,7 +61,7 @@ public class LocalGameManagerOffline : MonoBehaviour
 					heroInst.GetComponent<CharacterController>().enabled = true;
 					heroInst.GetComponent<ThirdPersonCamera>().enabled = true;
 					heroInst.GetComponent<FogOfWarUnit>().enabled = false;
-					heroInst.GetComponent<RobotController>().enabled = true;
+                    //heroInst.GetComponent<RobotController>().enabled = true;
 					heroInst.GetComponent<Animation>().enabled = true;
 					heroInst.GetComponent<NavMeshObstacle>().enabled = true;
 					heroInst.GetComponent<CStateUnit>().enabled = true;
@@ -70,7 +70,7 @@ public class LocalGameManagerOffline : MonoBehaviour
 
                     Camera.main.GetComponent<CameraRTSController>().enabled = false;
                     Camera.main.GetComponent<CameraMOBAController>().enabled = true;
-                    Camera.main.GetComponent<CameraMOBAController>().heroe = heroInst.GetComponent<HeroeController>();
+                    Camera.main.GetComponent<CameraMOBAController>().hero = heroInst;
 					navmeshColliders.SetActive(false);
                     Destroy(army1);
                     Destroy(army0);
