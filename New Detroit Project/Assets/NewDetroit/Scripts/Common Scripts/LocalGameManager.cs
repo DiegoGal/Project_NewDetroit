@@ -14,6 +14,7 @@ public class LocalGameManager : MonoBehaviour {
     public Transform redArmyCameraPosition;
     public Transform blueArmyCameraPosition;
     public GameObject navmeshColliders;
+    public static int myTeam;
 
     public void Awake()
     {
@@ -43,6 +44,7 @@ public class LocalGameManager : MonoBehaviour {
                     Minimap.SetRTSMode(false);
                     Destroy(army1);
                     Destroy(army0);
+                    myTeam = 0;
                     break;
                 case 1: // Skelterbot
                     heroInst = PhotonNetwork.Instantiate("Skelterbot", blueArmyCameraPosition.position + Vector3.down * 24f, new Quaternion(), 0);
@@ -55,6 +57,7 @@ public class LocalGameManager : MonoBehaviour {
                     Minimap.SetRTSMode(false);
                     Destroy(army1);
                     Destroy(army0);
+                    myTeam = 1;
                     break;
                 case 2: // Rob Army
                     Camera.main.transform.position = redArmyCameraPosition.position;
@@ -68,6 +71,7 @@ public class LocalGameManager : MonoBehaviour {
                     Minimap.teamNumber = 0;
                     Minimap.SetRTSMode(true);
                     Destroy(army1);
+                    myTeam = 0;
                     break;
                 case 3: // Skelter Army
                     Camera.main.transform.position = blueArmyCameraPosition.position;
@@ -81,8 +85,10 @@ public class LocalGameManager : MonoBehaviour {
                     Minimap.teamNumber = 1;
                     Minimap.SetRTSMode(true);
                     Destroy(army0);
+                    myTeam = 1;
                     break;
                 default:
+                    myTeam = -1;
                     Debug.Log("Error at selection");
                     Destroy(army0);
                     Destroy(army1);

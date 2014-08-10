@@ -26,23 +26,15 @@ public class RolSelection : Photon.MonoBehaviour {
     public GameObject lockButton;
 
     public bool heroes;
-    // 0 = Rob Render, 1 = Skelterbot, 2 = Rob Army, 3 = Skelter Army
-    public int[] rolSelected;
-    public string[] players;
+    // 0 = Rob Render, 1 = Skelterbot, 2 = Rob Army, 3 = Skelter Army 
+    private PhotonPlayer[] photonPlayers;
 
     public static bool isOnline;
     public bool locked;
 
 	// Use this for initialization
 	void Start () 
-    {
-        players = new string[4];
-        rolSelected = new int[4];
-        for (int i = 0; i < 4; i++)
-        {
-            rolSelected[i] = -1;
-            players[i] = "";
-        }
+    {                
         heroes = true;
         rightPanel.SetActive(true);
         leftPanel.SetActive(true);
@@ -60,6 +52,11 @@ public class RolSelection : Photon.MonoBehaviour {
 
     public void UpdateSelection()
     {
+        photonPlayers = new PhotonPlayer[4];
+        for (int i = 0; i < 4; i++)
+        {
+            photonPlayers[i] = null;
+        }
         if (heroes)
             UpdateNGUI("Heroes");
         else
@@ -109,19 +106,17 @@ public class RolSelection : Photon.MonoBehaviour {
     [RPC]
     public void ReciveUpdate(PhotonPlayer toMe)
     {
-        photonView.RPC("SendUpdate", toMe, rolSelected, players);
+        photonView.RPC("SendUpdate", toMe, photonPlayers);
     }
 
     [RPC]
-    public void SendUpdate(int[] rolExtSelected, string[] playersExt)
+    public void SendUpdate(PhotonPlayer[] playersExt)
     {
         for (int i = 0; i < playersExt.Length; i++)
         {
-            rolSelected[i] = rolExtSelected[i];
-            players[i] = playersExt[i];
-            Debug.Log(players[i]);
-            if (rolSelected[i] != -1)
-                setSelected(rolSelected[i], 0.5f);
+            photonPlayers[i] = playersExt[i];
+            if (photonPlayers[i] == null)
+                setSelected(i, 0.5f);
         }
         if (heroes)
             UpdateNGUI("Heroes");
@@ -130,25 +125,20 @@ public class RolSelection : Photon.MonoBehaviour {
     }
 
     [RPC]
-    public void PlayerSelection(int selected, string name)
+    public void PlayerSelection(int selected, string name, PhotonPlayer player)
     {
         int i = 0; bool enc = false;
-        while (i < rolSelected.Length && !enc)
+        while (i < 4 && !enc)
         {
-            if (players[i].Equals(name))
+            if (photonPlayers[i] != null && photonPlayers[i].name.Equals(name))
             {
-                setSelected(rolSelected[i], 1.0f);
-                rolSelected[i] = -1;
-                players[i] = "";
-            }
-            if (rolSelected[i] == -1)
-            {
-                rolSelected[i] = selected;
-                players[i] = name;
+                setSelected(i, 1.0f);              
+                photonPlayers[i] = null;
                 enc = true;
             }
             i++;
-        }        
+        }
+        photonPlayers[selected] = player;
         if (heroes)
             UpdateNGUI("Heroes");
         else
@@ -160,18 +150,8 @@ public class RolSelection : Photon.MonoBehaviour {
     [RPC]
     public void PlayerDeselection(int selected, string name)
     {
-        int i = 0; bool enc = false;
-        while (i < rolSelected.Length && !enc)
-        {
-            if (rolSelected[i] == selected && players[i].Equals(name))
-            {
-                rolSelected[i] = -1;
-                players[i] = "";
-                enc = true;
-            }
-            i++;
-        }
-
+        if (selected != -1)
+            photonPlayers[selected] = null;
         setSelected(selected, 1.0f);
         if (heroes)
             UpdateNGUI("Heroes");
@@ -187,7 +167,7 @@ public class RolSelection : Photon.MonoBehaviour {
             if (localSelection == i)
             {
                 if (isOnline)
-                    photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection,PhotonNetwork.playerName);
+                    photonView.RPC("PlayerDeselection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);
                 else
                     PlayerDeselection(localSelection, PhotonNetwork.playerName);
                 localSelection = -1;
@@ -244,41 +224,34 @@ public class RolSelection : Photon.MonoBehaviour {
         while (anim.IsPlaying(name))
             yield return new WaitForSeconds(0.1f);
         if (isOnline)
-            photonView.RPC("PlayerSelection", PhotonTargets.All, localSelection, PhotonNetwork.playerName);
+            photonView.RPC("PlayerSelection", PhotonTargets.All, localSelection, PhotonNetwork.playerName, PhotonNetwork.player);
         else
-            PlayerSelection(localSelection, PhotonNetwork.playerName);
+            PlayerSelection(localSelection, PhotonNetwork.playerName, PhotonNetwork.player);
     }
 
     private bool isSelected(int i)
     {
-        int j=0;
-        while (j < rolSelected.Length)
-        {
-            if (rolSelected[j] == i)
-                return true;
-            j++;
-        }
-        return false;
+        Debug.Log("Esta seleccionad " + i);
+        if (i != -1)
+            return photonPlayers[i] != null;
+        else
+            return false;
     }
 
     private string whoSelected(int i)
     {
-        int j = 0;
-        while (j < rolSelected.Length)
-        {
-            if (rolSelected[j] == i)
-                return players[j];
-            j++;
-        }
-        return "Error";
+        if (photonPlayers[i] == null)
+            return "Error";
+        else
+            return photonPlayers[i].name;
     }
-
+    // TOFIX
     private bool AllPlayersIn()
     {
         int j = 0, numPlay = 0;
-        while (j < rolSelected.Length)
+        while (j < 4)
         {
-            if (rolSelected[j] == -1);
+            if (photonPlayers[j] == null) ;
                 //return false;
             else numPlay++;
             j++;
@@ -379,6 +352,7 @@ public class RolSelection : Photon.MonoBehaviour {
     public void LoadScene()
     {
         LocalGameManager.joinedId = localSelection;
+        InRoomChat.players = photonPlayers;
         PhotonNetwork.LoadLevel(NetworkController.SceneNameGame);
     }
 
@@ -394,6 +368,7 @@ public class RolSelection : Photon.MonoBehaviour {
             count -= 1;
             playButton.GetComponentInChildren<UILabel>().text = "" + count;
         }
+        InRoomChat.players = photonPlayers;
         LoadScene();        
     }
 

@@ -11,14 +11,17 @@ public class InRoomChat : Photon.MonoBehaviour
     public List<string> messages = new List<string>();
     private string inputLine = "";
     private Vector2 scrollPos = Vector2.zero;
+    private bool teamChat = false;
+    private bool focused = false;
 
+    public static PhotonPlayer[] players; //recive value at rol selection
     public static readonly string ChatRPC = "Chat";
 
     public void Start()
     {
         if (this.AlignBottom)
         {
-            this.GuiRect.y = Screen.height - this.GuiRect.height;
+            this.GuiRect.y = ((float)Screen.height)/2.5f;
         }
     }
 
@@ -28,20 +31,60 @@ public class InRoomChat : Photon.MonoBehaviour
         {
             return;
         }
-        
-        if (Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.KeypadEnter || Event.current.keyCode == KeyCode.Return))
+        /*
+        if (!focused && !teamChat && Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.T)
         {
-            if (!string.IsNullOrEmpty(this.inputLine))
+            teamChat = true;
+            GUI.FocusControl("ChatInput");
+            focused = true;
+            inputLine = "";
+            return;
+        }
+        */
+        if (Event.current.type == EventType.KeyDown)
+        {
+            if (Event.current.keyCode == KeyCode.KeypadEnter || Event.current.keyCode == KeyCode.Return)
             {
-                this.photonView.RPC("Chat", PhotonTargets.All, this.inputLine);
-                this.inputLine = "";
-                GUI.FocusControl("");
-                return; // printing the now modified list would result in an error. to avoid this, we just skip this single frame
+                if (!string.IsNullOrEmpty(this.inputLine))
+                {
+                    if (!teamChat)
+                        this.photonView.RPC("Chat", PhotonTargets.All, this.inputLine);
+                    else
+                    {
+                        for (int i = 0 + LocalGameManager.myTeam; i < players.Length; i = i + 2)
+                        {
+                            if (players[i] != null)
+                                this.photonView.RPC("Chat", players[i], "[T]" + this.inputLine);
+                        }
+                        teamChat = false;
+                    }
+                    
+                    this.inputLine = "";
+                    GUI.FocusControl("");
+                    focused = false;
+                    return; // printing the now modified list would result in an error. to avoid this, we just skip this single frame
+                }
+                else
+                {
+                    if (!focused)
+                    {
+                        GUI.FocusControl("ChatInput");
+                    }
+                    else
+                    {
+                        GUI.FocusControl("");
+                        teamChat = false;
+                    }
+                    focused = !focused;
+                }
             }
-            else
-            {
-                GUI.FocusControl("ChatInput");
-            }
+            if (Event.current.keyCode == KeyCode.Backspace)
+                {
+                    if (!focused && !teamChat)
+                    {
+                        teamChat = true;                                                                        
+                    }
+                }
         }
 
         GUI.SetNextControlName("");
@@ -49,7 +92,7 @@ public class InRoomChat : Photon.MonoBehaviour
 
         scrollPos = GUILayout.BeginScrollView(scrollPos);
         GUILayout.FlexibleSpace();
-        for (int i = messages.Count - 1; i >= 0; i--)
+        for (int i = 0; i < messages.Count; i++)
         {
             GUILayout.Label(messages[i]);
         }
@@ -57,15 +100,31 @@ public class InRoomChat : Photon.MonoBehaviour
 
         GUILayout.BeginHorizontal();
         GUI.SetNextControlName("ChatInput");
-        inputLine = GUILayout.TextField(inputLine);
+        if (!focused && teamChat)
+        {
+            focused = true;
+            GUI.FocusControl("ChatInput");       
+        }
+        else
+         inputLine = GUILayout.TextField(inputLine);
+        /*
         if (GUILayout.Button("Send", GUILayout.ExpandWidth(false)))
         {
-            this.photonView.RPC("Chat", PhotonTargets.All, this.inputLine);
+            if (!teamChat)
+                this.photonView.RPC("Chat", PhotonTargets.All, this.inputLine);
+            else
+            {
+                for (int i = 0 + LocalGameManager.myTeam; i < players.Length; i = i + 2)
+                    this.photonView.RPC("Chat", players[i], "[T]" + this.inputLine);
+                teamChat = false;
+            }
             this.inputLine = "";
             GUI.FocusControl("");
-        }
+            focused = false;
+        }        
+        */
         GUILayout.EndHorizontal();
-        GUILayout.EndArea();
+        GUILayout.EndArea();        
     }
 
     [RPC]
